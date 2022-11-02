@@ -17,15 +17,15 @@ if ( ! defined('ABSPATH')) {
     exit;
 }
 
+// namespace class autoloading
 spl_autoload_register(function ($class) {
-    // Adapt this depending on your directory structure
     $parts = explode('\\', $class);
     $path  = __DIR__ . '/src';
 
     // remove root
     unset($parts[0]);
 
-    // form parth
+    // form path
     foreach ($parts as $part) {
         $path .= '/' . $part;
     }
