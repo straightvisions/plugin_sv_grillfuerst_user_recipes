@@ -14,6 +14,8 @@ final class Api_Route_Service {
 
     public function register_routes(): void {
         foreach ($this->routes as $route) {
+            if(is_string($route)) continue;
+
             $version = 'v1';
             if (isset($route['version'])) {
                 $version = $route['version'];

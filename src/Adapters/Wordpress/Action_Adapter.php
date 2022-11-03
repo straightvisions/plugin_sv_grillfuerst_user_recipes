@@ -12,23 +12,25 @@ final class Action_Adapter {
         $this->callbacks[$hook_name] = $callback;
 
         // add adapter callback
-        add_action($hook_name,
-            function($att1 = null, $att2 = null, $att3 = null){
-            }
-            , $priority, $accepted_args);
+        add_action(
+            $hook_name,
+            [$this, 'handle_rest_api_init'],
+            $priority,
+            $accepted_args
+        );
     }
 
     // handle wordpress callbacks
-    public function handle($hook_name, $att1 = null, $att2 = null, $att3 = null): string {
-        if (isset($this->callbacks[$hook_name])) {
-            $call = $this->callbacks[$shortcode_tag];
+    public function handle_rest_api_init($att1 = null, $att2 = null, $att3 = null): string {
+        if (isset($this->callbacks['rest_api_init'])) {
+            $call = $this->callbacks['rest_api_init'];
 
-            $response = call_user_func_array($call, array((array)$atts, (string)$content, (string)$shortcode_tag));
+            $response = call_user_func_array($call, array($att1));
 
             return (string)$response;
         } else {
             // error middleware here later
-            return 'callback not found for ' . $shortcode_tag;
+            return 'callback not found for ' . 'rest_api_init';
         }
     }
 }
