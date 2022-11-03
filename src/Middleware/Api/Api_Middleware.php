@@ -18,12 +18,13 @@ final class Api_Middleware implements Middleware_Interface {
     }
 
     // custom shortcode handler
-    public function init(): void {
-        $this->Api_Route_Service->register_routes();
-    }
 
     public function add(array $route): void {
         $this->Api_Route_Service->add($route);
+    }
+
+    public function init(): void {
+        $this->Api_Route_Service->register_routes();
     }
 
     // more controller functions
