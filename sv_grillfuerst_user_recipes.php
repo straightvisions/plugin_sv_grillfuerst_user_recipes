@@ -35,5 +35,14 @@ spl_autoload_register(function ($class) {
     }
 });
 
-require('src/App.php');
-$SV_Grillfuerst_User_Recipes = new SV_Grillfuerst_User_Recipes\App();
+
+use SV_Grillfuerst_User_Recipes\Factory\Container_Factory;
+use SV_Grillfuerst_User_Recipes\App;
+
+require_once __DIR__ . '/src/vendor/autoload.php';
+
+// Build DI Container instance
+$SV_Grillfuerst_User_Recipes = (new Container_Factory())->createInstance();
+
+// Create App instance
+$SV_Grillfuerst_User_Recipes->get(App::class);
