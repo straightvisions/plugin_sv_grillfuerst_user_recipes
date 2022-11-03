@@ -4,7 +4,7 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\User\Tests;
 
 use PHPUnit\Framework\TestCase;
 
-final class User_Login_Frontend_Service_Test extends TestCase{
+final class User_Login_Frontend_Service_Test extends TestCase {
 
     public function test_get(): void {
         ob_start();
