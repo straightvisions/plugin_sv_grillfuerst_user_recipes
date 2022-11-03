@@ -8,6 +8,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 
 final class App {
 
+    // add new middleware here + config/container
     public function __construct(
         Api_Middleware $Api_Middleware,
         User_Middleware $User_Middleware

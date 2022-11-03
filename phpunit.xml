@@ -19,6 +19,7 @@
             <directory>templates</directory>
             <directory>tmp</directory>
             <directory>vendor</directory>
+            <directory>src/vendor</directory>
         </exclude>
     </coverage>
     <testsuites>
