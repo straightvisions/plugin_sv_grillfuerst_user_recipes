@@ -13,6 +13,8 @@ final class User_Middleware implements Middleware_Interface {
     private Api_Middleware $Api_Middleware;
 
     public function __construct(Api_Middleware $Api_Middleware) {
+        $this->Api_Middleware = $Api_Middleware;
+
         // @todo check if this is correct - otherwise implement a dispatcher
         $this->Shortcode_Adapter = new Shortcode_Adapter();
         $this->Shortcode_Adapter->add('sv_gf_user_login', [$this, 'get_frontend_user_login']);
@@ -20,11 +22,9 @@ final class User_Middleware implements Middleware_Interface {
         // load services
         $this->User_Login_Frontend_Service = new User_Login_Frontend_Service();
 
-        // load api + add routes
-        $this->Api_Middleware              = $Api_Middleware;
         $this->Api_Middleware->add([
-            'route'=>'/users',
-            'args'=>['methods'=>'GET','callback'=>[$this, 'test']]
+            'route' => '/users',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test']]
         ]);
     }
 
@@ -33,10 +33,10 @@ final class User_Middleware implements Middleware_Interface {
         return $this->User_Login_Frontend_Service->get($atts);
     }
 
-    public function test(){
+    public function test() {
         // implement wp_response adapter + services
         echo "ok";
-        die;
+
     }
 
     // more controller functions
