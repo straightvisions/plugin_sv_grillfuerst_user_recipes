@@ -1,19 +1,24 @@
-const path = require("path");
-const HtmlWebpackPlugin = require("html-webpack-plugin");
+const path = require('path');
+const HtmlWebpackPlugin = require('html-webpack-plugin');
 
 module.exports = {
-	entry: {app: "./src/index.js"},
+	mode: 'production',
+	entry: './src/index.js',
 	output: {
 		path: __dirname, // the bundle output path
-		filename: "./dist/user_recipes.build.js", // the name of the bundle
+		filename: './dist/user_recipes.build.js', // the name of the bundle
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
-			template: "./src/index.html", // to import index.html file inside index.js
+			template: './src/index.html', // to import index.html file inside index.js
 		}),
 	],
 	devServer: {
 		port: 3030, // you can change the port
+		open: true,
+		hot: true,
+		compress: true,
+		historyApiFallback: true,
 	},
 	module: {
 		rules: [
@@ -21,16 +26,16 @@ module.exports = {
 				test: /\.(js|jsx)$/, // .js and .jsx files
 				exclude: /node_modules/, // excluding the node_modules folder
 				use: {
-					loader: "babel-loader",
+					loader: 'babel-loader',
 				},
 			},
 			{
 				test: /\.(sa|sc|c)ss$/, // styles files
-				use: ["style-loader", "css-loader", "sass-loader"],
+				use: ['style-loader', 'css-loader', 'postcss-loader'],
 			},
 			{
 				test: /\.(png|woff|woff2|eot|ttf|svg)$/, // to import images and fonts
-				loader: "url-loader",
+				loader: 'url-loader',
 				options: { limit: false },
 			},
 		],
