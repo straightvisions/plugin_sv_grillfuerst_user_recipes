@@ -1,4 +1,6 @@
 import React from "react";
+import Hero from './components/hero'
+
 const App = () => {
 	
 	// https://reactjs.org/docs/handling-events.html
@@ -7,11 +9,7 @@ const App = () => {
 		alert('You clicked submit.');
 	}
 	
-	return (
-		<form onSubmit={handleSubmit}>
-			<button type="submit">Submit</button>
-		</form>
-	);
+	return (<Hero/>);
 };
 
 export default App;
