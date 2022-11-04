@@ -7,3 +7,7 @@ Every code change will get reflected instantly.
 
 @todo
 remove index.html from production build by script
+
+# Hints
+Add your code to app.js.
+Add your custom css to style.css.
