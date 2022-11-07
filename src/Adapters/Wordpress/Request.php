@@ -10,7 +10,14 @@ use WP_REST_Request;
 final class Request implements Request_Interface {
     private WP_REST_Request $request;
 
+    // invokes don't work with chaining?
     public function __invoke($request) {
+        $this->request = $request;
+
+        return $this;
+    }
+
+    public function set($request){
         $this->request = $request;
 
         return $this;
