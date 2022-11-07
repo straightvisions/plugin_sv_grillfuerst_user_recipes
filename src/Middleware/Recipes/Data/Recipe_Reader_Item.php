@@ -1,8 +1,8 @@
 <?php
 
-namespace SV_Grillfuerst_User_Recipes\Middleware\User\Data;
+namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data;
 
-class Recipe_Read_Item {
+class Recipe_Reader_Item {
     public ?string $id = null;
     public ?string $user_id = null;
     public ?string $title = '';

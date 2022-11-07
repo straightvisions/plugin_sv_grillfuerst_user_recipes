@@ -1,6 +1,6 @@
 <?php
 
-namespace SV_Grillfuerst_User_Recipes\Middleware\User\Data;
+namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data;
 
 class Recipe_Update_Item {
     public ?string $title = null;
