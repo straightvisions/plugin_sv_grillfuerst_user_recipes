@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => 'dev-main',
         'version' => 'dev-main',
-        'reference' => '74ea0c3ebbd64ac552a95191ca14d2f2dc644340',
+        'reference' => '8596775ff18a84b40b7793b862d6771371ba664d',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => 'dev-main',
             'version' => 'dev-main',
-            'reference' => '74ea0c3ebbd64ac552a95191ca14d2f2dc644340',
+            'reference' => '8596775ff18a84b40b7793b862d6771371ba664d',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -69,6 +69,15 @@
             'provided' => array(
                 0 => '^1.0',
             ),
+        ),
+        'psr/http-message' => array(
+            'pretty_version' => '1.0.1',
+            'version' => '1.0.1.0',
+            'reference' => 'f6561bf28d520154e4b0ec72be95418abe6d9363',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../psr/http-message',
+            'aliases' => array(),
+            'dev_requirement' => false,
         ),
     ),
 );

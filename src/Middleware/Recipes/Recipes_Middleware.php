@@ -13,16 +13,15 @@ final class Recipes_Middleware implements Middleware_Interface {
         $this->Api_Middleware = $Api_Middleware;
         $this->Adapter = $Adapter;
 
-        // load services
-        //$this->User_Login_Frontend_Service = new User_Login_Frontend_Service();
-
         $this->Api_Middleware->add([
             'route' => '/recipes',
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_recipes']]
         ]);
     }
 
-    public function rest_get_recipes() {
+    public function rest_get_recipes( $request ) {
+        $Request = $this->Adapter->Request($request);
+
         // implement wp_response adapter + services
         echo "ok";
 
