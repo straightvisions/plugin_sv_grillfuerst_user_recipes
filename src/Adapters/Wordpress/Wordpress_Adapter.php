@@ -7,7 +7,7 @@ use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Connection;
 use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Request;
 use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Shortcode;
 
-final class Wordpress_Adapter extends Adapter{
+final class Wordpress_Adapter{
     public Connection $Query;
     public Request $Request;
     public Shortcode $Shortcode;

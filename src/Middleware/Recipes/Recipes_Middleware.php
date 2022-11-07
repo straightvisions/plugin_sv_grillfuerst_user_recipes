@@ -12,15 +12,14 @@ final class Recipes_Middleware implements Middleware_Interface {
     private $Adapter;
     private Recipe_Finder_Service $Recipe_Finder_Service;
 
-    /**
-     * @param Api_Middleware $Api_Middleware
-     * @param Adapter $Adapter
-     * @param Recipe_Finder_Service $Recipe_Finder_Service
-     */
-    public function __construct(Api_Middleware $Api_Middleware, Adapter $Adapter) {
+    public function __construct(
+        Api_Middleware $Api_Middleware,
+        Adapter $Adapter,
+        Recipe_Finder_Service $Recipe_Finder_Service
+    ) {
         $this->Api_Middleware = $Api_Middleware;
         $this->Adapter = $Adapter;
-        //$this->Recipe_Finder_Service = $Recipe_Finder_Service;
+        $this->Recipe_Finder_Service = $Recipe_Finder_Service;
 
         $this->Api_Middleware->add([
             'route' => '/recipes',
@@ -30,7 +29,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     }
 
     public function rest_get_recipes( $request ) {
-        $Request = $this->Adapter->Request->set($request);
+        $Request = $this->Adapter->Request()->set($request);
 
         //$results = $this->Recipe_Finder_Service->get_list();
         $results = array();

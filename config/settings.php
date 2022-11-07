@@ -2,10 +2,11 @@
 
 $settings = [
     'adapters' => [
-        'connection' => 'Wordpress_Adapter',
+        'Connection' => 'Wordpress_Adapter',
         // Wordpress CMS specific adapters
-        'action' => 'Wordpress_Adapter',
-        'shortcode' => 'Wordpress_Adapter',
+        'Action' => 'Wordpress_Adapter',
+        'Shortcode' => 'Wordpress_Adapter',
+        'Request' => 'Wordpress_Adapter',
     ]
 ];
 

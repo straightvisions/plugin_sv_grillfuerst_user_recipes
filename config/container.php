@@ -20,37 +20,31 @@ return [
     Api_Middleware::class  => function(ContainerInterface $container){
         return new Api_Middleware();
     },
-
+    //@todo autowire user middleware
     User_Middleware::class => function(ContainerInterface $container){
         $settings = $container->get('settings');
         $adapters = $settings['adapters'];
-        $Adapter = $container->get($adapters['shortcode']); // fake load adapter
+        $Adapter = $container->get($adapters['Shortcode']); // fake load adapter
         $Api = $container->get(Api_Middleware::class);
 
         return new User_Middleware($Api, $Adapter);
     },
 
-    Recipes_Middleware::class => function(ContainerInterface $container){
-        $settings = $container->get('settings');
-        $adapters = $settings['adapters'];
-        $Adapter = $container->get($adapters['connection']);
-        $Api = $container->get(Api_Middleware::class);
-
-        return new Recipes_Middleware($Api, $Adapter);
-    },
+    Recipes_Middleware::class => autowire(Recipes_Middleware::class),
 
     // adapters
     Adapter::class => function(ContainerInterface $container){
-        return new SV_Grillfuerst_User_Recipes\Adapters\Adapter();
+        return new SV_Grillfuerst_User_Recipes\Adapters\Adapter($container);
     },
 
     'Wordpress_Adapter' => autowire(Wordpress_Adapter::class),
 
+    //@todo autowire query factory
     // other stuff
     Query_Factory::class => function(ContainerInterface $container){
         $settings = $container->get('settings');
         $adapters = $settings['adapters'];
-        $Adapter = $container->get($adapters['connection']);
+        $Adapter = $container->get($adapters['Connection']);
 
         return new Query_Factory($Adapter);
     },
