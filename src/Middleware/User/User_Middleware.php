@@ -11,8 +11,9 @@ final class User_Middleware implements Middleware_Interface {
     private Shortcode_Adapter $Shortcode_Adapter;
     private User_Login_Frontend_Service $User_Login_Frontend_Service;
     private Api_Middleware $Api_Middleware;
+    private $Adapter;
 
-    public function __construct(Api_Middleware $Api_Middleware) {
+    public function __construct(Api_Middleware $Api_Middleware, $Adapter) {
         $this->Api_Middleware = $Api_Middleware;
 
         // @todo check if this is correct - otherwise implement a dispatcher
