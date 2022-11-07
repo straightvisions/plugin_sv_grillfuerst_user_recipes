@@ -5,7 +5,7 @@ use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Connection;
 use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Shortcode;
 use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Action;
 
-final class Wordpress_Adapter {
+final class Adapter {
     public $query;
     public $shorcode;
     public $action;

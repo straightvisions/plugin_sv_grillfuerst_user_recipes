@@ -2,7 +2,6 @@
 
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\User\User_Middleware;
-use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Wordpress_Adapter;
 use SV_Grillfuerst_User_Recipes\Factory\Query_Factory;
 use Psr\Container\ContainerInterface;
 
@@ -19,16 +18,17 @@ return [
     },
 
     User_Middleware::class => function(ContainerInterface $container){
-        /*      $settings = $container->get('settings');
-              $adapters = $settings['adapters'];
-              $Adapter = $container->get($adapters['shortcode']); // fake load adapter
-      */
-        return new User_Middleware($container->get(Api_Middleware::class), $container->get(Wordpress_Adapter::class));
+        $settings = $container->get('settings');
+        $adapters = $settings['adapters'];
+        $Adapter = $container->get($adapters['shortcode']); // fake load adapter
+        $Api = $container->get(Api_Middleware::class);
+
+        return new User_Middleware($Api, $Adapter);
     },
-    
+
     // adapters
-    Wordpress_Adapter::class => function(ContainerInterface $container){
-        return new Wordpress_Adapter();
+    'Wordpress_Adapter' => function(ContainerInterface $container){
+        return new SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Adapter();
     },
 
     // other stuff

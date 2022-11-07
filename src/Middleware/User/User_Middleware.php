@@ -2,23 +2,19 @@
 
 namespace SV_Grillfuerst_User_Recipes\Middleware\User;
 
-use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Shortcode_Adapter;
 use SV_Grillfuerst_User_Recipes\Interfaces\Middleware_Interface;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Login_Frontend_Service;
 
 final class User_Middleware implements Middleware_Interface {
-    private Shortcode_Adapter $Shortcode_Adapter;
     private User_Login_Frontend_Service $User_Login_Frontend_Service;
     private Api_Middleware $Api_Middleware;
     private $Adapter;
 
     public function __construct(Api_Middleware $Api_Middleware, $Adapter) {
         $this->Api_Middleware = $Api_Middleware;
-
-        // @todo check if this is correct - otherwise implement a dispatcher
-        $this->Shortcode_Adapter = new Shortcode_Adapter();
-        $this->Shortcode_Adapter->add('sv_gf_user_login', [$this, 'get_frontend_user_login']);
+        $this->Adapter = $Adapter;
+        $this->Adapter->shortcode->add('sv_gf_user_login', [$this, 'get_frontend_user_login']);
 
         // load services
         $this->User_Login_Frontend_Service = new User_Login_Frontend_Service();
