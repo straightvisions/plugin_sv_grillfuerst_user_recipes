@@ -12,6 +12,7 @@ final class Api_Route_Service {
 
     public function add(array $route): void {
         // implement route validation here
+
        if(is_array($route) === true){
            $this->routes[] = $route;
        }else{

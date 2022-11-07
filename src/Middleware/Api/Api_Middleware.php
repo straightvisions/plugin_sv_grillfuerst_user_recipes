@@ -19,7 +19,6 @@ final class Api_Middleware implements Middleware_Interface {
 
         add_action('rest_api_init', [$this, 'init']);
 
-
         $this->Api_Route_Service = new Api_Route_Service();
     }
 
