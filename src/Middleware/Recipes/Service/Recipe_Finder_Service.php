@@ -9,8 +9,11 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Recipe_Finder_Repo
 final class Recipe_Finder_Service {
     private Recipe_Finder_Repository $repository;
 
-    public function __construct() {
-        $this->repository = new Recipe_Finder_Repository();
+    /**
+     * @param Recipe_Finder_Repository     $repository
+     */
+    public function __construct(Recipe_Finder_Repository $repository) {
+        $this->repository = $repository;
     }
 
     public function get_list(int $user_id = null): Recipe_Finder_Result {

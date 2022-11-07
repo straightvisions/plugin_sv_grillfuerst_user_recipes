@@ -17,7 +17,8 @@ final class Container_Factory {
      */
     public function createInstance(): ContainerInterface {
         $containerBuilder = new ContainerBuilder();
-
+        $containerBuilder->useAutowiring(true);
+        $containerBuilder->useAnnotations(true);
         // Set up settings
         $containerBuilder->addDefinitions(__DIR__ . '/../../config/container.php');
 

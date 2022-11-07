@@ -15,6 +15,7 @@ class ComposerStaticInitc559cc1226192a4202d92ae9efaf34c5
         array (
             'Psr\\Http\\Message\\' => 17,
             'Psr\\Container\\' => 14,
+            'Psr\\Cache\\' => 10,
             'PhpDocReader\\' => 13,
         ),
         'L' => 
@@ -27,6 +28,8 @@ class ComposerStaticInitc559cc1226192a4202d92ae9efaf34c5
         ),
         'D' => 
         array (
+            'Doctrine\\Common\\Lexer\\' => 22,
+            'Doctrine\\Common\\Annotations\\' => 28,
             'DI\\' => 3,
         ),
     );
@@ -40,6 +43,10 @@ class ComposerStaticInitc559cc1226192a4202d92ae9efaf34c5
         array (
             0 => __DIR__ . '/..' . '/psr/container/src',
         ),
+        'Psr\\Cache\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/psr/cache/src',
+        ),
         'PhpDocReader\\' => 
         array (
             0 => __DIR__ . '/..' . '/php-di/phpdoc-reader/src/PhpDocReader',
@@ -51,6 +58,14 @@ class ComposerStaticInitc559cc1226192a4202d92ae9efaf34c5
         'Invoker\\' => 
         array (
             0 => __DIR__ . '/..' . '/php-di/invoker/src',
+        ),
+        'Doctrine\\Common\\Lexer\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/lexer/lib/Doctrine/Common/Lexer',
+        ),
+        'Doctrine\\Common\\Annotations\\' => 
+        array (
+            0 => __DIR__ . '/..' . '/doctrine/annotations/lib/Doctrine/Common/Annotations',
         ),
         'DI\\' => 
         array (
