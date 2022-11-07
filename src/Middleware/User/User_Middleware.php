@@ -14,7 +14,7 @@ final class User_Middleware implements Middleware_Interface {
     public function __construct(Api_Middleware $Api_Middleware, $Adapter) {
         $this->Api_Middleware = $Api_Middleware;
         $this->Adapter = $Adapter;
-        $this->Adapter->shortcode->add('sv_gf_user_login', [$this, 'get_frontend_user_login']);
+        $this->Adapter->Shortcode->add('sv_gf_user_login', [$this, 'get_frontend_user_login']);
 
         // load services
         $this->User_Login_Frontend_Service = new User_Login_Frontend_Service();
