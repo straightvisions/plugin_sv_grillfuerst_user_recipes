@@ -4,6 +4,7 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\User\Data;
 
 class Recipe_Read_Item {
     public ?string $id = null;
+    public ?string $user_id = null;
     public ?string $title = '';
     public ?string $state = 'draft';
     public ?string $categories = '{}';
