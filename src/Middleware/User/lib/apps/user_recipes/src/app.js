@@ -1,15 +1,14 @@
 import React from "react";
-import Hero from './components/hero'
+import Header from './components/header'
+import Recipes from './components/recipes'
 
 const App = () => {
-	
-	// https://reactjs.org/docs/handling-events.html
-	function handleSubmit(e) {
-		e.preventDefault();
-		alert('You clicked submit.');
-	}
-	
-	return (<Hero/>);
+	return (
+		[
+		<Header/>,
+		<Recipes/>
+		]
+	);
 };
 
 export default App;
