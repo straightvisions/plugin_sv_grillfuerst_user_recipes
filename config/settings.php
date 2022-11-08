@@ -1,5 +1,5 @@
 <?php
-
+//@todo add env support + specific default + wordpress config
 $settings = [
     'adapters' => [
         // Wordpress CMS specific adapters

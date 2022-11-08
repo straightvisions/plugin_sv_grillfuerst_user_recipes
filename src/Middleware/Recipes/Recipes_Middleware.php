@@ -33,7 +33,7 @@ final class Recipes_Middleware implements Middleware_Interface {
 
         $results = $this->Recipe_Finder_Service->get_list();
         // implement wp_response adapter + services
-        return json_encode($results); // @todo remove this when adapter is available
+        return \wp_send_json($results); // @todo remove this when adapter is available
 
     }
 

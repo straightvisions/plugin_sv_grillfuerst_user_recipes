@@ -22,13 +22,13 @@ final class Recipe_Repository {
     public function insert_recipe(array $recipe): int {
         $Recipe_Item = new Recipe_Insert_Item();
        
-        return (int)$this->Query_Factory->newInsert('recipes', $this->to_row($recipe, $Recipe_Item))
+        return (int)$this->Query_Factory->newInsert('svgfur_recipes', $this->to_row($recipe, $Recipe_Item))
                                        ->execute()
                                        ->lastInsertId();
     }
 
     public function get_recipe_by_id(int $recipe_id): array {
-        $query = $this->Query_Factory->newSelect('recipes');
+        $query = $this->Query_Factory->newSelect('svgfur_recipes');
         $query->select(
             [
                 '*',
@@ -51,20 +51,20 @@ final class Recipe_Repository {
 
         $row = $this->to_row($recipe, $Recipe_Item);
 
-        $this->Query_Factory->newUpdate('recipes', $row)
+        $this->Query_Factory->newUpdate('svgfur_recipes', $row)
                            ->where(['id' => $recipe_id])
                            ->execute();
     }
 
     public function exists_recipe_id(int $recipe_id): bool {
-        $query = $this->Query_Factory->newSelect('recipes');
+        $query = $this->Query_Factory->newSelect('svgfur_recipes');
         $query->select('id')->where(['id' => $recipe_id]);
 
         return (bool)$query->execute()->fetch('assoc');
     }
 
     public function delete_recipe_by_id(int $recipe_id): void {
-        $this->Query_Factory->newDelete('recipes')
+        $this->Query_Factory->newDelete('svgfur_recipes')
                            ->where(['id' => $recipe_id])
                            ->execute();
     }

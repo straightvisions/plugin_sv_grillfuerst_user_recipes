@@ -23,6 +23,7 @@ final class Request implements Request_Interface {
         return $this;
     }
 
+
     // have to use camel case due the interface implementation
     // interface methods
     public function getProtocolVersion() {
@@ -154,7 +155,7 @@ final class Request implements Request_Interface {
 
     public function getAttribute($name, $default = null) {
         // not implemented
-        return null;
+        return  isset($this->request[$name]) ? $this->request[$name] : $default;
     }
 
     public function withAttribute($name, $value) {
