@@ -64,6 +64,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         return \wp_send_json($results); // @todo remove this when adapter is available
     }
 
+    // @todo change finder in reader services!!
     public function rest_get_recipes_by_recipe_id( $request ) {
         $Request = $this->Adapter->Request()->set($request);
         $recipe_id = $Request->getAttribute('recipe_id');
