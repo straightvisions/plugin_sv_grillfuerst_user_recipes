@@ -6,6 +6,8 @@ $vendorDir = dirname(__DIR__);
 $baseDir = dirname($vendorDir);
 
 return array(
+    'Psr\\SimpleCache\\' => array($vendorDir . '/psr/simple-cache/src'),
+    'Psr\\Log\\' => array($vendorDir . '/psr/log/src'),
     'Psr\\Http\\Message\\' => array($vendorDir . '/psr/http-message/src'),
     'Psr\\Container\\' => array($vendorDir . '/psr/container/src'),
     'Psr\\Cache\\' => array($vendorDir . '/psr/cache/src'),
@@ -15,4 +17,8 @@ return array(
     'Doctrine\\Common\\Lexer\\' => array($vendorDir . '/doctrine/lexer/lib/Doctrine/Common/Lexer'),
     'Doctrine\\Common\\Annotations\\' => array($vendorDir . '/doctrine/annotations/lib/Doctrine/Common/Annotations'),
     'DI\\' => array($vendorDir . '/php-di/php-di/src'),
+    'Cake\\Utility\\' => array($vendorDir . '/cakephp/utility'),
+    'Cake\\Datasource\\' => array($vendorDir . '/cakephp/datasource'),
+    'Cake\\Database\\' => array($vendorDir . '/cakephp/database'),
+    'Cake\\Core\\' => array($vendorDir . '/cakephp/core'),
 );

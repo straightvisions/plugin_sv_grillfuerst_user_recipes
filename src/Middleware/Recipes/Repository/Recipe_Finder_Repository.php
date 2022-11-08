@@ -15,7 +15,7 @@ final class Recipe_Finder_Repository {
     }
 
     public function get(): array {
-        $query = $this->Query_Factory->new_select('recipes');
+        $query = $this->Query_Factory->newSelect('recipes');
 
         $query->select(
             [
@@ -30,7 +30,7 @@ final class Recipe_Finder_Repository {
     }
 
     public function get_by_user_id($id): array {
-        $query = $this->Query_Factory->new_select('recipes');
+        $query = $this->Query_Factory->newSelect('recipes');
 
         $query->select(
             [

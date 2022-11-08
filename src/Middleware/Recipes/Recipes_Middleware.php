@@ -31,8 +31,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     public function rest_get_recipes( $request ) {
         $Request = $this->Adapter->Request()->set($request);
 
-        //$results = $this->Recipe_Finder_Service->get_list();
-        $results = array();
+        $results = $this->Recipe_Finder_Service->get_list();
         // implement wp_response adapter + services
         return json_encode($results); // @todo remove this when adapter is available
 

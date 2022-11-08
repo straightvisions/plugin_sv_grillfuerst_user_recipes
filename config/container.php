@@ -7,6 +7,7 @@ use SV_Grillfuerst_User_Recipes\Factory\Query_Factory;
 use Psr\Container\ContainerInterface;
 use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Wordpress_Adapter;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
+use Cake\Database\Connection;
 
 use function DI\create;
 use function DI\autowire;
@@ -39,14 +40,19 @@ return [
 
     'Wordpress_Adapter' => autowire(Wordpress_Adapter::class),
 
-    //@todo autowire query factory
-    // other stuff
-    Query_Factory::class => function(ContainerInterface $container){
-        $settings = $container->get('settings');
-        $adapters = $settings['adapters'];
-        $Adapter = $container->get($adapters['Connection']);
+    Query_Factory::class => autowire(Query_Factory::class),
 
-        return new Query_Factory($Adapter);
+    // Database connection
+    Connection::class => function (ContainerInterface $container) {
+        return new Connection($container->get('settings')['db']);
+    },
+
+    PDO::class => function (ContainerInterface $container) {
+        $db = $container->get(Connection::class);
+        $driver = $db->getDriver();
+        $driver->connect();
+
+        return $driver->getConnection();
     },
 
 ];
