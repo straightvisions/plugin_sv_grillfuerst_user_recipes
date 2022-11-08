@@ -22,6 +22,12 @@ final class Recipe_Finder_Service {
         return $this->create_result($rows);
     }
 
+    public function get(int $recipe_id, int $user_id = null): Recipe_Finder_Result {
+        $rows = $user_id ? $this->repository->get_by_recipe_id_and_user_id($recipe_id, $user_id) : $this->repository->get($recipe_id);
+
+        return $this->create_result($rows);
+    }
+
     private function create_result(array $rows): Recipe_Finder_Result {
         $result = new Recipe_Finder_Result();
 

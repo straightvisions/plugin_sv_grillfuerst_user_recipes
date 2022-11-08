@@ -14,7 +14,7 @@ final class Recipe_Finder_Repository {
         $this->Query_Factory = $Query_Factory;
     }
 
-    public function get(): array {
+    public function get($id = null): array {
         $query = $this->Query_Factory->newSelect('svgfur_recipes');
 
         $query->select(
@@ -23,8 +23,10 @@ final class Recipe_Finder_Repository {
             ]
         );
 
-        // Add more "use case specific" conditions to the query
-        // ...
+        // filter by recipe id
+        if($id){
+            $query->where(['id' => (int)$id]);
+        }
 
         return $query->execute()->fetchAll('assoc') ?: [];
     }
@@ -38,7 +40,23 @@ final class Recipe_Finder_Repository {
             ]
         );
 
+        // filter by user id
         $query->where(['user_id' => (int)$id]);
+
+        return $query->execute()->fetchAll('assoc') ?: [];
+    }
+
+    public function get_by_recipe_id_and_user_id($id1, $id2): array {
+        $query = $this->Query_Factory->newSelect('svgfur_recipes');
+
+        $query->select(
+            [
+                '*',
+            ]
+        );
+
+        // filter by recipe id + user id
+        $query->where(['id' => (int)$id1, 'user_id' => (int)$id2]);
 
         return $query->execute()->fetchAll('assoc') ?: [];
     }
