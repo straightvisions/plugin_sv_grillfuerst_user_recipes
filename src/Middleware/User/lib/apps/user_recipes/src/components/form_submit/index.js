@@ -12,95 +12,41 @@ export default function Example() {
 				<fieldset>
 					<legend className="sr-only">By Email</legend>
 					<div className="text-base font-medium text-gray-900" aria-hidden="true">
-						By Email
+						Bitte bestätigen
 					</div>
 					<div className="mt-4 space-y-4">
 						<div className="flex items-start">
 							<div className="flex h-5 items-center">
 								<input
-									id="comments"
-									name="comments"
+									id="legals"
+									name="legals"
+									required="required"
 									type="checkbox"
 									className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
 								/>
 							</div>
 							<div className="ml-3 text-sm">
-								<label htmlFor="comments" className="font-medium text-gray-700">
-									Comments
+								<label htmlFor="legals" className="font-medium text-gray-700">
+									Rechteabtretung
 								</label>
-								<p className="text-gray-500">Get notified when someones posts a comment on a posting.</p>
+								<p className="text-gray-500">Du bestätigst, alle Rechte an dem Rezept und den Bildern zu besitzen und trittst diese an uns ab.</p>
 							</div>
 						</div>
 						<div className="flex items-start">
 							<div className="flex h-5 items-center">
 								<input
-									id="candidates"
-									name="candidates"
+									id="newsletter"
+									name="newsletter"
 									type="checkbox"
 									className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
 								/>
 							</div>
 							<div className="ml-3 text-sm">
-								<label htmlFor="candidates" className="font-medium text-gray-700">
-									Candidates
+								<label htmlFor="newsletter" className="font-medium text-gray-700">
+									Newsletteranmeldung
 								</label>
-								<p className="text-gray-500">Get notified when a candidate applies for a job.</p>
+								<p className="text-gray-500">Manche Rezepte stellen wir in unserem Newsletter vor - nicht verpassen!</p>
 							</div>
-						</div>
-						<div className="flex items-start">
-							<div className="flex h-5 items-center">
-								<input
-									id="offers"
-									name="offers"
-									type="checkbox"
-									className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-								/>
-							</div>
-							<div className="ml-3 text-sm">
-								<label htmlFor="offers" className="font-medium text-gray-700">
-									Offers
-								</label>
-								<p className="text-gray-500">Get notified when a candidate accepts or rejects an offer.</p>
-							</div>
-						</div>
-					</div>
-				</fieldset>
-				<fieldset>
-					<legend className="contents text-base font-medium text-gray-900">Push Notifications</legend>
-					<p className="text-sm text-gray-500">These are delivered via SMS to your mobile phone.</p>
-					<div className="mt-4 space-y-4">
-						<div className="flex items-center">
-							<input
-								id="push-everything"
-								name="push-notifications"
-								type="radio"
-								className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-							/>
-							<label htmlFor="push-everything" className="ml-3 block text-sm font-medium text-gray-700">
-								Everything
-							</label>
-						</div>
-						<div className="flex items-center">
-							<input
-								id="push-email"
-								name="push-notifications"
-								type="radio"
-								className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-							/>
-							<label htmlFor="push-email" className="ml-3 block text-sm font-medium text-gray-700">
-								Same as email
-							</label>
-						</div>
-						<div className="flex items-center">
-							<input
-								id="push-nothing"
-								name="push-notifications"
-								type="radio"
-								className="h-4 w-4 border-gray-300 text-indigo-600 focus:ring-indigo-500"
-							/>
-							<label htmlFor="push-nothing" className="ml-3 block text-sm font-medium text-gray-700">
-								No push notifications
-							</label>
 						</div>
 					</div>
 				</fieldset>
@@ -108,16 +54,10 @@ export default function Example() {
 		</div>
 		<div className="flex justify-end">
 			<button
-				type="button"
-				className="rounded-md border border-gray-300 bg-white py-2 px-4 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-			>
-				Cancel
-			</button>
-			<button
 				type="submit"
 				className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 			>
-				Save
+				Absenden
 			</button>
 		</div>
 	</div>

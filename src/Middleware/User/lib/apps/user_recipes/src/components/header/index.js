@@ -43,11 +43,13 @@ export default function Example(props) {
 						<div className="flex h-16 justify-between">
 							<div className="flex">
 								<div className="flex flex-shrink-0 items-center">
+									<a href="https://www.grillfuerst.de" target="_blank">
 									<img
 										className="block h-8 w-auto"
 										src="https://www.grillfuerst.de/magazin/wp-content/uploads/2022/09/Logo.svg"
 										alt="Grillfürst"
 									/>
+									</a>
 								</div>
 							</div>
 							<div className="flex items-center">
