@@ -1,26 +1,26 @@
-import React from "react";
+import React, { useState } from "react";
 import Header from './components/header';
-import Recipes from './components/recipes'
-import Form from './components/form'
-import {
-	BrowserRouter as Router,
-	Routes,
-	Route
-} from "react-router-dom";
+import Recipes from './components/recipes';
+import Form from './components/form';
 
 const App = () => {
+	const [view, setView] = useState("recipes");
+	
+	// check view component
+	let Section = (props) => {
+		if(props.view === 'form'){
+			return <Form/>;
+		}else{
+			return <Recipes/>;
+		}
+	}
+	
 	return (
-		[
-			<Router>
-				<div className="mx-auto max-w-7xl">
-				<Header/>
-				<Routes>
-					<Route path="/" exact element={<Recipes/>} />
-					<Route path="/form" exact element={<Form/>} />
-				</Routes>
-				</div>
-			</Router>
-		]
+		<div className="mx-auto max-w-7xl">
+			<Header view={view} onChange={setView}  />
+			<Section view={view} />
+		</div>
+
 	);
 };
 

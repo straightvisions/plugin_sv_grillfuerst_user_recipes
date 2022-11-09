@@ -1,37 +1,36 @@
 import React from "react";
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
-import {setSection} from "../../app";
 
-import { Link, useLocation } from "react-router-dom";
-function formButton(){
-	let location = useLocation();
-	
-	if(location.pathname === '/form') {
+function FormButton(props){
+
+	if(props.view === 'form') {
 		return (
-			<Link to="/">
+		
 				<button
+					onClick={()=>props.onChange('recipes')}
 					type="button"
 					className="relative inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-black hover:border-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 				>
 					<ArrowRightIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
 					<span>Übersicht</span>
 				</button>
-			</Link>
+		
 		);
 	}
 	
 	// default
 	return (
-		<Link to="/form">
+
 			<button
+				onClick={()=>props.onChange('form')}
 				type="button"
 				className="relative inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-black hover:border-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 			>
 				<PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
 				<span>Neues Rezept</span>
 			</button>
-		</Link>
+	
 	);
 }
 
@@ -39,7 +38,8 @@ function classNames(...classes) {
 	return classes.filter(Boolean).join(' ')
 }
 
-export default function Example() {
+export default function Example(props) {
+	
 	return (
 		<Disclosure as="nav" className="bg-white shadow">
 			{({ open }) => (
@@ -48,18 +48,16 @@ export default function Example() {
 						<div className="flex h-16 justify-between">
 							<div className="flex">
 								<div className="flex flex-shrink-0 items-center">
-									<Link to="/">
 									<img
 										className="block h-8 w-auto"
 										src="https://www.grillfuerst.de/magazin/wp-content/uploads/2022/09/Logo.svg"
 										alt="Grillfürst"
 									/>
-									</Link>
 								</div>
 							</div>
 							<div className="flex items-center">
 								<div className="flex-shrink-0">
-									{formButton()}
+									<FormButton {...props} />
 								</div>
 								<div className="ml-4 flex flex-shrink-0 items-center">
 									<button
