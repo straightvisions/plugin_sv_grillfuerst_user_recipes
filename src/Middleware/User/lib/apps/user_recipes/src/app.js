@@ -20,7 +20,6 @@ const App = () => {
 			<Header view={view} onChange={setView}  />
 			<Section view={view} />
 		</div>
-
 	);
 };
 

@@ -1,9 +1,8 @@
 import React from "react";
-import { Disclosure, Menu, Transition } from '@headlessui/react'
+import { Disclosure } from '@headlessui/react'
 import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
 
 function FormButton(props){
-
 	if(props.view === 'form') {
 		return (
 		
@@ -32,10 +31,6 @@ function FormButton(props){
 			</button>
 	
 	);
-}
-
-function classNames(...classes) {
-	return classes.filter(Boolean).join(' ')
 }
 
 export default function Example(props) {
