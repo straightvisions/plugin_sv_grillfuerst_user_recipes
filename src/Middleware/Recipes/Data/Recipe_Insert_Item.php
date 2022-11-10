@@ -4,15 +4,15 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data;
 
 class Recipe_Insert_Item {
     public ?string $title = '';
-    public ?string $user_id = null;
+    public ?int $user_id = 0;
     public ?string $state = 'draft';
-    public ?string $categories = '{}';
+    public ?array $categories = [];
     public ?string $info = '';
     public ?string $portions = '1';
     public ?string $preparation = '';
-    public ?string $preparation_meta = '{}';
-    public ?string $ingredients = '{}';
-    public ?string $media = '{}';
+    public ?array $preparation_meta = [];
+    public ?array $ingredients = [];
+    public ?array $media = [];
     public ?string $created = 'NOW()';
 
 
