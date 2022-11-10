@@ -29,14 +29,18 @@ abstract class AbstractUid implements \JsonSerializable
     /**
      * Creates an AbstractUid from an identifier represented in any of the supported formats.
      *
+     * @return static
+     *
      * @throws \InvalidArgumentException When the passed value is not valid
      */
-    abstract public static function fromString(string $uid): static;
+    abstract public static function fromString(string $uid): self;
 
     /**
+     * @return static
+     *
      * @throws \InvalidArgumentException When the passed value is not valid
      */
-    public static function fromBinary(string $uid): static
+    public static function fromBinary(string $uid): self
     {
         if (16 !== \strlen($uid)) {
             throw new \InvalidArgumentException('Invalid binary uid provided.');
@@ -46,9 +50,11 @@ abstract class AbstractUid implements \JsonSerializable
     }
 
     /**
+     * @return static
+     *
      * @throws \InvalidArgumentException When the passed value is not valid
      */
-    public static function fromBase58(string $uid): static
+    public static function fromBase58(string $uid): self
     {
         if (22 !== \strlen($uid)) {
             throw new \InvalidArgumentException('Invalid base-58 uid provided.');
@@ -58,9 +64,11 @@ abstract class AbstractUid implements \JsonSerializable
     }
 
     /**
+     * @return static
+     *
      * @throws \InvalidArgumentException When the passed value is not valid
      */
-    public static function fromBase32(string $uid): static
+    public static function fromBase32(string $uid): self
     {
         if (26 !== \strlen($uid)) {
             throw new \InvalidArgumentException('Invalid base-32 uid provided.');
@@ -70,9 +78,11 @@ abstract class AbstractUid implements \JsonSerializable
     }
 
     /**
+     * @return static
+     *
      * @throws \InvalidArgumentException When the passed value is not valid
      */
-    public static function fromRfc4122(string $uid): static
+    public static function fromRfc4122(string $uid): self
     {
         if (36 !== \strlen($uid)) {
             throw new \InvalidArgumentException('Invalid RFC4122 uid provided.');
@@ -130,7 +140,7 @@ abstract class AbstractUid implements \JsonSerializable
     /**
      * Returns whether the argument is an AbstractUid and contains the same value as the current instance.
      */
-    public function equals(mixed $other): bool
+    public function equals($other): bool
     {
         if (!$other instanceof self) {
             return false;

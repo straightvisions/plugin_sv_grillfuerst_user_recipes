@@ -11,7 +11,6 @@
 
 namespace Symfony\Component\Uid\Command;
 
-use Symfony\Component\Console\Attribute\AsCommand;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Helper\TableSeparator;
 use Symfony\Component\Console\Input\InputArgument;
@@ -23,9 +22,11 @@ use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Uid\UuidV1;
 use Symfony\Component\Uid\UuidV6;
 
-#[AsCommand(name: 'uuid:inspect', description: 'Inspect a UUID')]
 class InspectUuidCommand extends Command
 {
+    protected static $defaultName = 'uuid:inspect';
+    protected static $defaultDescription = 'Inspect a UUID';
+
     /**
      * {@inheritdoc}
      */
@@ -35,6 +36,7 @@ class InspectUuidCommand extends Command
             ->setDefinition([
                 new InputArgument('uuid', InputArgument::REQUIRED, 'The UUID to inspect'),
             ])
+            ->setDescription(self::$defaultDescription)
             ->setHelp(<<<'EOF'
 The <info>%command.name%</info> displays information about a UUID.
 
@@ -49,7 +51,7 @@ EOF
     /**
      * {@inheritdoc}
      */
-    protected function execute(InputInterface $input, OutputInterface $output): int
+    protected function execute(InputInterface $input, OutputInterface $output)
     {
         $io = new SymfonyStyle($input, $output instanceof ConsoleOutputInterface ? $output->getErrorOutput() : $output);
 

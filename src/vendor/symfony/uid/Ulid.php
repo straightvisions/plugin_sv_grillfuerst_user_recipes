@@ -22,8 +22,8 @@ class Ulid extends AbstractUid
 {
     protected const NIL = '00000000000000000000000000';
 
-    private static string $time = '';
-    private static array $rand = [];
+    private static $time = '';
+    private static $rand = [];
 
     public function __construct(string $ulid = null)
     {
@@ -62,7 +62,7 @@ class Ulid extends AbstractUid
     /**
      * {@inheritdoc}
      */
-    public static function fromString(string $ulid): static
+    public static function fromString(string $ulid): parent
     {
         if (36 === \strlen($ulid) && preg_match('{^[0-9a-f]{8}(?:-[0-9a-f]{4}){3}-[0-9a-f]{12}$}Di', $ulid)) {
             $ulid = uuid_parse($ulid);

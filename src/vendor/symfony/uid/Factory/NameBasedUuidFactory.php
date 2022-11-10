@@ -17,8 +17,8 @@ use Symfony\Component\Uid\UuidV5;
 
 class NameBasedUuidFactory
 {
-    private string $class;
-    private Uuid $namespace;
+    private $class;
+    private $namespace;
 
     public function __construct(string $class, Uuid $namespace)
     {
@@ -26,7 +26,10 @@ class NameBasedUuidFactory
         $this->namespace = $namespace;
     }
 
-    public function create(string $name): UuidV5|UuidV3
+    /**
+     * @return UuidV5|UuidV3
+     */
+    public function create(string $name): Uuid
     {
         switch ($class = $this->class) {
             case UuidV5::class: return Uuid::v5($this->namespace, $name);
