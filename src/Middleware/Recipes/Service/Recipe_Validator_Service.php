@@ -18,15 +18,15 @@ final class Recipe_Validator_Service {
         $this->repository = $repository;
     }
 
-    public function validate_recipe_update(int $userId, array $data): void {
+    public function validate_update(int $userId, array $data): void {
         if (!$this->repository->exists_id($userId)) {
             throw new DomainException(sprintf('User not found: %s', $userId));
         }
 
-        $this->validate_recipe($data);
+        $this->validate_insert($data);
     }
 
-    public function validate_recipe($data): void {
+    public function validate_insert($data): void {
         $validator = Validation::createValidator();
         $violations = $validator->validate($data, $this->createConstraints());
 

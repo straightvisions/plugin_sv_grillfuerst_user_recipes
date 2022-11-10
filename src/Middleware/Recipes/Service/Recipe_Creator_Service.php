@@ -7,7 +7,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Validator_Serv
 use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
 use Psr\Log\LoggerInterface;
 
-final class Recipe_Creat_Service {
+final class Recipe_Creator_Service {
     private Recipe_Repository $repository;
 
     private Recipe_Validator_Service $Recipe_Validator;
@@ -26,16 +26,18 @@ final class Recipe_Creat_Service {
             ->createLogger();
     }
 
-    public function create(array $data): int {
+    public function insert(array $data, int $user_id): int {
         // Input validation
-        $this->Recipe_Validator->validate($data);
+        $this->Recipe_Validator->validate_insert($data);
 
-        // Insert user and get new user ID
-        $Recipe_Id = $this->repository->insert($data);
+        // sets foreign key for user by route param
+        $data['user_id'] = $user_id;
+        // Insert item and get new item ID
+        $id = $this->repository->insert($data);
 
         // Logging
-        $this->logger->info(sprintf('User created successfully: %s', $Recipe_Id));
+        $this->logger->info(sprintf('Recipe created successfully: %s', $id));
 
-        return $Recipe_Id;
+        return $id;
     }
 }
