@@ -1,6 +1,6 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-export default function Example() {
+export default function Submit(props) {
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 		<div className="md:grid md:grid-cols-3 md:gap-6">
@@ -54,6 +54,7 @@ export default function Example() {
 		</div>
 		<div className="flex justify-end">
 			<button
+				onClick={()=>console.log(props.formState)}
 				type="submit"
 				className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 			>

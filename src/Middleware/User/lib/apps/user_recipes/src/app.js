@@ -10,10 +10,10 @@ const App = () => {
 	// check view component
 	let Section = (props) => {
 		if(props.view === 'form'){
-			return <Form/>;
+			return <Form />;
 		}else{
-			return <Form/>;
-			return <Recipes/>;
+			return <Form />;
+			//return <Recipes />;
 		}
 	}
 	

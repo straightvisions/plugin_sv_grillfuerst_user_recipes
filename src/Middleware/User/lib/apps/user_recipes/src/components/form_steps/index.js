@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const ingredients = [
 	{ label: 'Zucchini', id: 4823 },
@@ -8,7 +8,7 @@ function ingredient_field_name(id, subfield){
 	return 'ingredients['+id+']['+subfield+']';
 }
 
-export default function Example() {
+export default function Steps() {
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			<div className="md:grid md:grid-cols-3 md:gap-6">

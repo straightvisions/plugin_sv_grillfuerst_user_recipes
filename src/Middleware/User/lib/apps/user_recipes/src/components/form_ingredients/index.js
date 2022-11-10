@@ -1,14 +1,26 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
-const ingredients = [
-	{ label: 'Zucchini', id: 4823 },
-]
-
-function ingredient_field_name(id, subfield){
-	return 'recipe_ingredients['+id+']['+subfield+']';
-}
-
-export default function Example() {
+export default function Ingredients(props) {
+	const [ingredients, setIngredients] = useState(props.formState.ingredients);
+	
+	// push change to parent state
+	useEffect(() => {
+		props.formState.ingredients = ingredients;
+		props.setFormState(props.formState);
+	}, [ingredients, props.setFormState]);
+	
+	// needs custom function to apply data to the right array item
+	const setIngredient = (item) => {
+	
+		const newIngredients = ingredients.map(ingredient => {
+			if(ingredient.id === item.id){
+				return item;
+			}
+		});
+		
+		setIngredients(newIngredients);
+	}
+	
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 		<div className="md:grid md:grid-cols-3 md:gap-6">
@@ -51,26 +63,29 @@ export default function Example() {
 					</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-200 bg-white">
-					{ingredients.map((ingredient) => (
+					{ingredients.map(ingredient => (
 						<tr key={ingredient.id}>
 							<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
 								{ingredient.label}
 							</td>
 							<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 								<input
-								type="number"
-								name={ingredient_field_name(ingredient.id, 'count')}
-								placeholder="1"
-								min="1"
-								className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+									value={ingredient.amount}
+									onChange={e => { ingredient.amount = e.target.value; setIngredient(ingredient); }}
+									type="number"
+									placeholder="1"
+									min="1"
+									className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 								/>
 							</td>
 							<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 								<select
-									name={ingredient_field_name(ingredient.id, 'unit')}
+									value={ingredient.unit}
+									onChange={e => { ingredient.unit = e.target.value; setIngredient(ingredient); }}
 									className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 								>
-									<option value="585">Stück</option>
+									<option value="g">Gramm</option>
+									<option value="kg">Kilo</option>
 									<option>...</option>
 									<option>...</option>
 								</select>
@@ -78,7 +93,6 @@ export default function Example() {
 							<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 								<input
 									type="text"
-									name={ingredient_field_name(ingredient.id, 'comment')}
 									className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 								/>
 							</td>

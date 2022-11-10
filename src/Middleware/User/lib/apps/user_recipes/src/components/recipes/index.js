@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 
 const states = {
 	draft: {
@@ -55,7 +55,7 @@ const recipes = [
 	},
 ]
 
-export default function Example() {
+export default function Recipes() {
 	return (
 		<div className="px-4 sm:px-6 lg:px-0">
 			<div className="mt-8 flex flex-col">
