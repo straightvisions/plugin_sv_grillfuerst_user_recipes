@@ -15,7 +15,7 @@ export default function Form(props) {
 	}
 	
 	return (
-		<form className="space-y-6" action="#" method="POST" onSubmit={handleSubmit}>
+		<form className="space-y-6" action="#" onSubmit={handleSubmit}>
 			<Common formState={formState} setFormState={setFormState} />
 			<Ingredients formState={formState} setFormState={setFormState} />
 			<Steps formState={formState} setFormState={setFormState} />
