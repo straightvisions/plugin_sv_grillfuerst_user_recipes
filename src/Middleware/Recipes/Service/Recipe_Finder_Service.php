@@ -43,7 +43,7 @@ final class Recipe_Finder_Service {
     private function apply_data(Recipe_Finder_Item $item, array $row): Recipe_Finder_Item {
         foreach ($row as $key => $value) {
             if (property_exists($item, $key)) {
-                $item->{$key} = $value;
+                $item->set($key, $value);
             }
         }
 
