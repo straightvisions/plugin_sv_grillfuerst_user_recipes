@@ -28,12 +28,11 @@ export default function Example() {
 						
 						<div>
 							<label htmlFor="recipe_excerpt" className="block text-sm font-medium text-gray-700">
-								Intro
+								Zusammenfassung
 							</label>
 							<div className="mt-1">
 								<textarea
 									id="recipe_excerpt"
-									name="recipe_excerpt"
 									rows={3}
 									className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									placeholder="Die leckersten Grillspieße..."
