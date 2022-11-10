@@ -1,5 +1,4 @@
 import React from "react";
-import { Disclosure } from '@headlessui/react'
 import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
 
 function FormButton(props){
@@ -34,45 +33,39 @@ function FormButton(props){
 }
 
 export default function Example(props) {
-	
 	return (
-		<Disclosure as="nav" className="bg-white shadow">
-			{({ open }) => (
-				<>
-					<div className="px-4 sm:px-6 lg:px-8 mb-4">
-						<div className="flex h-16 justify-between">
-							<div className="flex">
-								<div className="flex flex-shrink-0 items-center">
-									<a href="https://www.grillfuerst.de" target="_blank">
-									<img
-										className="block h-8 w-auto"
-										src="https://www.grillfuerst.de/magazin/wp-content/uploads/2022/09/Logo.svg"
-										alt="Grillfürst"
-									/>
-									</a>
-								</div>
-							</div>
-							<div className="flex items-center">
-								<div className="flex-shrink-0">
-									<FormButton {...props} />
-								</div>
-								<div className="ml-4 flex flex-shrink-0 items-center">
-									<button
-										type="button"
-										className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-									>
-										<img
-											className="h-8 w-8 rounded-full"
-											src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-											alt=""
-										/>
-									</button>
-								</div>
-							</div>
-						</div>
+		<div className="px-4 sm:px-6 lg:px-8 mb-4 bg-white shadow">
+			<div className="flex h-16 justify-between">
+				<div className="flex items-center">
+					<div className="flex flex-shrink-0 items-center">
+						<a href="https://www.grillfuerst.de" target="_blank">
+						<img
+							className="block h-8 w-auto"
+							src="https://www.grillfuerst.de/magazin/wp-content/uploads/2022/09/Logo.svg"
+							alt="Grillfürst"
+						/>
+						</a>
 					</div>
-				</>
-			)}
-		</Disclosure>
+					<h1 className="ml-4 font-medium leading-tight text-2xl mt-0 mb-0 text-black-600 uppercase">Deine Rezepte</h1>
+				</div>
+				<div className="flex items-center">
+					<div className="flex-shrink-0">
+						<FormButton {...props} />
+					</div>
+					<div className="ml-4 flex flex-shrink-0 items-center">
+						<button
+							type="button"
+							className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+						>
+							<img
+								className="h-8 w-8 rounded-full"
+								src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+								alt=""
+							/>
+						</button>
+					</div>
+				</div>
+			</div>
+		</div>
 	)
 }
