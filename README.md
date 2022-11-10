@@ -28,6 +28,8 @@ Shareable class interfaces.
 
 # Hints
 
-- Download upload /vendor folder in root
-- run composer i in root to install phpunit test
+- Exclude the root /vendor folder in the root directory from remote uploads! (dev vendors)
+- Add new vendors to directly in the /src directory. (build vendors)
+- ```composer i``` in root to install phpunit test
+- ```composer --ignore-plattform-req=php update``` to prevent PHP 8 warnings
 

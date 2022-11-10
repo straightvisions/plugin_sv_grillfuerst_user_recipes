@@ -4,6 +4,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\User\User_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Recipes_Middleware;
 use SV_Grillfuerst_User_Recipes\Factory\Query_Factory;
+use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
 use Psr\Container\ContainerInterface;
 use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Wordpress_Adapter;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
@@ -40,7 +41,9 @@ return [
 
     'Wordpress_Adapter' => autowire(Wordpress_Adapter::class),
 
+    // factories
     Query_Factory::class => autowire(Query_Factory::class),
+    Logger_Factory::class => autowire(Logger_Factory::class),
 
     // Database connection
     Connection::class => function (ContainerInterface $container) {
