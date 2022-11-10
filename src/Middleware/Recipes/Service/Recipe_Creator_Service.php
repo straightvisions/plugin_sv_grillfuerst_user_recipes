@@ -35,6 +35,8 @@ final class Recipe_Creator_Service {
         // Insert item and get new item ID
         $id = $this->repository->insert($data);
 
+        // @todo e.g. ingredients array vs json object list -> array would be better, how is sorting?
+
         // Logging
         $this->logger->info(sprintf('Recipe created successfully: %s', $id));
 
