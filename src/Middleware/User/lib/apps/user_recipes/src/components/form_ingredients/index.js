@@ -5,7 +5,7 @@ const ingredients = [
 ]
 
 function ingredient_field_name(id, subfield){
-	return 'ingredients['+id+']['+subfield+']';
+	return 'recipe_ingredients['+id+']['+subfield+']';
 }
 
 export default function Example() {
@@ -30,8 +30,6 @@ export default function Example() {
 				</div>
 			</div>
 			<div className="mt-5 md:col-span-2 md:mt-0">
-				
-				
 				<table className="min-w-full divide-y divide-gray-300">
 					<thead className="bg-gray-50">
 					<tr>
