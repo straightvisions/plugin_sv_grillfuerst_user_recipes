@@ -8,8 +8,14 @@ import RecipeModel from '../../models/recipe';
 export default function Form(props) {
 	const [formState, setFormState] = useState(RecipeModel);
 	
+	const handleSubmit = (e) => {
+		e.preventDefault();
+		//@todo form submit should be "PUT" fetch - first "save" should be "POST"
+		console.log(formState);
+	}
+	
 	return (
-		<form className="space-y-6" action="#" method="POST">
+		<form className="space-y-6" action="#" method="POST" onSubmit={handleSubmit}>
 			<Common formState={formState} setFormState={setFormState} />
 			<Ingredients formState={formState} setFormState={setFormState} />
 			<Steps formState={formState} setFormState={setFormState} />

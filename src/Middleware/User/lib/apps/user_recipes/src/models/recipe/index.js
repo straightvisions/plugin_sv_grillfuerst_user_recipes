@@ -11,7 +11,7 @@ export default {
 		{
 			"id": 4823,
 			"label": "Zucchini",
-			"amount": 0,
+			"amount": 1,
 			"unit": "g",
 		},
 	]
