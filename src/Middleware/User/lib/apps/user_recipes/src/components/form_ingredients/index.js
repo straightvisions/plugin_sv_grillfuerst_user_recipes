@@ -29,7 +29,7 @@ export default function Example() {
 					</div>
 				</div>
 			</div>
-			<div className="mt-5 md:col-span-2 md:mt-0">
+			<div className="mt-5 md:col-span-2 md:mt-0 overflow-x-auto">
 				<table className="min-w-full divide-y divide-gray-300">
 					<thead className="bg-gray-50">
 					<tr>
