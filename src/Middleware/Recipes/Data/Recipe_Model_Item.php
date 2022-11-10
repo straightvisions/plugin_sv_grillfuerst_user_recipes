@@ -44,5 +44,4 @@ class Recipe_Model_Item {
         return $val;
     }
 
-
 }

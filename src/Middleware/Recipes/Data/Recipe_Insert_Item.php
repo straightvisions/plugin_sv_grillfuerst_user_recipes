@@ -14,4 +14,6 @@ class Recipe_Insert_Item {
     public ?string $ingredients = '{}';
     public ?string $media = '{}';
     public ?string $created = 'NOW()';
+
+
 }

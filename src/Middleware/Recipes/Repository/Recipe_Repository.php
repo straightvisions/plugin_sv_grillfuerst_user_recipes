@@ -1,6 +1,6 @@
 <?php
 
-namespace SV_Grillfuerst_User_Recipes\Middleware\User\Repository;
+namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository;
 
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Insert_Item;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Update_Item;
@@ -19,15 +19,16 @@ final class Recipe_Repository {
         $this->Query_Factory = $Query_Factory;
     }
 
-    public function insert_recipe(array $recipe): int {
+    public function insert(array $recipe): int {
         $Recipe_Item = new Recipe_Insert_Item();
-       
+
         return (int)$this->Query_Factory->newInsert('svgfur_recipes', $this->to_row($recipe, $Recipe_Item))
                                        ->execute()
                                        ->lastInsertId();
     }
 
-    public function get_recipe_by_id(int $recipe_id): array {
+
+    public function get_by_id(int $recipe_id): array {
         $query = $this->Query_Factory->newSelect('svgfur_recipes');
         $query->select(
             [
@@ -46,7 +47,7 @@ final class Recipe_Repository {
         return $row;
     }
 
-    public function update_recipe(int $recipe_id, array $recipe): void {
+    public function update(int $recipe_id, array $recipe): void {
         $Recipe_Item = new Recipe_Update_Item();
 
         $row = $this->to_row($recipe, $Recipe_Item);
@@ -56,14 +57,14 @@ final class Recipe_Repository {
                            ->execute();
     }
 
-    public function exists_recipe_id(int $recipe_id): bool {
+    public function exists_id(int $recipe_id): bool {
         $query = $this->Query_Factory->newSelect('svgfur_recipes');
         $query->select('id')->where(['id' => $recipe_id]);
 
         return (bool)$query->execute()->fetch('assoc');
     }
 
-    public function delete_recipe_by_id(int $recipe_id): void {
+    public function delete_by_id(int $recipe_id): void {
         $this->Query_Factory->newDelete('svgfur_recipes')
                            ->where(['id' => $recipe_id])
                            ->execute();
