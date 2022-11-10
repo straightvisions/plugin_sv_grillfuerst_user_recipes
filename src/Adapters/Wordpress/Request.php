@@ -144,6 +144,10 @@ final class Request implements Request_Interface {
         return $this->request->get_body();
     }
 
+    public function getJSONParams(){
+        return $this->request->get_json_params();
+    }
+
     public function withParsedBody($data) {
         // not implemented
         return null;
