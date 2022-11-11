@@ -34,22 +34,10 @@ module.exports = {
 				use: ['style-loader', 'css-loader', 'postcss-loader'],
 			},
 			{
-				test: /\.(png|woff|woff2|eot|ttf|svg)$/, // to import images and fonts
+				test: /\.(png|woff|eot|ttf|svg)$/, // to import images and fonts
 				loader: 'url-loader',
 				options: { limit: false },
 			},
-			{
-				test: /\.(woff(2)?|ttf|eot|svg)(\?v=\d+\.\d+\.\d+)?$/,
-				use: [
-					{
-						loader: 'file-loader',
-						options: {
-							name: '[name].[ext]',
-							outputPath: 'fonts/'
-						}
-					}
-				]
-			}
 		],
 	},
 };

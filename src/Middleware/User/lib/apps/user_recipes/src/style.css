@@ -5,10 +5,16 @@
 	src: local('Gentona Bold'), local('Gentona-Bold'),
 	url(./assets/fonts/Gentona_Bold.woff2) format('woff2'),
 }
+
 @font-face {
 	font-family:'Gentona Book';
 	font-style: normal;
 	font-weight: 500;
 	src: local('Gentona Book'), local('Gentona-Book'),
 	url(./assets/fonts/Gentona_Book.woff2) format('woff2'),
+}
+
+html,
+body {
+	font-family: 'Gentona Book', sans-serif;
 }
