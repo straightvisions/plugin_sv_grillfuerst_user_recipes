@@ -1,14 +1,26 @@
 import React, { useState, useEffect } from "react";
 
-const ingredients = [
-	{ label: 'Zucchini', id: 4823 },
-]
-
-function ingredient_field_name(id, subfield){
-	return 'ingredients['+id+']['+subfield+']';
-}
-
-export default function Steps() {
+export default function Steps(props) {
+	const [steps, setSteps] = useState(props.formState.steps);
+	
+	// push change to parent state
+	useEffect(() => {
+		props.formState.steps = steps;
+		props.setFormState(props.formState);
+	}, [steps, props.setFormState]);
+	
+	// needs custom function to apply data to the right array item
+	const setStep = (item) => {
+		
+		const newSteps = steps.map(step => {
+			if (step.id === item.id) {
+				return item;
+			}
+		});
+		
+		setSteps(newSteps);
+	}
+	
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			<div className="md:grid md:grid-cols-4 md:gap-6">
@@ -27,10 +39,12 @@ export default function Steps() {
 					<table className="min-w-full divide-y divide-gray-300">
 						<thead className="bg-gray-50">
 						<tr>
-							<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+							<th scope="col"
+								className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 								Schritt
 							</th>
-							<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+							<th scope="col"
+								className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 								Bild
 							</th>
 							<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -42,13 +56,14 @@ export default function Steps() {
 						</tr>
 						</thead>
 						<tbody className="divide-y divide-gray-200 bg-white" id="gf_recipe_steps">
-						{ingredients.map((ingredient) => (
-							<tr key={ingredient.id}>
+						{steps.map((step) => (
+							<tr key={step.order}>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-								
+									<div className="bg-black text-white p-3 rounded-full w-10 h-10 font-bold text-center cursor-pointer">{step.order}</div>
 								</td>
 								<td className="whitespace-nowrap py-4 text-sm font-medium text-gray-900">
-									<div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
+									<div
+										className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
 										<div className="space-y-1 text-center">
 											<svg
 												className="mx-auto h-12 w-12 text-gray-400"
@@ -66,11 +81,10 @@ export default function Steps() {
 											</svg>
 											<div className="flex text-sm text-gray-600">
 												<label
-													htmlFor="recipe_featured_image"
 													className="relative cursor-pointer rounded-md bg-white font-medium text-orange-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2"
 												>
 													<span>Bild hochladen</span>
-													<input id="recipe_featured_image" name="recipe_featured_image" type="file" className="sr-only" />
+													<input type="file" className="sr-only"/>
 												</label>
 												<p className="pl-1">oder per Drag & Drop ablegen</p>
 											</div>
@@ -79,14 +93,12 @@ export default function Steps() {
 									</div>
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 w-full">
-								<textarea
-									id="recipe_excerpt"
-									name="recipe_excerpt"
-									rows={6}
-									className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-									placeholder="Die leckersten Grillspieße..."
-									defaultValue={''}
-								/>
+							<textarea
+								rows={6}
+								className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+								placeholder="Die leckersten Grillspieße..."
+								defaultValue={step.description}
+							/>
 								</td>
 								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
 									<a href="#" className="text-indigo-600 hover:text-indigo-900">
@@ -97,7 +109,7 @@ export default function Steps() {
 												<path strokeLinecap="round" strokeLinejoin="round"
 													  d="M6 18L18 6M6 6l12 12"/>
 											</svg>
-											<span className="sr-only">{ingredient.label} Entfernen</span>
+											<span className="sr-only">{step.id} Entfernen</span>
 										</button>
 									</a>
 								</td>
