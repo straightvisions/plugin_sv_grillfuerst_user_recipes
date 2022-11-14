@@ -3,13 +3,20 @@
 namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data;
 
 class Recipe_Update_Item {
-    public ?string $title = null;
-    public ?string $state = null;
-    public ?string $categories = null;
-    public ?string $info = null;
-    public ?string $portions = null;
-    public ?string $preparation = null;
-    public ?string $preparation_meta = null;
-    public ?string $ingredients = null;
-    public ?string $media = null;
+    public ?int $user_id = 0;
+    public ?string $state = 'draft';
+    public ?string $title = '';
+    public ?string $excerpt = '';
+    public ?array $categories = []; // obsolete?
+    public ?string $portions = '1'; // obsolete ?
+    public ?string $featured_image = '{}';
+    public ?int $menu_type = 0;
+    public ?int $kitchen_style = 0;
+    public ?string $difficulty = 'easy';
+    public ?int $preparation_time = 0;
+    public ?int $cooking_time = 0;
+    public ?int $waiting_time = 0;
+    public ?array $ingredients = [];
+    public ?array $steps = [];
+    public ?string $created = 'NOW()';
 }
