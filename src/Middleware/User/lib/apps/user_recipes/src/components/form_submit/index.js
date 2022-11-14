@@ -3,12 +3,12 @@ import React, { useState, useEffect } from "react";
 export default function Submit(props) {
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-		<div className="md:grid md:grid-cols-3 md:gap-6">
+		<div className="md:grid md:grid-cols-4 md:gap-6">
 			<div className="md:col-span-1">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">Rezept einreichen</h3>
 				<p className="mt-1 text-sm text-gray-500">Wir prüfen dein Rezept und geben dir Feedback. Sobald wir dein Rezept annehmen, erhältst du von uns einen Gutschein für den Grillfürst-Shop.</p>
 			</div>
-			<div className="mt-5 space-y-6 md:col-span-2 md:mt-0">
+			<div className="mt-5 space-y-6 md:col-span-3 md:mt-0">
 				<fieldset>
 					<legend className="sr-only">By Email</legend>
 					<div className="text-base font-medium text-gray-900" aria-hidden="true">
@@ -55,7 +55,7 @@ export default function Submit(props) {
 		<div className="flex justify-end">
 			<button
 				type="submit"
-				className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+				className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 			>
 				Absenden
 			</button>

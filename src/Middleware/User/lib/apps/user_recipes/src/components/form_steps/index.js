@@ -11,22 +11,25 @@ function ingredient_field_name(id, subfield){
 export default function Steps() {
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-			<div className="md:grid md:grid-cols-3 md:gap-6">
+			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Schritte</h3>
 					<p className="mt-1 text-sm text-gray-500">Gib alle Zubereitungsschritte ein.</p>
 					<div className="col-span-6 sm:col-span-4 my-4">
 						<button
-							className="inline-flex justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+							className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 						>
 							Schritt hinzufügen
 						</button>
 					</div>
 				</div>
-				<div className="mt-5 md:col-span-2 md:mt-0 overflow-x-auto">
+				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
 					<table className="min-w-full divide-y divide-gray-300">
 						<thead className="bg-gray-50">
 						<tr>
+							<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+								Schritt
+							</th>
 							<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 								Bild
 							</th>
@@ -38,9 +41,12 @@ export default function Steps() {
 							</th>
 						</tr>
 						</thead>
-						<tbody className="divide-y divide-gray-200 bg-white">
+						<tbody className="divide-y divide-gray-200 bg-white" id="gf_recipe_steps">
 						{ingredients.map((ingredient) => (
 							<tr key={ingredient.id}>
+								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+								
+								</td>
 								<td className="whitespace-nowrap py-4 text-sm font-medium text-gray-900">
 									<div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
 										<div className="space-y-1 text-center">
@@ -61,7 +67,7 @@ export default function Steps() {
 											<div className="flex text-sm text-gray-600">
 												<label
 													htmlFor="recipe_featured_image"
-													className="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
+													className="relative cursor-pointer rounded-md bg-white font-medium text-orange-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2"
 												>
 													<span>Bild hochladen</span>
 													<input id="recipe_featured_image" name="recipe_featured_image" type="file" className="sr-only" />

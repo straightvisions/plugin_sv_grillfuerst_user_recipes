@@ -3,14 +3,14 @@ import React, { useState, useEffect } from "react";
 export default function Common() {
 	return (
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-				<div className="md:grid md:grid-cols-3 md:gap-6">
+				<div className="md:grid md:grid-cols-4 md:gap-6">
 					<div className="md:col-span-1">
 						<h3 className="text-lg font-medium leading-6 text-gray-900">Allgemeines</h3>
 						<p className="mt-1 text-sm text-gray-500">
 							Bearbeite hier die Basisinformationen zu deinem Rezept.
 						</p>
 					</div>
-					<div className="mt-5 space-y-6 md:col-span-2 md:mt-0">
+					<div className="mt-5 space-y-6 md:col-span-3 md:mt-0">
 						<div className="col-span-3 sm:col-span-2">
 							<label htmlFor="recipe_title" className="block text-sm font-medium text-gray-700">
 								Titel
@@ -63,7 +63,7 @@ export default function Common() {
 									<div className="flex text-sm text-gray-600">
 										<label
 											htmlFor="recipe_featured_image"
-											className="relative cursor-pointer rounded-md bg-white font-medium text-indigo-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2 hover:text-indigo-500"
+											className="relative cursor-pointer rounded-md bg-white font-medium text-orange-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2"
 										>
 											<span>Bild hochladen</span>
 											<input id="recipe_featured_image" name="recipe_featured_image" type="file" className="sr-only" />

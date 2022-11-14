@@ -23,7 +23,7 @@ export default function Ingredients(props) {
 	
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-		<div className="md:grid md:grid-cols-3 md:gap-6">
+		<div className="md:grid md:grid-cols-4 md:gap-6">
 			<div className="md:col-span-1">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">Zutaten</h3>
 				<p className="mt-1 text-sm text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden.</p>
@@ -41,7 +41,7 @@ export default function Ingredients(props) {
 					</div>
 				</div>
 			</div>
-			<div className="mt-5 md:col-span-2 md:mt-0 overflow-x-auto">
+			<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
 				<table className="min-w-full divide-y divide-gray-300">
 					<thead className="bg-gray-50">
 					<tr>
@@ -84,9 +84,9 @@ export default function Ingredients(props) {
 									onChange={e => { ingredient.unit = e.target.value; setIngredient(ingredient); }}
 									className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 								>
+									<option value="">Stück</option>
 									<option value="g">Gramm</option>
 									<option value="kg">Kilo</option>
-									<option>...</option>
 									<option>...</option>
 								</select>
 							</td>
