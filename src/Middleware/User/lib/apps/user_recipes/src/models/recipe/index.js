@@ -35,6 +35,7 @@ export default {
 	],
 	"steps": [
 		{
+			"id": "1000",
 			"order": 1,
 			"image": {
 				"url": null
@@ -42,6 +43,7 @@ export default {
 			"description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
 		},
 		{
+			"id": "2000",
 			"order": 2,
 			"image": {
 				"url": null
@@ -49,6 +51,7 @@ export default {
 			"description": "At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.",
 		},
 		{
+			"id": "3000",
 			"order": 3,
 			"image": {
 				"url": null

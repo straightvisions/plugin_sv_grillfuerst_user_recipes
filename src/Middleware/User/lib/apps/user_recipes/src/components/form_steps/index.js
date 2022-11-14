@@ -21,6 +21,12 @@ export default function Steps(props) {
 		setSteps(newSteps);
 	}
 	
+	const removeStep = (index) => {
+		// filter out the item from list
+		const newSteps = steps.filter((_, i) => i !== index);
+		setSteps(newSteps);
+	}
+	
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			<div className="md:grid md:grid-cols-4 md:gap-6">
@@ -56,10 +62,10 @@ export default function Steps(props) {
 						</tr>
 						</thead>
 						<tbody className="divide-y divide-gray-200 bg-white" id="gf_recipe_steps">
-						{steps.map((step) => (
-							<tr key={step.order}>
+						{steps.map((step, index) => (
+							<tr key={step.id}>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-									<div className="bg-black text-white p-3 rounded-full w-10 h-10 font-bold text-center cursor-pointer">{step.order}</div>
+									<div className="bg-black text-white p-3 rounded-full w-10 h-10 font-bold text-center cursor-pointer">{index+1}</div>
 								</td>
 								<td className="whitespace-nowrap py-4 text-sm font-medium text-gray-900">
 									<div
@@ -101,17 +107,17 @@ export default function Steps(props) {
 							/>
 								</td>
 								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-									<a href="#" className="text-indigo-600 hover:text-indigo-900">
-										<button type="button"
-												className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-blue-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-blue-500 dark:text-blue-500 dark:hover:text-white dark:focus:ring-blue-800">
-											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-												 strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-												<path strokeLinecap="round" strokeLinejoin="round"
-													  d="M6 18L18 6M6 6l12 12"/>
-											</svg>
-											<span className="sr-only">{step.id} Entfernen</span>
-										</button>
-									</a>
+									<button
+										onClick={() => removeStep(index)}
+										type="button"
+										className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
+										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+											 strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+											<path strokeLinecap="round" strokeLinejoin="round"
+												  d="M6 18L18 6M6 6l12 12"/>
+										</svg>
+										<span className="sr-only">Schritt {index+1} Entfernen</span>
+									</button>
 								</td>
 							</tr>
 						))}
