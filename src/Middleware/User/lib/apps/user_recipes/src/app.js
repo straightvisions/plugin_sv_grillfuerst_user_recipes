@@ -12,8 +12,8 @@ const App = () => {
 		if(props.view === 'form'){
 			return <Form />;
 		}else{
-			return <Form />;
-			//return <Recipes />;
+			//return <Form />;
+			return <Recipes />;
 		}
 	}
 	
