@@ -8,7 +8,7 @@ function FormButton(props){
 				<button
 					onClick={()=>props.onChange('recipes')}
 					type="button"
-					className="relative inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-black hover:border-black focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+					className="relative inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-black hover:border-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
 				>
 					<ArrowRightIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
 					<span>Übersicht</span>
@@ -23,7 +23,7 @@ function FormButton(props){
 			<button
 				onClick={()=>props.onChange('form')}
 				type="button"
-				className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+				className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
 			>
 				<PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
 				<span>Neues Rezept</span>
@@ -54,7 +54,7 @@ export default function Example(props) {
 					<div className="ml-4 flex flex-shrink-0 items-center">
 						<button
 							type="button"
-							className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+							className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
 						>
 							<img
 								className="h-8 w-8 rounded-full"
