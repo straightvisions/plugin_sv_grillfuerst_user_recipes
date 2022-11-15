@@ -18,9 +18,9 @@ final class Recipe_Validator_Service {
         $this->repository = $repository;
     }
 
-    public function validate_update(int $user_id, array $data): void {
-        if (!$this->repository->exists_id($user_id)) {
-            $errors = ['user_id'=>'User not found: '.$user_id];
+    public function validate_update(int $recipe_id, array $data): void {
+        if (!$this->repository->exists_id($recipe_id)) {
+            $errors = ['recipe_id'=>'Recipe not found: '.$recipe_id];
 
             $Response = new \stdClass();
             $Response->errors = $errors;

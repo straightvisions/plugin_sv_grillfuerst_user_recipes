@@ -52,6 +52,11 @@ final class Recipe_Repository {
 
         $row = $this->to_row($recipe, $Recipe_Item);
 
+        // prevent updates on $id
+        if(isset($row['id'])){
+            unset($row['id']);
+        }
+
         $this->Query_Factory->newUpdate('svgfur_recipes', $row)
                            ->where(['id' => $recipe_id])
                            ->execute();

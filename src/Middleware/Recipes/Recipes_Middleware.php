@@ -6,6 +6,7 @@ use SV_Grillfuerst_User_Recipes\Interfaces\Middleware_Interface;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Creator_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Updater_Service;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 
 final class Recipes_Middleware implements Middleware_Interface {
@@ -13,17 +14,20 @@ final class Recipes_Middleware implements Middleware_Interface {
     private $Adapter;
     private Recipe_Finder_Service $Recipe_Finder_Service;
     private Recipe_Creator_Service $Recipe_Creator_Service;
+    private Recipe_Updater_Service $Recipe_Updater_Service;
 
     public function __construct(
         Api_Middleware $Api_Middleware,
         Adapter $Adapter,
         Recipe_Finder_Service $Recipe_Finder_Service,
-        Recipe_Creator_Service $Recipe_Creator_Service
+        Recipe_Creator_Service $Recipe_Creator_Service,
+        Recipe_Updater_Service $Recipe_Updater_Service
     ) {
         $this->Api_Middleware = $Api_Middleware;
         $this->Adapter = $Adapter;
         $this->Recipe_Finder_Service = $Recipe_Finder_Service;
         $this->Recipe_Creator_Service = $Recipe_Creator_Service;
+        $this->Recipe_Updater_Service = $Recipe_Updater_Service;
 
         // https://github.com/straightvisions/plugin_sv_appointment/blob/master/lib/modules/api.php
         // @todo add permissions
@@ -73,6 +77,17 @@ final class Recipes_Middleware implements Middleware_Interface {
         return [];
     }
 
+    public function route_recipes_recipe_id( $request ){
+        $Request = $this->Adapter->Request()->set($request);
+
+        switch($Request->getMethod()){
+            case 'PUT' : return $this->rest_update_recipe($request);
+            case 'GET' : return $this->rest_get_recipes_by_recipe_id($request);
+        }
+
+        return [];
+    }
+
     // GETTER ----------------------------------------------------------------------------
     public function rest_get_recipes( $request ) {
         $Request = $this->Adapter->Request()->set($request);
@@ -112,11 +127,11 @@ final class Recipes_Middleware implements Middleware_Interface {
 
     public function rest_update_recipe( $request ) {
         $Request = $this->Adapter->Request()->set($request);
-        $user_id = $Request->getAttribute('user_id');
+        $recipe_id = $Request->getAttribute('recipe_id');
         $data = $Request->getJSONParams();
 
-        $recipe_id = $this->Recipe_Creator_Service->insert($data, $user_id);
-        $results = $this->Recipe_Finder_Service->get($recipe_id, $user_id);
+        $this->Recipe_Updater_Service->update($data, $recipe_id);
+        $results = $this->Recipe_Finder_Service->get($recipe_id);
         // implement wp_response adapter + services
         return \wp_send_json($results); // @todo remove this when adapter is available
     }
