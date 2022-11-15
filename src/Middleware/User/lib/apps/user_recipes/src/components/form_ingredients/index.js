@@ -29,6 +29,8 @@ export default function Ingredients(props) {
 		setIngredients(newIngredients);
 	}
 	
+	const [portions, setPortions] = useState(props.formState.portions);
+	
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 		<div className="md:grid md:grid-cols-4 md:gap-6">
@@ -47,6 +49,20 @@ export default function Ingredients(props) {
 							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 						/>
 					</div>
+				</div>
+				<div className="col-span-6 sm:col-span-4 my-4">
+					<label htmlFor="recipe_servings" className="mr-4 text-sm font-medium text-gray-700">
+						Rezept für
+					</label>
+					<select
+						value={portions}
+						onChange={e => { setPortions(e.target.value); }}
+						className="w-52 max-w-full whitespace-nowrap mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+					>
+						{[1,2,3,4,5,6,7,8].map(i => (
+						<option value={i} key={i}>{i} Portionen</option>
+						))}
+					</select>
 				</div>
 			</div>
 			<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
