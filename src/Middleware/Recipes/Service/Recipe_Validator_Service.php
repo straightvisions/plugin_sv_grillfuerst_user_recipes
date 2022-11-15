@@ -33,7 +33,7 @@ final class Recipe_Validator_Service {
     public function validate_insert($data): void {
         $validator = Validation::createValidator();
         $violations = $validator->validate($data, $this->createConstraints());
-        
+
         if ($violations->count()) {
             $errors = [];
             for($i = 0; $i < $violations->count(); ++$i){
@@ -64,7 +64,7 @@ final class Recipe_Validator_Service {
                 'excerpt' => $constraint->optional(
                     [
                         $constraint->notBlank(),
-                        $constraint->length(null, 500),
+                        $constraint->length(null, 1000),
                     ]
                 ),
                 'categories' => $constraint->optional(
@@ -74,10 +74,10 @@ final class Recipe_Validator_Service {
                 ),
                 'portions' => $constraint->optional(
                     [
-                        $constraint->type('array')
+                        $constraint->type('integer')
                     ]
                 ),
-                'feature_image' => $constraint->optional(
+                'featured_image' => $constraint->optional(
                     [
                         $constraint->type('array')
                     ]

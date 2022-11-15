@@ -10,24 +10,22 @@ class Recipe_Model_Item {
     public ?string $state = 'draft';
     public ?string $title = '';
     public ?string $excerpt = '';
-    public ?array $categories = []; // obsolete?
-    public ?string $portions = '1'; // obsolete ?
-    public ?object $featured_image;
+    public array|string $categories = []; // obsolete?
+    public ?int $portions = 1; // obsolete ?
+    public object|string $featured_image;
     public ?int $menu_type = 0;
     public ?int $kitchen_style = 0;
     public ?string $difficulty = 'easy';
     public ?int $preparation_time = 0;
     public ?int $cooking_time = 0;
     public ?int $waiting_time = 0;
-    public ?array $ingredients = [];
-    public ?array $steps = [];
+    public array|string $ingredients = [];
+    public array|string $steps = [];
+    public bool $newsletter = false;
     public ?string $created = '1970-01-01 00:00:00';
     public ?string $edited = '1970-01-01 00:00:00';
-    // debug entry
-    public ?array $_errors = [];
 
     // useful functions to convert data before output
-
     public function __construct(){
         // object types
         $this->featured_image = new Image_Model_Item();
@@ -46,6 +44,10 @@ class Recipe_Model_Item {
 
             $this->{$field} = $value;
         }
+    }
+
+    public function get($field){
+        return $this->{$field};
     }
 
     public function to_array($val){

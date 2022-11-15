@@ -75,7 +75,7 @@ final class Recipe_Repository {
 
         foreach ($Recipe_Item as $key => $default_value) {
             $Recipe_Item->set($key, $recipe[$key] ?? $default_value);
-            $output[$key] = $Recipe_Item[$key];
+            $output[$key] = $Recipe_Item->get($key);
         }
 
         return $output;
