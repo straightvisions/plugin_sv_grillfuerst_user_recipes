@@ -20,52 +20,55 @@ const states = {
 	}
 }
 
-let recipes = [
+const _recipes = [
 	{
-		id: '1000000000000',
-		name: 'Saftige Schaschlikspieße – das Originalrezept von Klaus von „Klaus grillt“',
-		date: '05.09.2022 18:45:05',
+		id: 1,
+		title: 'Saftige Schaschlikspieße – das Originalrezept von Klaus von „Klaus grillt“',
+		created: '05.09.2022 18:45:05',
 		author: 'Klaus',
 		avatar: 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg',
 		status: 'draft',
 		image: 'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/10/schaschlikspiesse-rezept-klaus-grillt-1.jpg',
 	},{
-		id: '2000000000000',
-		name: 'Köftetaler – Köfte im Brötchen von Klaus von „Klaus grillt“',
-		date: '05.09.2022 18:45:05',
+		id: 2,
+		title: 'Köftetaler – Köfte im Brötchen von Klaus von „Klaus grillt“',
+		created: '05.09.2022 18:45:05',
 		author: 'Klaus',
 		avatar: 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg',
 		status: 'submitted',
 		image: 'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/10/koeftetaler-rezept-klaus-grillt.jpg',
 	},{
-		id: '3000000000000',
+		id: 3,
 		name: 'Haxe vom Drehspieß',
-		date: '05.09.2022 18:45:05',
-		author: 'Klaus',
-		avatar: 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg',
-		status: 'feedback',
-		image: 'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/10/haxe-drehspiess-rezept-klaus-grillt.jpg',
+		created: '05.09.2022 18:45:05',
+		featured_image: {"url": 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg'},
+		state: 'feedback',
 	},{
-		id: '4000000000000',
-		name: 'Grünkohl Eintopf aus dem Dutch Oven – Ostfriesenpalme einfach und lecker',
-		date: '05.09.2022 18:45:05',
-		author: 'Klaus',
-		avatar: 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg',
-		status: 'published',
-		image: 'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/10/gruenkohl-eintopf-dutch-oven-ostfriesenpalme-bbq-bear.jpg',
+		id: 4,
+		title: 'Grünkohl Eintopf aus dem Dutch Oven – Ostfriesenpalme einfach und lecker',
+		created: '05.09.2022 18:45:05',
+		featured_image: {"url": 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg'},
+		state: 'feedback',
 	},
 ]
 
-
-
 export default function Recipes(props) {
 	
-	const getRecipes = () => {
-		fetch(routes.getRecipes + props.user.id)
+	const [recipes, setRecipes] = useState(_recipes);
+
+	const fetchUserRecipes = () => {
+		fetch(routes.getRecipesByUser + props.user.id)
 			.then(response => response.json())
-			.then(data => console.log(data));
+			.then(data => setRecipes(data.items));
 	}
 	
+	useEffect(() => {
+		fetchUserRecipes();
+	}, [])
+	
+	//@todo migrate list to ul ?
+	//@todo migrate list items to external component
+	console.log(recipes);
 	return (
 		<div className="px-4 sm:px-6 lg:px-0">
 			<div className="mt-8 flex flex-col">
@@ -89,25 +92,20 @@ export default function Recipes(props) {
 								<tbody className="divide-y divide-gray-200 bg-white">
 								{recipes.map((recipe) => (
 									<tr key={recipe.id}>
-										<td className="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-6">
-												<div className="h-10 w-10 flex-shrink-0">
-													<img className="h-10 w-10 rounded-full object-cover" src={recipe.avatar} alt={recipe.author} title={recipe.author} />
-												</div>
-										</td>
 										<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
 											<div className="flex items-center">
 												<div className="h-10 flex-shrink-0">
-													<img className="h-10 object-cover" src={recipe.image} alt="" />
+													<img className="h-10 object-cover" src={recipe.feature_image.url} alt="" />
 												</div>
 												<div className="ml-4">
-													<div className="font-medium text-gray-900">{recipe.name}</div>
-													<div className="text-gray-500">{recipe.date}</div>
+													<div className="font-medium text-gray-900">{recipe.title}</div>
+													<div className="text-gray-500">{recipe.created}</div>
 												</div>
 											</div>
 										</td>
 										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 											<span className={"inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900 "+states[recipe.status].color}>
-											  {states[recipe.status].label}
+											  {states[recipe.state].label}
 											</span>
 										</td>
 									</tr>

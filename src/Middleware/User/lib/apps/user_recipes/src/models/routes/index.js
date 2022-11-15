@@ -1,4 +1,4 @@
-const root = 'https://relaunch-magazin.grillfuerst.de/wp-json';
+const root = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-user-recipes';
 
 export default {
 	
