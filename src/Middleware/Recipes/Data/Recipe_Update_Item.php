@@ -9,7 +9,7 @@ class Recipe_Update_Item {
     public ?string $excerpt = '';
     public ?array $categories = []; // obsolete?
     public ?string $portions = '1'; // obsolete ?
-    public ?string $featured_image = '{}';
+    public ?string $featured_image = null;
     public ?int $menu_type = 0;
     public ?int $kitchen_style = 0;
     public ?string $difficulty = 'easy';
