@@ -1,19 +1,19 @@
-import React, { useState } from "react";
+import React from "react";
 import Header from './components/header';
 import Recipes from './components/recipes';
 import Form from './components/form';
 import User from './models/user';
+import LocalStorage from './components/local_storage';
 
 const App = () => {
-	const [view, setView] = useState("recipes");
-	const [user, setUser] = useState(User);
-	
+	const [view, setView] = LocalStorage("view");
+	const [user, setUser] = LocalStorage("user", User);
+
 	// check view component
 	let Section = (props) => {
 		if(props.view === 'form'){
 			return <Form />;
 		}else{
-			////return <Form />;
 			return <Recipes user={user} />;
 		}
 	}

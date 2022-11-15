@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 import Image from "../form_image";
+import LocalStorage from '../local_storage';
 
 export default function Steps(props) {
-	const [steps, setSteps] = useState(props.formState.steps);
+	const [steps, setSteps] = LocalStorage("steps", props.formState.steps);
 	
 	// push change to parent state
 	useEffect(() => {

@@ -1,7 +1,8 @@
 import React, { useState, useEffect } from "react";
+import LocalStorage from '../local_storage';
 
 export default function Ingredients(props) {
-	const [ingredients, setIngredients] = useState(props.formState.ingredients);
+	const [ingredients, setIngredients] = LocalStorage("ingredients", props.formState.ingredients);
 	
 	// push change to parent state
 	useEffect(() => {
@@ -29,7 +30,7 @@ export default function Ingredients(props) {
 		setIngredients(newIngredients);
 	}
 	
-	const [portions, setPortions] = useState(props.formState.portions);
+	const [portions, setPortions] = LocalStorage("portions", props.formState.portions);
 	
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
@@ -37,19 +38,6 @@ export default function Ingredients(props) {
 			<div className="md:col-span-1">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">Zutaten</h3>
 				<p className="mt-1 text-sm text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden.</p>
-				<div className="col-span-6 sm:col-span-4 my-4">
-					<label htmlFor="search_ingredient" className="block text-sm font-medium text-gray-700">
-						Neue Zutat hinzufügen
-					</label>
-					<div className="mt-1 flex rounded-md shadow-sm">
-						<input
-							type="text"
-							id="search_ingredient"
-							placeholder="Zucc..."
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-						/>
-					</div>
-				</div>
 				<div className="col-span-6 sm:col-span-4 my-4">
 					<label htmlFor="recipe_servings" className="mr-4 text-sm font-medium text-gray-700">
 						Rezept für
@@ -60,9 +48,27 @@ export default function Ingredients(props) {
 						className="w-52 max-w-full whitespace-nowrap mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 					>
 						{[1,2,3,4,5,6,7,8].map(i => (
-						<option value={i} key={i}>{i} Portionen</option>
+							<option value={i} key={i}>{i} Portionen</option>
 						))}
 					</select>
+				</div>
+				<div className="col-span-6 sm:col-span-4 my-4">
+					<label htmlFor="search_ingredient" className="block text-sm font-medium text-gray-700">
+						Neue Zutat hinzufügen
+					</label>
+					<div className="mt-1 mb-5 flex rounded-md shadow-sm">
+						<input
+							type="text"
+							id="search_ingredient"
+							placeholder="Zu..."
+							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+						/>
+					</div>
+					<div className="flex space-x-1">
+						<span className="p-2 bg-green-300 rounded-md text-sm cursor-pointer">Zuckermais</span>
+						<span className="p-2 bg-green-300 rounded-md text-sm cursor-pointer">Zucker</span>
+						<span className="p-2 bg-green-300 rounded-md text-sm cursor-pointer">Zunge</span>
+					</div>
 				</div>
 			</div>
 			<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
