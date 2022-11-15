@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Header from './components/header';
-import Footer from './components/footer';
 import Recipes from './components/recipes';
 import Form from './components/form';
 
@@ -12,7 +11,7 @@ const App = () => {
 		if(props.view === 'form'){
 			return <Form />;
 		}else{
-			//return <Form />;
+			return <Form />;
 			return <Recipes />;
 		}
 	}
@@ -21,7 +20,6 @@ const App = () => {
 		<div className="mx-auto max-w-7xl">
 			<Header view={view} onChange={setView} />
 			<Section view={view} />
-			<Footer />
 		</div>
 	);
 };

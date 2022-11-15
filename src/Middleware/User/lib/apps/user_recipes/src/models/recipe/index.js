@@ -38,7 +38,7 @@ export default {
 			"id": "1000",
 			"order": 1,
 			"image": {
-				"url": null
+				"url": "https://www.grillfuerst.de/magazin/wp-content/uploads/2020/10/K%C3%BCrbis-lecker-vom-Gril.jpg"
 			},
 			"description": "Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.",
 		},

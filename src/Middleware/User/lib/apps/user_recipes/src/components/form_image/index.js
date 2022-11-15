@@ -1,10 +1,18 @@
-import React from "react";
+import React, { useState } from "react";
 
-export default function Image(data) {
+export default function Image(props) {
+	const [getImage, setImage] = useState(props);
+	
+	let img_url = 'data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSI2ODAuNzY0IiBoZWlnaHQ9IjUyOC4zNTQiIHZpZXdCb3g9IjAgMCAxODAuMTE5IDEzOS43OTQiPjxnIHRyYW5zZm9ybT0idHJhbnNsYXRlKC0xMy41OSAtNjYuNjM5KSIgcGFpbnQtb3JkZXI9ImZpbGwgbWFya2VycyBzdHJva2UiPjxwYXRoIGZpbGw9IiNkMGQwZDAiIGQ9Ik0xMy41OTEgNjYuNjM5SDE5My43MXYxMzkuNzk0SDEzLjU5MXoiLz48cGF0aCBkPSJtMTE4LjUwNyAxMzMuNTE0LTM0LjI0OSAzNC4yNDktMTUuOTY4LTE1Ljk2OC00MS45MzggNDEuOTM3SDE3OC43MjZ6IiBvcGFjaXR5PSIuNjc1IiBmaWxsPSIjZmZmIi8+PGNpcmNsZSBjeD0iNTguMjE3IiBjeT0iMTA4LjU1NSIgcj0iMTEuNzczIiBvcGFjaXR5PSIuNjc1IiBmaWxsPSIjZmZmIi8+PHBhdGggZmlsbD0ibm9uZSIgZD0iTTI2LjExMSA3Ny42MzRoMTUyLjYxNHYxMTYuMDk5SDI2LjExMXoiLz48L2c+PC9zdmc+';
+	
+	if(getImage.props.url){
+		img_url = getImage.props.url;
+	}
+	
 	return (
-		/*<div><img src={data.url} className="w-full block" /></div>*/
-		<div className="mt-1 flex justify-center rounded-md border-2 border-dashed border-gray-300 px-6 pt-5 pb-6">
-			<div className="space-y-1 text-center">
+		<div className="h-full relative overflow-hidden mt-1 flex justify-center rounded-md p-6">
+			<div className="absolute w-full h-full top-0"><img src={img_url} className="object-cover w-full h-full" /></div>
+			<div className="h-fit m-auto p-6 space-y-1 bg-opacity-90 bg-white z-10 text-center rounded-md border-gray-300">
 				<svg
 					className="mx-auto h-12 w-12 text-gray-400"
 					stroke="currentColor"
@@ -21,11 +29,10 @@ export default function Image(data) {
 				</svg>
 				<div className="flex text-sm text-gray-600">
 					<label
-						htmlFor="recipe_featured_image"
-						className="relative cursor-pointer rounded-md bg-white font-medium text-orange-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2"
+						className="relative cursor-pointer font-bold text-orange-600 focus-within:outline-none focus-within:ring-2 focus-within:ring-indigo-500 focus-within:ring-offset-2"
 					>
 						<span>Bild hochladen</span>
-						<input id="recipe_featured_image" name="recipe_featured_image" type="file" className="sr-only" />
+						<input type="file" accept="image/*" className="sr-only" />
 					</label>
 					<p className="pl-1">oder per Drag & Drop ablegen</p>
 				</div>

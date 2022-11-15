@@ -2,8 +2,6 @@ import React, { useState } from "react";
 import Image from '../form_image';
 
 export default function Common(props) {
-	const [featuredImage, setFeaturedImage] = useState(props.formState.featured_image);
-	
 	return (
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 				<div className="md:grid md:grid-cols-4 md:gap-6">
@@ -45,9 +43,9 @@ export default function Common(props) {
 							<p className="mt-2 text-sm text-gray-500">Eine knackige Zusammenfassung oder Einführung in dein Rezept.</p>
 						</div>
 						
-						<div>
+						<div className="h-200 rounded-md overflow-hidden">
 							<label className="block text-sm font-medium text-gray-700">Hauptbild</label>
-							<Image url={featuredImage.url} />
+							<Image props={props.formState.featured_image} />
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">

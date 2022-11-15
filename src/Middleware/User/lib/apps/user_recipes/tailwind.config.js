@@ -14,6 +14,9 @@ module.exports = {
       minWidth: {
         'max': 'max-content',
       },
+      height: {
+        '200': '20rem'
+      }
     },
   },
   plugins: [
