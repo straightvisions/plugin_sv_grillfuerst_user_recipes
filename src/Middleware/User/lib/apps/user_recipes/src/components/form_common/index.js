@@ -76,7 +76,7 @@ export default function Common() {
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">
-							<div>
+							<div className="mb-5">
 								<label htmlFor="recipe_menu_type" className="block text-sm font-medium text-gray-700">
 									Menü Art
 								</label>
@@ -92,7 +92,7 @@ export default function Common() {
 									</select>
 								</div>
 							</div>
-							<div>
+							<div className="mb-5">
 								<label htmlFor="recipe_kitchen_style" className="block text-sm font-medium text-gray-700">
 									Küchenstil
 								</label>
@@ -108,7 +108,7 @@ export default function Common() {
 									</select>
 								</div>
 							</div>
-							<div>
+							<div className="mb-5">
 								<label htmlFor="recipe_difficulty" className="block text-sm font-medium text-gray-700">
 									Schwierigkeit
 								</label>
@@ -127,7 +127,7 @@ export default function Common() {
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">
-							<div>
+							<div className="mb-5">
 								<label htmlFor="recipe_preparation_time" className="block text-sm font-medium text-gray-700">
 									Vorbereitungszeit
 								</label>
@@ -141,7 +141,7 @@ export default function Common() {
 									/>
 								</div>
 							</div>
-							<div>
+							<div className="mb-5">
 								<label htmlFor="recipe_cooking_time" className="block text-sm font-medium text-gray-700">
 									Kochzeit
 								</label>
@@ -155,7 +155,7 @@ export default function Common() {
 									/>
 								</div>
 							</div>
-							<div>
+							<div className="mb-5">
 								<label htmlFor="recipe_waiting_time" className="block text-sm font-medium text-gray-700">
 									Wartezeit
 								</label>

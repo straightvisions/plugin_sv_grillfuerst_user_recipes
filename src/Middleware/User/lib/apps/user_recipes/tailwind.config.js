@@ -10,6 +10,11 @@ module.exports = {
         "Gentona Book, sans-serif",
       ],
     },
+    extend: {
+      minWidth: {
+        'max': 'max-content',
+      },
+    },
   },
   plugins: [
     require('@tailwindcss/forms'),

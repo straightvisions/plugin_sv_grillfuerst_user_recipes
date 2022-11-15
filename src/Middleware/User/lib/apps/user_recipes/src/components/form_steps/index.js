@@ -101,7 +101,7 @@ export default function Steps(props) {
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 w-full">
 							<textarea
 								rows={6}
-								className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+								className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 								placeholder="Die leckersten Grillspieße..."
 								defaultValue={step.description}
 							/>

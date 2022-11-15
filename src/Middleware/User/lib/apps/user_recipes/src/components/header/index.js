@@ -46,7 +46,6 @@ export default function Example(props) {
 						/>
 						</a>
 					</div>
-					<h1 className="ml-4 font-medium leading-tight text-2xl mt-0 mb-0 text-black-600 uppercase">Deine Rezepte</h1>
 				</div>
 				<div className="flex items-center">
 					<div className="flex-shrink-0">
