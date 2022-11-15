@@ -1,5 +1,5 @@
 import React from "react";
-import { PlusIcon, ArrowRightIcon, ArrowPathIcon } from '@heroicons/react/20/solid'
+import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
 
 function FormButton(props){
 	if(props.view === 'form') {
@@ -48,15 +48,6 @@ export default function Header(props) {
 					</div>
 				</div>
 				<div className="flex items-center">
-					<div className="mr-4">
-						<button
-							onClick={()=>{localStorage.clear();location.reload();}}
-							type="button"
-							className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-						>
-							<ArrowPathIcon className="h-5 w-5" aria-hidden="true"/>
-						</button>
-					</div>
 					<div className="flex-shrink-0">
 						<FormButton {...props} />
 					</div>

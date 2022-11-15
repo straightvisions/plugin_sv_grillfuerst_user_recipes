@@ -5,6 +5,8 @@ import Form from './components/form';
 import User from './models/user';
 import LocalStorage from './components/local_storage';
 
+import Dev from './components/dev';
+
 const App = () => {
 	const [view, setView] = LocalStorage("view");
 	const [user, setUser] = LocalStorage("user", User);
@@ -21,7 +23,8 @@ const App = () => {
 	return (
 		<div className="mx-auto max-w-7xl">
 			<Header user={user} view={view} onChange={setView} />
-			<Section  user={user} view={view} />
+			<Section user={user} view={view} />
+			<Dev user={user} view={view} />
 		</div>
 	);
 };
