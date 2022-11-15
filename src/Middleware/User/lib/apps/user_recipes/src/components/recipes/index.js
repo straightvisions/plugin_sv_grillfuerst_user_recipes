@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import routes from '../../models/routes';
 
 const states = {
 	draft: {
@@ -19,7 +20,7 @@ const states = {
 	}
 }
 
-const recipes = [
+let recipes = [
 	{
 		id: '1000000000000',
 		name: 'Saftige Schaschlikspieße – das Originalrezept von Klaus von „Klaus grillt“',
@@ -55,7 +56,16 @@ const recipes = [
 	},
 ]
 
-export default function Recipes() {
+
+
+export default function Recipes(props) {
+	
+	const getRecipes = () => {
+		fetch(routes.getRecipes + props.user.id)
+			.then(response => response.json())
+			.then(data => console.log(data));
+	}
+	
 	return (
 		<div className="px-4 sm:px-6 lg:px-0">
 			<div className="mt-8 flex flex-col">
