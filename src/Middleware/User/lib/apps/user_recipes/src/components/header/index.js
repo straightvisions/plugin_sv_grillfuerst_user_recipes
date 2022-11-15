@@ -32,7 +32,7 @@ function FormButton(props){
 	);
 }
 
-export default function Example(props) {
+export default function Header(props) {
 	return (
 		<div className="px-4 sm:px-6 lg:px-8 mb-4 bg-white shadow">
 			<div className="flex h-16 justify-between">
@@ -58,7 +58,7 @@ export default function Example(props) {
 						>
 							<img
 								className="h-8 w-8 rounded-full"
-								src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
+								src={props.user.avatar}
 								alt=""
 							/>
 						</button>
