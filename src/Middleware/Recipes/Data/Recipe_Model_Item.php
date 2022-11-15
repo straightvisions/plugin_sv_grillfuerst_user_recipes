@@ -7,7 +7,6 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Image_Model_Item;
 class Recipe_Model_Item {
     public ?int $id = 0;
     public ?int $user_id = 0;
-    public ?string $state = 'draft';
     public ?string $title = '';
     public ?string $excerpt = '';
     public array|string $categories = []; // obsolete?
@@ -22,8 +21,6 @@ class Recipe_Model_Item {
     public array|string $ingredients = [];
     public array|string $steps = [];
     public bool $newsletter = false;
-    public ?string $created = '1970-01-01 00:00:00';
-    public ?string $edited = '1970-01-01 00:00:00';
 
     // useful functions to convert data before output
     public function __construct(){

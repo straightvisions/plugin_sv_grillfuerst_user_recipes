@@ -87,8 +87,7 @@ final class Request implements Request_Interface {
     }
 
     public function getMethod() {
-        // not implemented
-        return null;
+        return $this->request->get_method();
     }
 
     public function withMethod($method) {

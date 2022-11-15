@@ -20,7 +20,6 @@ class Recipe_Insert_Item extends Recipe_Model_Item {
     public array|string $ingredients = '[]';
     public array|string $steps = '[]';
     public bool $newsletter = false;
-    public ?string $created = 'NOW()';
 
 // useful functions to convert data before output
 
