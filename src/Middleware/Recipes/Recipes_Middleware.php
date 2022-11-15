@@ -101,7 +101,8 @@ final class Recipes_Middleware implements Middleware_Interface {
         $user_id = $Request->getAttribute('user_id');
         $results = $this->Recipe_Finder_Service->get_list($user_id);
         // implement wp_response adapter + services
-        return \wp_send_json($results); // @todo remove this when adapter is available
+        $response = new \WP_REST_Response($results, 200);
+        return $response;
     }
 
     // @todo change finder in reader services!!

@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import Header from './components/header';
-import Footer from './components/footer';
 import Recipes from './components/recipes';
 import Form from './components/form';
 import User from './models/user';
@@ -23,7 +22,6 @@ const App = () => {
 		<div className="mx-auto max-w-7xl">
 			<Header user={user} view={view} onChange={setView} />
 			<Section  user={user} view={view} />
-			<Footer />
 		</div>
 	);
 };

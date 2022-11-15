@@ -25,18 +25,14 @@ const _recipes = [
 		id: 1,
 		title: 'Saftige Schaschlikspieße – das Originalrezept von Klaus von „Klaus grillt“',
 		created: '05.09.2022 18:45:05',
-		author: 'Klaus',
-		avatar: 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg',
-		status: 'draft',
-		image: 'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/10/schaschlikspiesse-rezept-klaus-grillt-1.jpg',
+		featured_image: {"url": 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg'},
+		state: 'feedback',
 	},{
 		id: 2,
 		title: 'Köftetaler – Köfte im Brötchen von Klaus von „Klaus grillt“',
 		created: '05.09.2022 18:45:05',
-		author: 'Klaus',
-		avatar: 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg',
-		status: 'submitted',
-		image: 'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/10/koeftetaler-rezept-klaus-grillt.jpg',
+		featured_image: {"url": 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg'},
+		state: 'feedback',
 	},{
 		id: 3,
 		name: 'Haxe vom Drehspieß',
@@ -66,9 +62,9 @@ export default function Recipes(props) {
 		fetchUserRecipes();
 	}, [])
 	
-	//@todo migrate list to ul ?
-	//@todo migrate list items to external component
-	console.log(recipes);
+	//@todo migrate list items to external component !!
+	//@todo add placeholders for fetches
+
 	return (
 		<div className="px-4 sm:px-6 lg:px-0">
 			<div className="mt-8 flex flex-col">
@@ -78,9 +74,6 @@ export default function Recipes(props) {
 							<table className="min-w-full divide-y divide-gray-300">
 								<thead className="bg-gray-50">
 								<tr>
-									<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-										Autor
-									</th>
 									<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 										Rezept
 									</th>
@@ -95,7 +88,12 @@ export default function Recipes(props) {
 										<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
 											<div className="flex items-center">
 												<div className="h-10 flex-shrink-0">
-													<img className="h-10 object-cover" src={recipe.feature_image.url} alt="" />
+													{recipe.featured_image.url &&
+														<img
+															className="h-10 object-cover"
+															src={recipe.featured_image.url} alt=""
+														/>
+													}
 												</div>
 												<div className="ml-4">
 													<div className="font-medium text-gray-900">{recipe.title}</div>
@@ -104,7 +102,7 @@ export default function Recipes(props) {
 											</div>
 										</td>
 										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-											<span className={"inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900 "+states[recipe.status].color}>
+											<span className={"inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900 "+states[recipe.state].color}>
 											  {states[recipe.state].label}
 											</span>
 										</td>
