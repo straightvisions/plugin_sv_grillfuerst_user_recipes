@@ -43,7 +43,10 @@ return [
 
     // factories
     Query_Factory::class => autowire(Query_Factory::class),
-    Logger_Factory::class => autowire(Logger_Factory::class),
+
+    Logger_Factory::class => function (ContainerInterface $container) {
+        return new Logger_Factory($container->get('settings')['logger']);
+    },
 
     // Database connection
     Connection::class => function (ContainerInterface $container) {
