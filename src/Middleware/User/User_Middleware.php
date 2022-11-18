@@ -29,6 +29,7 @@ final class User_Middleware implements Middleware_Interface {
 
     // custom shortcode handler
     public function get_frontend_user_dashboard(array $atts): string {
+        $this->Adapter->Asset()->add('app', 'User/lib/apps/user_recipes/dist/user_recipes.build.js');
         return $this->User_Dashboard_Frontend_Service->get($atts);
     }
 

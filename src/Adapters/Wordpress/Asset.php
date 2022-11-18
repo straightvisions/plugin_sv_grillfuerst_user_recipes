@@ -10,7 +10,7 @@ final class Asset {
     private $assets = [];
 
     public function add(string $handle, string $src): void {
-        $src = plugin_dir_url('src/Middleware/' . $src);
+        $src = plugin_dir_url('sv-grillfuerst-user-recipes/*') . 'src/Middleware/' . $src;
         // save origin
         $this->assets[$handle] = $src;
 
