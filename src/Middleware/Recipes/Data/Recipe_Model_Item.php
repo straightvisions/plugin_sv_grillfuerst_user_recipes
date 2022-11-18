@@ -10,7 +10,7 @@ class Recipe_Model_Item {
     public ?string $title = '';
     public ?string $excerpt = '';
     public array|string $categories = []; // obsolete?
-    public ?int $portions = 1; // obsolete ?
+    public ?int $servings = 1; // obsolete ?
     public object|string $featured_image;
     public ?int $menu_type = 0;
     public ?int $kitchen_style = 0;

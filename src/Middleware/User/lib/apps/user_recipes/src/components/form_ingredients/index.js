@@ -30,7 +30,7 @@ export default function Ingredients(props) {
 		setIngredients(newIngredients);
 	}
 	
-	const [portions, setPortions] = LocalStorage("portions", props.formState.portions);
+	const [servings, setservings] = LocalStorage("servings", props.formState.servings);
 	
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
@@ -43,8 +43,8 @@ export default function Ingredients(props) {
 						Rezept für
 					</label>
 					<select
-						value={portions}
-						onChange={e => { setPortions(e.target.value); }}
+						value={servings}
+						onChange={e => { setservings(e.target.value); }}
 						className="w-52 max-w-full whitespace-nowrap mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 					>
 						{[1,2,3,4,5,6,7,8].map(i => (

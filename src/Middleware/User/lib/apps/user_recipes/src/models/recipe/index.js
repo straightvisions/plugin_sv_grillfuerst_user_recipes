@@ -3,7 +3,7 @@ export default {
 	"title": "",
 	"excerpt": "",
 	"categories": [], // obsolete?
-	"portions": 4,
+	"servings": 4,
 	"featured_image": {
 		"url": "https://www.grillfuerst.de/magazin/wp-content/uploads/2020/10/Herbstliches-Gemuese-grillen.jpg"
 	},
