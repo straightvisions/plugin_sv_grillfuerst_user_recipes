@@ -23,6 +23,7 @@ return [
         return new Api_Middleware();
     },
     //@todo autowire user middleware
+        /*
     User_Middleware::class => function(ContainerInterface $container){
         $settings = $container->get('settings');
         $adapters = $settings['adapters'];
@@ -30,8 +31,9 @@ return [
         $Api = $container->get(Api_Middleware::class);
 
         return new User_Middleware($Api, $Adapter);
-    },
+    },*/
 
+    User_Middleware::class => autowire(User_Middleware::class),
     Recipes_Middleware::class => autowire(Recipes_Middleware::class),
 
     // adapters

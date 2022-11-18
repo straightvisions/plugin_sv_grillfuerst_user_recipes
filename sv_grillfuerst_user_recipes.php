@@ -16,6 +16,12 @@ License URI: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 if ( ! defined('ABSPATH')) {
     exit;
 }
+// wordpress specific
+add_action('init', 'sv_grillfuerst_user_recipes_rewrite_permalink_rules');
+
+function sv_grillfuerst_user_recipes_rewrite_permalink_rules() {
+    add_rewrite_rule('^user-recipes/(.+)?', 'index.php?pagename=user-recipes', 'top');
+}
 
 // namespace class autoloading
 spl_autoload_register(function ($class) {
