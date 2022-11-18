@@ -6,6 +6,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Image_Model_Item;
 
 class Recipe_Model_Item {
     public ?int $id = 0;
+    public ?int $uuid = 0;
     public ?int $user_id = 0;
     public ?string $title = '';
     public ?string $excerpt = '';

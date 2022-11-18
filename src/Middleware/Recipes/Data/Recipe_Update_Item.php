@@ -27,6 +27,7 @@ class Recipe_Update_Item extends Recipe_Model_Item {
         // object types
         $this->featured_image = new Image_Model_Item();
         unset($this->id);
+        unset($this->uuid);
     }
 
     // from database to response

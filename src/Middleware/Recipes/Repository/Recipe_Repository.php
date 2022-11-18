@@ -69,6 +69,13 @@ final class Recipe_Repository {
         return (bool)$query->execute()->fetch('assoc');
     }
 
+    public function exists_uuid(int $uuid): bool {
+        $query = $this->Query_Factory->newSelect('svgfur_recipes');
+        $query->select('uuid')->where(['uuid' => $uuid]);
+
+        return (bool)$query->execute()->fetch('assoc');
+    }
+
     public function delete_by_id(int $recipe_id): void {
         $this->Query_Factory->newDelete('svgfur_recipes')
                            ->where(['id' => $recipe_id])

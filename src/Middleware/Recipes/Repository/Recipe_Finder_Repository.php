@@ -25,7 +25,7 @@ final class Recipe_Finder_Repository {
 
         // filter by recipe id
         if($id){
-            $query->where(['id' => (int)$id]);
+            $query->where(['uuid' => (int)$id]);
         }
 
         return $query->execute()->fetchAll('assoc') ?: [];
@@ -56,7 +56,7 @@ final class Recipe_Finder_Repository {
         );
 
         // filter by recipe id + user id
-        $query->where(['id' => (int)$id1, 'user_id' => (int)$id2]);
+        $query->where(['uuid' => (int)$id1, 'user_id' => (int)$id2]);
 
         return $query->execute()->fetchAll('assoc') ?: [];
     }

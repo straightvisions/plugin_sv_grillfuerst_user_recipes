@@ -5,6 +5,7 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Model_Item;
 
 class Recipe_Insert_Item extends Recipe_Model_Item {
+    public ?int $uuid = 0;
     public ?int $user_id = 0;
     public ?string $state = 'draft';
     public ?string $title = '';
