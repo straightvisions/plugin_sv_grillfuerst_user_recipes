@@ -2,29 +2,38 @@ import React from "react";
 import Header from './components/header';
 import Recipes from './components/recipes';
 import Form from './components/form';
+import Spinner from './components/spinner';
 import User from './models/user';
 import LocalStorage from './components/local_storage';
-
+import routes from './models/routes';
 import Dev from './components/dev';
 
-const App = () => {
-	const [view, setView] = LocalStorage("view");
-	const [user, setUser] = LocalStorage("user", User);
+import {
+	BrowserRouter as Router,
+	Routes,
+	Route, useNavigate
+} from "react-router-dom";
 
-	// check view component
-	let Section = (props) => {
-		if(props.view === 'form'){
-			return <Form />;
-		}else{
-			return <Recipes user={user} />;
-		}
-	}
+const App = () => {
+	const [user, setUser] = LocalStorage("user", User);
+	
+	const navigate = useNavigate();
 	
 	return (
 		<div className="mx-auto max-w-7xl">
-			<Header user={user} view={view} onChange={setView} />
-			<Section user={user} view={view} />
-			<Dev user={user} view={view} />
+				<Header user={user} />
+				<Routes>
+					<Route
+						path="/edit/:uuid"
+						element={<Form/>}
+					/>
+					<Route
+						path="/"
+						element={<Recipes user={user} />}
+					/>
+				</Routes>
+				<Dev user={user} />
+		
 		</div>
 	);
 };

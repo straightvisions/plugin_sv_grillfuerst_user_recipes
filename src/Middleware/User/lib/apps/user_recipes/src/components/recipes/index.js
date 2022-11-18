@@ -1,5 +1,8 @@
 import React, { useState, useEffect } from "react";
 import routes from '../../models/routes';
+import {
+	useNavigate
+} from "react-router-dom";
 
 const states = {
 	draft: {
@@ -20,48 +23,16 @@ const states = {
 	}
 }
 
-const _recipes = [
-	{
-		id: 1,
-		title: 'Saftige Schaschlikspieße – das Originalrezept von Klaus von „Klaus grillt“',
-		created: '05.09.2022 18:45:05',
-		featured_image: {"url": 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg'},
-		state: 'feedback',
-	},{
-		id: 2,
-		title: 'Köftetaler – Köfte im Brötchen von Klaus von „Klaus grillt“',
-		created: '05.09.2022 18:45:05',
-		featured_image: {"url": 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg'},
-		state: 'feedback',
-	},{
-		id: 3,
-		name: 'Haxe vom Drehspieß',
-		created: '05.09.2022 18:45:05',
-		featured_image: {"url": 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg'},
-		state: 'feedback',
-	},{
-		id: 4,
-		title: 'Grünkohl Eintopf aus dem Dutch Oven – Ostfriesenpalme einfach und lecker',
-		created: '05.09.2022 18:45:05',
-		featured_image: {"url": 'https://www.grillfuerst.de/media/images/org/Klaus-grillt-Rezepte.jpg'},
-		state: 'feedback',
-	},
-]
-
 export default function Recipes(props) {
+	const [recipes, setRecipes] = useState([]);
+	const navigate = useNavigate();
 	
-	const [recipes, setRecipes] = useState(_recipes);
-
-	const fetchUserRecipes = () => {
+	useEffect(() => {
 		fetch(routes.getRecipesByUser + props.user.id)
 			.then(response => response.json())
 			.then(data => setRecipes(data.items));
-	}
-	
-	useEffect(() => {
-		fetchUserRecipes();
 	}, [])
-	
+
 	//@todo migrate list items to external component !!
 	//@todo add placeholders for fetches
 
@@ -74,17 +45,21 @@ export default function Recipes(props) {
 							<table className="min-w-full divide-y divide-gray-300">
 								<thead className="bg-gray-50">
 								<tr>
-									<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+									<th
+										scope="col"
+										className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 										Rezept
 									</th>
-									<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+									<th
+										scope="col"
+										className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
 										Status
 									</th>
 								</tr>
 								</thead>
 								<tbody className="divide-y divide-gray-200 bg-white">
 								{recipes.map((recipe) => (
-									<tr key={recipe.id}>
+									<tr key={recipe.uuid} onClick={() => navigate('/edit/' + recipe.uuid)}>
 										<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
 											<div className="flex items-center">
 												<div className="h-10 flex-shrink-0">

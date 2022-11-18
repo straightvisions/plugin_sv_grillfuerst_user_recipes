@@ -31,13 +31,14 @@ final class Recipe_Creator_Service {
         // sets foreign key for user by route param
         $data['user_id'] = $user_id;
         $data['uuid']    = $this->generate_uuid();
+
         // Insert item and get new item ID
         $id = $this->Repository->insert($data);
 
         // Logging
         $this->Logger->info(sprintf('Recipe created successfully: %s', $id));
 
-        return $id;
+        return $data['uuid'];
     }
 
     public function generate_uuid() {

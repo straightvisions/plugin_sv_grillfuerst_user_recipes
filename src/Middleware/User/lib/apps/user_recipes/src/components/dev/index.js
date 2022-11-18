@@ -1,7 +1,7 @@
 import React from "react";
 import { AdjustmentsVerticalIcon, ArrowPathIcon } from '@heroicons/react/20/solid'
 
-export default function Example() {
+export default function Dev() {
 	if (location.hostname !== "localhost"){
 		return;
 	}

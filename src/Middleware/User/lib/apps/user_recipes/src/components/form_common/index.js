@@ -2,6 +2,13 @@ import React from "react";
 import Image from '../form_image';
 
 export default function Common(props) {
+	const {
+		formState,
+		setFormState
+	} = props;
+	
+	//@todd change formState on change
+	
 	return (
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 				<div className="md:grid md:grid-cols-4 md:gap-6">
@@ -18,9 +25,10 @@ export default function Common(props) {
 							</label>
 							<div className="mt-1 flex rounded-md shadow-sm">
 								<input
+									value={formState.title}
 									type="text"
-									name="recipe_title"
-									id="recipe_title"
+									name="title"
+									id="title"
 									className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									placeholder="Leckere Grillspieße"
 								/>
@@ -38,6 +46,7 @@ export default function Common(props) {
 									className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									placeholder="Die leckersten Grillspieße..."
 									defaultValue={''}
+									value={formState.excerpt}
 								/>
 							</div>
 							<p className="mt-2 text-sm text-gray-500">Eine knackige Zusammenfassung oder Einführung in dein Rezept.</p>
@@ -45,7 +54,7 @@ export default function Common(props) {
 						
 						<div className="h-200 rounded-md overflow-hidden">
 							<label className="block text-sm font-medium text-gray-700">Hauptbild</label>
-							<Image props={props.formState.featured_image} />
+							<Image props={formState.featured_image} />
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">

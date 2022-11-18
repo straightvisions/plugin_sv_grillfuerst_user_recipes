@@ -1,33 +1,50 @@
 import React from "react";
+import {Link, useNavigate} from "react-router-dom";
 import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
 
+import {  useLocation } from 'react-router-dom';
+import routes from "../../models/routes";
+
 function FormButton(props){
-	if(props.view === 'form') {
+	const location = useLocation();
+	const navigate = useNavigate();
+	
+	const handleNewRecipe = () => {
+		// @todo add optical representation (loader)
+		
+		fetch(routes.createRecipe + props.user.id)
+			.then(response => response.json())
+			.then(data => {
+				navigate('/edit/' + data.items[0].uuid)
+			});
+	}
+	
+	if(location.pathname.includes('/edit/')) {
 		return (
-		
-				<button
-					onClick={()=>props.onChange('recipes')}
-					type="button"
-					className="relative inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-black hover:border-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-				>
-					<ArrowRightIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
-					<span>Übersicht</span>
-				</button>
-		
+			
+			<Link
+				className="relative inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-black hover:border-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+				role="button"
+				to="/"
+			>
+				<ArrowRightIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
+				<span>Übersicht</span>
+			</Link>
 		);
 	}
 	
 	// default
 	return (
-
-			<button
-				onClick={()=>props.onChange('form')}
-				type="button"
-				className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-			>
-				<PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
-				<span>Neues Rezept</span>
-			</button>
+		
+		<button
+			className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+			role="button"
+			onClick={handleNewRecipe}
+		>
+			<PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
+			<span>Neues Rezept</span>
+		</button>
+		
 	
 	);
 }

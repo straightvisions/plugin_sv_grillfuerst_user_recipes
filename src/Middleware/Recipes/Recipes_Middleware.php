@@ -43,8 +43,8 @@ final class Recipes_Middleware implements Middleware_Interface {
 
         // GET / UPDATE A SPECIFIC RECIPE
         $this->Api_Middleware->add([
-            'route' => '/recipes/(?P<recipe_id>\d+)', // wordpress specific
-            'args'  => ['methods' => 'GET, PUT', 'callback' => [$this, 'route_recipes_recipe_id']]
+            'route' => '/recipes/(?P<uuid>\d+)', // wordpress specific
+            'args'  => ['methods' => 'GET, PUT', 'callback' => [$this, 'route_recipes_uuid']]
         ]);
 
         // GET / CREATE RECIPES BASED ON USER ID
@@ -55,7 +55,7 @@ final class Recipes_Middleware implements Middleware_Interface {
 
         // Create - Upload Images
         $this->Api_Middleware->add([
-            'route' => '/recipes/(?P<recipe_id>\d+)/images/user/(?P<user_id>\d+)', // wordpress specific
+            'route' => '/recipes/(?P<uuid>\d+)/images/user/(?P<user_id>\d+)', // wordpress specific
             'args'  => ['methods' => 'POST,PUT', 'callback' => [$this, 'rest_get_recipes_upload_files']]
         ]);
 
@@ -77,12 +77,12 @@ final class Recipes_Middleware implements Middleware_Interface {
         return [];
     }
 
-    public function route_recipes_recipe_id( $request ){
+    public function route_recipes_uuid( $request ){
         $Request = $this->Adapter->Request()->set($request);
 
         switch($Request->getMethod()){
             case 'PUT' : return $this->rest_update_recipe($request);
-            case 'GET' : return $this->rest_get_recipes_by_recipe_id($request);
+            case 'GET' : return $this->rest_get_recipes_by_uuid($request);
         }
 
         return [];
@@ -106,12 +106,16 @@ final class Recipes_Middleware implements Middleware_Interface {
     }
 
     // @todo change finder in reader services!!
-    public function rest_get_recipes_by_recipe_id( $request ) {
+    public function rest_get_recipes_by_uuid( $request ) {
         $Request = $this->Adapter->Request()->set($request);
-        $recipe_id = $Request->getAttribute('recipe_id');
-        $results = $this->Recipe_Finder_Service->get($recipe_id);
+        $uuid = $Request->getAttribute('uuid');
+        $results = $this->Recipe_Finder_Service->get($uuid);
+
+        //hotfix // @todo replace the results with ReaderService
+        $results = $results->items[0];
+        $response = new \WP_REST_Response($results, 200);
         // implement wp_response adapter + services
-        return \wp_send_json($results); // @todo remove this when adapter is available
+        return $response; // @todo remove this when adapter is available
     }
 
     // SETTER ----------------------------------------------------------------------------
@@ -120,21 +124,26 @@ final class Recipes_Middleware implements Middleware_Interface {
         $user_id = $Request->getAttribute('user_id');
         $data = $Request->getJSONParams();
 
-        $recipe_id = $this->Recipe_Creator_Service->insert($data, $user_id);
-        $results = $this->Recipe_Finder_Service->get($recipe_id, $user_id);
+        $recipe_uuid = $this->Recipe_Creator_Service->insert($data, $user_id);
+        $results = $this->Recipe_Finder_Service->get($recipe_uuid, $user_id);
+        $response = new \WP_REST_Response($results, 200);
         // implement wp_response adapter + services
-        return \wp_send_json($results); // @todo remove this when adapter is available
+        return $response; // @todo remove this when adapter is available
     }
 
     public function rest_update_recipe( $request ) {
         $Request = $this->Adapter->Request()->set($request);
-        $recipe_id = $Request->getAttribute('recipe_id');
+        $uuid = $Request->getAttribute('uuid');
         $data = $Request->getJSONParams();
 
-        $this->Recipe_Updater_Service->update($data, $recipe_id);
-        $results = $this->Recipe_Finder_Service->get($recipe_id);
+        $this->Recipe_Updater_Service->update($data, $uuid);
+        $results = $this->Recipe_Finder_Service->get($uuid);
+
+        // hotifix -- return item not list
+       // $results = $results->items[0];
+        $response = new \WP_REST_Response($results, 200);
         // implement wp_response adapter + services
-        return \wp_send_json($results); // @todo remove this when adapter is available
+        return $response; // @todo remove this when adapter is available
     }
     // more controller functions
 
