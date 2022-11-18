@@ -9,14 +9,17 @@ final class Wordpress_Adapter{
     public Request $Request;
     public Shortcode $Shortcode;
     public Action $Action;
+    public Asset $Asset;
 
     public function __construct(
         Request $request,
         Shortcode $shortcode,
-        Action $action
+        Action $action,
+        Asset $asset
     ){
         $this->Request = $request;
         $this->Shortcode = $shortcode;
         $this->Action = $action;
+        $this->Asset = $asset;
     }
 }
