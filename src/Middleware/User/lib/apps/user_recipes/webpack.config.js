@@ -20,6 +20,9 @@ module.exports = {
 		compress: true,
 		historyApiFallback: true,
 	},
+	optimization: {
+		minimize: false
+	},
 	module: {
 		rules: [
 			{

@@ -18,3 +18,8 @@ html,
 body {
 	font-family: 'Gentona Book', sans-serif;
 }
+
+#sv-grillfuerst-user-recipes-app{
+	width:100%;
+	max-width:100%;
+}

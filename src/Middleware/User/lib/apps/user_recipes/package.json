@@ -6,7 +6,8 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "webpack serve --mode development --hot",
-    "build": "webpack --mode production"
+    "build-ugly": "webpack --mode production",
+    "build": "webpack --mode production --optimization-minimize"
   },
   "keywords": [],
   "author": "straightvisions GmbH",

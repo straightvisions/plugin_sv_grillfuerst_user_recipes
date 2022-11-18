@@ -4,6 +4,6 @@ import App from "./app.js";
 import './tailwind.css';
 import './style.css';
 
-const container = document.getElementById('app');
-const root = createRoot(container); // createRoot(container!) if you use TypeScript
+const container = document.getElementById('sv-grillfuerst-user-recipes-app');
+const root = createRoot(container);
 root.render(<App />);
