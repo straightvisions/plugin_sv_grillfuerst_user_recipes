@@ -1,15 +1,23 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import LocalStorage from '../local_storage';
+import routes from "../../models/routes";
 
 export default function Ingredients(props) {
 	const [ingredients, setIngredients] = LocalStorage("ingredients", props.formState.ingredients);
-	
+	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
+	const [ingredientsSearchResults, setIngredientsSearchResults] = useState([]); // data from db
+
 	// push change to parent state
 	useEffect(() => {
 		props.formState.ingredients = ingredients;
 		props.setFormState(props.formState);
 	}, [ingredients, props.setFormState]);
 	
+	useEffect(() => {
+		fetch(routes.getIngredients)
+			.then(response => response.json())
+			.then(data => setIngredientsDB(data.items));
+	}, []);
 	// needs custom function to apply data to the right array item
 	const setIngredient = (item) => {
 	
@@ -28,6 +36,21 @@ export default function Ingredients(props) {
 		const newIngredients = ingredients.filter(ingredient => ingredient.id !== item.id);
 		
 		setIngredients(newIngredients);
+	}
+	
+	const searchIngredient = (term) => {
+		if(term.length > 1){
+			const results = ingredientsDB.filter((item) => {
+				return (
+					item.name.toLowerCase().includes(term.toLowerCase())
+				);
+			});
+			
+			setIngredientsSearchResults(results);
+		}else{
+			setIngredientsSearchResults([]);
+		}
+		
 	}
 	
 	const [servings, setservings] = LocalStorage("servings", props.formState.servings);
@@ -62,8 +85,14 @@ export default function Ingredients(props) {
 							id="search_ingredient"
 							placeholder="Zu..."
 							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+							onChange={(e) => searchIngredient(e.target.value)}
 						/>
 					</div>
+					<ul id="search_ingredient_results">
+						{ingredientsSearchResults.length > 0 && ingredientsSearchResults.map(item => (
+							<li onClick={(e) => console.log(item.term_id)}>{item.name}</li>
+						))}
+					</ul>
 					<div className="flex space-x-1">
 						<span className="p-2 bg-green-300 rounded-md text-sm cursor-pointer">Zuckermais</span>
 						<span className="p-2 bg-green-300 rounded-md text-sm cursor-pointer">Zucker</span>

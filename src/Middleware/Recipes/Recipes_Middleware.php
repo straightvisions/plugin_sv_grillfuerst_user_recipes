@@ -7,6 +7,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Creator_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Updater_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Ingredients_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 
 final class Recipes_Middleware implements Middleware_Interface {
@@ -21,13 +22,15 @@ final class Recipes_Middleware implements Middleware_Interface {
         Adapter $Adapter,
         Recipe_Finder_Service $Recipe_Finder_Service,
         Recipe_Creator_Service $Recipe_Creator_Service,
-        Recipe_Updater_Service $Recipe_Updater_Service
+        Recipe_Updater_Service $Recipe_Updater_Service,
+        Recipe_Ingredients_Finder_Service $Recipe_Ingredients_Finder_Service
     ) {
         $this->Api_Middleware = $Api_Middleware;
         $this->Adapter = $Adapter;
         $this->Recipe_Finder_Service = $Recipe_Finder_Service;
         $this->Recipe_Creator_Service = $Recipe_Creator_Service;
         $this->Recipe_Updater_Service = $Recipe_Updater_Service;
+        $this->Recipe_Ingredients_Finder_Service = $Recipe_Ingredients_Finder_Service;
 
         // https://github.com/straightvisions/plugin_sv_appointment/blob/master/lib/modules/api.php
         // @todo add permissions
@@ -59,8 +62,11 @@ final class Recipes_Middleware implements Middleware_Interface {
             'args'  => ['methods' => 'POST,PUT', 'callback' => [$this, 'rest_get_recipes_upload_files']]
         ]);
 
-        // Update
-
+        // Ingredients
+        $this->Api_Middleware->add([
+            'route' => '/recipes/ingredients', // wordpress specific
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_ingredients']]
+        ]);
 
     }
 
@@ -93,7 +99,8 @@ final class Recipes_Middleware implements Middleware_Interface {
         $Request = $this->Adapter->Request()->set($request);
         $results = $this->Recipe_Finder_Service->get_list();
         // implement wp_response adapter + services
-        return \wp_send_json($results); // @todo remove this when adapter is available
+        $response = new \WP_REST_Response($results, 200); // @todo remove this when adapter is available
+        return $response;
     }
 
     public function rest_get_recipes_by_user_id( $request ) {
@@ -115,6 +122,14 @@ final class Recipes_Middleware implements Middleware_Interface {
         $results = $results->items[0];
         $response = new \WP_REST_Response($results, 200);
         // implement wp_response adapter + services
+        return $response; // @todo remove this when adapter is available
+    }
+
+    public function rest_get_ingredients( $request ) {
+        $Request = $this->Adapter->Request()->set($request);
+        $results = $this->Recipe_Ingredients_Finder_Service->get_list();
+        // implement wp_response adapter + services
+        $response = new \WP_REST_Response($results, 200);
         return $response; // @todo remove this when adapter is available
     }
 
@@ -146,5 +161,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $response; // @todo remove this when adapter is available
     }
     // more controller functions
+
+
 
 }
