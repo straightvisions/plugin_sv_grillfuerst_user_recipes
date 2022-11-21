@@ -46,7 +46,7 @@ export default function Ingredients(props) {
 		};
 		
 		ingredients.push(ingredient);
-		setFormState({ingredients: newIngredients});
+		setFormState({ingredients: ingredients});
 	}
 	
 	const removeIngredient = (item) => {
