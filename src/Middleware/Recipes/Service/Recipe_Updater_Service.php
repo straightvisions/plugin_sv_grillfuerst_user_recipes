@@ -30,6 +30,10 @@ final class Recipe_Updater_Service {
         // Input validation
         $this->Recipe_Validator->validate_update($recipe_id, $data);
 
+        // remove some stuff
+        unset($data['id']);
+        unset($data['edited']);
+
         // Update item
         $this->repository->update($recipe_id, $data);
 

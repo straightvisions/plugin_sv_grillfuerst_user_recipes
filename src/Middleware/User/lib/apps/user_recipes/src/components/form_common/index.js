@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useEffect, useState} from "react";
 import Image from '../form_image';
 
 export default function Common(props) {
@@ -7,7 +7,12 @@ export default function Common(props) {
 		setFormState
 	} = props;
 	
-	//@todd change formState on change
+	const {
+		title,
+		excerpt,
+		featured_image
+	} = formState;
+	
 	
 	return (
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
@@ -25,12 +30,13 @@ export default function Common(props) {
 							</label>
 							<div className="mt-1 flex rounded-md shadow-sm">
 								<input
-									value={formState.title}
+									value={title}
 									type="text"
 									name="title"
 									id="title"
 									className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									placeholder="Leckere Grillspieße"
+									onChange={(e)=>setFormState({title: e.target.value})}
 								/>
 							</div>
 						</div>
@@ -45,7 +51,8 @@ export default function Common(props) {
 									rows={3}
 									className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									placeholder="Die leckersten Grillspieße..."
-									value={formState.excerpt}
+									value={excerpt}
+									onChange={(e)=>setFormState({excerpt: e.target.value})}
 								/>
 							</div>
 							<p className="mt-2 text-sm text-gray-500">Eine knackige Zusammenfassung oder Einführung in dein Rezept.</p>
@@ -53,7 +60,7 @@ export default function Common(props) {
 						
 						<div className="h-200 rounded-md overflow-hidden">
 							<label className="block text-sm font-medium text-gray-700">Hauptbild</label>
-							<Image props={formState.featured_image} />
+							<Image props={featured_image} />
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">

@@ -15,27 +15,49 @@ export default function Form(props) {
 	//const [formState, setFormState] = useState(RecipeModel);
 	const params = useParams();
 	const formStateSlug = 'formState' + params.uuid; // multiple tabs support anyone?
-	const [formState, setFormState] = LocalStorage(formStateSlug , RecipeModel);
-	
+	const [localStorage, setLocalStorage] = LocalStorage(formStateSlug , RecipeModel);
+	const [formState, setFormState] = useState(RecipeModel);
+
+	// load data from db and check if newer than storage
 	useEffect(() => {
 		fetch(routes.getRecipeByUuid + params.uuid)
 			.then(response => response.json())
 			.then(data => {
-				setFormState(data)});
-	}, [])
+				const remoteTime = new Date(data.edited);
+				const localTime = new Date(localStorage.edited);
+			
+				if (remoteTime > localTime) {
+					setFormState(data);
+					setLocalStorage(data);
+				} else {
+					setFormState(localStorage);
+				}
+			});
+			
+	}, []);
+	
+	// update storage on formState change
+	// somehow useEffect doesn't work here
+	const _setFormState = (state) => {
+		state.edited = new Date();
+		state = {...formState, ...state};
+		setFormState(state);
+		setLocalStorage(state);
+	};
+	
 	
 	const handleSubmit = (e) => {
 		e.preventDefault();
 		//@todo form submit should be "PUT" fetch - first "save" should be "POST"
 		console.log(formState);
-	}
+	};
 	
 	return (
 		<form className="space-y-6" onSubmit={handleSubmit}>
-			<Common formState={formState} setFormState={setFormState} />
-			<Ingredients formState={formState} setFormState={setFormState} />
-			<Steps formState={formState} setFormState={setFormState} />
-			<Submit formState={formState} setFormState={setFormState} />
+			<Common formState={formState} setFormState={_setFormState} />
+			<Ingredients formState={formState} setFormState={_setFormState} />
+			<Steps formState={formState} setFormState={_setFormState} />
+			<Submit formState={formState} setFormState={_setFormState} />
 		</form>
-	)
+	);
 }

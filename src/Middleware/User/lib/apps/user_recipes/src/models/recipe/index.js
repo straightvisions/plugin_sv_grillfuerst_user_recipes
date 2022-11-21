@@ -14,7 +14,7 @@ export default {
 	"cooking_time":0,
 	"waiting_time":0,
 	"ingredients": [
-		{
+		/*{
 			"id": 4823,
 			"label": "Zucchini",
 			"amount": 1,
@@ -31,7 +31,7 @@ export default {
 			"label": "Knoblauchzehen",
 			"amount": 2,
 			"unit": "",
-		}
+		}*/
 	],
 	"steps": [
 		{
@@ -59,6 +59,7 @@ export default {
 			"description": "Duis autem vel eum iriure dolor in hendrerit in vulputate velit esse molestie consequat, vel illum dolore eu feugiat nulla facilisis at vero eros et accumsan et iusto odio dignissim qui blandit praesent luptatum zzril delenit augue duis dolore te feugait nulla facilisi.",
 		}
 	],
-	"newsletter": false
+	"newsletter": false,
+	"edited": "2099-00-00 00:00:00"
 	// add more here
 }

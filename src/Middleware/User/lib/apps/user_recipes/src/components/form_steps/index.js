@@ -1,15 +1,15 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 import Image from "../form_image";
-import LocalStorage from '../local_storage';
 
 export default function Steps(props) {
-	const [steps, setSteps] = LocalStorage("steps", props.formState.steps);
+	const {
+		formState,
+		setFormState
+	} = props
 	
-	// push change to parent state
-	useEffect(() => {
-		props.formState.steps = steps;
-		props.setFormState(props.formState);
-	}, [steps, props.setFormState]);
+	const {
+		steps
+	} = formState;
 	
 	// needs custom function to apply data to the right array item
 	const setStep = (item) => {
@@ -20,13 +20,13 @@ export default function Steps(props) {
 			}
 		});
 		
-		setSteps(newSteps);
+		setFormState({steps: newSteps});
 	}
 	
 	const removeStep = (index) => {
 		// filter out the item from list
 		const newSteps = steps.filter((_, i) => i !== index);
-		setSteps(newSteps);
+		setFormState({steps: newSteps});
 	}
 	
 	return (

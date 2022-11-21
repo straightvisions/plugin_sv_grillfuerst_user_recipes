@@ -1,4 +1,4 @@
-import React from "react";
+import React, {useState} from "react";
 import Header from './components/header';
 import Recipes from './components/recipes';
 import Form from './components/form';
@@ -15,7 +15,7 @@ import {
 } from "react-router-dom";
 
 const App = () => {
-	const [user, setUser] = LocalStorage("user", User);
+	const [user, setUser] = useState(User);
 	
 	const navigate = useNavigate();
 	

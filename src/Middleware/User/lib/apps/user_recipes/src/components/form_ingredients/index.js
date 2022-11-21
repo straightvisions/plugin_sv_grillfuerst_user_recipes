@@ -1,59 +1,59 @@
 import React, { useEffect, useState } from "react";
 import LocalStorage from '../local_storage';
 import routes from "../../models/routes";
+import TermSearch from "../combobox/term_search.js";
+
+
 
 export default function Ingredients(props) {
-	const [ingredients, setIngredients] = LocalStorage("ingredients", props.formState.ingredients);
-	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
-	const [ingredientsSearchResults, setIngredientsSearchResults] = useState([]); // data from db
-
-	// push change to parent state
-	useEffect(() => {
-		props.formState.ingredients = ingredients;
-		props.setFormState(props.formState);
-	}, [ingredients, props.setFormState]);
+	const {
+		formState,
+		setFormState,
+	} = props;
 	
-	useEffect(() => {
+	const {
+		servings,
+		ingredients
+	} = formState;
+
+	// database stuff
+	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
+	
+	// ingredients list from db for TermSearch
+	useEffect( () => {
 		fetch(routes.getIngredients)
-			.then(response => response.json())
-			.then(data => setIngredientsDB(data.items));
-	}, []);
+		.then(response => response.json())
+		.then(data => setIngredientsDB(data.items));
+	}, []); // if deps are an empty array -> effect runs only once
+	
 	// needs custom function to apply data to the right array item
 	const setIngredient = (item) => {
-	
 		const newIngredients = ingredients.map(ingredient => {
 			if(ingredient.id === item.id){
 				return item;
 			}
 		});
 		
-		setIngredients(newIngredients);
+		setFormState({ingredients: newIngredients});
+	}
+	
+	const addIngredient = (item) =>{
+		const ingredient = {
+			id: item.term_id,
+			label: item.name, // static attr from a non-static source!
+			amount: 0,
+			unit : "g",
+		};
+		
+		ingredients.push(ingredient);
+		setFormState({ingredients: newIngredients});
 	}
 	
 	const removeIngredient = (item) => {
-		
 		// filter out the item from list
 		const newIngredients = ingredients.filter(ingredient => ingredient.id !== item.id);
-		
-		setIngredients(newIngredients);
+		setFormState({ingredients: newIngredients});
 	}
-	
-	const searchIngredient = (term) => {
-		if(term.length > 1){
-			const results = ingredientsDB.filter((item) => {
-				return (
-					item.name.toLowerCase().includes(term.toLowerCase())
-				);
-			});
-			
-			setIngredientsSearchResults(results);
-		}else{
-			setIngredientsSearchResults([]);
-		}
-		
-	}
-	
-	const [servings, setservings] = LocalStorage("servings", props.formState.servings);
 	
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
@@ -67,7 +67,7 @@ export default function Ingredients(props) {
 					</label>
 					<select
 						value={servings}
-						onChange={e => { setservings(e.target.value); }}
+						onChange={e => setFormState({"servings": parseInt(e.target.value)})}
 						className="w-52 max-w-full whitespace-nowrap mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 					>
 						{[1,2,3,4,5,6,7,8].map(i => (
@@ -75,30 +75,8 @@ export default function Ingredients(props) {
 						))}
 					</select>
 				</div>
-				<div className="col-span-6 sm:col-span-4 my-4">
-					<label htmlFor="search_ingredient" className="block text-sm font-medium text-gray-700">
-						Neue Zutat hinzufügen
-					</label>
-					<div className="mt-1 mb-5 flex rounded-md shadow-sm">
-						<input
-							type="text"
-							id="search_ingredient"
-							placeholder="Zu..."
-							className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-							onChange={(e) => searchIngredient(e.target.value)}
-						/>
-					</div>
-					<ul id="search_ingredient_results">
-						{ingredientsSearchResults.length > 0 && ingredientsSearchResults.map(item => (
-							<li onClick={(e) => console.log(item.term_id)}>{item.name}</li>
-						))}
-					</ul>
-					<div className="flex space-x-1">
-						<span className="p-2 bg-green-300 rounded-md text-sm cursor-pointer">Zuckermais</span>
-						<span className="p-2 bg-green-300 rounded-md text-sm cursor-pointer">Zucker</span>
-						<span className="p-2 bg-green-300 rounded-md text-sm cursor-pointer">Zunge</span>
-					</div>
-				</div>
+				
+				<TermSearch label={"Neue Zutat hinzufügen"} items={ingredientsDB} onChange={addIngredient} />
 			</div>
 			<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
 				<table className="min-w-full divide-y divide-gray-300">
@@ -143,7 +121,7 @@ export default function Ingredients(props) {
 									onChange={e => { ingredient.unit = e.target.value; setIngredient(ingredient); }}
 									className="min-w-max whitespace-nowrap mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 								>
-									<option value="">Stück</option>
+									<option value="piece">Stück</option>
 									<option value="g">Gramm</option>
 									<option value="kg">Kilo</option>
 									<option>...</option>
