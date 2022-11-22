@@ -8,6 +8,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Finder_Service
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Creator_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Updater_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Ingredients_Finder_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Exporter_Service;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 
 final class Recipes_Middleware implements Middleware_Interface {
@@ -16,6 +17,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     private Recipe_Finder_Service $Recipe_Finder_Service;
     private Recipe_Creator_Service $Recipe_Creator_Service;
     private Recipe_Updater_Service $Recipe_Updater_Service;
+	private Recipe_Exporter_Service $Recipe_Exporter_Service;
 
     public function __construct(
         Api_Middleware $Api_Middleware,
@@ -23,7 +25,8 @@ final class Recipes_Middleware implements Middleware_Interface {
         Recipe_Finder_Service $Recipe_Finder_Service,
         Recipe_Creator_Service $Recipe_Creator_Service,
         Recipe_Updater_Service $Recipe_Updater_Service,
-        Recipe_Ingredients_Finder_Service $Recipe_Ingredients_Finder_Service
+        Recipe_Ingredients_Finder_Service $Recipe_Ingredients_Finder_Service,
+	    Recipe_Exporter_Service $Recipe_Exporter_Service,
     ) {
         $this->Api_Middleware = $Api_Middleware;
         $this->Adapter = $Adapter;
@@ -31,6 +34,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         $this->Recipe_Creator_Service = $Recipe_Creator_Service;
         $this->Recipe_Updater_Service = $Recipe_Updater_Service;
         $this->Recipe_Ingredients_Finder_Service = $Recipe_Ingredients_Finder_Service;
+	    $this->Recipe_Exporter_Service = $Recipe_Exporter_Service;
 
         // https://github.com/straightvisions/plugin_sv_appointment/blob/master/lib/modules/api.php
         // @todo add permissions
@@ -68,6 +72,13 @@ final class Recipes_Middleware implements Middleware_Interface {
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_ingredients']]
         ]);
 
+		// Export
+	    // GET / CREATE RECIPES BASED ON USER ID
+	    $this->Api_Middleware->add([
+		    'route' => '/recipes/(?P<uuid>\d+)/export', // wordpress specific
+		    'args'  => ['methods' => 'GET', 'callback' => [$this, 'route_recipe_export']]
+	    ]);
+
     }
 
     // ROUTER ----------------------------------------------------------------------------
@@ -93,6 +104,15 @@ final class Recipes_Middleware implements Middleware_Interface {
 
         return [];
     }
+
+	public function route_recipe_export( $request ){
+		$Request = $this->Adapter->Request()->set($request);
+		$uuid = $Request->getAttribute('uuid');
+		$results = $this->Recipe_Exporter_Service->export($uuid);
+		// implement wp_response adapter + services
+		$response = new \WP_REST_Response($results, 200);
+		return $response;
+	}
 
     // GETTER ----------------------------------------------------------------------------
     public function rest_get_recipes( $request ) {
@@ -163,7 +183,4 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $response; // @todo remove this when adapter is available
     }
     // more controller functions
-
-
-
 }
