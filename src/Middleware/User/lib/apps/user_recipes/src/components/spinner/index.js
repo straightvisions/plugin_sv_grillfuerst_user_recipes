@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 
 export default function Spinner(){
 	return (
-		<div aria-label="Loading..." role="status">
+		<div className="flex justify-center" aria-label="Loading..." role="status">
 			<svg className="h-6 w-6 animate-spin" viewBox="3 3 18 18">
 				<path
 					className="fill-gray-200"

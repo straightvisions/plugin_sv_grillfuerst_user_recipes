@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import LocalStorage from '../local_storage';
+import Spinner from '../spinner';
 import routes from "../../models/routes";
 import TermSearch from "../combobox/term_search.js";
 
@@ -13,7 +13,9 @@ export default function Ingredients(props) {
 		servings,
 		ingredients
 	} = formState;
-
+	
+	const [loading, setLoadingState] = useState(true);
+	
 	// database stuff
 	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
 	
@@ -21,7 +23,10 @@ export default function Ingredients(props) {
 	useEffect( () => {
 		fetch(routes.getIngredients)
 		.then(response => response.json())
-		.then(data => setIngredientsDB(data.items));
+		.then(data => {
+			setIngredientsDB(data.items);
+			setLoadingState(false);
+		});
 	}, []); // if deps are an empty array -> effect runs only once
 	
 	// needs custom function to apply data to the right array item
@@ -53,6 +58,9 @@ export default function Ingredients(props) {
 		setFormState({ingredients: newIngredients});
 	}
 	
+	// conditional rendering for TermSearch
+	const TermSearchComp = loading ? <Spinner /> : <TermSearch label={"Neue Zutat hinzufügen"} items={ingredientsDB} onChange={addIngredient} />;
+	
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 		<div className="md:grid md:grid-cols-4 md:gap-6">
@@ -73,8 +81,7 @@ export default function Ingredients(props) {
 						))}
 					</select>
 				</div>
-				
-				<TermSearch label={"Neue Zutat hinzufügen"} items={ingredientsDB} onChange={addIngredient} />
+				{TermSearchComp}
 			</div>
 			<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
 				<table className="min-w-full divide-y divide-gray-300">

@@ -16,9 +16,10 @@ export default function Form(props) {
 	//const [formState, setFormState] = useState(RecipeModel);
 	const params = useParams();
 	const formStateSlug = 'formState' + params.uuid; // multiple tabs support anyone?
-	const [localStorage, setLocalStorage] = LocalStorage(formStateSlug , RecipeModel);
-	const [formState, setFormState] = useState(RecipeModel);
-
+	const [localStorage, setLocalStorage] = LocalStorage(formStateSlug , {});
+	const [formState, setFormState] = useState({});
+	const [loading, setLoadingState] = useState(true);
+	const [saving, setSavingState] = useState(false);
 	// load data from db and check if newer than storage
 	useEffect(() => {
 		fetch(routes.getRecipeByUuid + params.uuid)
@@ -30,9 +31,12 @@ export default function Form(props) {
 				if (remoteTime > localTime) {
 					setFormState(data);
 					setLocalStorage(data);
+					
 				} else {
 					setFormState(localStorage);
 				}
+				
+				setLoadingState(false);
 			});
 			
 	}, []);
@@ -52,15 +56,31 @@ export default function Form(props) {
 		//@todo form submit should be "PUT" fetch - first "save" should be "POST"
 		console.log(formState);
 		
+		useEffect( () => {
+			fetch(routes.updateRecipe)
+				.then(response => response.json())
+				.then(data => {
+				
+				});
+		}, []); // if deps are an empty array -> effect runs only once
+		
 	};
 	
-	return (
-		<form className="space-y-6" onSubmit={handleSubmit}>
-			<Spinner/>
-			<Common formState={formState} setFormState={_setFormState} />
-			<Ingredients formState={formState} setFormState={_setFormState} />
-			<Steps formState={formState} setFormState={_setFormState} />
-			<Submit formState={formState} setFormState={_setFormState} />
-		</form>
-	);
+	if(loading){
+		return (
+			<div className="bg-white px-4 py-12 shadow sm:rounded-lg  h-full">
+				<Spinner />
+			</div>
+		)
+	}else{
+		return (
+			<form className="space-y-6" onSubmit={handleSubmit}>
+				<Common formState={formState} setFormState={_setFormState} />
+				<Ingredients formState={formState} setFormState={_setFormState} />
+				<Steps formState={formState} setFormState={_setFormState} />
+				<Submit formState={formState} setFormState={_setFormState} />
+			</form>
+		);
+	}
+	
 }
