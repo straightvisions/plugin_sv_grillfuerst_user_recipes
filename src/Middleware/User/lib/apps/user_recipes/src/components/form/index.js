@@ -51,6 +51,7 @@ export default function Form(props) {
 		e.preventDefault();
 		//@todo form submit should be "PUT" fetch - first "save" should be "POST"
 		console.log(formState);
+		
 	};
 	
 	return (
