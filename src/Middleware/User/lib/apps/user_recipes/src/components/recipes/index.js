@@ -1,8 +1,6 @@
 import React, { useState, useEffect } from "react";
 import routes from '../../models/routes';
-import {
-	useNavigate
-} from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import Spinner from "../spinner";
 
 const states = {

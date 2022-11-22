@@ -1,6 +1,58 @@
 import React from "react";
+import Spinner from '../spinner';
 
 export default function Submit(props) {
+	const {saving} = props;
+	
+	const SubmitButton = saving ? <button
+		disabled
+		type="submit"
+		className="ml-3
+		inline-flex
+		justify-center
+		gap-x-3
+		rounded-md border
+		border-transparent
+		bg-neutral-400
+		px-4 py-2
+		text-sm
+		font-medium
+		text-white
+		shadow-sm
+		focus:outline-none
+		focus:ring-2
+		focus:ring-indigo-500
+		focus:ring-offset-2
+		inline-flex items-center
+		"
+	>
+		<Spinner />  Speichert..
+	</button> :
+		<button
+			type="submit"
+			className="ml-3
+		inline-flex
+		justify-center
+		rounded-md border
+		border-transparent
+		bg-orange-600
+		px-4 py-2
+		text-sm
+		font-medium
+		text-white
+		shadow-sm
+		hover:bg-white
+		hover:text-orange-600
+		hover:border-orange-600
+		focus:outline-none
+		focus:ring-2
+		focus:ring-indigo-500
+		focus:ring-offset-2"
+		>
+			Absenden
+		</button>
+	;
+	
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 		<div className="md:grid md:grid-cols-4 md:gap-6">
@@ -53,12 +105,7 @@ export default function Submit(props) {
 			</div>
 		</div>
 		<div className="flex justify-end">
-			<button
-				type="submit"
-				className="ml-3 inline-flex justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-			>
-				Absenden
-			</button>
+			{SubmitButton}
 		</div>
 	</div>
 	)

@@ -2,6 +2,7 @@
 
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\User\User_Middleware;
+use SV_Grillfuerst_User_Recipes\Middleware\Admin\Admin_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Recipes_Middleware;
 use SV_Grillfuerst_User_Recipes\Factory\Query_Factory;
 use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
@@ -24,7 +25,7 @@ return [
     },
 
     User_Middleware::class => autowire(User_Middleware::class),
-
+    Admin_Middleware::class => autowire(Admin_Middleware::class),
     Recipes_Middleware::class => autowire(Recipes_Middleware::class),
 
     // adapters

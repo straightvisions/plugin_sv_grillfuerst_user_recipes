@@ -13,7 +13,7 @@ import {
 } from "react-router-dom";
 
 export default function Form(props) {
-	//const [formState, setFormState] = useState(RecipeModel);
+	const {user} = props;
 	const params = useParams();
 	const formStateSlug = 'formState' + params.uuid; // multiple tabs support anyone?
 	const [localStorage, setLocalStorage] = LocalStorage(formStateSlug , {});
@@ -50,21 +50,30 @@ export default function Form(props) {
 		setLocalStorage(state);
 	};
 	
-	
-	const handleSubmit = (e) => {
-		e.preventDefault();
-		//@todo form submit should be "PUT" fetch - first "save" should be "POST"
-		console.log(formState);
-		
-		useEffect( () => {
-			fetch(routes.updateRecipe)
-				.then(response => response.json())
-				.then(data => {
-				
-				});
-		}, []); // if deps are an empty array -> effect runs only once
-		
+	// manual save
+	const handleSubmit = (e = null) => {
+		if (e) e.preventDefault();
+		if(saving) return;
+		setSavingState(true);
+		//@todo change rout in backend to match stateless route here
+		fetch(routes.updateRecipe +  params.uuid + '/' + user.id, {
+			method: 'PUT',
+			cache: 'no-cache',
+			body: JSON.stringify(formState)
+		})
+			.then(response => response.json())
+			.then(data => {
+				setSavingState(false);
+				console.log(data);
+			});
 	};
+	
+	// auto save
+	/*
+	setTimeout(function() {
+		if (loading || saving) { return; } // abandon
+		self._timer = setInterval(handleSubmit, 15000);
+	}, 1000);*/
 	
 	if(loading){
 		return (
@@ -72,15 +81,15 @@ export default function Form(props) {
 				<Spinner />
 			</div>
 		)
-	}else{
-		return (
-			<form className="space-y-6" onSubmit={handleSubmit}>
-				<Common formState={formState} setFormState={_setFormState} />
-				<Ingredients formState={formState} setFormState={_setFormState} />
-				<Steps formState={formState} setFormState={_setFormState} />
-				<Submit formState={formState} setFormState={_setFormState} />
-			</form>
-		);
 	}
+	
+	return (
+		<form className="space-y-6" onSubmit={handleSubmit}>
+			<Common formState={formState} setFormState={_setFormState} />
+			<Ingredients formState={formState} setFormState={_setFormState} />
+			<Steps formState={formState} setFormState={_setFormState} />
+			<Submit saving={saving} formState={formState} setFormState={_setFormState} />
+		</form>
+	);
 	
 }
