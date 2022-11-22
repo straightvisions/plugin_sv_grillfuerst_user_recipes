@@ -8,6 +8,6 @@ import {
 } from "react-router-dom";
 
 
-const container = document.getElementById('sv-grillfuerst-user-recipes-app');
+const container = document.getElementById('sv-grillfuerst-user-recipes-admin-app');
 const root = createRoot(container);
 root.render(<Router><App /></Router>);
