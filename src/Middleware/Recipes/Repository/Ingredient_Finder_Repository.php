@@ -16,7 +16,14 @@ final class Ingredient_Finder_Repository {
 
     public function get($id = null): array {
         // @todo replace this with a custom query
-        return (array) \get_categories('taxonomy=cp_ingredient&post_type=grillrezepte');
+        $items = (array) \get_categories('taxonomy=cp_ingredient&post_type=grillrezepte');
+
+        // clone wp term_id to id field for better frontend support
+        foreach($items as &$item){
+            $item->id = $item->term_id;
+        }
+
+        return $items;
 
         $query = $this->Query_Factory->newSelect('svgfur_ingredients');
 

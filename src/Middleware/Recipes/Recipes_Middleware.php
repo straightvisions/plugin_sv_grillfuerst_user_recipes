@@ -130,6 +130,8 @@ final class Recipes_Middleware implements Middleware_Interface {
         $results = $this->Recipe_Ingredients_Finder_Service->get_list();
         // implement wp_response adapter + services
         $response = new \WP_REST_Response($results, 200);
+        // experimental cache control
+        $response->set_headers(array('Cache-Control' => 'max-age=3600'));
         return $response; // @todo remove this when adapter is available
     }
 

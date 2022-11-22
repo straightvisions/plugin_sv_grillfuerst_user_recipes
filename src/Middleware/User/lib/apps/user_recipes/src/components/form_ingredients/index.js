@@ -3,8 +3,6 @@ import LocalStorage from '../local_storage';
 import routes from "../../models/routes";
 import TermSearch from "../combobox/term_search.js";
 
-
-
 export default function Ingredients(props) {
 	const {
 		formState,
@@ -39,7 +37,7 @@ export default function Ingredients(props) {
 	
 	const addIngredient = (item) =>{
 		const ingredient = {
-			id: item.term_id,
+			id: item.id,
 			label: item.name, // static attr from a non-static source!
 			amount: 0,
 			unit : "g",
