@@ -2,14 +2,10 @@ import React, {useState} from "react";
 import Header from './components/header';
 import Recipes from './components/recipes';
 import Form from './components/form';
-import Spinner from './components/spinner';
 import User from './models/user';
-import LocalStorage from './components/local_storage';
-import routes from './models/routes';
 import Dev from './components/dev';
 
 import {
-	BrowserRouter as Router,
 	Routes,
 	Route, useNavigate
 } from "react-router-dom";

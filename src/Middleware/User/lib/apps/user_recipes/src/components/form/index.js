@@ -3,6 +3,7 @@ import Common from '../form_common';
 import Ingredients from '../form_ingredients';
 import Steps from '../form_steps';
 import Submit from '../form_submit';
+import Spinner from '../spinner';
 import RecipeModel from '../../models/recipe';
 import LocalStorage from "../local_storage";
 import routes from "../../models/routes";
@@ -54,6 +55,7 @@ export default function Form(props) {
 	
 	return (
 		<form className="space-y-6" onSubmit={handleSubmit}>
+			<Spinner/>
 			<Common formState={formState} setFormState={_setFormState} />
 			<Ingredients formState={formState} setFormState={_setFormState} />
 			<Steps formState={formState} setFormState={_setFormState} />
