@@ -3,6 +3,7 @@ import routes from '../../models/routes';
 import {
 	useNavigate
 } from "react-router-dom";
+import Spinner from "../spinner";
 
 const states = {
 	draft: {
@@ -25,16 +26,27 @@ const states = {
 
 export default function Recipes(props) {
 	const [recipes, setRecipes] = useState([]);
+	const [loading, setLoadingState] = useState(true);
 	const navigate = useNavigate();
 	
 	useEffect(() => {
 		fetch(routes.getRecipesByUser + props.user.id)
 			.then(response => response.json())
-			.then(data => setRecipes(data.items));
+			.then(data => {
+				setRecipes(data.items);
+				setLoadingState(false);
+			});
 	}, [])
 
 	//@todo migrate list items to external component !!
-	//@todo add placeholders for fetches
+	
+	if(loading){
+		return (
+			<div className="bg-white px-4 py-12 shadow sm:rounded-lg  h-full">
+				<Spinner />
+			</div>
+		);
+	}
 
 	return (
 		<div className="px-4 sm:px-6 lg:px-0">
