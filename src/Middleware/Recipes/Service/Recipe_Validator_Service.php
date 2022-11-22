@@ -67,11 +67,6 @@ final class Recipe_Validator_Service {
                         $constraint->length(null, 1000),
                     ]
                 ),
-                'categories' => $constraint->optional(
-                    [
-                        $constraint->type('array')
-                    ]
-                ),
                 'servings' => $constraint->optional(
                     [
                         $constraint->type('integer')

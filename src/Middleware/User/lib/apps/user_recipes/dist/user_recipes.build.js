@@ -7511,7 +7511,6 @@ function Submit(props) {
   // @todo replace this later
   "title": "",
   "excerpt": "",
-  "categories": [],
   // obsolete?
   "servings": 4,
   "featured_image": {

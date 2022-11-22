@@ -9,7 +9,6 @@ class Recipe_Update_Item extends Recipe_Model_Item {
     public ?string $state = 'draft';
     public ?string $title = '';
     public ?string $excerpt = '';
-    public array|string $categories = '[]'; // obsolete?
     public ?int $servings = 4;
     public ?int $menu_type = 0;
     public ?int $kitchen_style = 0;
