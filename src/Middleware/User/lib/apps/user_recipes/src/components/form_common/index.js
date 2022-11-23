@@ -1,5 +1,8 @@
 import React, {useEffect, useState} from "react";
 import Image from '../form_image';
+import TermSelect from "../dropdown/term_select";
+import routes from "../../models/routes";
+import Spinner from "../spinner";
 
 export default function Common(props) {
 	const {
@@ -12,6 +15,34 @@ export default function Common(props) {
 		excerpt,
 		featured_image
 	} = formState;
+	
+	const [loadingMenuType, setLoadingMenuTypeState] = useState(true);
+	const [loadingKitchenStyles, setLoadingKitchenStylesState] = useState(true);
+
+	const [menuTypes, setMenuTypes] = useState([]); // data from db
+	const [kitchenStyles, setKitchenStyles] = useState([]); // data from db
+	
+	useEffect( () => {
+		fetch(routes.getMenuTypes)
+			.then(response => response.json())
+			.then(data => {
+				setMenuTypes(data.items);
+				setLoadingMenuTypeState(false);
+			});
+	}, []); // if deps are an empty array -> effect runs only once
+	
+	useEffect( () => {
+		fetch(routes.getKitchenStyles)
+			.then(response => response.json())
+			.then(data => {
+				setKitchenStyles(data.items);
+				setLoadingKitchenStylesState(false);
+			});
+	}, []); // if deps are an empty array -> effect runs only once
+	
+	// conditional
+	const MenuTypes = loadingMenuType ? <Spinner /> : <TermSelect label={"Menüarten"} value={formState.menu_type} items={menuTypes} onChange={id => setFormState({menu_type: id})} />;
+	const KitchenStyles = loadingKitchenStyles ? <Spinner /> : <TermSelect label={"Küchenstil"} value={formState.kitchen_style} items={kitchenStyles} onChange={id => setFormState({kitchen_style: id})}/>;
 	
 	return (
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
@@ -64,36 +95,10 @@ export default function Common(props) {
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">
 							<div className="mb-5">
-								<label htmlFor="recipe_menu_type" className="block text-sm font-medium text-gray-700">
-									Menüart
-								</label>
-								<div className="mt-1 flex rounded-md shadow-sm">
-									<select
-										id="recipe_menu_type"
-										name="recipe_menu_type"
-										className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-									>
-										<option value="594">Beilage</option>
-										<option>...</option>
-										<option>...</option>
-									</select>
-								</div>
+								{MenuTypes}
 							</div>
 							<div className="mb-5">
-								<label htmlFor="recipe_kitchen_style" className="block text-sm font-medium text-gray-700">
-									Küchenstil
-								</label>
-								<div className="mt-1 flex rounded-md shadow-sm">
-									<select
-										id="recipe_kitchen_style"
-										name="recipe_kitchen_style"
-										className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-									>
-										<option value="585">Fisch</option>
-										<option>...</option>
-										<option>...</option>
-									</select>
-								</div>
+								{KitchenStyles}
 							</div>
 							<div className="mb-5">
 								<label htmlFor="recipe_difficulty" className="block text-sm font-medium text-gray-700">
