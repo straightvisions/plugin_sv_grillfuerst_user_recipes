@@ -57,12 +57,17 @@ export default function Recipes(props) {
 								<tr>
 									<th
 										scope="col"
-										className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+										className="w-1/12 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+										#
+									</th>
+									<th
+										scope="col"
+										className="w-10/12 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 										Rezept
 									</th>
 									<th
 										scope="col"
-										className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+										className="w-1/12 px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
 										Status
 									</th>
 								</tr>
@@ -70,6 +75,11 @@ export default function Recipes(props) {
 								<tbody className="divide-y divide-gray-200 bg-white">
 								{recipes.map((recipe) => (
 									<tr key={recipe.uuid} onClick={() => navigate('/edit/' + recipe.uuid)}>
+										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+											<span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900">
+											  {recipe.uuid}
+											</span>
+										</td>
 										<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
 											<div className="flex items-center">
 												<div className="h-10 flex-shrink-0">

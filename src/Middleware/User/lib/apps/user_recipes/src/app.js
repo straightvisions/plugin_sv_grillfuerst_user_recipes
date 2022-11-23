@@ -3,7 +3,6 @@ import Header from './components/header';
 import Recipes from './components/recipes';
 import Form from './components/form';
 import User from './models/user';
-import Dev from './components/dev';
 
 import {
 	Routes,
@@ -28,8 +27,6 @@ const App = () => {
 						element={<Recipes user={user} />}
 					/>
 				</Routes>
-				<Dev user={user} />
-		
 		</div>
 	);
 };

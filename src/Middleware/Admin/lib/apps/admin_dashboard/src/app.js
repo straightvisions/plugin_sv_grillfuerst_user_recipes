@@ -1,5 +1,7 @@
 import React, {useState} from "react";
 import NavigationBar from './components/navigation_bar';
+import Recipes from './components/recipes';
+import Form from './components/form';
 
 import {
 	Routes,
@@ -16,7 +18,14 @@ const App = () => {
 				<NavigationBar user={user} />
 				<div className="py-10">
 					<Routes>
-					
+						<Route
+							path="/edit/:uuid"
+							element={<Form />}
+						/>
+						<Route
+							path="/"
+							element={<Recipes />}
+						/>
 					</Routes>
 				</div>
 				
