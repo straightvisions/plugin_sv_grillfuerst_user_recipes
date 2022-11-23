@@ -14,6 +14,8 @@
 
 		private LoggerInterface $logger;
 
+		private $uploadedMediaIDs   = array();
+
 		public function __construct(
 			Recipe_Repository $repository,
 			Recipe_Validator_Service $Recipe_Validator,
@@ -44,7 +46,7 @@
 				"title"                     => "Test Rezept",
 				"excerpt"                   => "Test Excerpt",
 				"servings"                  => 4,
-				"featured_image"            => 0,
+				"featured_image"            => 'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/11/semmelknoedel-selber-machen.jpg',
 				"menu_type"                 => 594,
 				"kitchen_style"             => 581,
 				"difficulty"                => "easy",
@@ -73,11 +75,16 @@
 						'description'       => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
 						'acf_fc_layout'     => 'step'
 					],[
-						'gallery'           => [],
+						'gallery'           => [
+							'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/11/Blumenkohl-einfrieren.jpg',
+							'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/11/rezept-burgersosse-selber-machen.jpg'
+						],
 						'description'       => 'At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
 						'acf_fc_layout'     => 'step'
 					],[
-						'gallery'           => [],
+						'gallery'           => [
+							'https://www.grillfuerst.de/magazin/wp-content/uploads/2021/09/Weber-Gasgrill-Test-Genesis.jpg'
+						],
 						'description'       => 'Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
 						'acf_fc_layout'     => 'step'
 					],
@@ -85,12 +92,22 @@
 				"newsletter"                => false
 			];
 
+			array_walk($data['steps'], function(&$value, $key){
+				array_walk($value, function(&$value, $key){
+					if($key === 'gallery'){
+						array_walk($value, function(&$value, $key){
+							$value      = $this->export_media($value);
+						});
+					}
+				});
+			});
+
 			// REST Post Array
 			$d = json_encode([
 				'title'                             => $data['title'],
 				'content'                           => '<!-- wp:acf/sv-grillfuerst-custom-recipe-steps {"name":"acf/sv-grillfuerst-custom-recipe-steps","mode":"preview"} /-->',
 				'excerpt'                           => $data['excerpt'],
-				'featured_media'                    => $data['featured_image'],
+				'featured_media'                    => $this->export_media($data['featured_image']),
 				'cp_menutype'                       => [$data['menu_type']],
 				'cp_kitchenstyle'                   => [$data['kitchen_style']],
 				'acf'                               => [
@@ -128,9 +145,70 @@
 			// @todo: add debugging
 			// var_dump($r);
 
+			$this->map_media_to_post($r->id);
+
 			// Logging
 			if(isset($r->id)){
 				$this->logger->info(sprintf('Recipe exported successfully: %s', $recipe_id));
+			}
+		}
+		private function export_media(string $url): int{
+			$file = file_get_contents( $url );
+
+			$c      = curl_init('https://www.grillfuerst.de/magazin/wp-json/wp/v2/media');
+			curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
+			curl_setopt($c, CURLOPT_TIMEOUT, 30);
+			curl_setopt($c, CURLOPT_POST, 1);
+			curl_setopt($c, CURLOPT_CUSTOMREQUEST, "POST");
+			curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+
+			curl_setopt($c, CURLOPT_POSTFIELDS, $file);
+			curl_setopt($c, CURLOPT_HTTPHEADER, [
+				'Content-Disposition: form-data; filename="'.basename($url).'"',
+				'Content-Length: ' . strlen($file)
+			]);
+
+			$r = json_decode(curl_exec($c));
+			curl_close($c);
+
+			// @todo: add debugging
+			// var_dump($r);
+
+			// Logging
+			if(isset($r->id)){
+				$this->logger->info(sprintf('Media exported successfully: %s', $url));
+				$this->uploadedMediaIDs[]     = $r->id;
+				return $r->id;
+			}
+
+			return 0;
+		}
+		private function map_media_to_post(int $post_id){
+			if(count($this->uploadedMediaIDs) === 0){
+				return;
+			}
+
+			foreach($this->uploadedMediaIDs as $ID){
+				// REST Media Array
+				$d = json_encode([
+					'post'                             => $post_id,
+				]);
+
+				$c      = curl_init('https://www.grillfuerst.de/magazin/wp-json/wp/v2/media/'.$ID);
+				curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
+				curl_setopt($c, CURLOPT_TIMEOUT, 30);
+				curl_setopt($c, CURLOPT_POST, 1);
+				curl_setopt($c, CURLOPT_CUSTOMREQUEST, "POST");
+				curl_setopt($c, CURLOPT_RETURNTRANSFER, TRUE);
+
+				curl_setopt($c, CURLOPT_POSTFIELDS, $d);
+				curl_setopt($c, CURLOPT_HTTPHEADER, [
+					'Content-Type: application/json',
+					'Content-Length: ' . strlen($d)
+				]);
+
+				$r = json_decode(curl_exec($c));
+				curl_close($c);
 			}
 		}
 	}
