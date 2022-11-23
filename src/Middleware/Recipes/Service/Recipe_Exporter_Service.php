@@ -29,6 +29,10 @@
 		}
 
 		public function export(int $recipe_id): void {
+			if(!defined('GF_USER_RECIPES_BASE_URL')){
+				die('No Base URL set');
+			}
+
 			if(!defined('GF_USER_RECIPES_AUTH')){
 				die('No Auth set');
 			}
@@ -126,7 +130,7 @@
 
 			echo $d;
 
-			$c      = curl_init('https://www.grillfuerst.de/magazin/wp-json/wp/v2/grillrezepte'.$post_id);
+			$c      = curl_init(GF_USER_RECIPES_BASE_URL.'/wp-json/wp/v2/grillrezepte'.$post_id);
 			curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
 			curl_setopt($c, CURLOPT_TIMEOUT, 30);
 			curl_setopt($c, CURLOPT_POST, 1);
@@ -145,17 +149,16 @@
 			// @todo: add debugging
 			// var_dump($r);
 
-			$this->map_media_to_post($r->id);
-
 			// Logging
 			if(isset($r->id)){
+				$this->map_media_to_post($r->id);
 				$this->logger->info(sprintf('Recipe exported successfully: %s', $recipe_id));
 			}
 		}
 		private function export_media(string $url): int{
 			$file = file_get_contents( $url );
 
-			$c      = curl_init('https://www.grillfuerst.de/magazin/wp-json/wp/v2/media');
+			$c      = curl_init(GF_USER_RECIPES_BASE_URL.'/wp-json/wp/v2/media');
 			curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
 			curl_setopt($c, CURLOPT_TIMEOUT, 30);
 			curl_setopt($c, CURLOPT_POST, 1);
@@ -194,7 +197,7 @@
 					'post'                             => $post_id,
 				]);
 
-				$c      = curl_init('https://www.grillfuerst.de/magazin/wp-json/wp/v2/media/'.$ID);
+				$c      = curl_init(GF_USER_RECIPES_BASE_URL.'/wp-json/wp/v2/media/'.$ID);
 				curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
 				curl_setopt($c, CURLOPT_TIMEOUT, 30);
 				curl_setopt($c, CURLOPT_POST, 1);
