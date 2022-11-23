@@ -8,6 +8,8 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Finder_Service
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Creator_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Updater_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Ingredients_Finder_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Kitchen_Styles_Finder_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Menu_Types_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Exporter_Service;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 
@@ -18,6 +20,8 @@ final class Recipes_Middleware implements Middleware_Interface {
     private Recipe_Creator_Service $Recipe_Creator_Service;
     private Recipe_Updater_Service $Recipe_Updater_Service;
 	private Recipe_Exporter_Service $Recipe_Exporter_Service;
+	private Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service;
+	private Recipe_Menu_Types_Finder_Service $Recipe_Menu_Types_Finder_Service;
 
     public function __construct(
         Api_Middleware $Api_Middleware,
@@ -26,6 +30,8 @@ final class Recipes_Middleware implements Middleware_Interface {
         Recipe_Creator_Service $Recipe_Creator_Service,
         Recipe_Updater_Service $Recipe_Updater_Service,
         Recipe_Ingredients_Finder_Service $Recipe_Ingredients_Finder_Service,
+        Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service,
+        Recipe_Menu_Types_Finder_Service $Recipe_Menu_Types_Finder_Service,
 	    Recipe_Exporter_Service $Recipe_Exporter_Service,
     ) {
         $this->Api_Middleware = $Api_Middleware;
@@ -33,6 +39,8 @@ final class Recipes_Middleware implements Middleware_Interface {
         $this->Recipe_Finder_Service = $Recipe_Finder_Service;
         $this->Recipe_Creator_Service = $Recipe_Creator_Service;
         $this->Recipe_Updater_Service = $Recipe_Updater_Service;
+        $this->Recipe_Kitchen_Styles_Finder_Service = $Recipe_Kitchen_Styles_Finder_Service;
+        $this->Recipe_Menu_Types_Finder_Service = $Recipe_Menu_Types_Finder_Service;
         $this->Recipe_Ingredients_Finder_Service = $Recipe_Ingredients_Finder_Service;
 	    $this->Recipe_Exporter_Service = $Recipe_Exporter_Service;
 
@@ -70,6 +78,18 @@ final class Recipes_Middleware implements Middleware_Interface {
         $this->Api_Middleware->add([
             'route' => '/recipes/ingredients', // wordpress specific
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_ingredients']]
+        ]);
+
+        // Menu Types
+        $this->Api_Middleware->add([
+            'route' => '/recipes/menutypes', // wordpress specific
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_menu_types']]
+        ]);
+
+        // Kitchen Styles
+        $this->Api_Middleware->add([
+            'route' => '/recipes/kitchenstyles', // wordpress specific
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_kitchen_styles']]
         ]);
 
 		// Export
@@ -148,6 +168,26 @@ final class Recipes_Middleware implements Middleware_Interface {
     public function rest_get_ingredients( $request ) {
         $Request = $this->Adapter->Request()->set($request);
         $results = $this->Recipe_Ingredients_Finder_Service->get_list();
+        // implement wp_response adapter + services
+        $response = new \WP_REST_Response($results, 200);
+        // experimental cache control
+        $response->set_headers(array('Cache-Control' => 'max-age=3600'));
+        return $response; // @todo remove this when adapter is available
+    }
+
+    public function rest_get_menu_types( $request ) {
+        $Request = $this->Adapter->Request()->set($request);
+        $results = $this->Recipe_Menu_Types_Finder_Service->get_list();
+        // implement wp_response adapter + services
+        $response = new \WP_REST_Response($results, 200);
+        // experimental cache control
+        $response->set_headers(array('Cache-Control' => 'max-age=3600'));
+        return $response; // @todo remove this when adapter is available
+    }
+
+    public function rest_get_kitchen_styles( $request ) {
+        $Request = $this->Adapter->Request()->set($request);
+        $results = $this->Recipe_Kitchen_Styles_Finder_Service->get_list();
         // implement wp_response adapter + services
         $response = new \WP_REST_Response($results, 200);
         // experimental cache control

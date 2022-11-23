@@ -4,7 +4,7 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository;
 
 use SV_Grillfuerst_User_Recipes\Factory\Query_Factory;
 
-final class Ingredient_Finder_Repository {
+final class Ingredients_Finder_Repository {
     private Query_Factory $Query_Factory;
 
     /**

@@ -3,12 +3,12 @@
 namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service;
 
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Common_Finder_Result;
-use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Ingredients_Finder_Repository;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Kitchen_Styles_Finder_Repository;
 
-final class Recipe_Ingredients_Finder_Service {
-    private Ingredients_Finder_Repository $repository;
+final class Recipe_Kitchen_Styles_Finder_Service {
+    private Kitchen_Styles_Finder_Repository $repository;
 
-    public function __construct(Ingredients_Finder_Repository $repository) {
+    public function __construct(Kitchen_Styles_Finder_Repository $repository) {
         $this->repository = $repository;
     }
 
