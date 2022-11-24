@@ -7,22 +7,10 @@ import Spinner from '../spinner';
 import RecipeModel from '../../models/recipe';
 import LocalStorage from "../local_storage";
 import routes from "../../models/routes";
-
-import {
-	useParams
-} from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 function dateIsValid(date) {
-	if (
-		typeof date === 'object' &&
-		date !== null &&
-		typeof date.getTime === 'function' &&
-		!isNaN(date)
-	) {
-		return true;
-	}
-	
-	return false;
+	return typeof date === 'object' && date !== null && typeof date.getTime === 'function' && !isNaN(date);
 }
 
 export default function Form(props) {
@@ -78,6 +66,7 @@ export default function Form(props) {
 		if(saving || loading) return;
 		setSavingState(true);
 		//@todo change rout in backend to match stateless route here
+		console.log(formState);
 		fetch(routes.updateRecipe +  params.uuid, {
 			method: 'PUT',
 			cache: 'no-cache',

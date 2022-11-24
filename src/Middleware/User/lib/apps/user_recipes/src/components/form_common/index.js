@@ -1,8 +1,26 @@
 import React, {useEffect, useState} from "react";
-import Image from '../form_image';
-import TermSelect from "../dropdown/term_select";
+import Image from "../form_image";
+import Dropdown from "../dropdown/";
+import TermDropdown from "../dropdown/term_dropdown";
 import routes from "../../models/routes";
 import Spinner from "../spinner";
+
+const difficultyValues = [
+	{
+		label : "leicht",
+		value : "easy",
+	},
+	{
+		label : "mittel",
+		value : "medium",
+	},
+	{
+		label : "schwer",
+		value : "difficult",
+	},
+	
+];
+
 
 export default function Common(props) {
 	const {
@@ -13,7 +31,13 @@ export default function Common(props) {
 	const {
 		title,
 		excerpt,
-		featured_image
+		featured_image,
+		preparation_time,
+		cooking_time,
+		waiting_time,
+		difficulty,
+		menu_type,
+		kitchen_style,
 	} = formState;
 	
 	const [loadingMenuType, setLoadingMenuTypeState] = useState(true);
@@ -41,8 +65,9 @@ export default function Common(props) {
 	}, []); // if deps are an empty array -> effect runs only once
 	
 	// conditional
-	const MenuTypes = loadingMenuType ? <Spinner /> : <TermSelect label={"Menüarten"} value={formState.menu_type} items={menuTypes} onChange={id => setFormState({menu_type: id})} />;
-	const KitchenStyles = loadingKitchenStyles ? <Spinner /> : <TermSelect label={"Küchenstil"} value={formState.kitchen_style} items={kitchenStyles} onChange={id => setFormState({kitchen_style: id})}/>;
+	const MenuTypes = loadingMenuType ? <Spinner /> : <TermDropdown label={"Menüarten"} value={menu_type} items={menuTypes} onChange={id => setFormState({menu_type: id})} />;
+	const KitchenStyles = loadingKitchenStyles ? <Spinner /> : <TermDropdown label={"Küchenstil"} value={kitchen_style} items={kitchenStyles} onChange={id => setFormState({kitchen_style: id})}/>;
+	const Difficulties = <Dropdown label={"Schwierigkeitsgrad"} value={difficulty} items={difficultyValues} onChange={val => setFormState({difficulty: val})}/>;
 	
 	return (
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
@@ -60,12 +85,12 @@ export default function Common(props) {
 							</label>
 							<div className="mt-1 flex rounded-md shadow-sm">
 								<input
-									value={title}
 									type="text"
 									name="title"
 									id="title"
 									className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									placeholder="Leckere Grillspieße"
+									value={title}
 									onChange={(e)=>setFormState({title: e.target.value})}
 								/>
 							</div>
@@ -101,20 +126,7 @@ export default function Common(props) {
 								{KitchenStyles}
 							</div>
 							<div className="mb-5">
-								<label htmlFor="recipe_difficulty" className="block text-sm font-medium text-gray-700">
-									Schwierigkeit
-								</label>
-								<div className="mt-1 flex rounded-md shadow-sm">
-									<select
-										id="recipe_difficulty"
-										name="recipe_difficulty"
-										className="mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-									>
-										<option value="easy ">leicht</option>
-										<option value="medium">mittel</option>
-										<option value="difficult">schwer</option>
-									</select>
-								</div>
+								{Difficulties}
 							</div>
 						</div>
 						
@@ -129,7 +141,8 @@ export default function Common(props) {
 										name="recipe_preparation_time"
 										id="recipe_preparation_time"
 										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										placeholder="0"
+										onChange={(e)=>setFormState({preparation_time: parseInt(e.target.value)})}
+										value={preparation_time}
 									/>
 								</div>
 							</div>
@@ -143,7 +156,8 @@ export default function Common(props) {
 										name="recipe_cooking_time"
 										id="recipe_cooking_time"
 										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										placeholder="0"
+										onChange={(e)=>setFormState({cooking_time: parseInt(e.target.value)})}
+										value={cooking_time}
 									/>
 								</div>
 							</div>
@@ -157,7 +171,8 @@ export default function Common(props) {
 										name="recipe_waiting_time"
 										id="recipe_waiting_time"
 										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-										placeholder="0"
+										onChange={(e)=>setFormState({waiting_time: parseInt(e.target.value)})}
+										value={waiting_time}
 									/>
 								</div>
 							</div>

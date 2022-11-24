@@ -161,6 +161,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         //hotfix // @todo replace the results with ReaderService
         $results = $results->items[0];
         $response = new \WP_REST_Response($results, 200);
+
         // implement wp_response adapter + services
         return $response; // @todo remove this when adapter is available
     }

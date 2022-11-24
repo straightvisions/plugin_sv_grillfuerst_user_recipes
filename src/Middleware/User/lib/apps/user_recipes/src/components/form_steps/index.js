@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Image from "../form_image";
+import Step from "../step";
 
 export default function Steps(props) {
 	const {
@@ -13,13 +13,7 @@ export default function Steps(props) {
 	
 	// needs custom function to apply data to the right array item
 	const setStep = (item) => {
-		
-		const newSteps = steps.map(step => {
-			if (step.id === item.id) {
-				return item;
-			}
-		});
-		
+		const newSteps = steps.map(step => { return step.id === item.id ? item : step; });
 		setFormState({steps: newSteps});
 	}
 	
@@ -64,36 +58,11 @@ export default function Steps(props) {
 						</tr>
 						</thead>
 						<tbody className="divide-y divide-gray-200 bg-white" id="gf_recipe_steps">
-						{steps.map((step, index) => (
-							<tr key={step.id}>
-								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-									<div className="bg-black text-white p-3 rounded-full w-10 h-10 font-bold text-center cursor-pointer">{index+1}</div>
-								</td>
-								<td className="h-72 rounded-md overflow-hidden whitespace-nowrap py-4 text-sm font-medium text-gray-900">
-									<Image props={step.image} />
-								</td>
-								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 w-full">
-							<textarea
-								rows={12}
-								className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-								placeholder="Die leckersten Grillspieße..."
-								defaultValue={step.description}
-							/>
-								</td>
-								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
-									<button
-										onClick={() => removeStep(index)}
-										type="button"
-										className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
-										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-											 strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-											<path strokeLinecap="round" strokeLinejoin="round"
-												  d="M6 18L18 6M6 6l12 12"/>
-										</svg>
-										<span className="sr-only">Schritt {index+1} Entfernen</span>
-									</button>
-								</td>
-							</tr>
+						{steps.map((item, i) => (
+							
+								<Step key={i+1} onChange={(item) => setStep(item)} onDelete={(index) => removeStep(index)} item={item} index={i} />
+							
+							
 						))}
 						</tbody>
 					</table>

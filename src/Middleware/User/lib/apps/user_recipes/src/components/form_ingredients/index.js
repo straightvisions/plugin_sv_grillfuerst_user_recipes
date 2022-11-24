@@ -1,7 +1,11 @@
 import React, { useEffect, useState } from "react";
 import Spinner from '../spinner';
-import routes from "../../models/routes";
 import TermSearch from "../combobox/term_search.js";
+import Dropdown from "../dropdown";
+
+import routes from "../../models/routes";
+import ingredientUnitValues from "../../models/ingredient/units";
+import ingredientModel from "../../models/ingredient";
 
 export default function Ingredients(props) {
 	const {
@@ -21,32 +25,20 @@ export default function Ingredients(props) {
 	
 	// ingredients list from db for TermSearch
 	useEffect( () => {
-		fetch(routes.getIngredients)
-		.then(response => response.json())
-		.then(data => {
-			setIngredientsDB(data.items);
-			setLoadingState(false);
-		});
-	}, []); // if deps are an empty array -> effect runs only once
-	
+		fetch(routes.getIngredients).then(response => response.json())
+		.then(data => { setIngredientsDB(data.items); setLoadingState(false); });
+	}, []);
+
 	// needs custom function to apply data to the right array item
 	const setIngredient = (item) => {
-		const newIngredients = ingredients.map(ingredient => {
-			if(ingredient.id === item.id){
-				return item;
-			}
-		});
-		
+		const newIngredients =
+			ingredients.map(ingredient => { return ingredient.id === item.id ? item : ingredient; });
+
 		setFormState({ingredients: newIngredients});
 	}
 	
 	const addIngredient = (item) =>{
-		const ingredient = {
-			id: item.id,
-			label: item.name, // static attr from a non-static source!
-			amount: 0,
-			unit : "g",
-		};
+		const ingredient = { ...ingredientModel, id: item.id, label: item.name };
 		
 		ingredients.push(ingredient);
 		setFormState({ingredients: ingredients});
@@ -60,7 +52,7 @@ export default function Ingredients(props) {
 	
 	// conditional rendering for TermSearch
 	const TermSearchComp = loading ? <Spinner /> : <TermSearch label={"Neue Zutat hinzufügen"} items={ingredientsDB} onChange={addIngredient} />;
-	
+
 	return (
 	<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 		<div className="md:grid md:grid-cols-4 md:gap-6">
@@ -76,7 +68,7 @@ export default function Ingredients(props) {
 						onChange={e => setFormState({"servings": parseInt(e.target.value)})}
 						className="w-52 max-w-full whitespace-nowrap mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 					>
-						{[1,2,3,4,5,6,7,8].map(i => (
+						{[1,2,4,6,8,10,12,14,16,18,20].map(i => (
 							<option value={i} key={i}>{i} Portionen</option>
 						))}
 					</select>
@@ -121,21 +113,17 @@ export default function Ingredients(props) {
 								/>
 							</td>
 							<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-								<select
-									value={ingredient.unit}
-									onChange={e => { ingredient.unit = e.target.value; setIngredient(ingredient); }}
-									className="min-w-max whitespace-nowrap mt-1 block w-full rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-								>
-									<option value="piece">Stück</option>
-									<option value="g">Gramm</option>
-									<option value="kg">Kilo</option>
-									<option>...</option>
-								</select>
+								<Dropdown value={ingredient.unit} items={ingredientUnitValues}
+								          onChange={val => { ingredient.unit = val; setIngredient(ingredient);}}
+								          defaultValue={"g"}
+								/>
 							</td>
 							<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 								<input
 									type="text"
 									className="min-w-max mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+									value={ingredient.note}
+									onChange={e => { ingredient.note = e.target.value; setIngredient(ingredient); }}
 								/>
 							</td>
 							<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
