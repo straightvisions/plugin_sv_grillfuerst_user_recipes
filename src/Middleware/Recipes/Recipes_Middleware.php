@@ -203,7 +203,9 @@ final class Recipes_Middleware implements Middleware_Interface {
 
         $recipe_uuid = $this->Recipe_Creator_Service->insert($data, $user_id);
         $results = $this->Recipe_Finder_Service->get($recipe_uuid, $user_id);
-        $response = new \WP_REST_Response($results, 200);
+        //hotfix // @todo replace the results with ReaderService
+        $results = $results->items[0];
+        $response = new \WP_REST_Response($results, 201);
         // implement wp_response adapter + services
         return $response; // @todo remove this when adapter is available
     }
@@ -212,14 +214,15 @@ final class Recipes_Middleware implements Middleware_Interface {
         $Request = $this->Adapter->Request()->set($request);
         $uuid = $Request->getAttribute('uuid');
         $data = $Request->getJSONParams();
+        $code = 200;
 
-        $this->Recipe_Updater_Service->update($data, $uuid);
-        $results = $this->Recipe_Finder_Service->get($uuid);
+        if(is_array($data) && empty($data) === false){
+            $this->Recipe_Updater_Service->update($data, $uuid);
+        }else{
+            $code = 400;
+        }
 
-        // hotifix -- return item not list
-       // $results = $results->items[0];
-        $response = new \WP_REST_Response($results, 200);
-        // implement wp_response adapter + services
+        $response = new \WP_REST_Response([], $code);
         return $response; // @todo remove this when adapter is available
     }
     // more controller functions

@@ -19,12 +19,14 @@ final class Recipe_Validator_Service {
     }
 
     public function validate_update(int $recipe_id, array $data): void {
+
+
         if (!$this->repository->exists_id($recipe_id)) {
             $errors = ['recipe_id'=>'Recipe not found: '.$recipe_id];
 
-            $Response = new \stdClass();
-            $Response->errors = $errors;
-            wp_send_json($Response);
+            $Response = new \WP_REST_Response($errors);
+
+            \wp_send_json($Response);
         }
 
         $this->validate_insert($data);
@@ -42,10 +44,10 @@ final class Recipe_Validator_Service {
             }
 
             //@todo migrate this to an adapter + response class
-            $Response = new \stdClass();
-            $Response->errors = $errors;
+            $Response = new \WP_REST_Response($errors);
 
-            wp_send_json($Response);
+           \wp_send_json($Response);
+
         }
     }
 
@@ -123,6 +125,11 @@ final class Recipe_Validator_Service {
                         $constraint->type('boolean')
                     ]
                 ),
+                'created' => $constraint->optional([]),
+                'edited' => $constraint->optional([]),
+                'state' => $constraint->optional([]),
+                'uuid' => $constraint->optional([]),
+                'user_id' => $constraint->optional([]),
             ]
         );
     }

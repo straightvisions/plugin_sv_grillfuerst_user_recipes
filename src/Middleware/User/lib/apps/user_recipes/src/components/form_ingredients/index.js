@@ -8,7 +8,7 @@ export default function Ingredients(props) {
 		formState,
 		setFormState,
 	} = props;
-	
+
 	const {
 		servings,
 		ingredients

@@ -12,6 +12,19 @@ import {
 	useParams
 } from "react-router-dom";
 
+function dateIsValid(date) {
+	if (
+		typeof date === 'object' &&
+		date !== null &&
+		typeof date.getTime === 'function' &&
+		!isNaN(date)
+	) {
+		return true;
+	}
+	
+	return false;
+}
+
 export default function Form(props) {
 	const {user} = props;
 	const params = useParams();
@@ -20,6 +33,7 @@ export default function Form(props) {
 	const [formState, setFormState] = useState({});
 	const [loading, setLoadingState] = useState(true);
 	const [saving, setSavingState] = useState(false);
+	
 	// load data from db and check if newer than storage
 	useEffect(() => {
 		fetch(routes.getRecipeByUuid + params.uuid)
@@ -27,11 +41,18 @@ export default function Form(props) {
 			.then(data => {
 				const remoteTime = new Date(data.edited);
 				const localTime = new Date(localStorage.edited);
-			
-				if (remoteTime > localTime) {
+
+				// it's new or local is not set yet
+				if(	dateIsValid(remoteTime) === false || dateIsValid(localTime) === false ){
 					setFormState(data);
 					setLocalStorage(data);
-					
+					setLoadingState(false);
+					return; // break
+				}
+			
+				if ( remoteTime > localTime) {
+					setFormState(data);
+					setLocalStorage(data);
 				} else {
 					setFormState(localStorage);
 				}
@@ -56,16 +77,20 @@ export default function Form(props) {
 		if(saving) return;
 		setSavingState(true);
 		//@todo change rout in backend to match stateless route here
-		fetch(routes.updateRecipe +  params.uuid + '/' + user.id, {
+		fetch(routes.updateRecipe +  params.uuid, {
 			method: 'PUT',
 			cache: 'no-cache',
-			body: JSON.stringify(formState)
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify(formState),
 		})
 			.then(response => response.json())
 			.then(data => {
 				setSavingState(false);
-				console.log(data);
-			});
+			}).catch(function(error) {
+				// do error handling
+				console.log(error);
+				setSavingState(false);
+		});
 	};
 	
 	// auto save

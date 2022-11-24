@@ -36,7 +36,7 @@ final class Recipe_Repository {
             ]
         );
 
-        $query->where(['id' => $recipe_id]);
+        $query->where(['uuid' => $recipe_id]);
 
         $row = $query->execute()->fetch('assoc');
 
@@ -52,19 +52,14 @@ final class Recipe_Repository {
 
         $row = $this->to_row($recipe, $Recipe_Item);
 
-        // prevent updates on $id
-        if(isset($row['id'])){
-            unset($row['id']);
-        }
-
         $this->Query_Factory->newUpdate('svgfur_recipes', $row)
-                           ->where(['id' => $recipe_id])
+                           ->where(['uuid' => $recipe_id])
                            ->execute();
     }
 
     public function exists_id(int $recipe_id): bool {
         $query = $this->Query_Factory->newSelect('svgfur_recipes');
-        $query->select('id')->where(['id' => $recipe_id]);
+        $query->select('uuid')->where(['uuid' => $recipe_id]);
 
         return (bool)$query->execute()->fetch('assoc');
     }
@@ -78,7 +73,7 @@ final class Recipe_Repository {
 
     public function delete_by_id(int $recipe_id): void {
         $this->Query_Factory->newDelete('svgfur_recipes')
-                           ->where(['id' => $recipe_id])
+                           ->where(['uuid' => $recipe_id])
                            ->execute();
     }
 

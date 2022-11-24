@@ -140,11 +140,21 @@ final class Request implements Request_Interface {
     }
 
     public function getParsedBody() {
+        $body = $this->request->get_body();
+
+        // return array if json body
+        try {
+            $body = (array) json_decode($body);
+            return $body;
+        } catch (\Exception $e) {
+
+        }
+
         return $this->request->get_body();
     }
 
-    public function getJSONParams(){
-        return $this->request->get_json_params();
+    public function getJSONParams(): array{
+        return (array) $this->request->get_json_params();
     }
 
     public function withParsedBody($data) {

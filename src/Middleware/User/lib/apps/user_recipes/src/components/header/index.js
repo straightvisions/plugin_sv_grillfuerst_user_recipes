@@ -10,12 +10,14 @@ function FormButton(props){
 	const navigate = useNavigate();
 	
 	const handleNewRecipe = () => {
-		// @todo add optical representation (loader)
-		
-		fetch(routes.createRecipe + props.user.id)
+		fetch(routes.createRecipe + props.user.id, {
+			method: 'POST',
+			cache: 'no-cache',
+			body: JSON.stringify({})
+		})
 			.then(response => response.json())
 			.then(data => {
-				navigate('/edit/' + data.items[0].uuid)
+				navigate('/edit/' + data.uuid)
 			});
 	}
 	
