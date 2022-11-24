@@ -47,6 +47,7 @@ export default function Form(props) {
 					setFormState(data);
 					setLocalStorage(data);
 					setLoadingState(false);
+			
 					return; // break
 				}
 			
@@ -74,7 +75,7 @@ export default function Form(props) {
 	// manual save
 	const handleSubmit = (e = null) => {
 		if (e) e.preventDefault();
-		if(saving) return;
+		if(saving || loading) return;
 		setSavingState(true);
 		//@todo change rout in backend to match stateless route here
 		fetch(routes.updateRecipe +  params.uuid, {
@@ -94,11 +95,11 @@ export default function Form(props) {
 	};
 	
 	// auto save
-	/*
-	setTimeout(function() {
-		if (loading || saving) { return; } // abandon
-		self._timer = setInterval(handleSubmit, 15000);
-	}, 1000);*/
+	const autoSave = setInterval(() => {
+		if(loading || saving) return;
+		clearInterval(autoSave);
+		handleSubmit();
+	}, 30000); // save all 30s
 	
 	if(loading){
 		return (
