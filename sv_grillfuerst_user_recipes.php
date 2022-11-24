@@ -21,7 +21,11 @@ add_action('init', 'sv_grillfuerst_user_recipes_rewrite_permalink_rules');
 
 function sv_grillfuerst_user_recipes_rewrite_permalink_rules() {
     add_rewrite_rule('^user-recipes/(.+)?', 'index.php?pagename=user-recipes', 'top');
+    //@todo check if this is needed for prod - might should be removed
+    header('Access-Control-Allow-Origin: *');
 }
+
+
 
 // namespace class autoloading
 spl_autoload_register(function ($class) {
