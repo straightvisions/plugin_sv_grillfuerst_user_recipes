@@ -4,7 +4,7 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository;
 
 use SV_Grillfuerst_User_Recipes\Factory\Query_Factory;
 
-final class Ingredients_Finder_Repository {
+final class Revisions_Finder_Repository {
     private Query_Factory $Query_Factory;
 
     /**
@@ -15,24 +15,18 @@ final class Ingredients_Finder_Repository {
     }
 
     public function get($id = null): array {
-        // @todo replace this with a custom query
-        // or with curl https://www.grillfuerst.de/magazin/wp-json/wp/v2/cp_ingredient
-        $items = (array) \get_categories('taxonomy=cp_ingredient&post_type=grillrezepte');
-
-        // clone wp term_id to id field for better frontend support
-        foreach($items as &$item){
-            $item->id = $item->term_id;
-        }
-
-        return $items;
-
-        $query = $this->Query_Factory->newSelect('svgfur_ingredients');
+        $query = $this->Query_Factory->newSelect('svgfur_recipes_revisions');
 
         $query->select(
             [
                 '*',
             ]
         );
+
+        // filter by recipe id
+        if($id){
+            $query->where(['recipe_id' => (int)$id]);
+        }
 
         return $query->execute()->fetchAll('assoc') ?: [];
     }
