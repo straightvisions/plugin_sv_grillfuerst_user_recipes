@@ -122,7 +122,17 @@ final class Recipe_Validator_Service {
                 ),
                 'newsletter' => $constraint->optional(
                     [
-                        $constraint->type('boolean')
+                        $constraint->type('integer')
+                    ]
+                ),
+                'legal_rights' => $constraint->optional(
+                    [
+                        $constraint->type('integer')
+                    ]
+                ),
+                'feedback' => $constraint->optional(
+                    [
+                        $constraint->type('array')
                     ]
                 ),
                 'created' => $constraint->optional([]),

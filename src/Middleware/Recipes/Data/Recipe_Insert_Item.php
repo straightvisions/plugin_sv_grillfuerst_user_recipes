@@ -19,7 +19,7 @@ class Recipe_Insert_Item extends Recipe_Model_Item {
     public ?int $waiting_time = 0;
     public array|string $ingredients = '[]';
     public array|string $steps = '[]';
-    public bool $newsletter = false;
+    public int $newsletter = 0;
 
 // useful functions to convert data before output
 

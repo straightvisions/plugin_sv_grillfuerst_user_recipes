@@ -2,7 +2,26 @@ import React from "react";
 import Spinner from '../spinner';
 
 export default function Submit(props) {
-	const {saving} = props;
+	const {
+		saving,
+		formState,
+		setFormState
+	} = props;
+	
+	const {
+		legal_rights,
+		newsletter
+	} = formState;
+	
+	const handleNewsletter = () => {
+		formState.newsletter = newsletter === 1 ? 0 : 1;
+		setFormState(formState);
+	};
+	
+	const handleLegalRights = () => {
+		formState.legal_rights = legal_rights === 1 ? 0 : 1;
+		setFormState(formState);
+	};
 	
 	const SubmitButton = saving ? <button
 		disabled
@@ -75,6 +94,8 @@ export default function Submit(props) {
 									required="required"
 									type="checkbox"
 									className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+									checked={legal_rights}
+									onChange={handleLegalRights}
 								/>
 							</div>
 							<div className="ml-3 text-sm">
@@ -91,6 +112,8 @@ export default function Submit(props) {
 									name="newsletter"
 									type="checkbox"
 									className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
+									checked={newsletter}
+									onChange={handleNewsletter}
 								/>
 							</div>
 							<div className="ml-3 text-sm">
