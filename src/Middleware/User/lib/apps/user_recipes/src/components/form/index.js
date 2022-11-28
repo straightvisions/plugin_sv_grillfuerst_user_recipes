@@ -66,7 +66,7 @@ export default function Form(props) {
 		if(saving || loading) return;
 		setSavingState(true);
 		//@todo change rout in backend to match stateless route here
-		console.log(formState);
+		
 		fetch(routes.updateRecipe +  params.uuid, {
 			method: 'PUT',
 			cache: 'no-cache',
