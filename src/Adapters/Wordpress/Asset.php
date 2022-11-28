@@ -15,7 +15,7 @@ final class Asset {
         $this->assets[$handle] = $src;
 
         // wordpress specific
-        wp_register_script( $handle, $src, [], '1', true);
+        wp_register_script( $handle, $src, [], filemtime( $src ), true);
         wp_enqueue_script( $handle, $src);
     }
 }
