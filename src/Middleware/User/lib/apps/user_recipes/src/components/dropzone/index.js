@@ -8,7 +8,7 @@ export default function Dropzone(props) {
 		hint = '',
 		multiple = false,
 		accept = 'image/*',
-		onChange = (e) => {},
+		onChange = (files) => {},
 		uploading = false,
 	} = props;
 	
@@ -34,7 +34,7 @@ export default function Dropzone(props) {
 			const files = e.dataTransfer.files;
 			
 			setDragActive(false);
-			return validate(files) ? onChange(e) : false;
+			return validate(files) ? onChange(files) : false;
 		}
 	};
 	
@@ -42,8 +42,9 @@ export default function Dropzone(props) {
 		e.preventDefault();
 
 		if (e.target.files && e.target.files[0]) {
+			const files = e.target.files;
 			setDragActive(false);
-			return validate(e.target.files) ? onChange(e) : false;
+			return validate(files) ? onChange(files) : false;
 		}
 	};
 	

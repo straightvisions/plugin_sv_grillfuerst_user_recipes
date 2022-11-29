@@ -22,6 +22,7 @@ export default function MediaUpload(props) {
 		Array.from(files).forEach((item, index) => {
 			formData.append('files', item);
 		});
+	
 		// upload fetch
 		fetch(
 			routes.uploadMedia,

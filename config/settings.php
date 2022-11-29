@@ -7,6 +7,7 @@ $settings = [
         'Shortcode' => 'Wordpress_Adapter',
         'Request' => 'Wordpress_Adapter',
         'Asset' => 'Wordpress_Adapter',
+        'Filesystem' => 'Wordpress_Adapter',
     ],
 ];
 

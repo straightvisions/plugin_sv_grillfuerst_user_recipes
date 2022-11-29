@@ -43,7 +43,9 @@ final class Media_Middleware implements Middleware_Interface {
         $user_id = $Request->getAttribute('user_id');
         $data = $Request->getBody();
 
-        var_dump($data);
+        var_dump($Request->getUploadedFiles());
+        var_dump($Request);
+        die;
 
 
         $response = new \WP_REST_Response($data, 201);
