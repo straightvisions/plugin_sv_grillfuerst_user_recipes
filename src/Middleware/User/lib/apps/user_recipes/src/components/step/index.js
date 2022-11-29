@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import Image from "../form_image";
+import Images from "../form_images";
 
 export default function Step(props){
 	const {
@@ -16,7 +16,7 @@ export default function Step(props){
 				<div className="bg-black text-white p-3 rounded-full w-10 h-10 font-bold text-center cursor-pointer">{index+1}</div>
 			</td>
 			<td className="h-72 rounded-md overflow-hidden whitespace-nowrap py-4 text-sm font-medium text-gray-900">
-				<Image props={item.image} multiple={true} uuid={uuid} />
+				<Images images={item.image} multiple={true} uuid={uuid} />
 			</td>
 			<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 w-full">
 				<textarea

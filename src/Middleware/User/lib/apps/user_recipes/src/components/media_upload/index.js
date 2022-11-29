@@ -34,7 +34,7 @@ export default function MediaUpload(props) {
 		)
 			.then((response) => response.json())
 			.then((result) => {
-				console.log('Success:', result);
+				onChange(result);
 				setUploadingState(false);
 			})
 			.catch((error) => {

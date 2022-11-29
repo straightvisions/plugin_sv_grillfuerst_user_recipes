@@ -4,21 +4,20 @@ import MediaUpload from "../media_upload";
 export default function Image(props) {
 	const {
 		onChange = (e) => console.log(e),
-		multiple = false,
-		images = [],
+		image = false,
 		uuid = 0,
 	} = props;
-
+	
 	const route = '/recipes/' + uuid;
 	
-	if(images.length > 0){
+	if(image !== false){
 		return (
-			<p>SHOW IMAGE PLACEHOLDER</p>
-		)
+			<img alt="" src={image.url} />
+		);
 	}else{
 		return (
-			<MediaUpload label="Bild hochladen" subLabel="oder per Drag & Drop ablegen" route={route} multiple={multiple} />
-		)
+			<MediaUpload onChange={onChange} label="Bild hochladen" subLabel="oder per Drag & Drop ablegen" route={route}  />
+		);
 	}
 	
 }

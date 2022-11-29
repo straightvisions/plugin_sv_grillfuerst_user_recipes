@@ -65,6 +65,12 @@ export default function Common(props) {
 			});
 	}, []); // if deps are an empty array -> effect runs only once
 	
+	const handleImageUpload = (files) => {
+		formState.featured_image = files[0];
+		setFormState(formState);
+	}
+	
+	
 	// conditional
 	const MenuTypes = loadingMenuType ? <Spinner /> : <TermDropdown label={"Menüarten"} value={menu_type} items={menuTypes} onChange={id => setFormState({menu_type: id})} />;
 	const KitchenStyles = loadingKitchenStyles ? <Spinner /> : <TermDropdown label={"Küchenstil"} value={kitchen_style} items={kitchenStyles} onChange={id => setFormState({kitchen_style: id})}/>;
@@ -116,7 +122,7 @@ export default function Common(props) {
 						
 						<div className="h-200 rounded-md overflow-hidden">
 							<label className="block text-sm font-medium text-gray-700">Hauptbild</label>
-							<Image props={featured_image} uuid={formState.uuid} />
+							<Image onChange={handleImageUpload} image={featured_image} uuid={formState.uuid} />
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">
