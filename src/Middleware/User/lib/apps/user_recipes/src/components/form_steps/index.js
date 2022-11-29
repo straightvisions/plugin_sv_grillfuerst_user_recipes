@@ -59,10 +59,14 @@ export default function Steps(props) {
 						</thead>
 						<tbody className="divide-y divide-gray-200 bg-white" id="gf_recipe_steps">
 						{steps.map((item, i) => (
-							
-								<Step key={i+1} onChange={(item) => setStep(item)} onDelete={(index) => removeStep(index)} item={item} index={i} />
-							
-							
+								<Step
+									key={i+1}
+									onChange={(item) => setStep(item)}
+									onDelete={(index) => removeStep(index)}
+									item={item}
+									index={i}
+									uuid={formState.uuid}
+								/>
 						))}
 						</tbody>
 					</table>

@@ -29,9 +29,10 @@ final class Media_Middleware implements Middleware_Interface {
         //
         //
 
+        // upload recipe files
         $this->Api_Middleware->add([
-            'route' => '/media/upload',
-            'args'  => ['methods' => 'POST, GET', 'callback' => [$this, 'rest_upload_media']]
+            'route' => '/media/upload/recipes/(?P<uuid>\d+)',
+            'args'  => ['methods' => 'POST', 'callback' => [$this, 'rest_upload_media_recipes']]
         ]);
 
 
@@ -40,15 +41,29 @@ final class Media_Middleware implements Middleware_Interface {
     // SETTER ----------------------------------------------------------------------------
     public function rest_upload_media( $request ) {
         $Request = $this->Adapter->Request()->set($request);
-        $user_id = $Request->getAttribute('user_id');
-        $data = $Request->getBody();
+        $data = $Request->getUploadedFiles();
+        $items = [];
 
-        var_dump($Request->getUploadedFiles());
-        var_dump($Request);
-        die;
+        if(empty($data) === false){
+            $items = $this->Media_Upload_Service->add_multiple($data);
+        }
 
+        $response = new \WP_REST_Response($items, 201);
+        // implement wp_response adapter + services
+        return $response; // @todo remove this when adapter is available
+    }
 
-        $response = new \WP_REST_Response($data, 201);
+    public function rest_upload_media_recipes( $request ) {
+        $Request = $this->Adapter->Request()->set($request);
+        $uuid = (int) $Request->getAttribute('uuid');
+        $data = $Request->getUploadedFiles();
+        $items = [];
+
+        if(empty($data) === false){
+            $items = $this->Media_Upload_Service->add_multiple($data, 'recipes/'.$uuid);
+        }
+
+        $response = new \WP_REST_Response($items, 201);
         // implement wp_response adapter + services
         return $response; // @todo remove this when adapter is available
     }

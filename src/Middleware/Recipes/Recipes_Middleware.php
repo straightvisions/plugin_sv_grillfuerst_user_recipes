@@ -68,12 +68,6 @@ final class Recipes_Middleware implements Middleware_Interface {
             'args'  => ['methods' => 'GET, POST', 'callback' => [$this, 'route_recipes_user_id']]
         ]);
 
-        // Create - Upload Images
-        $this->Api_Middleware->add([
-            'route' => '/recipes/(?P<uuid>\d+)/images/user/(?P<user_id>\d+)', // wordpress specific
-            'args'  => ['methods' => 'POST,PUT', 'callback' => [$this, 'rest_get_recipes_upload_files']]
-        ]);
-
         // Ingredients
         $this->Api_Middleware->add([
             'route' => '/recipes/ingredients', // wordpress specific

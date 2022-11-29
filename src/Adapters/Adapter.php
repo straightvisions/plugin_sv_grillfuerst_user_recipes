@@ -21,5 +21,7 @@ class Adapter {
 
             return $adapter->{$name};
         }
+
+        return null;
     }
 }

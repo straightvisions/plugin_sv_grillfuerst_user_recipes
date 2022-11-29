@@ -9,6 +9,7 @@ export default function MediaUpload(props) {
 		multiple = false,
 		accept = 'image/*',
 		onChange = (e) => {console.log('change')},
+		route = '',
 	} = props;
 	
 	const [uploadingState, setUploadingState] = useState(false);
@@ -18,14 +19,14 @@ export default function MediaUpload(props) {
 		
 		// create form data
 		const formData = new FormData();
-		// add files to form data
+		// add files to form date
 		Array.from(files).forEach((item, index) => {
-			formData.append('files', item);
+			formData.append(index, item);
 		});
 	
 		// upload fetch
 		fetch(
-			routes.uploadMedia,
+			routes.uploadMedia + route,
 			{
 				method: 'POST',
 				body: formData,
