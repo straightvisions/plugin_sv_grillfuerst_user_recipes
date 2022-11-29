@@ -12,11 +12,10 @@ export default function Images(props) {
 	const route = '/recipes/' + uuid;
 
 	if(images.length > 0){
-		
 		return (
 			<>
 				{images.map(item => {
-					<img alt="" src={item.url} />
+					return <img alt="" src={item.url} />;
 					}
 				)}
 			</>

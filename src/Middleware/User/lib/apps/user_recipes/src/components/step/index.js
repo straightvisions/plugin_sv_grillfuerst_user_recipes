@@ -10,13 +10,25 @@ export default function Step(props){
 		uuid
 	} = props;
 	
+	/* legacy item fix */
+	if(item.hasOwnProperty('images') === false){
+		item.images = [];
+		delete item.image;
+		onChange(item);
+	}
+	
+	const handleImageUpload = (files) => {
+		item.images = files;
+		onChange(item);
+	}
+	
 	return (
 		<tr key={index}>
 			<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 				<div className="bg-black text-white p-3 rounded-full w-10 h-10 font-bold text-center cursor-pointer">{index+1}</div>
 			</td>
 			<td className="h-72 rounded-md overflow-hidden whitespace-nowrap py-4 text-sm font-medium text-gray-900">
-				<Images images={item.image} multiple={true} uuid={uuid} />
+				<Images onChange={handleImageUpload} images={item.images} uuid={uuid} multiple={true}/>
 			</td>
 			<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 w-full">
 				<textarea
