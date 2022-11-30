@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Step from "../step";
+import stepModel from "../../models/step";
 
 export default function Steps(props) {
 	const {
@@ -7,21 +8,27 @@ export default function Steps(props) {
 		setFormState
 	} = props
 	
-	const {
-		steps
-	} = formState;
+	let {steps} = formState;
 	
 	// needs custom function to apply data to the right array item
-	const setStep = (item) => {
-		const newSteps = steps.map(step => { return step.id === item.id ? item : step; });
-		setFormState({steps: newSteps});
+	const setStep = (index, item) => {
+		steps[index] = item;
+		setFormState({steps: steps});
 	}
+	
+	const addStep = () =>{
+		const step = { ...stepModel, order: steps.length + 1};
+		steps.push(step);
+		setFormState({steps: steps});
+	}
+	
 	
 	const removeStep = (index) => {
 		// filter out the item from list
-		const newSteps = steps.filter((_, i) => i !== index);
-		setFormState({steps: newSteps});
+		steps.splice(index, 1);
+		setFormState({steps: steps});
 	}
+
 	
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
@@ -31,6 +38,8 @@ export default function Steps(props) {
 					<p className="mt-1 text-sm text-gray-500">Gib alle Zubereitungsschritte ein.</p>
 					<div className="col-span-6 sm:col-span-4 my-4">
 						<button
+							onClick={addStep}
+							type="button"
 							className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 						>
 							Schritt hinzufügen
@@ -38,21 +47,21 @@ export default function Steps(props) {
 					</div>
 				</div>
 				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
-					<table className="min-w-full divide-y divide-gray-300">
-						<thead className="bg-gray-50">
+					<table className="w-full divide-y divide-gray-300">
+						<thead className="bg-gray-50 font-semibold text-left text-gray-900 text-sm">
 						<tr>
 							<th scope="col"
-								className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+								className="px-4 py-3.5 sm:px-6">
 								Schritt
 							</th>
 							<th scope="col"
-								className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+								className="min-w-[300px] px-4 py-3.5 sm:px-6">
 								Bild
 							</th>
-							<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+							<th scope="col" className="px-4 py-3.5 sm:px-6">
 								Beschreibung
 							</th>
-							<th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+							<th scope="col" className="px-4 py-3.5 sm:px-6">
 								<span className="sr-only">Löschen</span>
 							</th>
 						</tr>
@@ -60,9 +69,9 @@ export default function Steps(props) {
 						<tbody className="divide-y divide-gray-200 bg-white" id="gf_recipe_steps">
 						{steps.map((item, i) => (
 								<Step
-									key={i+1}
-									onChange={(item) => setStep(item)}
-									onDelete={(index) => removeStep(index)}
+									key={i}
+									onChange={(i, _item) => setStep(i, _item)}
+									onDelete={() => removeStep(i)}
 									item={item}
 									index={i}
 									uuid={formState.uuid}

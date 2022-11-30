@@ -70,6 +70,10 @@ export default function Common(props) {
 		setFormState(formState);
 	}
 	
+	const handleImageDelete = (image) => {
+		formState.featured_image = {};
+		setFormState(formState);
+	}
 	
 	// conditional
 	const MenuTypes = loadingMenuType ? <Spinner /> : <TermDropdown label={"Menüarten"} value={menu_type} items={menuTypes} onChange={id => setFormState({menu_type: id})} />;
@@ -111,7 +115,7 @@ export default function Common(props) {
 								<textarea
 									id="recipe_excerpt"
 									rows={3}
-									className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+									className="block w-full min-h-[80px] rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									placeholder="Die leckersten Grillspieße..."
 									value={excerpt}
 									onChange={(e)=>setFormState({excerpt: e.target.value})}
@@ -122,7 +126,7 @@ export default function Common(props) {
 						
 						<div className="h-200 rounded-md overflow-hidden">
 							<label className="block text-sm font-medium text-gray-700">Hauptbild</label>
-							<Image onChange={handleImageUpload} image={featured_image} uuid={formState.uuid} />
+							<Image onChange={handleImageUpload} onDelete={handleImageDelete} image={featured_image} uuid={formState.uuid} />
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">

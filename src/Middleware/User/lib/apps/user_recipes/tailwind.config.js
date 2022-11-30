@@ -7,12 +7,16 @@ module.exports = {
   theme: {
     fontFamily: {
       sans: [
-        "Gentona Book, sans-serif",
+        "Gentona Book, sans-serif"
       ],
     },
     extend: {
+      colors: {
+        'redgr': '#d51417',
+        'orangegr': '#f59b00'
+      },
       minWidth: {
-        'max': 'max-content',
+        'max': 'max-content'
       },
       height: {
         '200': '20rem'
@@ -20,6 +24,6 @@ module.exports = {
     },
   },
   plugins: [
-    require('@tailwindcss/forms'),
-  ],
+    require('@tailwindcss/forms')
+  ]
 }

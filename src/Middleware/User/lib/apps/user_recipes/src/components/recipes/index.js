@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from "react";
+import DayJS from 'react-dayjs';
 import routes from '../../models/routes';
 import { useNavigate } from "react-router-dom";
 import Spinner from "../spinner";
@@ -46,6 +47,9 @@ export default function Recipes(props) {
 		);
 	}
 
+	const getDate = (date) =>{
+		return <DayJS format="DD.MM.YYYY HH:mm">{date}</DayJS>;
+	}
 	return (
 		<div className="px-4 sm:px-6 lg:px-0">
 			<div className="mt-8 flex flex-col">
@@ -74,7 +78,7 @@ export default function Recipes(props) {
 								</thead>
 								<tbody className="divide-y divide-gray-200 bg-white">
 								{recipes.map((recipe) => (
-									<tr key={recipe.uuid} onClick={() => navigate('/edit/' + recipe.uuid)}>
+									<tr key={recipe.uuid} onClick={() => navigate('/edit/' + recipe.uuid)} className="cursor-pointer hover:bg-gray-100">
 										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 											<span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900">
 											  {recipe.uuid}
@@ -92,7 +96,7 @@ export default function Recipes(props) {
 												</div>
 												<div className="ml-4">
 													<div className="font-medium text-gray-900">{recipe.title}</div>
-													<div className="text-gray-500">{recipe.created}</div>
+													<div className="text-gray-500">{getDate(recipe.date)}</div>
 												</div>
 											</div>
 										</td>
