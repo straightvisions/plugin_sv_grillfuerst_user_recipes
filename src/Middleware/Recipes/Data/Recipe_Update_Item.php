@@ -50,6 +50,7 @@ class Recipe_Update_Item extends Recipe_Model_Item {
     }
 
     public function to_json($val){
+
         if(!is_array($val) && !is_object($val)){
             return $val;
         }

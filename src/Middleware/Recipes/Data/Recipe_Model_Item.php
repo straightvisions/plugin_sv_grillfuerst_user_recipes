@@ -58,14 +58,13 @@ class Recipe_Model_Item {
         if(is_array(json_decode($val))){
             $val = json_decode($val);
         }else{
-            $this->_errors[] = 'value is not a valid json string';
+            //$this->_errors[] = 'array value is not a valid json string';
         }
 
         return $val;
     }
 
     public function to_object($val){
-
         // instanceof is 3 times faster than is_object
         if($val instanceof \stdClass){
             return $val;
@@ -74,7 +73,7 @@ class Recipe_Model_Item {
         if((json_decode($val)) instanceof \stdClass){
             $val = json_decode($val);
         }else{
-            $this->_errors[] = 'value is not a valid json string';
+            //$this->_errors[] = 'object value is not a valid json string';
         }
 
         return $val;

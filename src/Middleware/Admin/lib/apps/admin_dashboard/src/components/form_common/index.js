@@ -36,6 +36,7 @@ export default function Common(props) {
 									className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									placeholder="Leckere Grillspieße"
 									onChange={(e)=>setFormState({title: e.target.value})}
+									required="required"
 								/>
 							</div>
 						</div>
@@ -52,6 +53,7 @@ export default function Common(props) {
 									placeholder="Die leckersten Grillspieße..."
 									value={excerpt}
 									onChange={(e)=>setFormState({excerpt: e.target.value})}
+									required="required"
 								/>
 							</div>
 							<p className="mt-2 text-sm text-gray-500">Eine knackige Zusammenfassung oder Einführung in dein Rezept.</p>

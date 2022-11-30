@@ -1,1 +1,1 @@
-<div id="sv-grillfuerst-user-recipes-app"></div>
+<div id="sv-grillfuerst-user-recipes-app" class="alignfull"></div>
