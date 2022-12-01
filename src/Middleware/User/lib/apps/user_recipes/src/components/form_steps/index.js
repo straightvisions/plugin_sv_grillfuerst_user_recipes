@@ -58,7 +58,7 @@ export default function Steps(props) {
 								className="min-w-[300px] px-4 py-3.5 sm:px-6">
 								Bild
 							</th>
-							<th scope="col" className="px-4 py-3.5 sm:px-6">
+							<th scope="col" className="min-w-[300px] px-4 py-3.5 sm:px-6">
 								Beschreibung
 							</th>
 							<th scope="col" className="px-4 py-3.5 sm:px-6">

@@ -85,7 +85,7 @@ export default function Ingredients(props) {
 						<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
 							Menge
 						</th>
-						<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+						<th scope="col" className="min-w-[140px] px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
 							Einheit
 						</th>
 						<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
