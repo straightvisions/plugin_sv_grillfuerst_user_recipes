@@ -47,7 +47,7 @@ export default function Steps(props) {
 					</div>
 				</div>
 				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
-					<table className="min-w-full w-full divide-y divide-gray-300">
+					<table className="w-full divide-y divide-gray-300">
 						<thead className="bg-gray-50 font-semibold text-left text-gray-900 text-sm">
 						<tr>
 							<th scope="col"
@@ -62,7 +62,7 @@ export default function Steps(props) {
 								Beschreibung
 							</th>
 							<th scope="col" className="px-4 py-3.5 sm:px-6">
-								<span className="sr-only">Löschen</span>
+								<span className="hidden sr-only">Löschen</span>
 							</th>
 						</tr>
 						</thead>
