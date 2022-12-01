@@ -29,7 +29,7 @@ export default function Recipes(props) {
 	const navigate = useNavigate();
 	
 	useEffect(() => {
-		fetch(routes.getRecipesByUser + props.user.id)
+		fetch(routes.getRecipes)
 			.then(response => response.json())
 			.then(data => {
 				setRecipes(data.items);
