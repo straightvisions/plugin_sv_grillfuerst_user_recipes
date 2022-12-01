@@ -24,7 +24,13 @@ function sv_grillfuerst_user_recipes_rewrite_permalink_rules() {
     //@todo check if this is needed for prod - might should be removed
     header('Access-Control-Allow-Origin: *');
 }
-
+/* // @todo add config based rewrite rules for wordpress
+add_filter( 'generate_rewrite_rules', function ( $wp_rewrite ){
+    $wp_rewrite->rules = array_merge(
+        ['nutzerrezepte/(\d+)/?$' => 'index.php?dl_id=$matches[1]'],
+        $wp_rewrite->rules
+    );
+} );*/
 
 
 // namespace class autoloading

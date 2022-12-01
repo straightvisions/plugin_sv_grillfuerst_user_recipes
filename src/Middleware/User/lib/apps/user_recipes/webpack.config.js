@@ -5,8 +5,9 @@ module.exports = {
 	mode: 'production',
 	entry: './src/index.js',
 	output: {
-		path: __dirname, // the bundle output path
-		filename: './dist/user_recipes.build.js', // the name of the bundle
+		path: path.resolve(__dirname, './dist'), // the bundle output path
+		filename: 'user_recipes.build.js', // the name of the bundle
+		publicPath: '/',
 	},
 	plugins: [
 		new HtmlWebpackPlugin({
