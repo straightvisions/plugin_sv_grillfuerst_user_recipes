@@ -31,7 +31,7 @@ export default function Form(props) {
 				const localTime = new Date(localStorage.edited);
 
 				// it's new or local is not set yet
-				if(	dateIsValid(remoteTime) === false || dateIsValid(localTime) === false ){
+				/*if(	dateIsValid(remoteTime) === false || dateIsValid(localTime) === false ){
 					setFormState(data);
 					setLocalStorage(data);
 					setLoadingState(false);
@@ -44,8 +44,8 @@ export default function Form(props) {
 					setLocalStorage(data);
 				} else {
 					setFormState(localStorage);
-				}
-				
+				}*/
+				setFormState(data);
 				setLoadingState(false);
 			});
 			

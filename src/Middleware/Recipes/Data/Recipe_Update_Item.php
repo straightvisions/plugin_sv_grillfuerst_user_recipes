@@ -10,7 +10,7 @@ class Recipe_Update_Item extends Recipe_Model_Item {
     public ?string $title = '';
     public ?string $excerpt = '';
     public ?int $servings = 4;
-    public ?int $menu_type = 0;
+    public array|string $menu_type = '[]';
     public ?int $kitchen_style = 0;
     public ?string $difficulty = 'easy';
     public ?int $preparation_time = 0;

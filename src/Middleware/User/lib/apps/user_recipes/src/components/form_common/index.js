@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Image from "../form_image";
 import Dropdown from "../dropdown/";
+import MultiSelect from "../multi_select/";
 import TermDropdown from "../dropdown/term_dropdown";
 import routes from "../../models/routes";
 import Spinner from "../spinner";
@@ -37,22 +38,25 @@ export default function Common(props) {
 		cooking_time,
 		waiting_time,
 		difficulty,
-		menu_type,
+		menu_type: menuTypes,
 		kitchen_style,
 	} = formState;
-	
-	const [loadingMenuType, setLoadingMenuTypeState] = useState(true);
+
+	const [loadingMenuTypes, setLoadingMenuTypesState] = useState(true);
 	const [loadingKitchenStyles, setLoadingKitchenStylesState] = useState(true);
 
-	const [menuTypes, setMenuTypes] = useState([]); // data from db
+	const [menuTypeOptions, setMenuTypeOptions] = useState([]); // data from db
 	const [kitchenStyles, setKitchenStyles] = useState([]); // data from db
 	
 	useEffect( () => {
 		fetch(routes.getMenuTypes)
 			.then(response => response.json())
 			.then(data => {
-				setMenuTypes(data.items);
-				setLoadingMenuTypeState(false);
+				// reduced given object items
+				const _options = data.items.map(i => { return { label: i.name, value: i.term_id }; });
+				
+				setMenuTypeOptions(_options);
+				setLoadingMenuTypesState(false);
 			});
 	}, []); // if deps are an empty array -> effect runs only once
 	
@@ -76,7 +80,7 @@ export default function Common(props) {
 	}
 	
 	// conditional
-	const MenuTypes = loadingMenuType ? <Spinner /> : <TermDropdown label={"Menüarten"} value={menu_type} items={menuTypes} onChange={id => setFormState({menu_type: id})} />;
+	const MenuTypes = loadingMenuTypes ? <Spinner /> : <MultiSelect label={"Menüarten"} selectedItems={menuTypes} items={menuTypeOptions} onChange={selection => setFormState({menu_type: selection})} />;
 	const KitchenStyles = loadingKitchenStyles ? <Spinner /> : <TermDropdown label={"Küchenstil"} value={kitchen_style} items={kitchenStyles} onChange={id => setFormState({kitchen_style: id})}/>;
 	const Difficulties = <Dropdown label={"Schwierigkeitsgrad"} value={difficulty} items={difficultyValues} onChange={val => setFormState({difficulty: val})}/>;
 	

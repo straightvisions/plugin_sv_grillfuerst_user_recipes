@@ -35,7 +35,8 @@ export default function TermSearch(props) {
 		onChange(item);
 		setFilteredItems([]);
 	}
-	
+	// @todo convert this to a common combobox with label-value pairs and move the term context up to parent component
+	// reduce the given options there
 	return (
 		<Combobox as="div">
 			<Combobox.Label className="block text-sm font-medium text-gray-700">{label}</Combobox.Label>
@@ -73,8 +74,8 @@ export default function TermSearch(props) {
 													active ? 'text-white' : 'text-indigo-600'
 												)}
 											>
-                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
-                      </span>
+					                        <CheckIcon className="h-5 w-5" aria-hidden="true" />
+					                      </span>
 										)}
 									</>
 								)}

@@ -12,7 +12,7 @@ class Recipe_Model_Item {
     public ?string $excerpt = '';
     public ?int $servings = 1; // obsolete ?
     public object|string $featured_image;
-    public ?int $menu_type = 0;
+    public array|string $menu_type = [];
     public ?int $kitchen_style = 0;
     public ?string $difficulty = 'easy';
     public ?int $preparation_time = 0;
