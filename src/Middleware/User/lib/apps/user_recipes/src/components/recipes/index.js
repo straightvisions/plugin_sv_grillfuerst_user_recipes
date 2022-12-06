@@ -1,7 +1,7 @@
-import React, { useState, useEffect } from "react";
+import React, {useEffect, useState} from "react";
 import DayJS from 'react-dayjs';
 import routes from '../../models/routes';
-import { useNavigate } from "react-router-dom";
+import {useNavigate} from "react-router-dom";
 import Spinner from "../spinner";
 
 const states = {
@@ -32,22 +32,29 @@ export default function Recipes(props) {
 		fetch(routes.getRecipes)
 			.then(response => response.json())
 			.then(data => {
-				setRecipes(data.items);
+				console.log(data.items);
+				// sort new to old
+				const _sorted = data.items.sort((a, b) => {
+						return a.created < b.created ? 1 : -1;
+					}
+				);
+
+				setRecipes(_sorted);
 				setLoadingState(false);
 			});
 	}, [])
-
+	
 	//@todo migrate list items to external component !!
 	
-	if(loading){
+	if (loading) {
 		return (
 			<div className="bg-white px-4 py-12 shadow sm:rounded-lg  h-full">
-				<Spinner />
+				<Spinner/>
 			</div>
 		);
 	}
-
-	const getDate = (date) =>{
+	
+	const getDate = (date) => {
 		return <DayJS format="DD.MM.YYYY HH:mm">{date}</DayJS>;
 	}
 	return (
@@ -78,9 +85,11 @@ export default function Recipes(props) {
 								</thead>
 								<tbody className="divide-y divide-gray-200 bg-white">
 								{recipes.map((recipe) => (
-									<tr key={recipe.uuid} onClick={() => navigate('/edit/' + recipe.uuid)} className="cursor-pointer hover:bg-gray-100">
+									<tr key={recipe.uuid} onClick={() => navigate('/edit/' + recipe.uuid)}
+									    className="cursor-pointer hover:bg-gray-100">
 										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-											<span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900">
+											<span
+												className="inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900">
 											  {recipe.uuid}
 											</span>
 										</td>
@@ -96,12 +105,13 @@ export default function Recipes(props) {
 												</div>
 												<div className="ml-4">
 													<div className="font-medium text-gray-900">{recipe.title}</div>
-													<div className="text-gray-500">{getDate(recipe.date)}</div>
+													<div className="text-gray-500">{getDate(recipe.created)}</div>
 												</div>
 											</div>
 										</td>
 										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-											<span className={"inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900 "+states[recipe.state].color}>
+											<span
+												className={"inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900 " + states[recipe.state].color}>
 											  {states[recipe.state].label}
 											</span>
 										</td>
