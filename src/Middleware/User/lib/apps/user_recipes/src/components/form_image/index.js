@@ -11,7 +11,7 @@ export default function Image(props) {
 	
 	const route = '/recipes/' + uuid;
 	
-	if(image && image.hasOwnProperty('url')){
+	if(image && image.hasOwnProperty('url') && image.url){
 		return (
 			<div
 				className="h-full w-full relative group overflow-hidden flex justify-center rounded-md bg-gray-100"
