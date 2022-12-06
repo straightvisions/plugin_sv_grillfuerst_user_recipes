@@ -38,14 +38,7 @@ export default function Common(props) {
 		cooking_time,
 		waiting_time,
 		difficulty,
-		kitchen_style,
 	} = formState;
-
-	
-	const [loadingKitchenStyles, setLoadingKitchenStylesState] = useState(true);
-
-	
-	const [kitchenStyles, setKitchenStyles] = useState([]); // data from db
 	
 	// MENU TYPES -----------------------------------------------------------------------------------------------------
 	// MENU TYPES -----------------------------------------------------------------------------------------------------
@@ -81,15 +74,43 @@ export default function Common(props) {
 	// MENU TYPES -----------------------------------------------------------------------------------------------------
 	// MENU TYPES -----------------------------------------------------------------------------------------------------
 	// MENU TYPES -----------------------------------------------------------------------------------------------------
+	// KITCHEN STYLES -------------------------------------------------------------------------------------------------
+	// KITCHEN STYLES -------------------------------------------------------------------------------------------------
+	// KITCHEN STYLES -------------------------------------------------------------------------------------------------
+	// data
 	
+	const {kitchen_style: kitchenStyles} = formState;
+	const [loadingKitchenStyles, setLoadingKitchenStylesState] = useState(true);
+	const [kitchenStyleOptions, setKitchenStyleOptions] = useState([]); // data from db
+	const [kitchenStyleOptionsSelected, setKitchenStyleOptionsSelected] = useState([]); // data from db
+	
+	// element
+	// element
+	const KitchenStylesSelect = loadingKitchenStyles ? <Spinner /> :
+		<MultiSelect
+			label={"Küchenstil"}
+			selected={kitchenStyleOptionsSelected}
+			options={kitchenStyleOptions}
+			onChange={selection => setFormState({kitchen_style: selection})} />;
+	
+	// async call
 	useEffect( () => {
 		fetch(routes.getKitchenStyles)
 			.then(response => response.json())
 			.then(data => {
-				setKitchenStyles(data.items);
+				// reduced given object items
+				const _options = data.items.map(i => { return { label: i.name, value: i.term_id }; }); // all items
+				const _selection = _options.filter(i => kitchenStyles.includes(i.value)); // filtered items
+				
+				setKitchenStyleOptions(_options);
+				setKitchenStyleOptionsSelected(_selection);
 				setLoadingKitchenStylesState(false);
 			});
 	}, []); // if deps are an empty array -> effect runs only once
+	
+	// KITCHEN STYLES -------------------------------------------------------------------------------------------------
+	// KITCHEN STYLES -------------------------------------------------------------------------------------------------
+	// KITCHEN STYLES -------------------------------------------------------------------------------------------------
 	
 	const handleImageUpload = (files) => {
 		formState.featured_image = files[0];
@@ -102,7 +123,6 @@ export default function Common(props) {
 	}
 	
 	// conditional
-	const KitchenStyles = loadingKitchenStyles ? <Spinner /> : <TermDropdown label={"Küchenstil"} value={kitchen_style} items={kitchenStyles} onChange={id => setFormState({kitchen_style: id})}/>;
 	const Difficulties = <Dropdown label={"Schwierigkeitsgrad"} value={difficulty} items={difficultyValues} onChange={val => setFormState({difficulty: val})}/>;
 	
 	return (
@@ -159,7 +179,7 @@ export default function Common(props) {
 								{MenuTypesSelect}
 							</div>
 							<div className="mb-5">
-								{KitchenStyles}
+								{KitchenStylesSelect}
 							</div>
 							<div className="mb-5">
 								{Difficulties}

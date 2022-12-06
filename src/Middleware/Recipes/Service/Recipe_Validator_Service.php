@@ -86,7 +86,7 @@ final class Recipe_Validator_Service {
                 ),
                 'kitchen_style' => $constraint->optional(
                     [
-                        $constraint->type('integer')
+                        $constraint->type('array')
                     ]
                 ),
                 'difficulty' => $constraint->optional(
