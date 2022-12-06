@@ -38,27 +38,49 @@ export default function Common(props) {
 		cooking_time,
 		waiting_time,
 		difficulty,
-		menu_type: menuTypes,
 		kitchen_style,
 	} = formState;
 
-	const [loadingMenuTypes, setLoadingMenuTypesState] = useState(true);
+	
 	const [loadingKitchenStyles, setLoadingKitchenStylesState] = useState(true);
 
-	const [menuTypeOptions, setMenuTypeOptions] = useState([]); // data from db
+	
 	const [kitchenStyles, setKitchenStyles] = useState([]); // data from db
 	
+	// MENU TYPES -----------------------------------------------------------------------------------------------------
+	// MENU TYPES -----------------------------------------------------------------------------------------------------
+	// MENU TYPES -----------------------------------------------------------------------------------------------------
+	// data
+	const {menu_type: menuTypes} = formState;
+	const [loadingMenuTypes, setLoadingMenuTypesState] = useState(true);
+	const [menuTypeOptions, setMenuTypeOptions] = useState([]); // data from db
+	const [menuTypeOptionsSelected, setMenuTypeOptionsSelected] = useState([]); // data from db
+	
+	// element
+	const MenuTypesSelect = loadingMenuTypes ? <Spinner /> :
+		<MultiSelect
+			label={"Menüarten"}
+			selected={menuTypeOptionsSelected}
+			options={menuTypeOptions}
+			onChange={selection => setFormState({menu_type: selection})} />;
+	
+	// async call
 	useEffect( () => {
 		fetch(routes.getMenuTypes)
 			.then(response => response.json())
 			.then(data => {
 				// reduced given object items
-				const _options = data.items.map(i => { return { label: i.name, value: i.term_id }; });
+				const _options = data.items.map(i => { return { label: i.name, value: i.term_id }; }); // all items
+				const _selection = _options.filter(i => menuTypes.includes(i.value)); // filtered items
 				
 				setMenuTypeOptions(_options);
+				setMenuTypeOptionsSelected(_selection);
 				setLoadingMenuTypesState(false);
 			});
 	}, []); // if deps are an empty array -> effect runs only once
+	// MENU TYPES -----------------------------------------------------------------------------------------------------
+	// MENU TYPES -----------------------------------------------------------------------------------------------------
+	// MENU TYPES -----------------------------------------------------------------------------------------------------
 	
 	useEffect( () => {
 		fetch(routes.getKitchenStyles)
@@ -80,7 +102,6 @@ export default function Common(props) {
 	}
 	
 	// conditional
-	const MenuTypes = loadingMenuTypes ? <Spinner /> : <MultiSelect label={"Menüarten"} selectedItems={menuTypes} items={menuTypeOptions} onChange={selection => setFormState({menu_type: selection})} />;
 	const KitchenStyles = loadingKitchenStyles ? <Spinner /> : <TermDropdown label={"Küchenstil"} value={kitchen_style} items={kitchenStyles} onChange={id => setFormState({kitchen_style: id})}/>;
 	const Difficulties = <Dropdown label={"Schwierigkeitsgrad"} value={difficulty} items={difficultyValues} onChange={val => setFormState({difficulty: val})}/>;
 	
@@ -135,7 +156,7 @@ export default function Common(props) {
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">
 							<div className="mb-5">
-								{MenuTypes}
+								{MenuTypesSelect}
 							</div>
 							<div className="mb-5">
 								{KitchenStyles}
