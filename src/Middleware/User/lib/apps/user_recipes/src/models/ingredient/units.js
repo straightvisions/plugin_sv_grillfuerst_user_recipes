@@ -1,5 +1,4 @@
-const rawList = [
-
+let rawList = [
 	{label: "Esslöffel", value: "EL", plural: "Esslöffel"},
 	{label: "Teelöffel", value: "TL", plural: "Teelöffel"},
 	{label: "Kilogramm", value: "kg", plural: "Kilogramm"},
@@ -23,4 +22,4 @@ const rawList = [
 	{label: "pro Person", value: "pro Person", plural: "pro Person"},
 ];
 
-export default rawList.sort((a,b) => a.label - b.label);
+export default rawList;
