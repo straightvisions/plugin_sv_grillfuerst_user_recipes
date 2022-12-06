@@ -69,7 +69,7 @@ export default function Ingredients(props) {
 						className="w-52 max-w-full whitespace-nowrap mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
 					>
 						{[1,2,4,6,8,10,12,14,16,18,20].map(i => (
-							<option value={i} key={i}>{i} Portionen</option>
+							<option value={i} key={i}>{i} { i > 1 ? "Portionen" : "Portion"}</option>
 						))}
 					</select>
 				</div>
