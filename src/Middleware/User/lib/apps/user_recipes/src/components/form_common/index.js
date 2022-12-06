@@ -148,6 +148,7 @@ export default function Common(props) {
 									placeholder="Leckere Grillspieße"
 									value={title}
 									onChange={(e)=>setFormState({title: e.target.value})}
+									required
 								/>
 							</div>
 						</div>
@@ -164,6 +165,7 @@ export default function Common(props) {
 									placeholder="Die leckersten Grillspieße..."
 									value={excerpt}
 									onChange={(e)=>setFormState({excerpt: e.target.value})}
+									required
 								/>
 							</div>
 							<p className="mt-2 text-sm text-gray-500">Eine knackige Zusammenfassung oder Einführung in dein Rezept.</p>
