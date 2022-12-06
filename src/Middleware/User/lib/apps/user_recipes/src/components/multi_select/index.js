@@ -33,7 +33,8 @@ export default function MultiSelect(props) {
 	
 	
 	const isSelected = (id) => {
-		return selection.includes(id)
+		const matches = selection.filter(i=>i.value === id);
+		return matches.length > 0;
 	};
 	
 	return (
