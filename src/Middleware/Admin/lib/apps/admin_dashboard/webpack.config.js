@@ -5,8 +5,8 @@ module.exports = {
 	mode: 'production',
 	entry: './src/index.js',
 	output: {
-		path: __dirname, // the bundle output path
-		filename: './dist/admin_dashboard.build.js', // the name of the bundle
+		path: path.resolve(__dirname, './dist'), // the bundle output path
+		filename: 'admin_dashboard.build.js', // the name of the bundle
 		publicPath: '/',
 	},
 	plugins: [
@@ -15,7 +15,7 @@ module.exports = {
 		}),
 	],
 	devServer: {
-		port: 3040, // you can change the port
+		port: 3030, // you can change the port
 		open: true,
 		hot: true,
 		compress: true,
