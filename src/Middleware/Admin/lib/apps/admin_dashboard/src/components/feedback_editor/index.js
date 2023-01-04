@@ -3,6 +3,7 @@ import Submit from '../submit';
 import WYSIWYG from '../wysiwyg';
 import Spinner from "../spinner";
 import LocalStorage from "../local_storage";
+import ActivityMap from "../activity_map";
 
 export default function FeedbackEditor(props) {
 	const {
@@ -14,19 +15,10 @@ export default function FeedbackEditor(props) {
 	const formStateSlug = 'formStateFeedback' + formState.uuid; // multiple tabs support anyone?
 	const [localStorage, setLocalStorage] = LocalStorage(formStateSlug , '');
 	
-	const getCommentHistory = () => {
-		const history = formState.feedback;
-		let html = history.length > 0 ? '' : <p>Bisher kein Feedback eingereicht.</p>;
-		
-		for(let i = 0; i < history.length; i++){
-			html += <p><strong>{history[i].date}</strong><br />{history[i].content}</p>;
-		}
-		
-		return html;
-	}
-	
 	const handleClick = () => {
-		return onSubmit(localStorage);
+		const value = localStorage;
+		setLocalStorage('');
+		return onSubmit(value);
 	}
 	
 	const SubmitButton = saving ? <button
@@ -40,11 +32,17 @@ export default function FeedbackEditor(props) {
 			>Feedback absenden</button>;
 	
 	return (
-		<>
-			<WYSIWYG formState={formState} onChange={val => setLocalStorage(val)} value={localStorage}/>
-			{SubmitButton}
-			{getCommentHistory()}
-		</>
+		<div className="space-y-12">
+			<div className="space-y-4">
+				<WYSIWYG formState={formState} onChange={val => setLocalStorage(val)} value={localStorage}/>
+				{SubmitButton}
+			</div>
+			
+			<div className="space-y-4">
+				<h3 className="text-lg font-medium leading-6 text-gray-900">Feedback Historie</h3>
+				<ActivityMap items={formState.feedback} />
+			</div>
+		</div>
 	);
 	
 }

@@ -34,6 +34,7 @@ final class Recipe_Validator_Service {
 
     public function validate_insert($data): void {
         $validator = Validation::createValidator();
+
         $violations = $validator->validate($data, $this->createConstraints());
 
         if ($violations->count()) {

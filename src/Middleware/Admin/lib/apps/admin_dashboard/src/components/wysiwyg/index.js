@@ -24,7 +24,6 @@ export default function WYSIWYG(props) {
 				onEditorChange={(newValue, editor) => {
 					setText(editor.getContent({format: 'text'}));
 					onChange(newValue);
-					
 				}}
 			/>
 		</>

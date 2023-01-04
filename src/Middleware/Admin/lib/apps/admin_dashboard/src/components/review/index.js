@@ -28,8 +28,49 @@ export default function Review(props) {
 			
 	}, []);
 	
+	const createFeedback = (value) => {
+		let feedbackHistory = formState.feedback;
+		
+		var today = new Date();
+		var dd = String(today.getDate()).padStart(2, '0');
+		var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
+		var yyyy = today.getFullYear();
+		
+		today = mm + '/' + dd + '/' + yyyy;
+		
+		return {
+			date: today,
+			text: value,
+			userId: 1,
+			type: 'comment'
+		};
+	}
+	
 	const handleSubmit = (value) => {
-		console.log(value);
+		if(saving || loading) return;
+		setSavingState(true);
+		formState.feedback.push( createFeedback(value) )
+		const feedback = formState.feedback;
+		const data = {
+			feedback,
+		};
+	
+		fetch(routes.updateRecipe +  params.uuid, {
+			method: 'PUT',
+			cache: 'no-cache',
+			headers: {'Content-Type': 'application/json'},
+			body: JSON.stringify(data),
+		})
+			.then(response => response.json())
+			.then(data => {
+				setSavingState(false);
+				//@todo give a notice on success
+			}).catch(function(error) {
+			// do error handling
+			//@todo give a notice on error
+			console.log(error);
+			setSavingState(false);
+		});
 	};
 	
 	console.log(formState);
