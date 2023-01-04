@@ -1,7 +1,7 @@
 import React, {useState} from "react";
 import NavigationBar from './components/navigation_bar';
 import Recipes from './components/recipes';
-import Form from './components/form';
+import Review from './components/review';
 
 import {
 	Routes,
@@ -20,7 +20,7 @@ const App = () => {
 					<Routes>
 						<Route
 							path="/edit/:uuid"
-							element={<Form />}
+							element={<Review />}
 						/>
 						<Route
 							path="/"

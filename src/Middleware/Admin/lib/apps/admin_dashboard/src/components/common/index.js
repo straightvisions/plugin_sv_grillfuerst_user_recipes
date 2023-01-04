@@ -1,5 +1,5 @@
 import React, {useEffect, useState} from "react";
-import Image from '../form_image';
+import Image from '../image';
 
 export default function Common(props) {
 	const {
