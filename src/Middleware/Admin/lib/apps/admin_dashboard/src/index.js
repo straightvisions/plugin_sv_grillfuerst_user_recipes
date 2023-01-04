@@ -20,6 +20,6 @@ styleNode.innerHTML = `${tailwindCSS}${styleCSS}`;
 bodyNode.appendChild(styleNode);
 bodyNode.appendChild(renderIn);
 shadow.appendChild(bodyNode);
-
+// {window.location.pathname}
 const root = createRoot(renderIn);
-root.render(<Router basename={window.location.pathname}><App /></Router>);
+root.render(<Router basename={svgf_root_path}><App /></Router>);
