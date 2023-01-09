@@ -7,5 +7,7 @@ export default {
 	"getRecipeByUuid": root + '/recipes/', // GET + {recipe_id}
 	"updateRecipe": root + '/recipes/', // PUT + {recipe_id}
 	"getIngredients": root + '/recipes/ingredients', // GET
+	"getMenuTypes": root + '/recipes/menutypes', // GET
+	"getKitchenStyles": root + '/recipes/kitchenstyles', // GET
 
 }
