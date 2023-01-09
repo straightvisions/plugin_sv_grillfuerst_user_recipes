@@ -43,10 +43,19 @@ class Recipe_Update_Item extends Recipe_Model_Item {
 
             $this->{$field} = $value;
         }
+
+        return $this->get($field);
     }
 
     public function get($field){
         return $this->{$field};
+    }
+
+    public function unset(string $key){
+        // check if attribute exists and check if key is NOT a function
+        if(isset($this->{$key}) && method_exists($this, $key) === false){
+            unset($this->{$key});
+        }
     }
 
     public function to_json($val){
@@ -56,6 +65,10 @@ class Recipe_Update_Item extends Recipe_Model_Item {
         }
 
         return json_encode($val);
+    }
+
+    public function get_array(){
+
     }
 
 }

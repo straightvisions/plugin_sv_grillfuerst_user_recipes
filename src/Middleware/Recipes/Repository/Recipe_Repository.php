@@ -78,14 +78,17 @@ final class Recipe_Repository {
     }
 
     private function to_row(array $recipe, $Recipe_Item): array {
-        $output = [];
+        $data = [];
 
-        foreach ($Recipe_Item as $key => $default_value) {
-            $Recipe_Item->set($key, $recipe[$key] ?? $default_value);
-            $output[$key] = $Recipe_Item->get($key);
+        foreach($Recipe_Item as $key => $default_value) {
+            // don't add non-existing values to the update array, otherwise we will overwrite database
+            // rows with default data. defaults should only be used in the inserter / creator
+            if(isset($recipe[$key])){
+                $data[$key] = $Recipe_Item->set($key, $recipe[$key]);
+            }
         }
 
-        return $output;
+        return $data;
     }
 
 }
