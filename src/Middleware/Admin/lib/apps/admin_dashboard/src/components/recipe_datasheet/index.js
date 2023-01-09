@@ -6,9 +6,7 @@ import routes from "../../models/routes";
 export default function RecipeDatasheet(props) {
 	const [data, setData] = useState(props.data);
 	
-	const getImage = (image) => {
-		return image.url ? <img src={image.url}/> : 'none';
-	}
+	const getImage = image => image.url && <img src={image.url}/> || 'Kein Bild gesetzt.' ;
 	
 	const [kitchenStyles, setKitchenStyles] = useState(<Spinner/>);
 	useEffect(() => {
@@ -37,10 +35,7 @@ export default function RecipeDatasheet(props) {
 		return 'steps...';
 	};
 	
-	
 	return (
-		
-		
 		<div className="overflow-hidden bg-white shadow sm:rounded-lg">
 			<div className="px-4 py-5 sm:px-6">
 				<h3 className="text-lg font-medium leading-6 text-gray-900">Rezept Informationen</h3>
@@ -150,9 +145,6 @@ export default function RecipeDatasheet(props) {
 					</div>
 				</dl>
 			</div>
-		
-		
 		</div>
-	
 	)
 }
