@@ -20,6 +20,9 @@ module.exports = {
       },
       height: {
         '200': '20rem'
+      },
+      scale: {
+        '300': '3.00',
       }
     },
   },
