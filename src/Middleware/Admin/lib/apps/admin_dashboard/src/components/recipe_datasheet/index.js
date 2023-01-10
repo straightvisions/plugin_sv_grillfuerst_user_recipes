@@ -35,10 +35,8 @@ export default function RecipeDatasheet(props) {
 		return (
 			<>
 				{items.length > 0 ? items.map(item =>
-					<div className="">
-						<img key={item.filename} alt="" src={item.url}
-						     className="transform-gpu transition duration-500 touch:scale-300 hover:scale-300"/>
-					</div>
+					<img key={item.filename} alt="" src={item.url}
+					     className="transform-gpu transition duration-500 touch:scale-300 hover:scale-300"/>
 				) : <i>Keine Bilder</i>
 					
 				}

@@ -5,6 +5,7 @@ import RecipeDatasheet from '../recipe_datasheet';
 import FeedbackEditor from '../feedback_editor';
 import routes from "../../models/routes";
 import ActivityMap from "../activity_map";
+import Modal from "../modal";
 
 export default function Review(props) {
 	const {user} = props;
@@ -13,6 +14,7 @@ export default function Review(props) {
 	const [formState, setFormState] = useState({});
 	const [loading, setLoadingState] = useState(true);
 	const [saving, setSavingState] = useState(false);
+	const [confirmReleaseOpen, setConfirmReleaseOpen] = useState(false);
 	
 	// load data from db
 	useEffect(() => {
@@ -84,12 +86,12 @@ export default function Review(props) {
 	
 	const ReleaseButton = saving ? <button
 		disabled
-		type="submit"
+		type="button"
 		className="col-span-12 ml-3 mt-4 inline-flex justify-center gap-x-3 rounded-md border border-transparent bg-neutral-400 px-4 py-2 text-sm font-medium text-white shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 inline-flex items-center"
 	><Spinner/> Speichert..</button> : <button
-		type="submit"
+		type="button"
 		className="col-span-12 ml-3 mt-4 inline-flex justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-		onClick={handleRelease}
+		onClick={()=>setConfirmReleaseOpen(true)}
 	>Rezepte freigeben</button>;
 	
 	return (
@@ -111,7 +113,14 @@ export default function Review(props) {
 			<div className="mx-auto my-8 max-w-3xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-12 lg:gap-8 lg:px-8">
 				<hr className="h-px bg-gray-400 border-0 col-span-12" />
 				{ReleaseButton}
+				<Modal
+					message="Rezept wirklich freigeben? Dies kann nicht rückgängig gemacht werden!"
+					open={confirmReleaseOpen}
+					setOpen={setConfirmReleaseOpen}
+					name="modalReleaseConfirm"
+					onConfirm={handleRelease} />
 			</div>
+			
 		</div>
 	);
 

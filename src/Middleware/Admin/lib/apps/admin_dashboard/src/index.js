@@ -1,17 +1,14 @@
+
+
 import React from "react";
-import { render } from 'react-dom';
 import { createRoot } from 'react-dom/client';
+import {BrowserRouter as Router} from "react-router-dom";
 import App from "./app.js";
+import patch from "./patch.js";
 import tailwindCSS from '!!raw-loader!!!postcss-loader!./tailwind.css';
 import styleCSS from '!!raw-loader!!!postcss-loader!./style.css';
 
-import {
-	BrowserRouter as Router
-} from "react-router-dom";
-
-// get our shadow HOST
 const host = document.getElementById('sv-grillfuerst-user-recipes-admin-app');
-// new render block for shadow dom
 const shadow = host.attachShadow({ mode: 'open' });
 const bodyNode = document.createElement('body');
 const styleNode = document.createElement('style');
@@ -20,6 +17,11 @@ styleNode.innerHTML = `${tailwindCSS}${styleCSS}`;
 bodyNode.appendChild(styleNode);
 bodyNode.appendChild(renderIn);
 shadow.appendChild(bodyNode);
-// {window.location.pathname}
+
+// not working
+patch(host);
+
 const root = createRoot(renderIn);
+
 root.render(<Router basename={svgf_root_path}><App /></Router>);
+
