@@ -1,4 +1,4 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import NavigationBar from './components/navigation_bar';
 import Recipes from './components/recipes';
 import Review from './components/review';

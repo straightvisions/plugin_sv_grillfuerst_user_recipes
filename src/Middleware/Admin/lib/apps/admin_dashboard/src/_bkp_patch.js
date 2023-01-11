@@ -4,7 +4,7 @@
  * @param portalRoot - The HTML element that you want Modals to be teleported to
  * @returns
  */
-export default function patch(
+export default function _bkp_patch(
 	shadowRootContainer,
 	portalRoot
 ) {
