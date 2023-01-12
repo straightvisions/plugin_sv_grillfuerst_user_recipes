@@ -16,7 +16,7 @@ const App = () => {
 	return (
 		<div className="min-h-full bg-gray-100">
 				<NavigationBar user={user} />
-				<div className="py-10">
+				<div className="p-10">
 					<Routes>
 						<Route
 							path="/edit/:uuid"

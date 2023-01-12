@@ -16,8 +16,8 @@ final class Recipe_Finder_Service {
         $this->repository = $repository;
     }
 
-    public function get_list(int $user_id = null): Recipe_Finder_Result {
-        $rows = $user_id ? $this->repository->get_by_user_id($user_id) : $this->repository->get();
+    public function get_list(int $user_id = null, array $params = []): Recipe_Finder_Result {
+        $rows = $user_id ? $this->repository->get_by_user_id($user_id, $params) : $this->repository->get(null, $params);
 
         return $this->create_result($rows);
     }
@@ -36,6 +36,11 @@ final class Recipe_Finder_Service {
 
             $result->items[] = $this->apply_data($item, $row);
         }
+
+        // apply totals for pagination
+        $result->totalPages = $this->repository->get_total_pages();
+        $result->totalRows = $this->repository->get_total_rows();
+        $result->page = $this->repository->get_current_page();
 
         return $result;
     }

@@ -17,7 +17,7 @@ shadow.appendChild(bodyNode);
 
 // patch tailwind portals
 let r = 0, p = setInterval(function() {
-	if(r > 100) clearInterval(patchShadowDom); // prevent endless loop
+	if(r > 100) clearInterval(p); // prevent endless loop
 	const portal = document.getElementById('headlessui-portal-root'); // portal for modals
 	const _shadow = host.shadowRoot?.children[0];
 	if(_shadow && portal) _shadow.appendChild(portal) & clearInterval(p); // patch dom

@@ -79,4 +79,5 @@ final class Query_Factory {
     public function newDelete(string $table): Query {
         return $this->newQuery()->delete($table);
     }
+
 }

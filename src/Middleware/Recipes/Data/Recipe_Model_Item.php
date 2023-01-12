@@ -9,6 +9,7 @@ class Recipe_Model_Item {
     public ?int $uuid = 0;
     public ?int $user_id = 0;
     public ?string $title = '';
+    public ?string $link = '';
     public ?string $excerpt = '';
     public ?int $servings = 1; // obsolete ?
     public object|string $featured_image;

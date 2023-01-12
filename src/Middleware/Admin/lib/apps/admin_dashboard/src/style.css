@@ -17,6 +17,7 @@
 html,
 body {
 	font-family: 'Gentona Book', sans-serif;
+	margin:0;
 }
 
 #sv-grillfuerst-user-recipes-admin-app{
