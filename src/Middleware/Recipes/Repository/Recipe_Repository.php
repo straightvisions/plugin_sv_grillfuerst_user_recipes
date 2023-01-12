@@ -87,7 +87,7 @@ final class Recipe_Repository {
                 $data[$key] = $Recipe_Item->set($key, $recipe[$key]);
             }
         }
-var_dump($data);die;
+
         return $data;
     }
 

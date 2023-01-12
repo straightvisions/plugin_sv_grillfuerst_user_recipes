@@ -76,12 +76,12 @@ final class Recipe_Finder_Repository {
         $query->where(['uuid' => (int)$id1, 'user_id' => (int)$id2]);
 
         // counting before limit
-        $this->apply_counting($query, $params);
+        $this->apply_counting($query);
 
         return $query->execute()->fetchAll('assoc') ?: [];
     }
 
-    private function apply_counting($query, array $params){
+    private function apply_counting($query, array $params = []){
         $this->totalRows = $query->execute()->count();
         $this->totalPages = $params['limit'] ? ceil($this->totalRows / (int)$params['limit']) : 1;
         $this->currentPage = $params['page'] ? (int)$params['page'] : 1;

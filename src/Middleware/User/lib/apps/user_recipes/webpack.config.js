@@ -15,7 +15,7 @@ module.exports = {
 		}),
 	],
 	devServer: {
-		port: 3030, // you can change the port
+		port: 3040, // you can change the port
 		open: true,
 		hot: true,
 		compress: true,

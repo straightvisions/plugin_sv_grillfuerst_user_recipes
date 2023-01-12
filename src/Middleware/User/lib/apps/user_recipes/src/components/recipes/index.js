@@ -3,17 +3,18 @@ import DayJS from 'react-dayjs';
 import routes from '../../models/routes';
 import {useNavigate} from "react-router-dom";
 import Spinner from "../spinner";
+import Pagination from "../pagination";
 
 const states = {
 	draft: {
 		label: 'Entwurf',
 		color: 'bg-gray-100'
 	},
-	submitted: {
+	review_pending: {
 		label: 'Eingereicht',
 		color: 'bg-yellow-100'
 	},
-	feedback: {
+	reviewed: {
 		label: 'Feedback',
 		color: 'bg-blue-100'
 	},
@@ -25,14 +26,23 @@ const states = {
 
 export default function Recipes(props) {
 	const [recipes, setRecipes] = useState([]);
+	const [pagination, setPagination] = useState({rows:0,pages:0,page:1});
 	const [loading, setLoadingState] = useState(true);
+	const [page, setPage] = useState(1);
+	const [limit, setLimit] = useState(20);
 	const navigate = useNavigate();
 	
 	useEffect(() => {
-		fetch(routes.getRecipes)
+		let route = routes.getRecipes;
+		setLoadingState(true);
+		// filter
+		route += '?';
+		route +='limit='+parseInt(limit);
+		route +='&page=' + parseInt(page);
+		
+		fetch(route)
 			.then(response => response.json())
 			.then(data => {
-				console.log(data.items);
 				// sort new to old
 				const _sorted = data.items.sort((a, b) => {
 						return a.created < b.created ? 1 : -1;
@@ -40,9 +50,10 @@ export default function Recipes(props) {
 				);
 
 				setRecipes(_sorted);
+				setPagination({rows:data.totalRows, pages:data.totalPages, page:data.page});
 				setLoadingState(false);
 			});
-	}, [])
+	}, [page])
 	
 	//@todo migrate list items to external component !!
 	
@@ -119,6 +130,15 @@ export default function Recipes(props) {
 								))}
 								</tbody>
 							</table>
+							<div className="p-4 border-t border-gray-200">
+								<Pagination
+									pages={pagination.pages}
+									rows={pagination.rows}
+									page={pagination.page}
+									showingCount={recipes.length}
+									onChange={setPage}
+								/>
+							</div>
 						</div>
 					</div>
 				</div>

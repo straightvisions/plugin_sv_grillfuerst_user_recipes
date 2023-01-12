@@ -141,6 +141,7 @@ final class Recipe_Validator_Service {
                 'state' => $constraint->optional([]),
                 'uuid' => $constraint->optional([]),
                 'user_id' => $constraint->optional([]),
+                'link' => $constraint->optional([]),
             ]
         );
     }

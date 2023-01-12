@@ -199,7 +199,9 @@ final class Recipes_Middleware implements Middleware_Interface {
         $data = $Request->getJSONParams();
 
         $recipe_uuid = $this->Recipe_Creator_Service->insert($data, $user_id);
+
         $results = $this->Recipe_Finder_Service->get($recipe_uuid, $user_id);
+
         //hotfix // @todo replace the results with ReaderService
         $results = $results->items[0];
         $response = new \WP_REST_Response($results, 201);

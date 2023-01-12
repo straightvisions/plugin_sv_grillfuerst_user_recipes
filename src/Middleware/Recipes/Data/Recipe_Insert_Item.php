@@ -35,6 +35,8 @@ class Recipe_Insert_Item extends Recipe_Model_Item {
 
             $this->{$field} = $value;
         }
+
+        return $this->get($field);
     }
 
     public function get($field){
