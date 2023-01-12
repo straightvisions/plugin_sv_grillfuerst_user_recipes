@@ -1,6 +1,6 @@
 import React from "react";
 import {Link, useNavigate} from "react-router-dom";
-import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
+import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
 
 import {  useLocation } from 'react-router-dom';
 import routes from "../../models/routes";

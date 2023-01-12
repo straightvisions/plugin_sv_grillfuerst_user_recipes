@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid'
+import { ChevronLeftIcon, ChevronRightIcon } from '@heroicons/react/20/solid';
 
 export default function Pagination(props) {
 	const {

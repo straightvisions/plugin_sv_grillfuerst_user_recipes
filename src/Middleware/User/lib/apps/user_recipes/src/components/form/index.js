@@ -29,6 +29,12 @@ export default function Form(props) {
 			});
 			
 	}, []);
+	
+	useEffect(()=>{
+		if(formState.state === 'review_pending'){
+			handleSave();
+		}
+	},[formState]);
 
 	// update storage on formState change
 	// somehow useEffect doesn't work here
@@ -39,8 +45,7 @@ export default function Form(props) {
 	};
 	
 	// manual save
-	const handleSubmit = (e = null) => {
-		if (e) e.preventDefault();
+	const handleSave = () => {
 		if(saving || loading) return;
 		setSavingState(true);
 		//@todo change route in backend to match stateless route here
@@ -63,9 +68,13 @@ export default function Form(props) {
 		});
 	};
 	
+	const handleSubmit = () => {
+		_setFormState({state: 'review_pending'});
+	}
+	
 	// auto save
 	useInterval(() => {
-		handleSubmit();
+		handleSave();
 	}, 20000);
 	
 	if(loading){
@@ -77,12 +86,12 @@ export default function Form(props) {
 	}
 	
 	return (
-		<form className="space-y-6" onSubmit={handleSubmit}>
+		<div className="space-y-6">
 			<Common formState={formState} setFormState={_setFormState} />
 			<Ingredients formState={formState} setFormState={_setFormState} />
 			<Steps formState={formState} setFormState={_setFormState} />
-			<Submit saving={saving} formState={formState} setFormState={_setFormState} />
-		</form>
+			<Submit saving={saving} formState={formState} setFormState={_setFormState} onSubmit={handleSubmit} onSave={handleSave}/>
+		</div>
 	);
 	
 }
