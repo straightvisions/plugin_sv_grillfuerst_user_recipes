@@ -1,4 +1,4 @@
-import React, {useEffect, useState, } from "react";
+import React, {useEffect, useState} from "react";
 import { useInterval } from 'usehooks-ts'
 import Common from '../form_common';
 import Ingredients from '../form_ingredients';
@@ -7,6 +7,7 @@ import Submit from '../form_submit';
 import Spinner from '../spinner';
 import routes from "../../models/routes";
 import { useParams } from "react-router-dom";
+import { AlertReviewed, AlertReviewPending, AlertPublished } from '../form_alerts';
 
 function dateIsValid(date) {
 	return typeof date === 'object' && date !== null && typeof date.getTime === 'function' && !isNaN(date);
@@ -85,13 +86,42 @@ export default function Form(props) {
 		)
 	}
 	
-	return (
-		<div className="space-y-6">
-			<Common formState={formState} setFormState={_setFormState} />
-			<Ingredients formState={formState} setFormState={_setFormState} />
-			<Steps formState={formState} setFormState={_setFormState} />
-			<Submit saving={saving} formState={formState} setFormState={_setFormState} onSubmit={handleSubmit} onSave={handleSave}/>
-		</div>
-	);
+	const getAlerts = () => {
+		if(formState.state === 'review_pending'){
+			return (
+				<AlertReviewPending />
+			)
+		}
+		
+		if(formState.state === 'published'){
+			return (
+				<AlertPublished {...formState} />
+			)
+		}
+		
+		if(formState.state === 'reviewed'){
+			return (
+				<AlertReviewed {...formState} />
+			)
+		}
+	}
+	
+	if(formState.state === 'published' || formState.state === 'review_pending'){
+		return (
+			<div className="space-y-6">
+				{getAlerts()}
+			</div>
+		);
+	}else{
+		return (
+			<div className="space-y-6">
+				{getAlerts()}
+				<Common formState={formState} setFormState={_setFormState} />
+				<Ingredients formState={formState} setFormState={_setFormState} />
+				<Steps formState={formState} setFormState={_setFormState} />
+				<Submit saving={saving} formState={formState} setFormState={_setFormState} onSubmit={handleSubmit} onSave={handleSave}/>
+			</div>
+		);
+	}
 	
 }

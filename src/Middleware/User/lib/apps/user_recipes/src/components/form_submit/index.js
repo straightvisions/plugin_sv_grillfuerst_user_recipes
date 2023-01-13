@@ -26,6 +26,12 @@ export default function Submit(props) {
 		setFormState(formState);
 	};
 	
+	if(formState.state === 'review_pending' || formState.state === 'published'){
+		return (
+			<div className="mt-4"></div>
+		)
+	}
+	
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			<div className="md:grid md:grid-cols-4 md:gap-6">
