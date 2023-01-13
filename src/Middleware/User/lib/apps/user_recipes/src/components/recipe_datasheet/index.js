@@ -2,6 +2,14 @@ import React, {useEffect, useState} from "react";
 import Spinner from "../spinner";
 import routes from "../../models/routes";
 
+const difficultyValues =
+	{
+		easy: "leicht",
+		medium: "mittel",
+		difficult: "schwer",
+	};
+
+
 export default function RecipeDatasheet(props) {
 	const [data, setData] = useState(props.data);
 	
@@ -68,7 +76,9 @@ export default function RecipeDatasheet(props) {
 					</div>
 					<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
 						<dt className="text-sm font-medium text-gray-500">Schwierigkeitsgrad</dt>
-						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{data.difficulty}</dd>
+						<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{difficultyValues[data.difficulty] ? difficultyValues[data.difficulty]
+						: data.difficulty
+						}</dd>
 					</div>
 					<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
 						<dt className="text-sm font-medium text-gray-500">Vorbereitungszeit</dt>

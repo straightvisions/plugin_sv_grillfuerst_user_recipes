@@ -120,8 +120,8 @@ export default function Submit(props) {
 						<Spinner/> Speichert..
 					</button> :
 					<button
-						onClick={onSubmit}
-						type="button"
+			
+						type="submit"
 						className="ml-3 inline-flex	justify-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm
 		font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none
 		focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"

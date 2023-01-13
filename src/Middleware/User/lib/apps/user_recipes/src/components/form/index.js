@@ -8,6 +8,7 @@ import Spinner from '../spinner';
 import routes from "../../models/routes";
 import { useParams } from "react-router-dom";
 import { AlertReviewed, AlertReviewPending, AlertPublished } from '../form_alerts';
+import RecipeDatasheet  from '../recipe_datasheet';
 
 function dateIsValid(date) {
 	return typeof date === 'object' && date !== null && typeof date.getTime === 'function' && !isNaN(date);
@@ -108,19 +109,24 @@ export default function Form(props) {
 	
 	if(formState.state === 'published' || formState.state === 'review_pending'){
 		return (
-			<div className="space-y-6">
-				{getAlerts()}
+			<div className="flex gap-4">
+				<div className="w-1/2">
+					<RecipeDatasheet data={formState} />
+				</div>
+				<div className="w-1/2">
+					{getAlerts()}
+				</div>
 			</div>
 		);
 	}else{
 		return (
-			<div className="space-y-6">
+			<form className="space-y-6" onSubmit={handleSubmit}>
 				{getAlerts()}
 				<Common formState={formState} setFormState={_setFormState} />
 				<Ingredients formState={formState} setFormState={_setFormState} />
 				<Steps formState={formState} setFormState={_setFormState} />
-				<Submit saving={saving} formState={formState} setFormState={_setFormState} onSubmit={handleSubmit} onSave={handleSave}/>
-			</div>
+				<Submit saving={saving} formState={formState} setFormState={_setFormState} onSave={handleSave}/>
+			</form>
 		);
 	}
 	
