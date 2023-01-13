@@ -4,6 +4,7 @@ import routes from '../../models/routes';
 import {useNavigate} from "react-router-dom";
 import Spinner from "../spinner";
 import Pagination from "../pagination";
+import {DocumentDuplicateIcon, TrashIcon} from "@heroicons/react/20/solid";
 
 const states = {
 	draft: {
@@ -68,6 +69,16 @@ export default function Recipes(props) {
 	const getDate = (date) => {
 		return <DayJS format="DD.MM.YYYY HH:mm">{date}</DayJS>;
 	}
+	
+	const handleCopyCode = (e, c) => {
+		e.stopPropagation();
+		
+		if(typeof c === 'string' && c !== ''){
+			navigator.clipboard.writeText(c);
+			//@todo add infobox here
+		}
+	}
+	
 	return (
 		<div className="px-4 sm:px-6 lg:px-0">
 			<div className="mt-8 flex flex-col">
@@ -84,13 +95,18 @@ export default function Recipes(props) {
 									</th>
 									<th
 										scope="col"
+										className="w-1/12 px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+										Status
+									</th>
+									<th
+										scope="col"
 										className="w-10/12 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 										Rezept
 									</th>
 									<th
 										scope="col"
-										className="w-1/12 px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-										Status
+										className="w-10/12 py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+										Gutschein
 									</th>
 								</tr>
 								</thead>
@@ -102,6 +118,12 @@ export default function Recipes(props) {
 											<span
 												className="inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900">
 											  {recipe.uuid}
+											</span>
+										</td>
+										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+											<span
+												className={"inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900 " + states[recipe.state].color}>
+											  {states[recipe.state].label}
 											</span>
 										</td>
 										<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
@@ -120,11 +142,20 @@ export default function Recipes(props) {
 												</div>
 											</div>
 										</td>
-										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-											<span
-												className={"inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900 " + states[recipe.state].color}>
-											  {states[recipe.state].label}
-											</span>
+										<td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+											{recipe.voucher !== '' &&
+												<button
+													onClick={e=>handleCopyCode(e, recipe.voucher)}
+													title="Code kopieren"
+													type="button"
+													className="flex px-3 py-2 bg-orange-600 text-white
+													border border-transparent justify-center align-center
+													hover:bg-white hover:text-orange-600 hover:border-orange-600
+													font-semibold rounded">
+													<DocumentDuplicateIcon className="stroke-white w-[16px]"/>
+													<span className="ml-1">{recipe.voucher}</span>
+												</button>
+											}
 										</td>
 									</tr>
 								))}

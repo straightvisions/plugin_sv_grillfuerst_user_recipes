@@ -8,6 +8,7 @@ class Recipe_Update_Item extends Recipe_Model_Item {
     public ?int $user_id = 0;
     public ?string $state = 'draft';
     public ?string $link = '';
+    public string $voucher = '';
     public ?string $title = '';
     public ?string $excerpt = '';
     public ?int $servings = 4;
