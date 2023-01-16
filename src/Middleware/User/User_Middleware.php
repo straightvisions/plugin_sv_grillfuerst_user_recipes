@@ -25,10 +25,31 @@ final class User_Middleware implements Middleware_Interface {
             'route' => '/users',
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'test']]
         ]);
+
+        $this->Api_Middleware->add([
+            'route' => '/users/(?P<user_id>\d+)/login',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test']]
+        ]);
+
+        $this->Api_Middleware->add([
+            'route' => '/users/register',
+            'args'  => ['methods' => 'POST', 'callback' => [$this, 'test']]
+        ]);
+
+        $this->Api_Middleware->add([
+            'route' => '/users/(?P<user_id>\d+)/reset',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test']]
+        ]);
+
+        $this->Api_Middleware->add([
+            'route' => '/users/(?P<user_id>\d+)/login',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test']]
+        ]);
     }
 
     // custom shortcode handler
     public function get_frontend_user_dashboard(array $atts): string {
+        //@todo add switch for redirect to login template
         $this->Adapter->Asset()->add('app', 'User/lib/apps/user_recipes/dist/user_recipes.build.js');
         return $this->User_Dashboard_Frontend_Service->get($atts);
     }

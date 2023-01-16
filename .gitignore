@@ -1,3 +1,4 @@
 /vendor/
 /src/Middleware/User/lib/apps/user_recipes/node_modules/
 /src/Middleware/Admin/lib/apps/admin_dashboard/node_modules/
+/src/Middleware/User/lib/apps/login/node_modules/
