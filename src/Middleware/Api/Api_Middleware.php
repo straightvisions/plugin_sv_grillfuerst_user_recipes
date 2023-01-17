@@ -4,12 +4,14 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Api;
 
 use SV_Grillfuerst_User_Recipes\Interfaces\Middleware_Interface;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Service\Api_Route_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Api\Service\Api_Http_Service;
 
 use function add_action;
 
 final class Api_Middleware implements Middleware_Interface {
     //private Action_Adapter $Action_Adapter;
     private Api_Route_Service $Api_Route_Service;
+    private Api_Http_Service $Api_Http_Service;
 
     public function __construct(
         //Action_Adapter $Action_Adapter
@@ -20,6 +22,7 @@ final class Api_Middleware implements Middleware_Interface {
         add_action('rest_api_init', [$this, 'init']);
 
         $this->Api_Route_Service = new Api_Route_Service();
+        $this->Api_Http_Service = new Api_Http_Service();
     }
 
     // custom shortcode handler
@@ -33,5 +36,9 @@ final class Api_Middleware implements Middleware_Interface {
     }
 
     // more controller functions
+
+    public function http(){
+        return $this->Api_Http_Service->get_client();
+    }
 
 }

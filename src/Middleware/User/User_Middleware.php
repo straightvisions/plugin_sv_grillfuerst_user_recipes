@@ -43,8 +43,8 @@ final class User_Middleware implements Middleware_Interface {
         ]);
 
         $this->Api_Middleware->add([
-            'route' => '/users/(?P<user_id>\d+)/login',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test']]
+            'route' => '/users/login',
+            'args'  => ['methods' => 'POST', 'callback' => [$this, 'rest_login']]
         ]);
     }
 
@@ -57,28 +57,24 @@ final class User_Middleware implements Middleware_Interface {
 
     public function rest_login( $request ) {
         $Request = $this->Adapter->Request()->set($request);
-        $params = $Request->getParams();
+        $data = $Request->getJSONParams();
+
+
         //$results = $this->Recipe_Finder_Service->get_list(null, $params);
+        $client = $this->Api_Middleware->http();
 
-        $url = 'https://www.grillfuerst.de/index.php?page=callback&page_action=gf_magazine&call=api&endpoint=account-login';
-
-        // Initialize the cURL session
-        $ch = curl_init();
-
-// Set the URL of the server you want to call
-        curl_setopt($ch, CURLOPT_URL, $url);
-
-// Return the response as a string instead of outputting it
-        curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
-
-// Execute the cURL request
-        $response = curl_exec($ch);
-
-// Close the cURL session
-        curl_close($ch);
+        //@todo implement env
+        $response = $client->request('POST', 'localhost',
+        [
+            'form_params' => $data,
+            'auth' => [
+                '',
+                ''
+            ]
+        ]);
 
         // implement wp_response adapter + services
-        $response = new \WP_REST_Response($results, 200); // @todo remove this when adapter is available
+        $response = new \WP_REST_Response($response->getBody()->getContents(), $response->getStatusCode()); // @todo remove this when adapter is available
         return $response;
     }
 
