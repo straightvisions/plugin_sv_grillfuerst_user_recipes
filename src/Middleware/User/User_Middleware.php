@@ -64,12 +64,12 @@ final class User_Middleware implements Middleware_Interface {
         $client = $this->Api_Middleware->http();
 
         //@todo implement env
-        $response = $client->request('POST', 'localhost',
+        $response = $client->request('POST', 'https://example.com',
         [
             'form_params' => $data,
             'auth' => [
-                '',
-                ''
+                'test',
+                'a'
             ]
         ]);
 
