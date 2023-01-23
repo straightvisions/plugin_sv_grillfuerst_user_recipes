@@ -6,17 +6,23 @@ use SV_Grillfuerst_User_Recipes\Interfaces\Middleware_Interface;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Dashboard_Frontend_Service;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
+use Psr\Container\ContainerInterface;
 
 
 final class User_Middleware implements Middleware_Interface {
     private User_Dashboard_Frontend_Service $User_Dashboard_Frontend_Service;
     private Api_Middleware $Api_Middleware;
     private $Adapter;
+    private $settings;
+    private $auth_header;
 
     public function __construct(
         Api_Middleware $Api_Middleware,
         User_Dashboard_Frontend_Service $User_Dashboard_Frontend_Service,
-        Adapter $Adapter) {
+        Adapter $Adapter,
+        ContainerInterface $container
+    ) {
+        $this->settings = $container->get('settings');
         $this->Api_Middleware = $Api_Middleware;
         $this->User_Dashboard_Frontend_Service = $User_Dashboard_Frontend_Service;
         $this->Adapter = $Adapter;
@@ -44,7 +50,7 @@ final class User_Middleware implements Middleware_Interface {
 
         $this->Api_Middleware->add([
             'route' => '/users/login',
-            'args'  => ['methods' => 'POST', 'callback' => [$this, 'rest_login']]
+            'args'  => ['methods' => 'POST,GET', 'callback' => [$this, 'rest_login']]
         ]);
     }
 
@@ -58,23 +64,19 @@ final class User_Middleware implements Middleware_Interface {
     public function rest_login( $request ) {
         $Request = $this->Adapter->Request()->set($request);
         $data = $Request->getJSONParams();
-
-
-        //$results = $this->Recipe_Finder_Service->get_list(null, $params);
         $client = $this->Api_Middleware->http();
 
-        //@todo implement env
-        $response = $client->request('POST', 'https://example.com',
+        $response = $client->request('POST',
+            $this->settings['login_server_url'] ,
         [
-            'form_params' => $data,
-            'auth' => [
-                'test',
-                'a'
-            ]
+            'content-type' => 'application/json',
+            'json' => $data,
+            'headers' => ['Authorization' => $this->settings['auth_header']],
+            'debug'=>false
         ]);
 
         // implement wp_response adapter + services
-        $response = new \WP_REST_Response($response->getBody()->getContents(), $response->getStatusCode()); // @todo remove this when adapter is available
+        $response = new \WP_REST_Response(json_decode($response->getBody(), true), $response->getStatusCode()); // @todo remove this when adapter is available
         return $response;
     }
 
@@ -85,5 +87,4 @@ final class User_Middleware implements Middleware_Interface {
     }
 
     // more controller functions
-
 }
