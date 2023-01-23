@@ -31,9 +31,7 @@ return [
     Media_Middleware::class => autowire(Media_Middleware::class),
 
     // adapters
-    Adapter::class => function(ContainerInterface $container){
-        return new SV_Grillfuerst_User_Recipes\Adapters\Adapter($container);
-    },
+    Adapter::class => autowire(Adapter::class),
 
     'Wordpress_Adapter' => autowire(Wordpress_Adapter::class),
 
