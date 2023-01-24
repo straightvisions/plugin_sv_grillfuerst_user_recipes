@@ -25,6 +25,10 @@ export default function App(){
 						path="/login"
 						element={<Login />}
 					/>
+					<Route
+						path="/"
+						element={<Login />}
+					/>
 				</Routes>
 		</div>
 	);

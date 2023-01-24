@@ -1,21 +1,18 @@
 import React, {useState} from 'react';
 import Logo from '../logo';
 import Spinner from '../spinner';
+import Overlay from '../overlay';
 
 export default function Login(props){
 	// @todo move this to config:
-	const bearerToken = 'xx';
-	const routeLogin = 'xxx';
+	const routeLogin = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-user-recipes/v1/users/login';
 	const [credentials, setCredentials] = useState({
 		username: '',
 		password: ''
 	});
 	
 	const [message, setMessage] = useState('');
-	
 	const [isSending, setIsSending] = useState(false);
-	
-	console.log(credentials);
 	
 	const handleEmail = (e) => {
 		credentials.username = e.target.value;
@@ -35,15 +32,14 @@ export default function Login(props){
 		fetch(routeLogin, {
 			method: 'POST',
 			cache: 'no-cache',
-			headers: {
-				'Authorization': `Bearer ${bearerToken}`,
-				'Content-Type': 'application/json'},
+			// no auth header - this is a public call
+			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify(credentials),
 		})
 			.then(response => response.json())
 			.then(res => {
 				if(res.status === 'success'){
-					window.location.href = res.url + '&ref=xxx';
+					window.location.href = res.url + '&ref=https%3A%2F%2Frelaunch-magazin.grillfuerst.de%2Fnutzerrezepte';
 				}else{
 					setMessage(res.message);
 				}
@@ -53,7 +49,7 @@ export default function Login(props){
 				
 			}).catch(function(error) {
 			setMessage(error.message);
-			setSavingState(false);
+			setIsSending(false);
 		});
 	}
 	
@@ -66,15 +62,19 @@ export default function Login(props){
 			</div>
 			
 			<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-				<div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10">
+				<div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 relative">
+					{ isSending &&
+						<Overlay />
+					}
 					<form className="space-y-6" onSubmit={handleSubmit}>
 						{message !== '' &&
 							<div role="alert">
 								<div className="bg-red-500 text-sm text-white font-bold rounded-t px-4 py-2">
 									Login fehlgeschlagen
 								</div>
-								<div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-sm text-red-700">
-									<p>{message}</p>
+								<div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-sm text-red-700"
+								     dangerouslySetInnerHTML={{__html: message}}
+								>
 								</div>
 							</div>
 						}
