@@ -44,8 +44,8 @@ final class User_Middleware implements Middleware_Interface {
         ]);
 
         $this->Api_Middleware->add([
-            'route' => '/users/(?P<user_id>\d+)/reset',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test']]
+            'route' => '/users/reset',
+            'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_reset']]
         ]);
 
         $this->Api_Middleware->add([
@@ -74,6 +74,25 @@ final class User_Middleware implements Middleware_Interface {
             'headers' => ['Authorization' => $this->settings['auth_header']],
             'debug'=>false
         ]);
+
+        // implement wp_response adapter + services
+        $response = new \WP_REST_Response(json_decode($response->getBody(), true), $response->getStatusCode()); // @todo remove this when adapter is available
+        return $response;
+    }
+
+    public function rest_reset( $request ) {
+        $Request = $this->Adapter->Request()->set($request);
+        $data = $Request->getJSONParams();
+        $client = $this->Api_Middleware->http();
+
+        $response = $client->request('POST',
+            $this->settings['reset_server_url'] ,
+            [
+                'content-type' => 'application/json',
+                'json' => $data,
+                'headers' => ['Authorization' => $this->settings['auth_header']],
+                'debug'=>false
+            ]);
 
         // implement wp_response adapter + services
         $response = new \WP_REST_Response(json_decode($response->getBody(), true), $response->getStatusCode()); // @todo remove this when adapter is available

@@ -44,7 +44,6 @@ export default function Login(props){
 					setMessage(res.message);
 				}
 				
-				console.log(res);
 				setIsSending(false);
 				
 			}).catch(function(error) {
