@@ -15,13 +15,15 @@ export default function Login(props){
 	const [isSending, setIsSending] = useState(false);
 	
 	const handleEmail = (e) => {
-		credentials.username = e.target.value;
-		setCredentials(credentials);
+		let newCredentials = {...credentials};
+		newCredentials.username = e.target.value;
+		setCredentials(newCredentials);
 	}
 	
 	const handlePassword = (e) => {
-		credentials.password = e.target.value;
-		setCredentials(credentials);
+		let newCredentials = {...credentials};
+		newCredentials.password = e.target.value;
+		setCredentials(newCredentials);
 	}
 	
 	const handleSubmit = (e) => {

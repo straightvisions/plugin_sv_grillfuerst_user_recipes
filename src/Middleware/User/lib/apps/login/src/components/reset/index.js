@@ -13,8 +13,9 @@ export default function Reset(props){
 	const [isSending, setIsSending] = useState(false);
 	
 	const handleEmail = (e) => {
-		credentials.username = e.target.value;
-		setCredentials(credentials);
+		let newCredentials = {...credentials};
+		newCredentials.username = e.target.value;
+		setCredentials(newCredentials);
 	}
 	
 	const handleSubmit = (e) => {

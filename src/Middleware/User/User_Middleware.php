@@ -99,6 +99,25 @@ final class User_Middleware implements Middleware_Interface {
         return $response;
     }
 
+    public function rest_register( $request ) {
+        $Request = $this->Adapter->Request()->set($request);
+        $data = $Request->getJSONParams();
+        $client = $this->Api_Middleware->http();
+
+        $response = $client->request('POST',
+            $this->settings['register_server_url'] ,
+            [
+                'content-type' => 'application/json',
+                'json' => $data,
+                'headers' => ['Authorization' => $this->settings['auth_header']],
+                'debug'=>false
+            ]);
+
+        // implement wp_response adapter + services
+        $response = new \WP_REST_Response(json_decode($response->getBody(), true), $response->getStatusCode()); // @todo remove this when adapter is available
+        return $response;
+    }
+
     public function test() {
         // implement wp_response adapter + services
         echo "ok";
