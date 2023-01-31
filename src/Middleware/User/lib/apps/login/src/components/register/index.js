@@ -44,7 +44,6 @@ export default function Register(props){
 		}
 	}
 	
-	
 	const handleEmail = (e) => {
 		let newCredentials = {...credentials};
 		newCredentials.cust_info.customers_email_address = e.target.value;
@@ -52,7 +51,6 @@ export default function Register(props){
 	}
 	
 	const handlePassword = (key, val) => {
-		console.log('handle');
 		let newPassword = {...password};
 		if(newPassword.hasOwnProperty(key)){
 			newPassword[key] = val;
@@ -74,7 +72,6 @@ export default function Register(props){
 			
 			setCredentials(newCredentials);
 		}
-		console.log(newPassword);
 		setPassword(newPassword);
 	}
 	
