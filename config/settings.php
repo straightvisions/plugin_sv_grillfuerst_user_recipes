@@ -31,7 +31,7 @@ $settings['auth_header'] .= $settings['basic_auth_header'] ? 'Basic ' . $setting
 $settings['auth_header'] .= $settings['bearer_auth_header'] ? 'Bearer ' . $settings['bearer_auth_header'] . ' ' : '';
 // URLS
 $settings['login_server_url'] = GF_USER_RECIPES_LOGIN_SERVER_URL;
-$settings['reset_server_url'] = GF_USER_RECIPES_RESET_SERVER_URL;s
+$settings['reset_server_url'] = GF_USER_RECIPES_RESET_SERVER_URL;
 $settings['register_server_url'] = GF_USER_RECIPES_REGISTER_SERVER_URL;
 
 $settings['logger'] = [
