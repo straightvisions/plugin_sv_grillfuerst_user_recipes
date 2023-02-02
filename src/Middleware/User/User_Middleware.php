@@ -40,7 +40,7 @@ final class User_Middleware implements Middleware_Interface {
 
         $this->Api_Middleware->add([
             'route' => '/users/register',
-            'args'  => ['methods' => 'POST', 'callback' => [$this, 'test']]
+            'args'  => ['methods' => 'POST', 'callback' => [$this, 'rest_register']]
         ]);
 
         $this->Api_Middleware->add([

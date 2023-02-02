@@ -1,11 +1,12 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useReducer} from 'react';
 import Logo from '../logo';
-import Overlay from "../overlay";
+import Overlay from '../overlay';
+import { useNavigate } from 'react-router-dom';
 
 export default function Register(props){
 	
 	// @todo move this to config:
-	const routeLogin = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-user-recipes/v1/users/login';
+	const routeLogin = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-user-recipes/v1/users/register';
 	
 	const [credentials, setCredentials] = useState({
 		'default_address': {
@@ -28,13 +29,26 @@ export default function Register(props){
 		}
 	});
 	
-	const [message, setMessage] = useState('');
+	const [message, setMessage] = useReducer((state, action)=>{
+		return action.payload.map(i=>i.info_message).join('<br><br>');
+	},'');
+	
 	const [isSending, setIsSending] = useState(false);
 	const [password, setPassword] = useState({
 		password1: '',
 		password2: '',
 		message: '',
 	});
+	
+	const [isSuccess, setIsSuccess] = useState(false);
+	const navigate = useNavigate();
+	
+	useEffect(()=>{
+		if(isSuccess === true){
+			navigate('/');
+		}
+		
+	},[isSuccess])
 	
 	const handleAddress = (key, val) => {
 		if(credentials.default_address.hasOwnProperty(key)){
@@ -47,6 +61,7 @@ export default function Register(props){
 	const handleEmail = (e) => {
 		let newCredentials = {...credentials};
 		newCredentials.cust_info.customers_email_address = e.target.value;
+		newCredentials.cust_info.customers_email_address_confirm = e.target.value;
 		setCredentials(newCredentials);
 	}
 	
@@ -59,12 +74,14 @@ export default function Register(props){
 		if(newPassword.password1 === newPassword.password2){
 			let newCredentials = {...credentials};
 			newCredentials.cust_info.customers_password = newPassword.password1;
+			newCredentials.cust_info.customers_password_confirm = newPassword.password1;
 			newPassword.message = '';
 			setCredentials(newCredentials);
 		}else{
 			// remove unsafe password from list
 			let newCredentials = {...credentials};
 			newCredentials.cust_info.customers_password = '';
+			newCredentials.cust_info.customers_password_confirm = '';
 			
 			if(newPassword.password1 !== '' && newPassword.password2 !== ''){
 				newPassword.message = 'Passwörter stimmen nicht überein!';
@@ -78,7 +95,9 @@ export default function Register(props){
 	
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if(isSending) return;
+		
+		// is already sending or pw is not valid yet?
+		if(isSending || password.message !== '') return;
 		setIsSending(true);
 		
 		fetch(routeLogin, {
@@ -91,18 +110,20 @@ export default function Register(props){
 			.then(response => response.json())
 			.then(res => {
 				if(res.status === 'success'){
-					window.location.href = res.url + '&ref=https%3A%2F%2Frelaunch-magazin.grillfuerst.de%2Fnutzerrezepte';
+					setIsSuccess(true);
 				}else{
-					setMessage(res.message);
+					setMessage({payload: res.message.error});
 				}
 				
 				setIsSending(false);
 				
 			}).catch(function(error) {
-			setMessage(error.message);
+			setMessage({payload: error.message});
 			setIsSending(false);
 		});
 	}
+	
+	
 	
 	
 	return (
@@ -118,9 +139,9 @@ export default function Register(props){
 					{ isSending &&
 						<Overlay />
 					}
-					<form className="space-y-6 grid grid-cols-2 gap-x-4" onSubmit={e=>e.preventDefault()}>
+					<form className="space-y-6 grid grid-cols-2 gap-x-4" onSubmit={handleSubmit}>
 						{message !== '' &&
-							<div role="alert">
+							<div role="alert" className="col-span-2">
 								<div className="bg-red-500 text-sm text-white font-bold rounded-t px-4 py-2">
 									Registrierung fehlgeschlagen
 								</div>
@@ -283,7 +304,7 @@ export default function Register(props){
 									autoComplete="tel"
 									required
 									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
-									onChange={(e) => handleAddress('gender', e.target.value)}
+									onChange={(e) => handleAddress('customers_phone', e.target.value)}
 								/>
 							</div>
 						</div>
@@ -336,7 +357,7 @@ export default function Register(props){
 						<div className="col-span-2 inset-0 flex items-center">
 							<div className="w-full border-t border-gray-300" />
 						</div>
-						
+						{ /*
 						<div className="flex items-center col-span-2">
 							<input
 								id="newsletter"
@@ -348,7 +369,7 @@ export default function Register(props){
 								Ja, ich möchte den Newsletter erhalten.
 							</label>
 						</div>
-					
+						*/}
 						
 						<div className="col-span-2">
 							<input
