@@ -29,6 +29,7 @@ $settings['bearer_auth_header'] = GF_USER_RECIPES_APP_BEARER_AUTH;
 // combine auth headers to final header
 $settings['auth_header'] .= $settings['basic_auth_header'] ? 'Basic ' . $settings['basic_auth_header'] . ' ' : '';
 $settings['auth_header'] .= $settings['bearer_auth_header'] ? 'Bearer ' . $settings['bearer_auth_header'] . ' ' : '';
+$settings['auth_header'] = trim(rtrim($settings['auth_header']));
 // URLS
 $settings['login_server_url'] = GF_USER_RECIPES_LOGIN_SERVER_URL;
 $settings['reset_server_url'] = GF_USER_RECIPES_RESET_SERVER_URL;
