@@ -55,7 +55,7 @@ spl_autoload_register(function ($class) {
 use SV_Grillfuerst_User_Recipes\Factory\Container_Factory;
 use SV_Grillfuerst_User_Recipes\App;
 
-require_once __DIR__ . '/src/vendor/autoload.php';
+require_once __DIR__ . '/vendor/autoload.php';
 
 // Build DI Container instance
 $SV_Grillfuerst_User_Recipes = (new Container_Factory())->createInstance();
