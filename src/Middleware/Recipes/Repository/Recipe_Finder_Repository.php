@@ -82,7 +82,7 @@ final class Recipe_Finder_Repository {
     }
 
     private function apply_counting($query, array $params = []){
-        $this->totalRows = $query->execute()->count();
+        $this->totalRows = $query->execute()->rowCount();
         $this->totalPages = $params['limit'] ? ceil($this->totalRows / (int)$params['limit']) : 1;
         $this->currentPage = $params['page'] ? (int)$params['page'] : 1;
     }

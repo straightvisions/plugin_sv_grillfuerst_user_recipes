@@ -31,16 +31,7 @@ final class Query_Factory {
      * @return Query A new select query
      */
     public function newSelect(string $table): Query {
-        return $this->newQuery()->from($table);
-    }
-
-    /**
-     * Create a new query.
-     *
-     * @return Query The query
-     */
-    public function newQuery(): Query {
-        return $this->connection->newQuery();
+        return $this->connection->selectQuery()->from($table);
     }
 
     /**
@@ -52,7 +43,7 @@ final class Query_Factory {
      * @return Query The new update query
      */
     public function newUpdate(string $table, array $data): Query {
-        return $this->newQuery()->update($table)->set($data);
+        return $this->connection->updateQuery()->update($table)->set($data);
     }
 
     /**
@@ -64,7 +55,7 @@ final class Query_Factory {
      * @return Query The new insert query
      */
     public function newInsert(string $table, array $data): Query {
-        return $this->newQuery()->insert(array_keys($data))
+        return $this->connection->insertQuery()->insert(array_keys($data))
                     ->into($table)
                     ->values($data);
     }
@@ -77,7 +68,7 @@ final class Query_Factory {
      * @return Query A new delete query
      */
     public function newDelete(string $table): Query {
-        return $this->newQuery()->delete($table);
+        return $this->connection->deleteQuery()->delete($table);
     }
 
 }
