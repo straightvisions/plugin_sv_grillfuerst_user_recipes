@@ -6,6 +6,7 @@ use SV_Grillfuerst_User_Recipes\Interfaces\Middleware_Interface;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Dashboard_Frontend_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Login_Frontend_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Jwt\Jwt_Middleware;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 use Psr\Container\ContainerInterface;
 
@@ -14,6 +15,7 @@ final class User_Middleware implements Middleware_Interface {
     private User_Dashboard_Frontend_Service $User_Dashboard_Frontend_Service;
     private User_Login_Frontend_Service $User_Login_Frontend_Service;
     private Api_Middleware $Api_Middleware;
+    private Jwt_Middleware $Jwt_Middleware;
     private $Adapter;
     private $settings;
     private $auth_header;
@@ -22,6 +24,7 @@ final class User_Middleware implements Middleware_Interface {
         Api_Middleware $Api_Middleware,
         User_Dashboard_Frontend_Service $User_Dashboard_Frontend_Service,
         User_Login_Frontend_Service $User_Login_Frontend_Service,
+        Jwt_Middleware $Jwt_Middleware,
         Adapter $Adapter,
         ContainerInterface $container
     ) {
@@ -29,6 +32,7 @@ final class User_Middleware implements Middleware_Interface {
         $this->Api_Middleware = $Api_Middleware;
         $this->User_Dashboard_Frontend_Service = $User_Dashboard_Frontend_Service;
         $this->User_Login_Frontend_Service = $User_Login_Frontend_Service;
+        $this->Jwt_Middleware = $Jwt_Middleware;
         $this->Adapter = $Adapter;
         $this->Adapter->Shortcode()->add('sv_grillfuerst_user_recipes_user_dashboard', [$this, 'get_frontend_user_dashboard']);
         $this->Adapter->Shortcode()->add('sv_grillfuerst_user_recipes_user_login', [$this, 'get_frontend_user_login']);
@@ -57,6 +61,35 @@ final class User_Middleware implements Middleware_Interface {
             'route' => '/users/login',
             'args'  => ['methods' => 'POST,GET', 'callback' => [$this, 'rest_login']]
         ]);
+
+        $this->Api_Middleware->add([
+            'route' => '/users/jwt',
+            'args'  => ['methods' => 'POST,GET', 'callback' => [$this, 'jwt_test']]
+        ]);
+    }
+
+    public function jwt_test($request){
+        $Request = $this->Adapter->Request()->set($request);
+        $data = $Request->getJSONParams();
+        $method = $Request->getMethod();
+        $body = [];
+        $code = 404;
+
+        if($method === 'GET'){
+            $body['token'] = $this->Jwt_Middleware->create(['user_id' => 1]);
+            $code = 200;
+        }
+
+        if($method === 'POST'){
+
+            $body = $this->Jwt_Middleware->get($Request->getHeader('authorization'));
+            $code = 200;
+        }
+
+
+        // implement wp_response adapter + services
+        $response = new \WP_REST_Response($body, $code); // @todo remove this when adapter is available
+        return $response;
     }
 
     // custom shortcode handler
