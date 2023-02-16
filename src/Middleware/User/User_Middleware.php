@@ -124,6 +124,7 @@ final class User_Middleware implements Middleware_Interface {
 
         if($code === 200 && isset($body['status']) && $body['status'] === 'success'){
             // @todo create a session and set a cookie with token
+            //$body['token'] = $this->Jwt_Middleware->create(['user_id' => 1]);
         }
 
         // implement wp_response adapter + services
