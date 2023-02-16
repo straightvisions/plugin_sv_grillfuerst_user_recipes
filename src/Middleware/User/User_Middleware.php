@@ -63,6 +63,16 @@ final class User_Middleware implements Middleware_Interface {
         ]);
 
         $this->Api_Middleware->add([
+            'route' => '/users/login/check',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_login_check']]
+        ]);
+
+        $this->Api_Middleware->add([
+            'route' => '/users/logout',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_logout']]
+        ]);
+
+        $this->Api_Middleware->add([
             'route' => '/users/jwt',
             'args'  => ['methods' => 'POST,GET', 'callback' => [$this, 'jwt_test']]
         ]);
@@ -123,12 +133,70 @@ final class User_Middleware implements Middleware_Interface {
         $code = $response->getStatusCode();
 
         if($code === 200 && isset($body['status']) && $body['status'] === 'success' && isset($body['customerId'])){
-            $body['token'] = $this->Jwt_Middleware->create([
-                    'user_id' => $body['customerId'],
-                    'role'=> 'customer'
-                ]);
+            $this->Jwt_Middleware->create([
+                'userId' => $body['customerId'],
+                'role'=> 'customer',
+                'can' => ['view','edit']
+            ]);
         }
 
+        // implement wp_response adapter + services
+        $response = new \WP_REST_Response($body, $code); // @todo remove this when adapter is available
+        return $response;
+    }
+
+    public function rest_login_check() {
+        $data = $this->Jwt_Middleware->get();
+        $id = isset($data['userId']) ? $data['userId'] : 0;
+        $client = $this->Api_Middleware->http();
+
+        $response = $client->request('POST',
+            $this->settings['loggedin_server_url'] ,
+            [
+                'content-type' => 'application/json',
+                'json' => ['customerId'=>$id],
+                'headers' => ['Authorization' => $this->settings['auth_header']],
+                'debug'=>false
+            ]);
+
+        $body = json_decode($response->getBody(), true);
+        $code = $response->getStatusCode();
+
+        // id = 0 returns an error from remote, we have to compensate that
+        if(isset($body['status']) && $body['status'] === 'error'){
+            $body['status'] = 'success';
+            $body['loggedIn'] = false;
+        }
+
+        $body['userId'] = $id;
+
+        // implement wp_response adapter + services
+        $response = new \WP_REST_Response($body, $code); // @todo remove this when adapter is available
+        return $response;
+    }
+
+    public function rest_logout() {
+        $data = $this->Jwt_Middleware->get();
+        $id = isset($data['userId']) ? $data['userId'] : 0;
+        $this->Jwt_Middleware->destroy();
+        $client = $this->Api_Middleware->http();
+
+        //@todo not implemented yet
+        $code = 200;
+        $body = ['status'=>'success'];
+        /*
+        $response = $client->request('POST',
+            $this->settings['logout_server_url'] ,
+            [
+                'content-type' => 'application/json',
+                'json' => ['customerId'=>$id],
+                'headers' => ['Authorization' => $this->settings['auth_header']],
+                'debug'=>false
+            ]);
+
+        $body = json_decode($response->getBody(), true);
+        $code = $response->getStatusCode();
+    */
         // implement wp_response adapter + services
         $response = new \WP_REST_Response($body, $code); // @todo remove this when adapter is available
         return $response;

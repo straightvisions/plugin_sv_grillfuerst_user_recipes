@@ -42,9 +42,8 @@ export default function Login(props){
 			.then(response => response.json())
 			.then(res => {
 				if(res.status === 'success'){
-					storage.set('token', res.token);
 					storage.set('userId', res.customerId);
-					window.location.href = res.url + '&ref=https%3A%2F%2Frelaunch-magazin.grillfuerst.de%2Fnutzerrezepte';
+					//window.location.href = res.url + '&ref=https%3A%2F%2Frelaunch-magazin.grillfuerst.de%2Fnutzerrezepte';
 				}else{
 					setMessage(res.message);
 				}

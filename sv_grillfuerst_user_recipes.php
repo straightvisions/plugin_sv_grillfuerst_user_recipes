@@ -51,7 +51,6 @@ spl_autoload_register(function ($class) {
     }
 });
 
-
 use SV_Grillfuerst_User_Recipes\Factory\Container_Factory;
 use SV_Grillfuerst_User_Recipes\App;
 

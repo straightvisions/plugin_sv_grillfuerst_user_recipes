@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import DayJS from 'react-dayjs';
 import routes from '../../models/routes';
+import storage from '../../modules/storage';
 import {useNavigate} from "react-router-dom";
 import Spinner from "../spinner";
 import Pagination from "../pagination";
@@ -41,7 +42,11 @@ export default function Recipes(props) {
 		route +='limit='+parseInt(limit);
 		route +='&page=' + parseInt(page);
 		
-		fetch(route)
+		fetch(route,{
+			headers: {
+				'Authorization': 'Bearer ' + storage.get('token'),
+			}
+		})
 			.then(response => response.json())
 			.then(data => {
 				// sort new to old

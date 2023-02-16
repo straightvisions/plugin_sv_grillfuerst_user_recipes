@@ -2,33 +2,32 @@ import React, {useState} from "react";
 import Header from './components/header';
 import Recipes from './components/recipes';
 import Form from './components/form';
-import User from './models/user';
-
-import {
-	Routes,
-	Route, useNavigate
-} from "react-router-dom";
+import user from './modules/user';
+import routes from './models/routes';
+import { Routes, Route} from "react-router-dom";
 
 const App = () => {
-	const [user, setUser] = useState(User);
-	
-	const navigate = useNavigate();
-	
-	return (
-		<div className="mx-auto max-w-7xl">
-				<Header user={user} />
+	if(user.isLoggedIn() === false){
+		//window.location.href = routes.login;
+	}else{
+		return (
+			<div className="mx-auto max-w-7xl">
+				<Header />
 				<Routes>
 					<Route
 						path="/edit/:uuid"
-						element={<Form user={user}/>}
+						element={<Form />}
 					/>
 					<Route
 						path="/"
-						element={<Recipes user={user} />}
+						element={<Recipes />}
 					/>
 				</Routes>
-		</div>
-	);
+			</div>
+		);
+	}
+	
+	
 };
 
 export default App;

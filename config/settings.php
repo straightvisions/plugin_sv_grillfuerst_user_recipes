@@ -1,6 +1,7 @@
 <?php
 //@todo add env support + specific default + wordpress config
 $settings = [
+    'env' => defined('GF_USER_RECIPES_ENV') ? GF_USER_RECIPES_ENV : 'production',
     'adapters' => [
         // Wordpress CMS specific adapters
         'Action' => 'Wordpress_Adapter',
@@ -33,6 +34,7 @@ $settings['auth_header'] .= $settings['bearer_auth_header'] ? 'Bearer ' . $setti
 $settings['auth_header'] = trim(rtrim($settings['auth_header']));
 // URLS
 $settings['login_server_url'] = GF_USER_RECIPES_LOGIN_SERVER_URL;
+$settings['loggedin_server_url'] = GF_USER_RECIPES_LOGGEDIN_SERVER_URL;
 $settings['reset_server_url'] = GF_USER_RECIPES_RESET_SERVER_URL;
 $settings['register_server_url'] = GF_USER_RECIPES_REGISTER_SERVER_URL;
 

@@ -1,6 +1,6 @@
 const storage = {
 	appStorage : 'svGrillfuerstUserRecipes',
-
+	
 	getStorage : () => {
 		let _storage = localStorage.getItem(storage.appStorage);
 		return _storage ? JSON.parse(_storage) : {};
@@ -20,15 +20,6 @@ const storage = {
 		const _storage = storage.getStorage();
 		return _storage.hasOwnProperty(key) ? _storage[key] : def;
 	},
-	
-	getToken : () => {
-		const tokenString = document.cookie
-			.split(';')
-			.map(cookie => cookie.trim())
-			.find(cookie => cookie.startsWith('svGrillfuerstUserRecipesToken='));
-
-		return tokenString ? tokenString.split('=')[1] : '';
-	}
 }
 
 window.addEventListener('storage', function(event) {

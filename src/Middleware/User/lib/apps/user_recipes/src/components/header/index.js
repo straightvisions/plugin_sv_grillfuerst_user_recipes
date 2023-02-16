@@ -1,9 +1,10 @@
-import React from "react";
-import {Link, useNavigate} from "react-router-dom";
+import React from 'react';
+import {Link, useNavigate} from 'react-router-dom';
 import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
-
 import {  useLocation } from 'react-router-dom';
-import routes from "../../models/routes";
+import routes from '../../models/routes';
+import user from '../../modules/user';
+const User = user.get();
 
 function FormButton(props){
 	const location = useLocation();
@@ -75,11 +76,16 @@ export default function Header(props) {
 							type="button"
 							className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
 						>
+							{User.avatar !== '' ?
 							<img
 								className="h-8 w-8 rounded-full"
-								src={props.user.avatar}
+								src={User.avatar}
 								alt=""
-							/>
+							/> : <svg className="h-8 w-8 rounded-full" fill="currentColor"
+							          viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+									<path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
+									      clipRule="evenodd"></path>
+								</svg>}
 						</button>
 					</div>
 				</div>

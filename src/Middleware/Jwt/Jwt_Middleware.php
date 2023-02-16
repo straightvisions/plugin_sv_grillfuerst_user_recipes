@@ -8,30 +8,36 @@ use Firebase\JWT\Key;
 
 final class Jwt_Middleware implements Middleware_Interface {
     private $settings;
+    private $cookie_key = 'svGrillfuerstUserRecipesToken';
     private $secret_key = "mysecretkey123"; //@todo ->ENV
     private $expiration_time = 3600; //@todo 7 days
     private $algo = 'HS256';
+    private $token = null;
 
     public function __construct(
         ContainerInterface $container
     ) {
         $this->settings = $container->get('settings');
+        $this->token = isset($_COOKIE[$this->cookie_key]) ? $_COOKIE[$this->cookie_key] : $this->token;
     }
 
-    public function get(string $auth_header): array{
-        $token = $this->extract($auth_header);
-
-        return $this->validate($auth_header) ? (array) JWT::decode($token, new Key($this->secret_key, $this->algo)) : [];
+    public function get(): array{
+        $token = $this->token;
+        return $this->validate() ? (array) JWT::decode($token, new Key($this->secret_key, $this->algo)) : [];
     }
 
-    public function create(array $payload = []){
+    public function create(array $payload = []): void{
         $payload['exp'] = time() + (int)$this->expiration_time;
-        return JWT::encode($payload, $this->secret_key, $this->algo);
+        // create token
+        $token = JWT::encode($payload, $this->secret_key, $this->algo);
+        // create safe cookie
+        setcookie($this->cookie_key, $token, time() + 3600, '/', '', true, true);
     }
 
-    public function validate(string $auth_header): bool{
+    public function validate(): bool{
+
         try {
-            $token = $this->extract($auth_header);
+            $token = $this->token ? $this->token : '';
             // Validate the token and decode the payload data
             $decoded_data = (array)JWT::decode($token, new Key($this->secret_key, $this->algo));
         } catch (\Exception $e) {
@@ -42,6 +48,41 @@ final class Jwt_Middleware implements Middleware_Interface {
         return true;
     }
 
+    public function can(string $function = ''){
+        $output = false;
+        $token = $this->get();
+
+        if(isset($token['can']) && in_array($function, $token['can'])){
+            $output = true;
+        }
+
+        return $output;
+    }
+
+    public function isRole(string $role = 'user'){
+        $output = false;
+        $token = $this->get();
+
+        if(isset($token['role']) && $token['role'] === $role){
+            $output = true;
+        }
+
+        // overload for admins
+        if($role === 'admin' && $token['role'] === 'user'){
+            $output = true;
+        }
+
+        return $output;
+    }
+
+    public function destroy(){
+        if(isset($_COOKIE[$this->cookie_key])){
+            unset($_COOKIE[$this->cookie_key]);
+            setcookie($this->cookie_key, '', time() - 3600, '/', '', true, true);
+        }
+    }
+
+    // obsolete but keep it if we want app auth later
     private function extract(string $auth_header): string{
         $tokens = explode(',', $auth_header);
         $bearer = '';
