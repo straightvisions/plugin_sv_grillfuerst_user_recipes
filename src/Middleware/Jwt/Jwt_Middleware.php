@@ -18,7 +18,11 @@ final class Jwt_Middleware implements Middleware_Interface {
         ContainerInterface $container
     ) {
         $this->settings = $container->get('settings');
-        $this->token = isset($_COOKIE[$this->cookie_key]) ? $_COOKIE[$this->cookie_key] : $this->token;
+    }
+
+    public function setToken(string $auth_header): void{
+        $this->token = $this->extract($auth_header);
+        // error handling?
     }
 
     public function get(): array{
@@ -26,12 +30,10 @@ final class Jwt_Middleware implements Middleware_Interface {
         return $this->validate() ? (array) JWT::decode($token, new Key($this->secret_key, $this->algo)) : [];
     }
 
-    public function create(array $payload = []): void{
+    public function create(array $payload = []): string{
         $payload['exp'] = time() + (int)$this->expiration_time;
         // create token
-        $token = JWT::encode($payload, $this->secret_key, $this->algo);
-        // create safe cookie
-        setcookie($this->cookie_key, $token, time() + 3600, '/', '', true, true);
+        return JWT::encode($payload, $this->secret_key, $this->algo);
     }
 
     public function validate(): bool{

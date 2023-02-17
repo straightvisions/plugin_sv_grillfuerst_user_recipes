@@ -72,34 +72,6 @@ final class User_Middleware implements Middleware_Interface {
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_logout']]
         ]);
 
-        $this->Api_Middleware->add([
-            'route' => '/users/jwt',
-            'args'  => ['methods' => 'POST,GET', 'callback' => [$this, 'jwt_test']]
-        ]);
-    }
-
-    public function jwt_test($request){
-        $Request = $this->Adapter->Request()->set($request);
-        $data = $Request->getJSONParams();
-        $method = $Request->getMethod();
-        $body = [];
-        $code = 404;
-
-        if($method === 'GET'){
-            $body['token'] = $this->Jwt_Middleware->create(['user_id' => 1]);
-            $code = 200;
-        }
-
-        if($method === 'POST'){
-
-            $body = $this->Jwt_Middleware->get($Request->getHeader('authorization'));
-            $code = 200;
-        }
-
-
-        // implement wp_response adapter + services
-        $response = new \WP_REST_Response($body, $code); // @todo remove this when adapter is available
-        return $response;
     }
 
     // custom shortcode handler
@@ -131,9 +103,10 @@ final class User_Middleware implements Middleware_Interface {
 
         $body = json_decode($response->getBody(), true);
         $code = $response->getStatusCode();
+        $token = '';
 
         if($code === 200 && isset($body['status']) && $body['status'] === 'success' && isset($body['customerId'])){
-            $this->Jwt_Middleware->create([
+            $token = $this->Jwt_Middleware->create([
                 'userId' => $body['customerId'],
                 'role'=> 'customer',
                 'can' => ['view','edit']
@@ -142,6 +115,7 @@ final class User_Middleware implements Middleware_Interface {
 
         // implement wp_response adapter + services
         $response = new \WP_REST_Response($body, $code); // @todo remove this when adapter is available
+        $response->header('Authorization', 'Bearer ' . $token);
         return $response;
     }
 
