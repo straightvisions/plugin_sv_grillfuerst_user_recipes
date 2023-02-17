@@ -7,9 +7,9 @@ import routes from './models/routes';
 import { Routes, Route} from "react-router-dom";
 
 const App = () => {
-	if(user.isLoggedIn() === false){
+	/*if(user.isLoggedIn() === false){
 		//window.location.href = routes.login;
-	}else{
+	}else{*/
 		return (
 			<div className="mx-auto max-w-7xl">
 				<Header />
@@ -25,7 +25,7 @@ const App = () => {
 				</Routes>
 			</div>
 		);
-	}
+	//}
 	
 	
 };
