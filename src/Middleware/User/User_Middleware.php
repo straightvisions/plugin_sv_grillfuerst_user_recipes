@@ -103,10 +103,10 @@ final class User_Middleware implements Middleware_Interface {
 
         $body = json_decode($response->getBody(), true);
         $code = $response->getStatusCode();
-        $token = '';
+        $auth_header = '';
 
         if($code === 200 && isset($body['status']) && $body['status'] === 'success' && isset($body['customerId'])){
-            $token = $this->Jwt_Middleware->create([
+            $auth_header = 'Bearer ' . $this->Jwt_Middleware->create([
                 'userId' => $body['customerId'],
                 'role'=> 'customer',
                 'can' => ['view','edit']
@@ -115,7 +115,8 @@ final class User_Middleware implements Middleware_Interface {
 
         // implement wp_response adapter + services
         $response = new \WP_REST_Response($body, $code); // @todo remove this when adapter is available
-        $response->header('Authorization', 'Bearer ' . $token);
+        $response->header('Authorization', $auth_header);
+        $response->header( 'Access-Control-Expose-Headers', 'Authorization' );
         return $response;
     }
 

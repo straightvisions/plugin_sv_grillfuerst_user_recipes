@@ -39,17 +39,24 @@ export default function Login(props){
 			headers: {'Content-Type': 'application/json'},
 			body: JSON.stringify(credentials),
 		})
-			.then(response => response.json())
+			.then(response => {
+				const authHeader = response.headers.get('Authorization');
+				const token = authHeader ? authHeader.split(' ')[1] : null;
+				return response.json().then(data => ({data, token}));
+			})
 			.then(res => {
-				if(res.status === 'success'){
-					storage.set('userId', res.customerId);
-					//window.location.href = res.url + '&ref=https%3A%2F%2Frelaunch-magazin.grillfuerst.de%2Fnutzerrezepte';
-				}else{
-					setMessage(res.message);
+				const {data, token} = res;
+				if(data.status === 'success'){
+					storage.set('userId', data.customerId);
+					storage.set('token', token);
+					window.location.href = data.url + '&ref=https%3A%2F%2Frelaunch-magazin.grillfuerst.de%2Fnutzerrezepte';
+				} else {
+					setMessage(data.message);
+					// clean storage just in case
+					storage.set('userId', 0);
+					storage.set('token', '');
 				}
-				
 				setIsSending(false);
-				
 			}).catch(function(error) {
 			setMessage(error.message);
 			setIsSending(false);
