@@ -19,7 +19,7 @@ const storage = {
 	get : (key, def = '') => {
 		const _storage = storage.getStorage();
 		return _storage.hasOwnProperty(key) ? _storage[key] : def;
-	},
+	}
 }
 
 window.addEventListener('storage', function(event) {

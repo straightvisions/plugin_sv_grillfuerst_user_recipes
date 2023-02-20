@@ -243,24 +243,25 @@ final class User_Middleware implements Middleware_Interface {
         $body['userId'] = $user_id;
 
         // @todo implement a model
-        $data = isset($body['data']) ? $body['data'] : null;
+        $body_data = isset($body['data']) ? $body['data'] : null;
         // map data to meet frontend user model
-        if($data){
-            $body['firstname'] = isset($data['customers_firstname']) ? $data['customers_firstname'] : '';
-            $body['lastname'] = isset($data['customers_lastname']) ? $data['customers_lastname'] : '';
-            $body['gender'] = isset($data['customers_gender']) ? $data['customers_gender'] : '';
-            $body['avatar'] = isset($data['customers_avatar']) ? $data['customers_avatar'] : '';
+        if($body_data){
+            $data = [];
+            $data['firstname'] = isset($body_data['customers_firstname']) ? $body_data['customers_firstname'] : '';
+            $data['lastname'] = isset($body_data['customers_lastname']) ? $body_data['customers_lastname'] : '';
+            $data['gender'] = isset($body_data['customers_gender']) ? $body_data['customers_gender'] : '';
+            $data['avatar'] = isset($body_data['customers_avatar']) ? $body_data['customers_avatar'] : '';
 
             $body['salutation'] = '';
 
-            switch($body['gender']){
-                case 'm': $body['salutation'] = 'Herr'; break;
-                case 'f': $body['salutation'] = 'Frau'; break;
-                case 'c': $body['salutation'] = ''; break;
+            switch($body_data['gender']){
+                case 'm': $data['salutation'] = 'Herr'; break;
+                case 'f': $data['salutation'] = 'Frau'; break;
+                case 'c': $data['salutation'] = ''; break;
             }
 
             // remove all unnecessary and private user info
-            unset($body['data']);
+            $body['data'] = $data;
         }
 
         // id = 0 returns an error from remote, we have to compensate that

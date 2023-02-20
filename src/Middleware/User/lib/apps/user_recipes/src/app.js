@@ -1,15 +1,29 @@
-import React, {useState} from "react";
+import React, {useState, useEffect} from "react";
 import Header from './components/header';
 import Recipes from './components/recipes';
 import Form from './components/form';
 import user from './modules/user';
-import routes from './models/routes';
+import Spinner from './components/spinner';
 import { Routes, Route} from "react-router-dom";
 
 const App = () => {
-	/*if(user.isLoggedIn() === false){
-		//window.location.href = routes.login;
-	}else{*/
+	
+	// initiate user first - this also checks if user is loggedIn
+	// if not, we redirect to the given login url
+	const [userInited, setUserInited] = useState(false);
+	
+	useEffect(()=>{
+		const initUser = async()=> {
+			await user.init();
+			setUserInited(true);
+		}
+		
+		initUser();
+	}, []);
+	
+	if(userInited === false){
+		return (<Spinner />);
+	}else{
 		return (
 			<div className="mx-auto max-w-7xl">
 				<Header />
@@ -25,8 +39,8 @@ const App = () => {
 				</Routes>
 			</div>
 		);
-	//}
-	
+		
+	}
 	
 };
 
