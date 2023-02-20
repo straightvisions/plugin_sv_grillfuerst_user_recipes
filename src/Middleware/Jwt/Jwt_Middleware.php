@@ -10,7 +10,7 @@ final class Jwt_Middleware implements Middleware_Interface {
     private $settings;
     private $cookie_key = 'svGrillfuerstUserRecipesToken';
     private $secret_key = "mysecretkey123"; //@todo ->ENV
-    private $expiration_time = 3600; //@todo 7 days
+    private $expiration_time = 3600 * 24 * 7; //@todo 7 days
     private $algo = 'HS256';
     private $token = null;
 

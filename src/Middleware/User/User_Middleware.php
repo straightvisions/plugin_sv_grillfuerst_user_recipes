@@ -68,6 +68,11 @@ final class User_Middleware implements Middleware_Interface {
         ]);
 
         $this->Api_Middleware->add([
+            'route' => '/users/info',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_user_info']]
+        ]);
+
+        $this->Api_Middleware->add([
             'route' => '/users/logout',
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_logout']]
         ]);
@@ -212,6 +217,62 @@ final class User_Middleware implements Middleware_Interface {
 
         // implement wp_response adapter + services
         $response = new \WP_REST_Response(json_decode($response->getBody(), true), $response->getStatusCode()); // @todo remove this when adapter is available
+        return $response;
+    }
+
+    public function rest_user_info($request) {
+        $Request = $this->Adapter->Request()->set($request);
+        $auth_header = $Request->getHeader('Authorization');
+        $this->Jwt_Middleware->setToken($auth_header);
+        $token_data = $this->Jwt_Middleware->get();
+        $client = $this->Api_Middleware->http();
+        $user_id = isset($token_data['userId']) ? $token_data['userId'] : 0;
+
+        $response = $client->request('POST',
+            $this->settings['customer_info_server_url'] ,
+            [
+                'content-type' => 'application/json',
+                'json' => ['customerId'=>$user_id],
+                'headers' => ['Authorization' => $this->settings['auth_header']],
+                'debug'=>false
+            ]);
+
+        $body = json_decode($response->getBody(), true);
+        $code = $response->getStatusCode();
+        $body['isLoggedIn'] = true;
+        $body['userId'] = $user_id;
+
+        // @todo implement a model
+        $data = isset($body['data']) ? $body['data'] : null;
+        // map data to meet frontend user model
+        if($data){
+            $body['firstname'] = isset($data['customers_firstname']) ? $data['customers_firstname'] : '';
+            $body['lastname'] = isset($data['customers_lastname']) ? $data['customers_lastname'] : '';
+            $body['gender'] = isset($data['customers_gender']) ? $data['customers_gender'] : '';
+            $body['avatar'] = isset($data['customers_avatar']) ? $data['customers_avatar'] : '';
+
+            $body['salutation'] = '';
+
+            switch($body['gender']){
+                case 'm': $body['salutation'] = 'Herr'; break;
+                case 'f': $body['salutation'] = 'Frau'; break;
+                case 'c': $body['salutation'] = ''; break;
+            }
+
+            // remove all unnecessary and private user info
+            unset($body['data']);
+        }
+
+        // id = 0 returns an error from remote, we have to compensate that
+        if(isset($body['status']) && $body['status'] === 'error'){
+            $body['status'] = 'success';
+            $body['isLoggedIn'] = false;
+        }
+
+        // implement wp_response adapter + services
+        $response = new \WP_REST_Response($body, $code); // @todo remove this when adapter is available
+        $response->header('Authorization', $auth_header);
+        $response->header( 'Access-Control-Expose-Headers', 'Authorization' );
         return $response;
     }
 

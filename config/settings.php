@@ -37,6 +37,7 @@ $settings['login_server_url'] = GF_USER_RECIPES_LOGIN_SERVER_URL;
 $settings['loggedin_server_url'] = GF_USER_RECIPES_LOGGEDIN_SERVER_URL;
 $settings['reset_server_url'] = GF_USER_RECIPES_RESET_SERVER_URL;
 $settings['register_server_url'] = GF_USER_RECIPES_REGISTER_SERVER_URL;
+$settings['customer_info_server_url'] = GF_USER_RECIPES_USER_INFO_SERVER_URL;
 
 $settings['logger'] = [
     'name' => 'app',
