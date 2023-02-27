@@ -50,8 +50,8 @@ final class Api_Middleware implements Middleware_Interface {
 
         $validateRequest    = $JWT->validateRequest($Request);
         // optional validation
-        $validateRole       = isset($perms[0]) ? $JWT->isRole($perms[0]) : true;
-        $validateCan        = isset($perms[1]) ? $JWT->can($perms[1]) : true;
+        $validateRole       = isset($perms[0]) && $perms[0] !== '*' ? $JWT->isRole($perms[0]) : true;
+        $validateCan        = isset($perms[1]) && $perms[0] !== '*' ? $JWT->can($perms[1]) : true;
         $validateCustom     = isset($perms[2]) ? $perms[2]($Request) : true;
 
         if(
