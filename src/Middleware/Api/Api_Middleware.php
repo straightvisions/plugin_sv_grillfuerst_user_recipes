@@ -5,6 +5,8 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Api;
 use SV_Grillfuerst_User_Recipes\Interfaces\Middleware_Interface;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Service\Api_Route_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Service\Api_Http_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Jwt\Jwt_Middleware;
+use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 
 use function add_action;
 
@@ -12,17 +14,19 @@ final class Api_Middleware implements Middleware_Interface {
     //private Action_Adapter $Action_Adapter;
     private Api_Route_Service $Api_Route_Service;
     private Api_Http_Service $Api_Http_Service;
+    private Jwt_Middleware $Jwt_Middleware;
+    private $Adapter;
 
     public function __construct(
-        //Action_Adapter $Action_Adapter
+        Adapter $Adapter,
+        Jwt_Middleware $Jwt_Middleware
     ) {
-        //$this->Action_Adapter = $Action_Adapter;
-        //$this->Action_Adapter->add('rest_api_init', [$this, 'init']);
 
-        add_action('rest_api_init', [$this, 'init']);
-
+        add_action('rest_api_init', [$this, 'init']); //@todo move this to an adapter
         $this->Api_Route_Service = new Api_Route_Service();
         $this->Api_Http_Service = new Api_Http_Service();
+        $this->Adapter = $Adapter;
+        $this->Jwt_Middleware = $Jwt_Middleware;
     }
 
     // custom shortcode handler
@@ -36,9 +40,34 @@ final class Api_Middleware implements Middleware_Interface {
     }
 
     // more controller functions
-
     public function http(){
         return $this->Api_Http_Service->get_client();
+    }
+
+    public function response($request, $callback, array $perms){
+        $Request = $this->Adapter->Request()->set($request);
+        $JWT = $this->Jwt_Middleware;
+        $response = '';
+
+        if(
+            $JWT->validateRequest($Request)
+            && $JWT->isRole($perms[0])
+            && $JWT->can($perms[1])
+        ){
+            $res = $callback($Request);
+            $response = new \WP_REST_Response($res[0], isset($res[1]) ? $res[1] : 200);
+
+        }else{
+            $response = new \WP_REST_Response([], 404);
+        }
+
+        return $response;
+    }
+
+    // public api route
+    public function response_public($request, $callback){
+        $Request = $this->Adapter->Request()->set($request);
+        return $callback($Request);
     }
 
 }
