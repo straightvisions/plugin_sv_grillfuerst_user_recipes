@@ -267,8 +267,4 @@ final class User_Middleware implements Middleware_Interface {
         return $response;
     }
 
-    // more controller functions
-    private function response($Request, $response){
-        return $this->Jwt_Middleware->validateRequest($Request)  ? $response : new \WP_REST_Response([], 403);
-    }
 }
