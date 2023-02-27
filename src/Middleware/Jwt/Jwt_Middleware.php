@@ -55,11 +55,11 @@ final class Jwt_Middleware implements Middleware_Interface {
         return $this->validate();
     }
 
-    public function can(string $function = ''){
+    public function can(string $canDo = ''){
         $output = false;
         $token = $this->get();
 
-        if(isset($token['can']) && in_array($function, $token['can'])){
+        if(isset($token['can']) && in_array($canDo, $token['can'])){
             $output = true;
         }
 
@@ -75,7 +75,7 @@ final class Jwt_Middleware implements Middleware_Interface {
         }
 
         // overload for admins
-        if($role === 'admin' && ( $token['role'] === 'user' || $token['role'] === 'customer') ){
+        if( $token['role'] === 'admin' && ( $role === 'user' || $role === 'customer') ){
             $output = true;
         }
 
