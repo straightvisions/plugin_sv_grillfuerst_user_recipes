@@ -38,16 +38,6 @@ final class User_Middleware implements Middleware_Interface {
         $this->Adapter->Shortcode()->add('sv_grillfuerst_user_recipes_user_login', [$this, 'get_frontend_user_login']);
 
         $this->Api_Middleware->add([
-            'route' => '/users',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test']]
-        ]);
-
-        $this->Api_Middleware->add([
-            'route' => '/users/(?P<user_id>\d+)/login',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test']]
-        ]);
-
-        $this->Api_Middleware->add([
             'route' => '/users/register',
             'args'  => ['methods' => 'POST', 'callback' => [$this, 'rest_register']]
         ]);
@@ -277,11 +267,8 @@ final class User_Middleware implements Middleware_Interface {
         return $response;
     }
 
-    public function test() {
-        // implement wp_response adapter + services
-        echo "ok";
-
-    }
-
     // more controller functions
+    private function response($Request, $response){
+        return $this->Jwt_Middleware->validateRequest($Request)  ? $response : new \WP_REST_Response([], 403);
+    }
 }
