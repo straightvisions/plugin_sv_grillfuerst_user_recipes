@@ -30,6 +30,11 @@ final class Jwt_Middleware implements Middleware_Interface {
         return $this->validate() ? (array) JWT::decode($token, new Key($this->secret_key, $this->algo)) : [];
     }
 
+    public function getValue(string $name){
+        $token = $this->get();
+        return isset($token[$name]) ? $token[$name] : '';
+    }
+
     public function create(array $payload = []): string{
         $payload['exp'] = time() + (int)$this->expiration_time;
         // create token
