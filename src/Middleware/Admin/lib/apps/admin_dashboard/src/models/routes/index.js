@@ -2,6 +2,10 @@ const root = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-use
 
 export default {
 	
+	
+	"isLoggedIn": root + '/admin/is_logged_in',
+	"getAdminInfo": root + '/admin/info',
+	"getUserInfoById": root + '/users/{id}/info',
 	"getRecipes": root + '/recipes', // GET
 	"getRecipesByUser": root + '/recipes/user/', // GET + {user_id}
 	"getRecipeByUuid": root + '/recipes/', // GET + {recipe_id}

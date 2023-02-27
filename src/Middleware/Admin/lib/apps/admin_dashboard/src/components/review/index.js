@@ -6,6 +6,7 @@ import FeedbackEditor from '../feedback_editor';
 import routes from "../../models/routes";
 import ActivityMap from "../activity_map";
 import Modal from "../modal";
+import headers from "../../modules/headers";
 
 export default function Review(props) {
 	const {user} = props;
@@ -18,7 +19,9 @@ export default function Review(props) {
 	
 	// load data from db
 	useEffect(() => {
-		fetch(routes.getRecipeByUuid + params.uuid)
+		fetch(routes.getRecipeByUuid + params.uuid,{
+			headers:headers.get()
+		})
 			.then(response => response.json())
 			.then(data => {
 				setFormState(data);
@@ -58,7 +61,7 @@ export default function Review(props) {
 		fetch(routes.updateRecipe +  params.uuid, {
 			method: 'PUT',
 			cache: 'no-cache',
-			headers: {'Content-Type': 'application/json'},
+			headers:headers.get(),
 			body: JSON.stringify(data),
 		})
 			.then(response => response.json())

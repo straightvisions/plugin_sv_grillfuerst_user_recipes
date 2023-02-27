@@ -2,6 +2,8 @@ import React, {useState, useEffect} from "react";
 import NavigationBar from './components/navigation_bar';
 import Recipes from './components/recipes';
 import Review from './components/review';
+import user from './modules/user';
+import Spinner from './components/spinner';
 
 import {
 	Routes,
@@ -9,27 +11,38 @@ import {
 } from "react-router-dom";
 
 const App = () => {
-	const [user, setUser] = useState({});
+	const [userInited, setUserInited] = useState(false);
 	
-	const navigate = useNavigate();
+	useEffect(()=>{
+		const initUser = async()=> {
+			await user.init();
+			setUserInited(true);
+		}
+		
+		initUser();
+	}, []);
 	
-	return (
-		<div className="min-h-full bg-gray-100">
-				<NavigationBar user={user} />
+	if(userInited === false){
+		return (<Spinner />);
+	}else {
+		return (
+			<div className="min-h-full bg-gray-100">
+				<NavigationBar user={user}/>
 				<div className="p-10">
 					<Routes>
 						<Route
 							path="/edit/:uuid"
-							element={<Review />}
+							element={<Review/>}
 						/>
 						<Route
 							path="/"
-							element={<Recipes />}
+							element={<Recipes/>}
 						/>
 					</Routes>
 				</div>
-		</div>
-	);
+			</div>
+		);
+	}
 };
 
 export default App;

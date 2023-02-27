@@ -6,6 +6,7 @@ import Filter from './filter';
 import Pagination from '../pagination';
 import {Image as ImagePH} from '../placeholder';
 import { LinkIcon } from '@heroicons/react/20/solid'
+import headers from "../../modules/headers";
 
 const states = {
 	draft: {
@@ -42,7 +43,9 @@ export default function Recipes(props) {
 		route +='limit='+parseInt(limit);
 		route +='&page=' + parseInt(page);
 		//route += '&state[]=reviewed&state[]=review_pending&state[]=published';
-		fetch(route)
+		fetch(route,{
+			headers:headers.get()
+		})
 			.then(response => response.json())
 			.then(data => {
 				setRecipes(data.items);

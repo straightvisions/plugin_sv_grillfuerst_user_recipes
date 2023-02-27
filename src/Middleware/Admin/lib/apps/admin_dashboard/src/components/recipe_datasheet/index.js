@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Spinner from "../spinner";
 import routes from "../../models/routes";
+import headers from "../../modules/headers";
 
 export default function RecipeDatasheet(props) {
 	const [data, setData] = useState(props.data);
@@ -9,7 +10,9 @@ export default function RecipeDatasheet(props) {
 	
 	const [kitchenStyles, setKitchenStyles] = useState(<Spinner/>);
 	useEffect(() => {
-		fetch(routes.getKitchenStyles).then(response => response.json()).then(res => {
+		fetch(routes.getKitchenStyles,{
+			headers:headers.get()
+		}).then(response => response.json()).then(res => {
 			const _options = res.items.map(i => ({label: i.name, value: i.term_id})); // all items
 			const _selection = _options.filter(i => data.kitchen_style.includes(i.value)); // filtered items
 			const kitchenStyles = _selection.length > 0 ? _selection.reduce((acc, cur) => acc + cur.label + ', ', '').slice(0, -2) :
@@ -20,7 +23,9 @@ export default function RecipeDatasheet(props) {
 	
 	const [menuTypes, setMenuTypes] = useState(<Spinner/>);
 	useEffect(() => {
-		fetch(routes.getMenuTypes).then(response => response.json()).then(res => {
+		fetch(routes.getMenuTypes,{
+			headers:headers.get()
+		}).then(response => response.json()).then(res => {
 			const _options = res.items.map(i => ({label: i.name, value: i.term_id})); // all items
 			const _selection = _options.filter(i => data.menu_type.includes(i.value)); // filtered items
 			const menuTypes = _selection.length > 0 ? _selection.reduce((acc, cur) => acc + cur.label + ', ', '').slice(0, -2) :

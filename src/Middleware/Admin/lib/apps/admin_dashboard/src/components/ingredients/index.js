@@ -2,6 +2,7 @@ import React, {useEffect, useState} from "react";
 import Spinner from '../spinner';
 import routes from "../../models/routes";
 import TermSearch from "../combobox/term_search.js";
+import headers from "../../modules/headers";
 
 export default function Ingredients(props) {
 	const {
@@ -21,7 +22,9 @@ export default function Ingredients(props) {
 	
 	// ingredients list from db for TermSearch
 	useEffect(() => {
-		fetch(routes.getIngredients)
+		fetch(routes.getIngredients,{
+			headers:headers.get()
+		})
 			.then(response => response.json())
 			.then(data => {
 				setIngredientsDB(data.items);

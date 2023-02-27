@@ -11,6 +11,7 @@ import routes from "../../models/routes";
 import {
 	useParams
 } from "react-router-dom";
+import headers from "../../modules/headers";
 
 export default function Form(props) {
 	const {user} = props;
@@ -22,7 +23,9 @@ export default function Form(props) {
 	const [saving, setSavingState] = useState(false);
 	// load data from db and check if newer than storage
 	useEffect(() => {
-		fetch(routes.getRecipeByUuid + params.uuid)
+		fetch(routes.getRecipeByUuid + params.uuid, {
+				headers:headers.get()
+			})
 			.then(response => response.json())
 			.then(data => {
 				const remoteTime = new Date(data.edited);
@@ -59,6 +62,7 @@ export default function Form(props) {
 		fetch(routes.updateRecipe +  params.uuid + '/' + user.id, {
 			method: 'PUT',
 			cache: 'no-cache',
+			headers:headers.get(),
 			body: JSON.stringify(formState)
 		})
 			.then(response => response.json())
