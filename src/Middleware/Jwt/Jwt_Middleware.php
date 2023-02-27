@@ -37,7 +37,6 @@ final class Jwt_Middleware implements Middleware_Interface {
     }
 
     public function validate(): bool{
-
         try {
             $token = $this->token ? $this->token : '';
             // Validate the token and decode the payload data
@@ -48,6 +47,12 @@ final class Jwt_Middleware implements Middleware_Interface {
         }
 
         return true;
+    }
+
+    public function validateRequest($Request): bool{
+        $auth_header = $Request->getHeader('Authorization');
+        $this->setToken($auth_header);
+        return $this->validate();
     }
 
     public function can(string $function = ''){
@@ -70,7 +75,7 @@ final class Jwt_Middleware implements Middleware_Interface {
         }
 
         // overload for admins
-        if($role === 'admin' && $token['role'] === 'user'){
+        if($role === 'admin' && ( $token['role'] === 'user' || $token['role'] === 'customer') ){
             $output = true;
         }
 
