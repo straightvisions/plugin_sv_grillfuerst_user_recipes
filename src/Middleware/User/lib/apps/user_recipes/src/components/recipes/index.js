@@ -5,7 +5,9 @@ import storage from '../../modules/storage';
 import {useNavigate} from "react-router-dom";
 import Spinner from "../spinner";
 import Pagination from "../pagination";
-import {DocumentDuplicateIcon, TrashIcon} from "@heroicons/react/20/solid";
+import {DocumentDuplicateIcon, PlusIcon, TrashIcon} from "@heroicons/react/20/solid";
+import user from '../../modules/user';
+const User = user.get();
 
 const states = {
 	draft: {
@@ -84,6 +86,21 @@ export default function Recipes(props) {
 		}
 	}
 	
+	const handleNewRecipe = () => {
+		fetch(routes.createRecipe + User.id, {
+			method: 'POST',
+			cache: 'no-cache',
+			headers: {
+				'Authorization': 'Bearer ' + storage.get('token'),
+			},
+			body: JSON.stringify({})
+		})
+			.then(response => response.json())
+			.then(data => {
+				navigate('/edit/' + data.uuid)
+			});
+	}
+	
 	return (
 		<div className="px-4 sm:px-6 lg:px-0">
 			<div className="mt-8 flex flex-col">
@@ -116,7 +133,7 @@ export default function Recipes(props) {
 								</tr>
 								</thead>
 								<tbody className="divide-y divide-gray-200 bg-white">
-								{recipes.map((recipe) => (
+								{recipes.length > 0 ? recipes.map((recipe) => (
 									<tr key={recipe.uuid} onClick={() => navigate('/edit/' + recipe.uuid)}
 									    className="cursor-pointer hover:bg-gray-100">
 										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -163,7 +180,20 @@ export default function Recipes(props) {
 											}
 										</td>
 									</tr>
-								))}
+								)) :
+									<tr>
+										<td key="0" className="col-span-4 whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+											<button
+												className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+												role="button"
+												onClick={handleNewRecipe}
+											>
+												<PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
+												<span>Neues Rezept hinzufügen</span>
+											</button>
+										</td>
+									</tr>
+								}
 								</tbody>
 							</table>
 							<div className="p-4 border-t border-gray-200">

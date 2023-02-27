@@ -6,6 +6,7 @@ import Dropdown from "../dropdown";
 import routes from "../../models/routes";
 import ingredientUnitValues from "../../models/ingredient/units";
 import ingredientModel from "../../models/ingredient";
+import storage from "../../modules/storage";
 
 export default function Ingredients(props) {
 	const {
@@ -25,7 +26,11 @@ export default function Ingredients(props) {
 	
 	// ingredients list from db for TermSearch
 	useEffect( () => {
-		fetch(routes.getIngredients).then(response => response.json())
+		fetch(routes.getIngredients,{
+			headers: {
+				'Authorization': 'Bearer ' + storage.get('token'),
+			},
+		}).then(response => response.json())
 		.then(data => { setIngredientsDB(data.items); setLoadingState(false); });
 	}, []);
 

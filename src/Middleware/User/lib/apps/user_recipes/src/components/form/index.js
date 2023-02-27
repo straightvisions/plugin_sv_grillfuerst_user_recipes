@@ -9,6 +9,7 @@ import routes from "../../models/routes";
 import { useParams } from "react-router-dom";
 import { AlertReviewed, AlertReviewPending, AlertPublished } from '../form_alerts';
 import RecipeDatasheet  from '../recipe_datasheet';
+import storage from "../../modules/storage";
 
 function dateIsValid(date) {
 	return typeof date === 'object' && date !== null && typeof date.getTime === 'function' && !isNaN(date);
@@ -23,7 +24,11 @@ export default function Form(props) {
 	
 	// load data from db and check if newer than storage
 	useEffect(() => {
-		fetch(routes.getRecipeByUuid + params.uuid)
+		fetch(routes.getRecipeByUuid + params.uuid,{
+			headers: {
+				'Authorization': 'Bearer ' + storage.get('token'),
+			}
+		})
 			.then(response => response.json())
 			.then(data => {
 				setFormState(data);
@@ -55,7 +60,7 @@ export default function Form(props) {
 		fetch(routes.updateRecipe +  params.uuid, {
 			method: 'PUT',
 			cache: 'no-cache',
-			headers: {'Content-Type': 'application/json'},
+			headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + storage.get('token')},
 			body: JSON.stringify(formState),
 		})
 			.then(response => response.json())

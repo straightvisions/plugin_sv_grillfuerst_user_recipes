@@ -5,6 +5,7 @@ import MultiSelect from "../multi_select/";
 import TermDropdown from "../dropdown/term_dropdown";
 import routes from "../../models/routes";
 import Spinner from "../spinner";
+import storage from "../../modules/storage";
 
 const difficultyValues = [
 	{
@@ -59,7 +60,11 @@ export default function Common(props) {
 	
 	// async call
 	useEffect( () => {
-		fetch(routes.getMenuTypes)
+		fetch(routes.getMenuTypes,{
+			headers: {
+				'Authorization': 'Bearer ' + storage.get('token'),
+			},
+		})
 			.then(response => response.json())
 			.then(data => {
 				// reduced given object items
@@ -95,7 +100,11 @@ export default function Common(props) {
 	
 	// async call
 	useEffect( () => {
-		fetch(routes.getKitchenStyles)
+		fetch(routes.getKitchenStyles,{
+			headers: {
+				'Authorization': 'Bearer ' + storage.get('token'),
+			},
+		})
 			.then(response => response.json())
 			.then(data => {
 				// reduced given object items

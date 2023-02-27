@@ -135,7 +135,12 @@ final class Recipes_Middleware implements Middleware_Interface {
     public function rest_get_recipes( $request ) {
         return $this->Api_Middleware->response($request, function($Request){
             $params = $Request->getParams();
-            $results = $this->Recipe_Finder_Service->get_list(null, $params);
+            if($this->Jwt_Middleware->isRole('admin')){
+                $results = $this->Recipe_Finder_Service->get_list(0, $params);
+            }else{
+                $token_user_id = (int)$this->Jwt_Middleware->getValue('userId');
+                $results = $this->Recipe_Finder_Service->get_list($token_user_id, $params);
+            }
             return [$results, 200];
         }, ['customer', 'view']);
 
@@ -153,10 +158,17 @@ final class Recipes_Middleware implements Middleware_Interface {
     public function rest_get_recipes_by_uuid( $request ) {
         return $this->Api_Middleware->response($request, function($Request){
             $uuid = $Request->getAttribute('uuid');
-            $results = $this->Recipe_Finder_Service->get($uuid);
-            $results = $results->items[0];
+
+            if($this->Jwt_Middleware->isRole('admin')){
+                $results = $this->Recipe_Finder_Service->get($uuid);
+            }else{
+                $token_user_id = (int)$this->Jwt_Middleware->getValue('userId');
+                $results = $this->Recipe_Finder_Service->get($uuid, $token_user_id);
+            }
+
+            $results = isset($results->items[0]) ? $results->items[0] : [];
             return [$results, 200];
-        }, ['customer', 'view', fn($Request) => (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue('userId')]);
+        }, ['customer', 'view']);
     }
 
     public function rest_get_ingredients( $request ) {
@@ -185,6 +197,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $this->Api_Middleware->response($request, function($Request){
             $user_id = $Request->getAttribute('user_id');
             $data = $Request->getJSONParams();
+
             $recipe_uuid = $this->Recipe_Creator_Service->insert($data, $user_id);
             $results = $this->Recipe_Finder_Service->get($recipe_uuid, $user_id);
             $results = $results->items[0]; //hotfix // @todo replace the results with ReaderService
@@ -200,7 +213,7 @@ final class Recipes_Middleware implements Middleware_Interface {
                 $this->Recipe_Updater_Service->update($data, $uuid);
             }
             return [[], 200];
-        }, ['customer', 'edit', fn($Request) => (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue('userId')]);
+        }, ['customer', 'edit', fn($Request) => $this->Jwt_Middleware->isRole('admin') || (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue('userId')]);
 
 
     }

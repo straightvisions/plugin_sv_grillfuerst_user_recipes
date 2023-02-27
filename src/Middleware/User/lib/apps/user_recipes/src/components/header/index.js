@@ -4,6 +4,7 @@ import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
 import {  useLocation } from 'react-router-dom';
 import routes from '../../models/routes';
 import user from '../../modules/user';
+import storage from "../../modules/storage";
 const User = user.get();
 
 function FormButton(props){
@@ -11,8 +12,11 @@ function FormButton(props){
 	const navigate = useNavigate();
 	
 	const handleNewRecipe = () => {
-		fetch(routes.createRecipe + props.user.id, {
+		fetch(routes.createRecipe + User.id, {
 			method: 'POST',
+			headers: {
+				'Authorization': 'Bearer ' + storage.get('token'),
+			},
 			cache: 'no-cache',
 			body: JSON.stringify({})
 		})

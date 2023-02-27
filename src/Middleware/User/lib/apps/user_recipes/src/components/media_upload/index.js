@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Dropzone from '../dropzone';
 import routes from '../../models/routes';
+import storage from "../../modules/storage";
 
 export default function MediaUpload(props) {
 	const {
@@ -29,6 +30,9 @@ export default function MediaUpload(props) {
 			routes.uploadMedia + route,
 			{
 				method: 'POST',
+				headers: {
+					'Authorization': 'Bearer ' + storage.get('token'),
+				},
 				body: formData,
 			}
 		)
