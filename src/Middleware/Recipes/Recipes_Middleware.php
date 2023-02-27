@@ -11,6 +11,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Ingredients_Fi
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Kitchen_Styles_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Menu_Types_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Exporter_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Jwt\Jwt_Middleware;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 
 final class Recipes_Middleware implements Middleware_Interface {
@@ -22,6 +23,7 @@ final class Recipes_Middleware implements Middleware_Interface {
 	private Recipe_Exporter_Service $Recipe_Exporter_Service;
 	private Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service;
 	private Recipe_Menu_Types_Finder_Service $Recipe_Menu_Types_Finder_Service;
+	private Jwt_Middleware $Jwt_Middleware;
 
     public function __construct(
         Api_Middleware $Api_Middleware,
@@ -33,6 +35,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service,
         Recipe_Menu_Types_Finder_Service $Recipe_Menu_Types_Finder_Service,
 	    Recipe_Exporter_Service $Recipe_Exporter_Service,
+        Jwt_Middleware $Jwt_Middleware
     ) {
         $this->Api_Middleware = $Api_Middleware;
         $this->Adapter = $Adapter;
@@ -43,6 +46,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         $this->Recipe_Menu_Types_Finder_Service = $Recipe_Menu_Types_Finder_Service;
         $this->Recipe_Ingredients_Finder_Service = $Recipe_Ingredients_Finder_Service;
 	    $this->Recipe_Exporter_Service = $Recipe_Exporter_Service;
+        $this->Jwt_Middleware = $Jwt_Middleware;
 
         // https://github.com/straightvisions/plugin_sv_appointment/blob/master/lib/modules/api.php
         // @todo add permissions
@@ -120,12 +124,11 @@ final class Recipes_Middleware implements Middleware_Interface {
     }
 
 	public function route_recipe_export( $request ){
-		$Request = $this->Adapter->Request()->set($request);
-		$uuid = $Request->getAttribute('uuid');
-		$results = $this->Recipe_Exporter_Service->export($uuid);
-		// implement wp_response adapter + services
-		$response = new \WP_REST_Response($results, 200);
-		return $response;
+        return $this->Api_Middleware->response($request, function($Request){
+            $uuid = $Request->getAttribute('uuid');
+            $results = $this->Recipe_Exporter_Service->export($uuid);
+            return [$results, 200];
+        }, ['admin']);
 	}
 
     // GETTER ----------------------------------------------------------------------------
@@ -133,97 +136,73 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $this->Api_Middleware->response($request, function($Request){
             $params = $Request->getParams();
             $results = $this->Recipe_Finder_Service->get_list(null, $params);
-            // implement wp_response adapter + services
             return [$results, 200];
         }, ['customer', 'view']);
 
     }
 
     public function rest_get_recipes_by_user_id( $request ) {
-        $Request = $this->Adapter->Request()->set($request);
-        $params = $Request->getParams();
-        $user_id = $Request->getAttribute('user_id');
-        $results = $this->Recipe_Finder_Service->get_list($user_id, $params);
-        // implement wp_response adapter + services
-        $response = new \WP_REST_Response($results, 200);
-        return $response;
+        return $this->Api_Middleware->response($request, function($Request){
+            $params = $Request->getParams();
+            $user_id = (int)$Request->getAttribute('user_id');
+            $results = $this->Recipe_Finder_Service->get_list($user_id, $params);
+            return [$results, 200];
+        }, ['customer', 'view', fn($Request) => (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue('userId')]);
     }
 
-    // @todo change finder in reader services!!
     public function rest_get_recipes_by_uuid( $request ) {
-        $Request = $this->Adapter->Request()->set($request);
-        $uuid = $Request->getAttribute('uuid');
-        $results = $this->Recipe_Finder_Service->get($uuid);
-
-        //hotfix // @todo replace the results with ReaderService
-        $results = $results->items[0];
-        $response = new \WP_REST_Response($results, 200);
-
-        // implement wp_response adapter + services
-        return $response; // @todo remove this when adapter is available
+        return $this->Api_Middleware->response($request, function($Request){
+            $uuid = $Request->getAttribute('uuid');
+            $results = $this->Recipe_Finder_Service->get($uuid);
+            $results = $results->items[0];
+            return [$results, 200];
+        }, ['customer', 'view', fn($Request) => (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue('userId')]);
     }
 
     public function rest_get_ingredients( $request ) {
-        $Request = $this->Adapter->Request()->set($request);
-        $results = $this->Recipe_Ingredients_Finder_Service->get_list();
-        // implement wp_response adapter + services
-        $response = new \WP_REST_Response($results, 200);
-        // experimental cache control
-        $response->set_headers(array('Cache-Control' => 'max-age=3600'));
-        return $response; // @todo remove this when adapter is available
+        return $this->Api_Middleware->response($request, function($Request){
+            $results = $this->Recipe_Ingredients_Finder_Service->get_list();
+            return [$results, 200];
+        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
     }
 
     public function rest_get_menu_types( $request ) {
-        $Request = $this->Adapter->Request()->set($request);
-        $results = $this->Recipe_Menu_Types_Finder_Service->get_list();
-        // implement wp_response adapter + services
-        $response = new \WP_REST_Response($results, 200);
-        // experimental cache control
-        $response->set_headers(array('Cache-Control' => 'max-age=3600'));
-        return $response; // @todo remove this when adapter is available
+        return $this->Api_Middleware->response($request, function($Request){
+            $results = $this->Recipe_Menu_Types_Finder_Service->get_list();
+            return [$results, 200];
+        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
     }
 
     public function rest_get_kitchen_styles( $request ) {
-        $Request = $this->Adapter->Request()->set($request);
-        $results = $this->Recipe_Kitchen_Styles_Finder_Service->get_list();
-        // implement wp_response adapter + services
-        $response = new \WP_REST_Response($results, 200);
-        // experimental cache control
-        $response->set_headers(array('Cache-Control' => 'max-age=3600'));
-        return $response; // @todo remove this when adapter is available
+        return $this->Api_Middleware->response($request, function($Request){
+            $results = $this->Recipe_Kitchen_Styles_Finder_Service->get_list();
+            return [$results, 200];
+        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
     }
 
     // SETTER ----------------------------------------------------------------------------
     public function rest_create_recipe( $request ) {
-        $Request = $this->Adapter->Request()->set($request);
-        $user_id = $Request->getAttribute('user_id');
-        $data = $Request->getJSONParams();
-
-        $recipe_uuid = $this->Recipe_Creator_Service->insert($data, $user_id);
-
-        $results = $this->Recipe_Finder_Service->get($recipe_uuid, $user_id);
-
-        //hotfix // @todo replace the results with ReaderService
-        $results = $results->items[0];
-        $response = new \WP_REST_Response($results, 201);
-        // implement wp_response adapter + services
-        return $response; // @todo remove this when adapter is available
+        return $this->Api_Middleware->response($request, function($Request){
+            $user_id = $Request->getAttribute('user_id');
+            $data = $Request->getJSONParams();
+            $recipe_uuid = $this->Recipe_Creator_Service->insert($data, $user_id);
+            $results = $this->Recipe_Finder_Service->get($recipe_uuid, $user_id);
+            $results = $results->items[0]; //hotfix // @todo replace the results with ReaderService
+            return [$results, 200];
+        }, ['customer', 'edit', fn($Request) => (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue('userId')]);
     }
 
     public function rest_update_recipe( $request ) {
-        $Request = $this->Adapter->Request()->set($request);
-        $uuid = $Request->getAttribute('uuid');
-        $data = $Request->getJSONParams();
-        $code = 200;
+        return $this->Api_Middleware->response($request, function($Request){
+            $uuid = $Request->getAttribute('uuid');
+            $data = $Request->getJSONParams();
+            if(is_array($data) && empty($data) === false){
+                $this->Recipe_Updater_Service->update($data, $uuid);
+            }
+            return [[], 200];
+        }, ['customer', 'edit', fn($Request) => (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue('userId')]);
 
-        if(is_array($data) && empty($data) === false){
-            $this->Recipe_Updater_Service->update($data, $uuid);
-        }else{
-            $code = 400;
-        }
 
-        $response = new \WP_REST_Response([], $code);
-        return $response; // @todo remove this when adapter is available
     }
-    // more controller functions
+
 }
