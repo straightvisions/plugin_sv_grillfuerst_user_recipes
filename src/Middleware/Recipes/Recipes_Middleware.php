@@ -130,12 +130,13 @@ final class Recipes_Middleware implements Middleware_Interface {
 
     // GETTER ----------------------------------------------------------------------------
     public function rest_get_recipes( $request ) {
-        $Request = $this->Adapter->Request()->set($request);
-        $params = $Request->getParams();
-        $results = $this->Recipe_Finder_Service->get_list(null, $params);
-        // implement wp_response adapter + services
-        $response = new \WP_REST_Response($results, 200); // @todo remove this when adapter is available
-        return $response;
+        return $this->Api_Middleware->response($request, function($Request){
+            $params = $Request->getParams();
+            $results = $this->Recipe_Finder_Service->get_list(null, $params);
+            // implement wp_response adapter + services
+            return [$results, 200];
+        }, ['customer', 'view']);
+
     }
 
     public function rest_get_recipes_by_user_id( $request ) {
