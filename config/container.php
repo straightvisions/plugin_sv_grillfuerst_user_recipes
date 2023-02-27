@@ -21,10 +21,7 @@ return [
     },
 
     // middleware
-    Api_Middleware::class  => function(ContainerInterface $container){
-        return new Api_Middleware();
-    },
-
+    Api_Middleware::class => autowire(Api_Middleware::class),
     User_Middleware::class => autowire(User_Middleware::class),
     Admin_Middleware::class => autowire(Admin_Middleware::class),
     Recipes_Middleware::class => autowire(Recipes_Middleware::class),
