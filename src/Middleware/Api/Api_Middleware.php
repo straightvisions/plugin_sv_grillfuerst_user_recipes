@@ -44,15 +44,21 @@ final class Api_Middleware implements Middleware_Interface {
         return $this->Api_Http_Service->get_client();
     }
 
-    public function response($request, $callback, array $perms){
+    public function response($request, $callback, array $perms = [], array $headers = []){
         $Request = $this->Adapter->Request()->set($request);
         $JWT = $this->Jwt_Middleware;
-        $response = '';
+
+        $validateRequest    = $JWT->validateRequest($Request);
+        // optional validation
+        $validateRole       = isset($perms[0]) ? $JWT->isRole($perms[0]) : true;
+        $validateCan        = isset($perms[1]) ? $JWT->can($perms[1]) : true;
+        $validateCustom     = isset($perms[2]) ? $perms[2]($Request) : true;
 
         if(
-            $JWT->validateRequest($Request)
-            && $JWT->isRole($perms[0])
-            && $JWT->can($perms[1])
+            $validateRequest
+            && $validateRole
+            && $validateCan
+            && $validateCustom
         ){
             $res = $callback($Request);
             $response = new \WP_REST_Response($res[0], isset($res[1]) ? $res[1] : 200);
@@ -61,10 +67,14 @@ final class Api_Middleware implements Middleware_Interface {
             $response = new \WP_REST_Response([], 404);
         }
 
+        if($headers){
+            $response->set_headers($headers);
+        }
+
         return $response;
     }
 
-    // public api route
+    // public api route without any validation -> login route for example
     public function response_public($request, $callback){
         $Request = $this->Adapter->Request()->set($request);
         return $callback($Request);
