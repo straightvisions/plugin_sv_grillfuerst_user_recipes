@@ -60,14 +60,17 @@ final class Recipe_Validator_Service {
                 //@todo add validations
                 'title' => $constraint->optional(
                     [
+                        /* // re-implement when frontend can read exceptions
                         $constraint->notBlank(),
                         $constraint->length(null, 255),
+                        */
                     ]
                 ),
                 'excerpt' => $constraint->optional(
-                    [
+                    [/* // re-implement when frontend can read exceptions
                         $constraint->notBlank(),
                         $constraint->length(null, 1000),
+                    */
                     ]
                 ),
                 'servings' => $constraint->optional(
