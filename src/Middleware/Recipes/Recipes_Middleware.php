@@ -94,7 +94,7 @@ final class Recipes_Middleware implements Middleware_Interface {
 	    // GET / CREATE RECIPES BASED ON USER ID
 	    $this->Api_Middleware->add([
 		    'route' => '/recipes/(?P<uuid>\d+)/export', // wordpress specific
-		    'args'  => ['methods' => 'GET', 'callback' => [$this, 'route_recipe_export']]
+		    'args'  => ['methods' => 'PUT', 'callback' => [$this, 'route_recipe_export']]
 	    ]);
 
     }
@@ -126,9 +126,11 @@ final class Recipes_Middleware implements Middleware_Interface {
 	public function route_recipe_export( $request ){
         return $this->Api_Middleware->response($request, function($Request){
             $uuid = $Request->getAttribute('uuid');
-            $results = $this->Recipe_Exporter_Service->export($uuid);
+            //$results = $this->Recipe_Exporter_Service->export($uuid);
+
+            return [[],200];
             return [$results, 200];
-        }, ['admin']);
+        }, ['admin','export']);
 	}
 
     // GETTER ----------------------------------------------------------------------------
@@ -209,6 +211,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $this->Api_Middleware->response($request, function($Request){
             $uuid = $Request->getAttribute('uuid');
             $data = $Request->getJSONParams();
+
             if(is_array($data) && empty($data) === false){
                 $this->Recipe_Updater_Service->update($data, $uuid);
             }

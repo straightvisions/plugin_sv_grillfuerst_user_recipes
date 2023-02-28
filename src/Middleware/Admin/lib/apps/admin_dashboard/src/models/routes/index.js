@@ -2,7 +2,7 @@ const root = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-use
 
 export default {
 	
-	
+	"login": root + '/login',
 	"isLoggedIn": root + '/admin/is_logged_in',
 	"getAdminInfo": root + '/admin/info',
 	"getUserInfoById": root + '/users/{id}/info',
@@ -10,6 +10,7 @@ export default {
 	"getRecipesByUser": root + '/recipes/user/', // GET + {user_id}
 	"getRecipeByUuid": root + '/recipes/', // GET + {recipe_id}
 	"updateRecipe": root + '/recipes/', // PUT + {recipe_id}
+	"exportRecipe": root + '/recipes/{id}/export', // PUT + {recipe_id}
 	"getIngredients": root + '/recipes/ingredients', // GET
 	"getMenuTypes": root + '/recipes/menutypes', // GET
 	"getKitchenStyles": root + '/recipes/kitchenstyles', // GET

@@ -15,7 +15,10 @@ export default function Review(props) {
 	const [formState, setFormState] = useState({});
 	const [loading, setLoadingState] = useState(true);
 	const [saving, setSavingState] = useState(false);
+	
 	const [confirmReleaseOpen, setConfirmReleaseOpen] = useState(false);
+	const [infoExportOpen, setInfoExportOpen] = useState(true);
+	const [exportState, setExportState] = useState({'message':'', 'status':''});
 	
 	// load data from db
 	useEffect(() => {
@@ -46,7 +49,7 @@ export default function Review(props) {
 			userId: 1,
 			type: 'comment'
 		};
-	}
+	};
 	
 	const handleSubmit = (value) => {
 		if(saving || loading) return;
@@ -76,16 +79,44 @@ export default function Review(props) {
 		});
 	};
 	
+	const handleRelease = () => {
+		if(saving || loading) return;
+		setSavingState(true);
+		const route = routes.exportRecipe.replace('{id}', params.uuid);
+		
+		fetch(route, {
+			method: 'PUT',
+			cache: 'no-cache',
+			headers:headers.get()
+			}).then((res) => {
+				if (!res.ok) {
+					setExportState({
+						message: 'Speichern nicht möglich, es trat ein Fehler auf: ' + res.statusText,
+						status: res.ok
+					});
+				}
+				return res.json();
+			})
+			.then((res) => {
+				setSavingState(false);
+			})
+			.catch(function (error) {
+				// do error handling
+				//@todo give a notice on error
+				setExportState({
+					message: 'Speichern nicht möglich, es trat ein Fehler auf: ' + error.message,
+					status: 500
+				});
+				setSavingState(false);
+			});
+	};
+	
 	if(loading){
 		return (
 			<div className="bg-white px-4 py-12 shadow sm:rounded-lg  h-full">
 				<Spinner />
 			</div>
-		)
-	}
-	
-	const handleRelease = () => {
-	
+		);
 	}
 	
 	const ReleaseButton = saving ? <button
@@ -99,7 +130,9 @@ export default function Review(props) {
 	>Rezepte freigeben</button>;
 	
 	return (
+		
 		<div className="py-6">
+			
 			<div className="mx-auto max-w-3xl sm:px-6 lg:grid lg:max-w-7xl lg:grid-cols-12 lg:gap-8 lg:px-8">
 				<main className="xs:col-span-12 sm:col-span-6 xl:col-span-6 space-y-4 mb-4">
 					{formState.state === 'published' &&
@@ -131,12 +164,49 @@ export default function Review(props) {
 					<hr className="h-px bg-gray-400 border-0 col-span-12"/>
 					{ReleaseButton}
 					<Modal
-						message="Rezept wirklich freigeben? Dies kann nicht rückgängig gemacht werden!"
+						message={exportState.message}
+						open={infoExportOpen}
+						onClose={()=>setInfoExportOpen(false)}
+						name="modalExportInfo"
+						
+						confirmText=""
+						cancelText="Schließen"
+						title="Export erfolgreich!"
+					/>
+					<Modal
+						message={'Rezept wirklich freigeben? Dies kann <strong>nicht</strong> rückgängig gemacht werden'}
 						open={confirmReleaseOpen}
-						setOpen={setConfirmReleaseOpen}
+						onClose={()=>setConfirmReleaseOpen(false)}
 						name="modalReleaseConfirm"
-						onConfirm={handleRelease}/>
+						onConfirm={()=>{setConfirmReleaseOpen(false);handleRelease();}}/>
 				</div>
+			}
+			{
+				exportState.status === 200 &&
+				<Modal
+					message={exportState.message}
+					open={true}
+					onClose={()=>setInfoExportOpen(false)}
+					name="modalExportInfo"
+					
+					confirmText=""
+					cancelText="Schließen"
+					title="Export erfolgreich!"
+				/>
+			}
+			
+			{
+				exportState.status !== 200 && exportState.status !== '' &&
+				<Modal
+					message={exportState.message}
+					open={true}
+					onClose={()=>setInfoExportOpen(false)}
+					name="modalExportInfo"
+				
+					confirmText=""
+					cancelText="Schließen"
+					title="Es ist ein Fehler aufgetreten"
+				/>
 			}
 			
 		</div>
