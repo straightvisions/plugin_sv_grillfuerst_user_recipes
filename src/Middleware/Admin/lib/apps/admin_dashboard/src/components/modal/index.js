@@ -1,5 +1,4 @@
 import React, {useState} from "react";
-import {Dialog} from '@headlessui/react'
 import {ExclamationTriangleIcon} from '@heroicons/react/24/outline'
 
 export default function Modal(props) {
@@ -11,9 +10,9 @@ export default function Modal(props) {
 		onClose = () => {},
 		confirmText = 'Ja',
 		cancelText = 'Abbrechen',
-		open = false,
+		isOpen = false,
 	} = props;
-
+	
 	const handleClose = () => {
 		return onClose();
 	};
@@ -21,56 +20,50 @@ export default function Modal(props) {
 	const handleConfirm = () => {
 		return onConfirm();
 	};
-
+	
 	return (
-		<Dialog
-			open={open}
-			onClose={handleClose}
-			as="div" className="relative z-10" >
-			<div className="fixed inset-0 bg-black/30" aria-hidden="true" />
-			<div className="fixed inset-0 z-10 overflow-y-auto">
-				<div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-					<Dialog.Panel
-						className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
-						<div className="sm:flex sm:items-start">
-							<div
-								className="mx-auto flex h-12 w-12 flex-shrink-0 items-center justify-center rounded-full bg-red-100 sm:mx-0 sm:h-10 sm:w-10">
-								<ExclamationTriangleIcon className="h-6 w-6 text-red-600" aria-hidden="true"/>
-							</div>
-							<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
-								<Dialog.Title as="h3" className="text-lg font-medium leading-6 text-gray-900">
-									{title}
-								</Dialog.Title>
-								<div className="mt-2 text-sm text-gray-500" >
-									{message}
+		<>
+			{isOpen && (
+				<div className="fixed z-10 inset-0 overflow-y-auto">
+					<div className="flex items-center justify-center min-h-screen px-4 pt-6 pb-20 text-center sm:block sm:p-0">
+						<div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
+						
+						<span className="hidden sm:inline-block sm:align-middle sm:h-screen" aria-hidden="true">&#8203;</span>
+						
+						<div className="inline-block align-bottom bg-white rounded-lg text-left overflow-hidden shadow-xl transform transition-all sm:my-8 sm:align-middle sm:max-w-lg sm:w-full">
+							<div className="bg-white px-4 pt-5 pb-4 sm:p-6 sm:pb-4">
+								<div className="sm:flex sm:items-start">
+									<div className="mx-auto flex-shrink-0 flex items-center justify-center h-12 w-12 rounded-full bg-yellow-100 sm:mx-0 sm:h-10 sm:w-10">
+										<ExclamationTriangleIcon className="h-6 w-6 text-yellow-600" aria-hidden="true" />
+									</div>
+									
+									<div className="mt-3 text-center sm:mt-0 sm:ml-4 sm:text-left">
+										<h3 className="text-lg leading-6 font-medium text-gray-900">{title}</h3>
+										<div className="mt-2 text-sm text-gray-500" dangerouslySetInnerHTML={{__html:message}}>
+										</div>
+									</div>
 								</div>
 							</div>
-						</div>
-						<div className="mt-5 sm:mt-4 sm:flex sm:flex-row-reverse">
-							{confirmText !== '' &&
-								<button
-									type="button"
-									className="inline-flex w-full justify-center rounded-md border border-transparent bg-red-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-red-700 focus:outline-none focus:ring-2 focus:ring-red-500 focus:ring-offset-2 sm:ml-3 sm:w-auto sm:text-sm"
-									onClick={handleConfirm}
-								>
-									{confirmText}
-								</button>
-							}
-							{cancelText !== '' &&
-								<button
-									type="button"
-									className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2 sm:mt-0 sm:w-auto sm:text-sm"
-									onClick={handleClose}
-								>
-									{cancelText}
-								</button>
-							}
 							
+							<div className="bg-gray-50 px-4 py-3 sm:px-6 sm:flex sm:flex-row-reverse">
+								{confirmText !== '' &&
+									<button type="button" onClick={onConfirm}
+									        className="w-full inline-flex justify-center rounded-md border border-transparent shadow-sm px-4 py-2 bg-yellow-600 text-base font-medium text-white hover:bg-yellow-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-yellow-500 sm:ml-3 sm:w-auto sm:text-sm">
+										{confirmText}
+									</button>
+								}
+								{cancelText !== '' &&
+									<button type="button" onClick={onClose} className="mt-3 w-full inline-flex justify-center rounded-md border border-gray-300 shadow-sm px-4 py-2 bg-white text-base font-medium text-gray-700 hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-gray-500 sm:mt-0 sm:ml-3 sm:w-auto sm:text-sm">
+										{cancelText}
+									</button>
+								}
+								
+							</div>
 						</div>
-					</Dialog.Panel>
+					</div>
 				</div>
-			</div>
-		</Dialog>
+			)}
+		</>
 	);
 	
 }

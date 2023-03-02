@@ -164,18 +164,8 @@ export default function Review(props) {
 					<hr className="h-px bg-gray-400 border-0 col-span-12"/>
 					{ReleaseButton}
 					<Modal
-						message={exportState.message}
-						open={infoExportOpen}
-						onClose={()=>setInfoExportOpen(false)}
-						name="modalExportInfo"
-						
-						confirmText=""
-						cancelText="Schließen"
-						title="Export erfolgreich!"
-					/>
-					<Modal
 						message={'Rezept wirklich freigeben? Dies kann <strong>nicht</strong> rückgängig gemacht werden'}
-						open={confirmReleaseOpen}
+						isOpen={confirmReleaseOpen}
 						onClose={()=>setConfirmReleaseOpen(false)}
 						name="modalReleaseConfirm"
 						onConfirm={()=>{setConfirmReleaseOpen(false);handleRelease();}}/>
@@ -185,7 +175,7 @@ export default function Review(props) {
 				exportState.status === 200 &&
 				<Modal
 					message={exportState.message}
-					open={true}
+					isOpen={true}
 					onClose={()=>setInfoExportOpen(false)}
 					name="modalExportInfo"
 					
@@ -199,10 +189,9 @@ export default function Review(props) {
 				exportState.status !== 200 && exportState.status !== '' &&
 				<Modal
 					message={exportState.message}
-					open={true}
+					isOpen={true}
 					onClose={()=>setInfoExportOpen(false)}
 					name="modalExportInfo"
-				
 					confirmText=""
 					cancelText="Schließen"
 					title="Es ist ein Fehler aufgetreten"
