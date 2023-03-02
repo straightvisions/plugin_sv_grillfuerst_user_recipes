@@ -126,10 +126,8 @@ final class Recipes_Middleware implements Middleware_Interface {
 	public function route_recipe_export( $request ){
         return $this->Api_Middleware->response($request, function($Request){
             $uuid = $Request->getAttribute('uuid');
-            //$results = $this->Recipe_Exporter_Service->export($uuid);
-
-            return [[],200];
-            return [$results, 200];
+            $results = $this->Recipe_Exporter_Service->export($uuid);
+            return $results;
         }, ['admin','export']);
 	}
 

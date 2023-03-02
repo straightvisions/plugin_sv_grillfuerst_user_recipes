@@ -3,6 +3,7 @@
 namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service;
 
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Finder_Item;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Exporter_Item;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Finder_Result;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Recipe_Finder_Repository;
 
@@ -28,6 +29,12 @@ final class Recipe_Finder_Service {
         return $this->create_result($rows);
     }
 
+    public function getRaw(int $recipe_id): Recipe_Exporter_Item {
+        $row = $this->repository->getRaw($recipe_id);
+        $item = new Recipe_Exporter_Item();
+        return $this->apply_data_raw($item, $row);
+    }
+
     private function create_result(array $rows): Recipe_Finder_Result {
         $result = new Recipe_Finder_Result();
 
@@ -46,6 +53,16 @@ final class Recipe_Finder_Service {
     }
 
     private function apply_data(Recipe_Finder_Item $item, array $row): Recipe_Finder_Item {
+        foreach ($row as $key => $value) {
+            if (property_exists($item, $key)) {
+                $item->set($key, $value);
+            }
+        }
+
+        return $item;
+    }
+
+    private function apply_data_raw(Recipe_Exporter_Item $item, array $row): Recipe_Exporter_Item {
         foreach ($row as $key => $value) {
             if (property_exists($item, $key)) {
                 $item->set($key, $value);

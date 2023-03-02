@@ -41,6 +41,21 @@ final class Recipe_Finder_Repository {
         return $query->execute()->fetchAll('assoc') ?: [];
     }
 
+    public function getRaw($id){
+        $query = $this->Query_Factory->newSelect('svgfur_recipes');
+
+        $query->select(
+            [
+                '*',
+            ]
+        );
+
+        // filter by user id
+        $query->where(['uuid' => (int)$id]);
+
+        return $query->execute()->fetch('assoc') ?: [];
+    }
+
     public function get_by_user_id($id, array $params = []): array {
         $query = $this->Query_Factory->newSelect('svgfur_recipes');
 

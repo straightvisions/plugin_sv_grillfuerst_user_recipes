@@ -4,108 +4,49 @@
 
 	use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Recipe_Repository;
 	use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Validator_Service;
+	use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Finder_Service;
 	use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
 	use Psr\Log\LoggerInterface;
 
 	final class Recipe_Exporter_Service {
 		private Recipe_Repository $repository;
-
 		private Recipe_Validator_Service $Recipe_Validator;
-
 		private LoggerInterface $logger;
-
 		private $uploadedMediaIDs   = array();
+        private $response = ['message'=>'', 'status'=>200];
+        private $Recipe_Finder_Service;
 
-		public function __construct(
+        public function __construct(
 			Recipe_Repository $repository,
 			Recipe_Validator_Service $Recipe_Validator,
+            Recipe_Finder_Service $Recipe_Finder_Service,
 			Logger_Factory $Logger_Factory
 		) {
 			$this->repository = $repository;
 			$this->Recipe_Validator = $Recipe_Validator;
+			$this->Recipe_Finder_Service = $Recipe_Finder_Service;
 			$this->logger = $Logger_Factory
 				->addFileHandler('user_updater.log')
 				->createLogger();
 		}
 
-		public function export(int $recipe_id): void {
-			if(!defined('GF_USER_RECIPES_BASE_URL')){
-				die('No Base URL set');
+		public function export(int $uuid): array {
+			if(!defined('GF_USER_RECIPES_BASE_URL')){#
+                $this->response = ['message'=>'Config error - base url missing.', 'status'=>500];
 			}
 
 			if(!defined('GF_USER_RECIPES_AUTH')){
-				die('No Auth set');
+                $this->response = ['message'=>'Config error - recipes auth not set.', 'status'=>401];
 			}
 
+            $data = $this->Recipe_Finder_Service->getRaw($uuid);
+
 			$post_id        = '';
-			//$post_id        = '/184917'; // TEST DATA WP post ID
+            foreach($data->steps as $key => $step){
+                $this->export_images($step->images);
+            }
 
-			// TEST DATA
-			$data   = [
-				"created"                   => "2022-11-10 11:08:17",
-				"edited"                    => "2022-11-18 14:40:33",
-				"state"                     => "draft",
-				"uuid"                      => 31688,
-				"user_id"                   => 1,
-				"title"                     => "Test Rezept",
-				"excerpt"                   => "Test Excerpt",
-				"servings"                  => 4,
-				"featured_image"            => 'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/11/semmelknoedel-selber-machen.jpg',
-				"menu_type"                 => 594,
-				"kitchen_style"             => 581,
-				"difficulty"                => "easy",
-				"preparation_time"          => 40,
-				"cooking_time"              => 80,
-				"waiting_time"              => 120,
-				"ingredients"               => [
-					[
-						'ingredient'        => 721,
-						'amount'            => '3',
-						'comment'           => 'mehlig kochend',
-						'differing_unit'    => '',
-						'acf_fc_layout'     => 'ingredient'
-					],
-					[
-						'ingredient'        => 712,
-						'amount'            => '6',
-						'comment'           => '',
-						'differing_unit'    => '',
-						'acf_fc_layout'     => 'ingredient'
-					]
-				],
-				"steps"                     => [
-					[
-						'gallery'           => [],
-						'description'       => 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam voluptua.',
-						'acf_fc_layout'     => 'step'
-					],[
-						'gallery'           => [
-							'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/11/Blumenkohl-einfrieren.jpg',
-							'https://www.grillfuerst.de/magazin/wp-content/uploads/2022/11/rezept-burgersosse-selber-machen.jpg'
-						],
-						'description'       => 'At vero eos et accusam et justo duo dolores et ea rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-						'acf_fc_layout'     => 'step'
-					],[
-						'gallery'           => [
-							'https://www.grillfuerst.de/magazin/wp-content/uploads/2021/09/Weber-Gasgrill-Test-Genesis.jpg'
-						],
-						'description'       => 'Stet clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit amet.',
-						'acf_fc_layout'     => 'step'
-					],
-				],
-				"newsletter"                => false
-			];
-
-			array_walk($data['steps'], function(&$value, $key){
-				array_walk($value, function(&$value, $key){
-					if($key === 'gallery'){
-						array_walk($value, function(&$value, $key){
-							$value      = $this->export_media($value);
-						});
-					}
-				});
-			});
-
+die;
 			// REST Post Array
 			$d = json_encode([
 				'title'                             => $data['title'],
@@ -154,8 +95,23 @@
 				$this->map_media_to_post($r->id);
 				$this->logger->info(sprintf('Recipe exported successfully: %s', $recipe_id));
 			}
+
+            return $this->response;
 		}
-		private function export_media(string $url): int{
+
+        private function export_images(array $images): void{
+            foreach($images as $key => $image){
+                $this->export_media($image);
+            }
+        }
+
+		private function export_media($image): int{
+
+            if(empty($image->url)){
+               return 0;
+            }
+
+            $url = $image->url;
 			$file = file_get_contents( $url );
 
 			$c      = curl_init(GF_USER_RECIPES_BASE_URL.'/wp-json/wp/v2/media');

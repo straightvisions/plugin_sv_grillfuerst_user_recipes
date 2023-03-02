@@ -79,6 +79,7 @@ export default function Review(props) {
 		});
 	};
 	
+	// export
 	const handleRelease = () => {
 		if(saving || loading) return;
 		setSavingState(true);
@@ -88,27 +89,22 @@ export default function Review(props) {
 			method: 'PUT',
 			cache: 'no-cache',
 			headers:headers.get()
-			}).then((res) => {
-				if (!res.ok) {
-					setExportState({
-						message: 'Speichern nicht möglich, es trat ein Fehler auf: ' + res.statusText,
-						status: res.ok
-					});
-				}
-				return res.json();
 			})
-			.then((res) => {
-				setSavingState(false);
-			})
-			.catch(function (error) {
-				// do error handling
-				//@todo give a notice on error
-				setExportState({
-					message: 'Speichern nicht möglich, es trat ein Fehler auf: ' + error.message,
-					status: 500
-				});
-				setSavingState(false);
+			.then((response) => {
+				return new Promise((resolve) => response.json()
+					.then((json) => resolve({
+						status: response.status,
+						ok: response.ok,
+						json,
+					})));
+			}).then(({ status, json, ok }) => {
+			setExportState({
+				message: json.message,
+				status
 			});
+			setInfoExportOpen(true);
+			setSavingState(false);
+		});
 	};
 	
 	if(loading){
@@ -175,12 +171,11 @@ export default function Review(props) {
 				exportState.status === 200 &&
 				<Modal
 					message={exportState.message}
-					isOpen={true}
+					isOpen={infoExportOpen}
 					onClose={()=>setInfoExportOpen(false)}
 					name="modalExportInfo"
-					
 					confirmText=""
-					cancelText="Schließen"
+					cancelText="Ok"
 					title="Export erfolgreich!"
 				/>
 			}
@@ -189,7 +184,7 @@ export default function Review(props) {
 				exportState.status !== 200 && exportState.status !== '' &&
 				<Modal
 					message={exportState.message}
-					isOpen={true}
+					isOpen={infoExportOpen}
 					onClose={()=>setInfoExportOpen(false)}
 					name="modalExportInfo"
 					confirmText=""
