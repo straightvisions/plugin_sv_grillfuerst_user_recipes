@@ -6,6 +6,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Admin\Admin_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Recipes_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Media\Media_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Jwt\Jwt_Middleware;
+use SV_Grillfuerst_User_Recipes\Middleware\Email\Email_Middleware;
 use SV_Grillfuerst_User_Recipes\Factory\Query_Factory;
 use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
 use Psr\Container\ContainerInterface;
@@ -27,6 +28,7 @@ return [
     Recipes_Middleware::class => autowire(Recipes_Middleware::class),
     Media_Middleware::class => autowire(Media_Middleware::class),
     Jwt_Middleware::class => autowire(Jwt_Middleware::class),
+    Email_Middleware::class => autowire(Email_Middleware::class),
 
     // adapters
     Adapter::class => autowire(Adapter::class),

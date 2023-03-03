@@ -9,7 +9,9 @@
         "symfony/validator": "^6.1",
         "psr/log": "^3.0",
         "firebase/php-jwt": "^6.4",
-        "guzzlehttp/guzzle": "^7.5"
+        "guzzlehttp/guzzle": "^7.5",
+        "symfony/mailer": "^6.2",
+        "twig/twig": "^3.5"
     },
     "minimum-stability": "beta"
 }
