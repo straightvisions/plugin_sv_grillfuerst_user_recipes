@@ -47,8 +47,8 @@ class Recipe_Model_Item {
         }
     }
 
-    public function get($field){
-        return $this->{$field};
+    public function get(string $field, mixed $default = ''){
+        return property_exists($this, $field) ? $this->{$field} : $default;
     }
 
     public function to_array($val){

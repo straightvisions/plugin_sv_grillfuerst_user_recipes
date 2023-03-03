@@ -127,6 +127,9 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $this->Api_Middleware->response($request, function($Request){
             $uuid = $Request->getAttribute('uuid');
             $results = $this->Recipe_Exporter_Service->export($uuid);
+            //@todo use postId to link recipe to post + generate voucher
+            // + send emails
+            // + frontendapp: handle response
             return $results;
         }, ['admin','export']);
 	}

@@ -5,6 +5,7 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service;
 use Psr\Log\LoggerInterface;
 use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Recipe_Repository;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Exporter_Item;
 
 final class Recipe_Exporter_Service {
     private Recipe_Repository $repository;
@@ -33,20 +34,19 @@ final class Recipe_Exporter_Service {
     // controller fn -----------------------------------------------
     public function export(int $uuid): array {
         if($this->check_config()){
-            $data = $this->get_data($uuid);
+            $item = $this->get_data($uuid);
             // export images
-            foreach ($data['steps'] as $key => $step) {
-                $this->export_images($step['images']);
+            foreach ($item->steps as $key => &$step) {
+                $step->images = $this->export_images($step->images);
             }
             // export data
-            $post = $this->export_data($data);
-            var_dump($post);die;
+            $post = $this->export_data($item);
             // link images to post
             $this->map_media_to_post($post);
             // Logging
             if (isset($post->id)) {
                 $this->logger->info(sprintf('Recipe exported successfully: %s', $uuid));
-                $this->response = ['message' => sprintf('Recipe exported successfully: %s', $uuid), 'status' => 200];
+                $this->response = ['message' => sprintf('Recipe exported successfully: %s', $uuid), 'postId' => $post->id, 'status' => 200];
             }
         }
 
@@ -72,33 +72,79 @@ final class Recipe_Exporter_Service {
     }
 
     private function get_data(int $uuid){
-        return json_decode(json_encode($this->Recipe_Finder_Service->getRaw($uuid, true)), true);
+        return $this->Recipe_Finder_Service->getRaw($uuid, true);
     }
 
-    private function export_data(array $data){
+    private function export_images(array $images): array {
+        foreach ($images as $key => &$image) {
+            $image->id = $this->export_media($image);
+        }
+
+        return $images;
+    }
+
+    private function export_media($image): int {
+        $url = $image->url;
+
+        if (empty($url)) {
+            return 0;
+        }
+
+        $file = file_get_contents($url);
+        $mime_type = mime_content_type($url);
+
+        $c = curl_init(GF_USER_RECIPES_BASE_URL . '/wp-json/wp/v2/media');
+        curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
+        curl_setopt($c, CURLOPT_TIMEOUT, 30);
+        curl_setopt($c, CURLOPT_POST, 1);
+        curl_setopt($c, CURLOPT_CUSTOMREQUEST, "POST");
+        curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+
+        curl_setopt($c, CURLOPT_POSTFIELDS, $file);
+        curl_setopt($c, CURLOPT_HTTPHEADER, [
+            'Content-Disposition: form-data; filename="' . basename($url) . '"',
+            //'Content-Type: ' . $mime_type,
+            'Content-Length: ' . strlen($file)
+        ]);
+
+        $r = json_decode(curl_exec($c));
+        curl_close($c);
+
+        // Logging
+        if (property_exists($r, 'id')) {
+            $this->logger->info(sprintf('Media exported successfully: %s', $url));
+            $this->uploadedMediaIDs[] = $r->id;
+        }
+
+        return property_exists($r,'id') ? $r->id : 0;
+    }
+
+    private function export_data(Recipe_Exporter_Item $item){
+
         // REST Post Array
         $d = json_encode([
-            'title'           => $data['title'],
+            'title'           => $item->get('title'),
             'content'         => '<!-- wp:acf/sv-grillfuerst-custom-recipe-steps {"name":"acf/sv-grillfuerst-custom-recipe-steps","mode":"preview"} /-->',
-            'excerpt'         => $data['excerpt'],
-            'featured_media'  => $this->export_media($data['featured_image']),
-            'cp_menutype'     => [$data['menu_type']],
-            'cp_kitchenstyle' => [$data['kitchen_style']],
+            'excerpt'         => $item->get('excerpt'),
+            'featured_media'  => $this->export_media($item->get('featured_image')),
+            'cp_menutype'     => $item->get('menu_type'),
+            'cp_kitchenstyle' => $item->get('kitchen_style'),
             'acf'             => [
-                'preparation_time' => $data['preparation_time'],
-                'cooking_time'     => $data['cooking_time'],
-                'waiting_time'     => $data['waiting_time'],
-                'difficulty'       => $data['difficulty'],
-                'ingredients'      => $data['ingredients'],
-                'steps'            => $data['steps'],
+                'preparation_time' => $item->get('preparation_time'),
+                'cooking_time'     => $item->get('cooking_time'),
+                'waiting_time'     => $item->get('waiting_time'),
+                'difficulty'       => $item->get('difficulty'),
+                'ingredients'      => $item->get('ingredients'),
+                'steps'            => $item->get('steps'),
                 'gf_user_recipe'   => [
-                    'gf_user_recipe_uuid'    => $data['uuid'],
-                    'gf_user_recipe_user_id' => $data['user_id']
+                    'gf_user_recipe_uuid'    => $item->get('uuid'),
+                    'gf_user_recipe_user_id' => $item->get('user_id')
                 ]
             ]
         ]);
 
-        $c = curl_init(GF_USER_RECIPES_BASE_URL . '/wp-json/wp/v2/grillrezepte' . '');
+
+        $c = curl_init(GF_USER_RECIPES_BASE_URL . '/wp-json/wp/v2/grillrezepte');
         curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
         curl_setopt($c, CURLOPT_TIMEOUT, 30);
         curl_setopt($c, CURLOPT_POST, 1);
@@ -115,46 +161,6 @@ final class Recipe_Exporter_Service {
         curl_close($c);
 
         return $r;
-    }
-
-    private function export_images(array $images): void {
-        foreach ($images as $key => $image) {
-            $this->export_media($image);
-        }
-    }
-
-    private function export_media($image): int {
-        $url = $image['url'];
-
-        if (empty($image['url'])) {
-            return 0;
-        }
-
-        $file = file_get_contents($url);
-
-        $c = curl_init(GF_USER_RECIPES_BASE_URL . '/wp-json/wp/v2/media');
-        curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
-        curl_setopt($c, CURLOPT_TIMEOUT, 30);
-        curl_setopt($c, CURLOPT_POST, 1);
-        curl_setopt($c, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-
-        curl_setopt($c, CURLOPT_POSTFIELDS, $file);
-        curl_setopt($c, CURLOPT_HTTPHEADER, [
-            'Content-Disposition: form-data; filename="' . basename($url) . '"',
-            'Content-Length: ' . strlen($file)
-        ]);
-
-        $r = json_decode(curl_exec($c));
-        curl_close($c);
-
-        // Logging
-        if (isset($r->id)) {
-            $this->logger->info(sprintf('Media exported successfully: %s', $url));
-            $this->uploadedMediaIDs[] = $r->id;
-        }
-
-        return isset($r->id) ? $r->id : 0;
     }
 
     private function map_media_to_post($post) {

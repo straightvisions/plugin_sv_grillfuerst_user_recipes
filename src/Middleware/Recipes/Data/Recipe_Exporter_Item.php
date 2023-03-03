@@ -15,4 +15,43 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
         $this->featured_image = new Image_Model_Item();
     }
 
+    public function get(string $field, mixed $default = ''){
+        return method_exists($this, 'get_'.$field) ? call_user_func([$this, 'get_'.$field]) : parent::get($field, $default);
+    }
+
+    private function get_ingredients(){
+        $list = $this->ingredients;
+        $output = [];
+        foreach($list as $k => $d){
+            $output[] =  [
+                'acf_fc_layout' => 'ingredient',
+                'ingredient' => $d->id,
+                'amount' => $d->amount,
+                'comment' => $d->note,
+                'differing_unit' => $d->unit,
+                'position'=>0,
+            ];
+        }
+
+        return $output;
+    }
+
+    private function get_steps(){
+        $list = $this->steps;
+        $output = [];
+        foreach($list as $k => $d){
+            $image_ids = array_map(function($image) {
+                return $image->id;
+            }, $d->images);
+
+            $output[] =  [
+                'acf_fc_layout' => 'step',
+                'description' => $d->description,
+                'gallery' => $image_ids,
+            ];
+        }
+
+        return $output;
+    }
+
 }
