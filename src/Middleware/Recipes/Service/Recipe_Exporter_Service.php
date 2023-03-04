@@ -107,7 +107,7 @@ final class Recipe_Exporter_Service {
             'Content-Length: ' . strlen($file)
         ]);
 
-        $r = json_decode(curl_exec($c));
+        $r = (object) json_decode(curl_exec($c));
         curl_close($c);
 
         // Logging

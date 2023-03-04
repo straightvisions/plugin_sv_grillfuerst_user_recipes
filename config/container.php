@@ -13,6 +13,10 @@ use Psr\Container\ContainerInterface;
 use SV_Grillfuerst_User_Recipes\Adapters\Wordpress\Wordpress_Adapter;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 use Cake\Database\Connection;
+use Symfony\Component\Mailer\Transport;
+use Symfony\Component\Mailer\Mailer;
+use Twig\Environment;
+use Twig\Loader\FilesystemLoader;
 
 use function DI\autowire;
 
@@ -28,7 +32,50 @@ return [
     Recipes_Middleware::class => autowire(Recipes_Middleware::class),
     Media_Middleware::class => autowire(Media_Middleware::class),
     Jwt_Middleware::class => autowire(Jwt_Middleware::class),
-    Email_Middleware::class => autowire(Email_Middleware::class),
+    Transport::class => function () {
+        //return Transport::fromDsn('smtp://localhost');
+        return Transport::fromDsn('smtp://localhost');
+    },
+
+    Mailer::class => function (ContainerInterface $container) {
+        $settings = $container->get('settings');
+
+        if (isset($settings['mailer'])) {
+            $smtp = $settings['mailer']['smtp'] ?? false;
+
+            $dsn = $smtp ? sprintf(
+                '%s://%s:%s@%s:%s',
+                $smtp['type'],
+                $smtp['username'],
+                $smtp['password'],
+                $smtp['host'],
+                $smtp['port']
+            ) : 'sendmail://default';
+        } else {
+            $dsn = 'null://null';
+        }
+
+        return new Mailer(Transport::fromDsn($dsn));
+    },
+
+    Email_Middleware::class => function (ContainerInterface $container) {
+        return new Email_Middleware(
+            $container->get(Mailer::class),
+            $container->get(Environment::class),
+            $container->get(Logger_Factory::class),
+            $container
+        );
+    },
+
+    Environment::class  => function (ContainerInterface $container) {
+        // Set up Twig's filesystem loader
+        $loader = new FilesystemLoader(__DIR__ . '/../src/Templates');
+        // Add the loader to Twig's environment
+        $twig = new Environment($loader);
+        // Add the Symfony Bridge to Twig's environment
+        $twig->addExtension(new \Twig\Extension\DebugExtension());
+        return $twig;
+    },
 
     // adapters
     Adapter::class => autowire(Adapter::class),

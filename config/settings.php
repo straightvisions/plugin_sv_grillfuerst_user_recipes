@@ -47,4 +47,8 @@ $settings['logger'] = [
     'file_permission' => 0775,
 ];
 
+$settings['mailer'] = [
+    'from' => 'noreply@grillfuerst.de'
+];
+
 return $settings;

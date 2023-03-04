@@ -2,61 +2,74 @@
 
 namespace SV_Grillfuerst_User_Recipes\Middleware\Email;
 
-use SV_Grillfuerst_User_Recipes\Interfaces\Middleware_Interface;
+use Psr\Container\ContainerInterface;
+use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
+use RuntimeException;
 use Symfony\Component\Mailer\MailerInterface;
+use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
+use Throwable;
 use Twig\Environment;
+use Twig\Error\LoaderError;
+use Twig\Source;
+use Psr\Log\LoggerInterface;
 
-class Email_Middleware implements Middleware_Interface {
-    private $mailer;
-    private $twig;
+class Email_Middleware {
+    private MailerInterface $mailer;
+    private Environment $twig;
+    private LoggerInterface $logger;
+    private $settings;
 
-    private $data = [
-      'from'=>'',
-      'to'=>'',
-      'subject'=>'',
-      'body'=>'',
-    ];
-
-    public function __construct(MailerInterface $mailer, Environment $twig) {
+    public function __construct(
+        MailerInterface $mailer,
+        Environment $twig,
+        Logger_Factory $Logger_Factory,
+        ContainerInterface $container
+    ) {
         $this->mailer = $mailer;
         $this->twig   = $twig;
+        $this->logger = $Logger_Factory
+            ->addFileHandler('emailer.log')
+            ->createLogger();
+        $this->settings = $container->get('settings')['mailer'];
     }
 
-    public function send(string $type = 'default') {
-        $d = $this->data;
+    public function send(array $data): void {
+        $from = new Address(isset($data['from']) ? $data['from'] : $this->settings['from']);
+        $to   = new Address($data['to']);
 
         $email = (new Email())
-            ->from($d['from'])
-            ->to($d['to'])
-            ->subject($d['subject'])
-            ->html(
-                $this->render($type, [
-                    'subject' => $d['subject'],
-                    'content' => $d['body']
-                ])
-            );
+            ->from($from)
+            ->to($to)
+            ->subject($data['subject'])
+            ->html($this->render($data));
 
-        $this->mailer->send($email);
-    }
-
-    private function render(string $type, array $params): string {
-        $type = 'published';
-        $type = $this->isTemplate($type) ? $type : 'default';
-        return  $this->twig->render('Template/'.$type.'.html.twig', $params) ;
-    }
-
-    private function isTemplate(string $type): bool{
-        return file_exists(__DIR__.'/Template/'.$type.'.html.twig');
-    }
-
-    public function set(string $field, string $value): void{
-        if(isset($this->data[$field])){
-            $this->data[$field] = $value;
+        try {
+            $this->mailer->send($email);
+            $this->logger->info('Email sent successfully', $data);
+        } catch (Throwable $exception) {
+            $this->logger->error($exception->getMessage(), $data);
+            throw new RuntimeException('Failed to send email');
         }
     }
 
-    public function get(string $field): string{
-        return isset($this->data[$field]) ? $this->data['field'] : '';
+    private function render(array $params): string {
+        return $this->twig->render($this->getTemplate((string)$params['template']), [
+            'subject' => $params['subject'],
+            'content' => $params['body'],
+        ]);
+    }
+
+    private function getTemplate(string $templateName): string {
+        $templateName = 'Email/'.$templateName;
+        $defaultTemplate = 'Email/default.html.twig';
+
+        try {
+            $twigSource = $this->twig->getLoader()->getSourceContext($templateName);
+        } catch (LoaderError $e) {
+            $twigSource = new Source('', $defaultTemplate);
+        }
+
+        return $twigSource->getName();
     }
 }

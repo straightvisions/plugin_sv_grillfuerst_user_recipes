@@ -2,17 +2,20 @@
 
 namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes;
 
+use Psr\Container\ContainerInterface;
+use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 use SV_Grillfuerst_User_Recipes\Interfaces\Middleware_Interface;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
-use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Finder_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Email\Email_Middleware;
+use SV_Grillfuerst_User_Recipes\Middleware\Jwt\Jwt_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Creator_Service;
-use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Updater_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Exporter_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Ingredients_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Kitchen_Styles_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Menu_Types_Finder_Service;
-use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Exporter_Service;
-use SV_Grillfuerst_User_Recipes\Middleware\Jwt\Jwt_Middleware;
-use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Updater_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Info_Service;
 
 final class Recipes_Middleware implements Middleware_Interface {
     private Api_Middleware $Api_Middleware;
@@ -20,10 +23,13 @@ final class Recipes_Middleware implements Middleware_Interface {
     private Recipe_Finder_Service $Recipe_Finder_Service;
     private Recipe_Creator_Service $Recipe_Creator_Service;
     private Recipe_Updater_Service $Recipe_Updater_Service;
-	private Recipe_Exporter_Service $Recipe_Exporter_Service;
-	private Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service;
-	private Recipe_Menu_Types_Finder_Service $Recipe_Menu_Types_Finder_Service;
-	private Jwt_Middleware $Jwt_Middleware;
+    private Recipe_Exporter_Service $Recipe_Exporter_Service;
+    private Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service;
+    private Recipe_Menu_Types_Finder_Service $Recipe_Menu_Types_Finder_Service;
+    private Jwt_Middleware $Jwt_Middleware;
+    private Email_Middleware $Email_Middleware;
+    private User_Info_Service $User_Info_Service;
+    private $settings;
 
     public function __construct(
         Api_Middleware $Api_Middleware,
@@ -34,19 +40,26 @@ final class Recipes_Middleware implements Middleware_Interface {
         Recipe_Ingredients_Finder_Service $Recipe_Ingredients_Finder_Service,
         Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service,
         Recipe_Menu_Types_Finder_Service $Recipe_Menu_Types_Finder_Service,
-	    Recipe_Exporter_Service $Recipe_Exporter_Service,
-        Jwt_Middleware $Jwt_Middleware
+        Recipe_Exporter_Service $Recipe_Exporter_Service,
+        Jwt_Middleware $Jwt_Middleware,
+        Email_Middleware $Email_Middleware,
+        User_Info_Service $User_Info_Service,
+        ContainerInterface $container
+
     ) {
-        $this->Api_Middleware = $Api_Middleware;
-        $this->Adapter = $Adapter;
-        $this->Recipe_Finder_Service = $Recipe_Finder_Service;
-        $this->Recipe_Creator_Service = $Recipe_Creator_Service;
-        $this->Recipe_Updater_Service = $Recipe_Updater_Service;
+        $this->Api_Middleware                       = $Api_Middleware;
+        $this->Adapter                              = $Adapter;
+        $this->Recipe_Finder_Service                = $Recipe_Finder_Service;
+        $this->Recipe_Creator_Service               = $Recipe_Creator_Service;
+        $this->Recipe_Updater_Service               = $Recipe_Updater_Service;
         $this->Recipe_Kitchen_Styles_Finder_Service = $Recipe_Kitchen_Styles_Finder_Service;
-        $this->Recipe_Menu_Types_Finder_Service = $Recipe_Menu_Types_Finder_Service;
-        $this->Recipe_Ingredients_Finder_Service = $Recipe_Ingredients_Finder_Service;
-	    $this->Recipe_Exporter_Service = $Recipe_Exporter_Service;
-        $this->Jwt_Middleware = $Jwt_Middleware;
+        $this->Recipe_Menu_Types_Finder_Service     = $Recipe_Menu_Types_Finder_Service;
+        $this->Recipe_Ingredients_Finder_Service    = $Recipe_Ingredients_Finder_Service;
+        $this->Recipe_Exporter_Service              = $Recipe_Exporter_Service;
+        $this->Jwt_Middleware                       = $Jwt_Middleware;
+        $this->Email_Middleware                     = $Email_Middleware;
+        $this->User_Info_Service                    = $User_Info_Service;
+        $this->settings                             = $container->get('settings');
 
         // https://github.com/straightvisions/plugin_sv_appointment/blob/master/lib/modules/api.php
         // @todo add permissions
@@ -90,136 +103,227 @@ final class Recipes_Middleware implements Middleware_Interface {
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_kitchen_styles']]
         ]);
 
-		// Export
-	    // GET / CREATE RECIPES BASED ON USER ID
-	    $this->Api_Middleware->add([
-		    'route' => '/recipes/(?P<uuid>\d+)/export', // wordpress specific
-		    'args'  => ['methods' => 'PUT', 'callback' => [$this, 'route_recipe_export']]
-	    ]);
+        // Export
+        // GET / CREATE RECIPES BASED ON USER ID
+        $this->Api_Middleware->add([
+            'route' => '/recipes/(?P<uuid>\d+)/export', // wordpress specific
+            'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_recipe_export']]
+        ]);
 
+        // Test
+        $this->Api_Middleware->add([
+            'route' => '/test/email', // wordpress specific
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_send_email_recipe_published']]
+        ]);
     }
 
     // ROUTER ----------------------------------------------------------------------------
-    public function route_recipes_user_id( $request ){
+    public function route_recipes_user_id($request) {
         $Request = $this->Adapter->Request()->set($request);
 
-        switch($Request->getMethod()){
-            case 'POST' : return $this->rest_create_recipe($request);
-            case 'PUT' : return $this->rest_update_recipe($request);
-            case 'GET' : return $this->rest_get_recipes_by_user_id($request);
+        switch ($Request->getMethod()) {
+            case 'POST' :
+                return $this->rest_create_recipe($request);
+            case 'PUT' :
+                return $this->rest_update_recipe($request);
+            case 'GET' :
+                return $this->rest_get_recipes_by_user_id($request);
         }
 
         return [];
     }
 
-    public function route_recipes_uuid( $request ){
-        $Request = $this->Adapter->Request()->set($request);
+    public function rest_create_recipe($request) {
+        return $this->Api_Middleware->response(
+            $request,
+            function ($Request) {
+                $user_id = $Request->getAttribute('user_id');
+                $data    = $Request->getJSONParams();
 
-        switch($Request->getMethod()){
-            case 'PUT' : return $this->rest_update_recipe($request);
-            case 'GET' : return $this->rest_get_recipes_by_uuid($request);
-        }
+                $recipe_uuid = $this->Recipe_Creator_Service->insert($data, $user_id);
+                $results     = $this->Recipe_Finder_Service->get($recipe_uuid, $user_id);
+                $results     = $results->items[0]; //hotfix // @todo replace the results with ReaderService
 
-        return [];
+                return [$results, 200];
+            },
+            [
+                'customer',
+                'edit',
+                fn($Request) => (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue(
+                        'userId'
+                    )
+            ]
+        );
     }
 
-	public function route_recipe_export( $request ){
-        return $this->Api_Middleware->response($request, function($Request){
-            $uuid = $Request->getAttribute('uuid');
-            $results = $this->Recipe_Exporter_Service->export($uuid);
-            //@todo use postId to link recipe to post + generate voucher
-            // + send emails
-            // + frontendapp: handle response
-            return $results;
-        }, ['admin','export']);
-	}
+    public function rest_update_recipe($request) {
+        return $this->Api_Middleware->response(
+            $request,
+            function ($Request) {
+                $uuid = $Request->getAttribute('uuid');
+                $data = $Request->getJSONParams();
+
+                if (is_array($data) && empty($data) === false) {
+                    $this->Recipe_Updater_Service->update($data, $uuid);
+                }
+
+                return [[], 200];
+            },
+            [
+                'customer',
+                'edit',
+                fn($Request) => $this->Jwt_Middleware->isRole('admin') || (int)$Request->getAttribute(
+                        'user_id'
+                    ) === (int)$this->Jwt_Middleware->getValue('userId')
+            ]
+        );
+    }
 
     // GETTER ----------------------------------------------------------------------------
-    public function rest_get_recipes( $request ) {
-        return $this->Api_Middleware->response($request, function($Request){
-            $params = $Request->getParams();
-            if($this->Jwt_Middleware->isRole('admin')){
-                $results = $this->Recipe_Finder_Service->get_list(0, $params);
-            }else{
-                $token_user_id = (int)$this->Jwt_Middleware->getValue('userId');
-                $results = $this->Recipe_Finder_Service->get_list($token_user_id, $params);
-            }
-            return [$results, 200];
-        }, ['customer', 'view']);
 
+    public function rest_get_recipes_by_user_id($request) {
+        return $this->Api_Middleware->response(
+            $request,
+            function ($Request) {
+                $params = $Request->getParams();
+                $user_id = (int)$Request->getAttribute('user_id');
+                $results = $this->Recipe_Finder_Service->get_list($user_id, $params);
+
+                return [$results, 200];
+            },
+            [
+                'customer',
+                'view',
+                fn($Request) => (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue(
+                        'userId'
+                    )
+            ]
+        );
     }
 
-    public function rest_get_recipes_by_user_id( $request ) {
-        return $this->Api_Middleware->response($request, function($Request){
-            $params = $Request->getParams();
-            $user_id = (int)$Request->getAttribute('user_id');
-            $results = $this->Recipe_Finder_Service->get_list($user_id, $params);
-            return [$results, 200];
-        }, ['customer', 'view', fn($Request) => (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue('userId')]);
+    public function route_recipes_uuid($request) {
+        $Request = $this->Adapter->Request()->set($request);
+
+        switch ($Request->getMethod()) {
+            case 'PUT' :
+                return $this->rest_update_recipe($request);
+            case 'GET' :
+                return $this->rest_get_recipes_by_uuid($request);
+        }
+
+        return [];
     }
 
-    public function rest_get_recipes_by_uuid( $request ) {
-        return $this->Api_Middleware->response($request, function($Request){
+    public function rest_get_recipes_by_uuid($request) {
+        return $this->Api_Middleware->response($request, function ($Request) {
             $uuid = $Request->getAttribute('uuid');
 
-            if($this->Jwt_Middleware->isRole('admin')){
+            if ($this->Jwt_Middleware->isRole('admin')) {
                 $results = $this->Recipe_Finder_Service->get($uuid);
-            }else{
+            } else {
                 $token_user_id = (int)$this->Jwt_Middleware->getValue('userId');
-                $results = $this->Recipe_Finder_Service->get($uuid, $token_user_id);
+                $results       = $this->Recipe_Finder_Service->get($uuid, $token_user_id);
             }
 
             $results = isset($results->items[0]) ? $results->items[0] : [];
+
             return [$results, 200];
         }, ['customer', 'view']);
     }
 
-    public function rest_get_ingredients( $request ) {
-        return $this->Api_Middleware->response($request, function($Request){
-            $results = $this->Recipe_Ingredients_Finder_Service->get_list();
-            return [$results, 200];
-        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
+    public function rest_recipe_export($request) {
+        return $this->Api_Middleware->response($request, function ($Request) {
+            $uuid    = $Request->getAttribute('uuid');
+            $results = $this->Recipe_Exporter_Service->export($uuid);
+
+            if ($results['status'] === 200) {
+                $this->handle_after_recipe_published($uuid); // should be its own service
+            }
+
+            return $results;
+        }, ['admin', 'export']);
     }
 
-    public function rest_get_menu_types( $request ) {
-        return $this->Api_Middleware->response($request, function($Request){
-            $results = $this->Recipe_Menu_Types_Finder_Service->get_list();
-            return [$results, 200];
-        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
-    }
+    public function rest_get_recipes($request) {
+        return $this->Api_Middleware->response($request, function ($Request) {
+            $params = $Request->getParams();
+            if ($this->Jwt_Middleware->isRole('admin')) {
+                $results = $this->Recipe_Finder_Service->get_list(0, $params);
+            } else {
+                $token_user_id = (int)$this->Jwt_Middleware->getValue('userId');
+                $results       = $this->Recipe_Finder_Service->get_list($token_user_id, $params);
+            }
 
-    public function rest_get_kitchen_styles( $request ) {
-        return $this->Api_Middleware->response($request, function($Request){
-            $results = $this->Recipe_Kitchen_Styles_Finder_Service->get_list();
             return [$results, 200];
-        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
+        }, ['customer', 'view']);
     }
 
     // SETTER ----------------------------------------------------------------------------
-    public function rest_create_recipe( $request ) {
-        return $this->Api_Middleware->response($request, function($Request){
-            $user_id = $Request->getAttribute('user_id');
-            $data = $Request->getJSONParams();
 
-            $recipe_uuid = $this->Recipe_Creator_Service->insert($data, $user_id);
-            $results = $this->Recipe_Finder_Service->get($recipe_uuid, $user_id);
-            $results = $results->items[0]; //hotfix // @todo replace the results with ReaderService
+    public function rest_get_ingredients($request) {
+        return $this->Api_Middleware->response($request, function ($Request) {
+            $results = $this->Recipe_Ingredients_Finder_Service->get_list();
+
             return [$results, 200];
-        }, ['customer', 'edit', fn($Request) => (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue('userId')]);
+        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
     }
 
-    public function rest_update_recipe( $request ) {
-        return $this->Api_Middleware->response($request, function($Request){
-            $uuid = $Request->getAttribute('uuid');
-            $data = $Request->getJSONParams();
+    public function rest_get_menu_types($request) {
+        return $this->Api_Middleware->response($request, function ($Request) {
+            $results = $this->Recipe_Menu_Types_Finder_Service->get_list();
 
-            if(is_array($data) && empty($data) === false){
-                $this->Recipe_Updater_Service->update($data, $uuid);
-            }
-            return [[], 200];
-        }, ['customer', 'edit', fn($Request) => $this->Jwt_Middleware->isRole('admin') || (int)$Request->getAttribute('user_id') === (int)$this->Jwt_Middleware->getValue('userId')]);
+            return [$results, 200];
+        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
+    }
+
+    public function rest_get_kitchen_styles($request) {
+        return $this->Api_Middleware->response($request, function ($Request) {
+            $results = $this->Recipe_Kitchen_Styles_Finder_Service->get_list();
+
+            return [$results, 200];
+        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
+    }
+
+    // handler ----------------------------------------------------------------------------
+    // @todo these should be services
+    private function handle_after_recipe_published(int $uuid) {
+        $results = $this->Recipe_Finder_Service->get($uuid);
+        $recipe = $results->items[0];
+        $user_id = $recipe->get('user_id');
+        // get the data
+        $info = $this->User_Info_Service->get($user_id, true);
+        $user = $info['body']['data'];
+        // $todo update recipe to published
+        //@todo get voucher infos, get recipe title, build email
+        $voucher = '';
+        $email = [
+            'to'=>$user['email'],
+            'subject'=>'Ihr Rezept wurde freigeschaltet',
+            'name'=>$user['salutation']. ' ' .$user['lastname'],
+            'recipe_name'=>$recipe->title,
+            'voucher_code'=>$voucher,
+            'shop_url'=>'https://grillfuerst.de', //@todo move this to settings
+        ];
+        var_dump($email);die;
+        $this->send_email_recipe_published($email);
 
 
+    }
+
+    // EMAILS ----------------------------------------------------------------------------
+    private function send_email_recipe_published(array $params) {
+        $params['template'] = 'published';
+        $this->Email_Middleware->send($params);
+    }
+
+    public function test_send_email_recipe_published() {
+        $params = [
+            'to'      => 'dennis-heiden@straightvisions.com',
+            'subject' => 'test',
+            'body'    => '<strong>Hellow World </strong>'
+        ];
+
+        $this->Email_Middleware->send($params);
     }
 
 }
