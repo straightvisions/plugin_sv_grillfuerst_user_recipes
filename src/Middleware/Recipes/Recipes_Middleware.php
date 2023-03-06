@@ -250,13 +250,15 @@ final class Recipes_Middleware implements Middleware_Interface {
             $uuid    = $Request->getAttribute('uuid');
             $results = $this->Recipe_Exporter_Service->export($uuid);
             $errors  = []; // @todo implement an errors service to provide better error handling in all components
+            $results['link'] = '';
 
             if ($results['status'] === 200) {
                 // change state to published + add link to post
+                $results['link'] = GF_USER_RECIPES_BASE_URL . '/wp-admin/post.php?post=' . $results['postId'] . '&action=edit';
                 $this->Recipe_Updater_Service->update(
                     [
                     'state' => 'published',
-                    'link' => GF_USER_RECIPES_BASE_URL . '/wp-admin/post.php?post=' . $results['postId'] . '&action=edit'
+                    'link' => $results['link']
                     ], $uuid);
 
                 $errors = array_merge(
@@ -266,8 +268,8 @@ final class Recipes_Middleware implements Middleware_Interface {
             }
 
             $results['errors'] = $errors;
-            //@todo check why we get 1 instead of the return
-            return $results;
+
+            return [$results, $results['status']];
         }, ['admin', 'export']);
     }
 
@@ -320,8 +322,6 @@ final class Recipes_Middleware implements Middleware_Interface {
         // get the data
         $info = $this->User_Info_Service->get($user_id, true);
         $user = $info['body']['data'];
-        // $todo update recipe to published
-        //@todo get voucher infos, get recipe title, build email
         $voucher = $this->Recipe_Voucher_Service->create();
 
         if ($voucher !== '') {
