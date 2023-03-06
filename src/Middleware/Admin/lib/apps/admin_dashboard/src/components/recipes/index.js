@@ -42,7 +42,7 @@ export default function Recipes(props) {
 		route += '?';
 		route +='limit='+parseInt(limit);
 		route +='&page=' + parseInt(page);
-		//route += '&state[]=reviewed&state[]=review_pending&state[]=published';
+		route += 'state=review_pending';
 		fetch(route,{
 			headers:headers.get()
 		})

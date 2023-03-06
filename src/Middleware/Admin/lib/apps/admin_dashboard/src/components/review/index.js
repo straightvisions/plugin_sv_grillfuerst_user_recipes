@@ -99,7 +99,11 @@ export default function Review(props) {
 					})));
 			}).then(({ status, json, ok }) => {
 			setExportState({
-				message: json.message,
+				message:
+				json.message
+				+ '<br />Link: <a href="'+json.link+'" target="_blank">'+json.link+'</a>'
+				+ '<br />Errors: ' + json.errors.join('<br />')
+				,
 				status
 			});
 			setInfoExportOpen(true);
@@ -185,7 +189,7 @@ export default function Review(props) {
 				<Modal
 					message={exportState.message}
 					isOpen={infoExportOpen}
-					onClose={()=>setInfoExportOpen(false)}
+					onClose={()=>location.reload()}
 					name="modalExportInfo"
 					confirmText=""
 					cancelText="Schließen"
