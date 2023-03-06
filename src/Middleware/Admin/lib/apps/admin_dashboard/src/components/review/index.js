@@ -61,7 +61,7 @@ export default function Review(props) {
 			state: 'reviewed'
 		};
 	
-		fetch(routes.updateRecipe +  params.uuid, {
+		fetch(routes.updateRecipe + params.uuid + '/feedback', {
 			method: 'PUT',
 			cache: 'no-cache',
 			headers:headers.get(),

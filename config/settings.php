@@ -2,6 +2,7 @@
 //@todo add env support + specific default + wordpress config
 $settings = [
     'env' => defined('GF_USER_RECIPES_ENV') ? GF_USER_RECIPES_ENV : 'production',
+    'debug' => defined('GF_USER_RECIPES_DEBUG') ? GF_USER_RECIPES_DEBUG : false,
     'adapters' => [
         // Wordpress CMS specific adapters
         'Action' => 'Wordpress_Adapter',

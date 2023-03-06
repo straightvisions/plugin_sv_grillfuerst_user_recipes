@@ -1,16 +1,17 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
-    <title>Hello</title>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Neues Feedback erhalten!</title>
 </head>
 <body>
-<h1>Hello {{ name }}</h1>
-
-<p>Here is some data:</p>
-<ul>
-    {% for key, value in data %}
-        <li>{{ key }}: {{ value }}</li>
-    {% endfor %}
-</ul>
+<h1>Neues Feedback erhalten!</h1>
+<p>Sehr geehrte/r {{ name }},</p>
+<p>Wir haben Ihr Rezept "{{ recipe_name }}" geprüft und haben noch ein paar Anmerkungen für Sie.</p>
+<p>Unsere Hinweise finden Sie in der Bearbeitungsansicht Ihres Rezepts in der Rezepte-App.</p>
+<p><a href="{{ recipe_url }}"> {{ recipe_url }} </a></p>
+<p>Vielen Dank für das Teilen Ihres leckeren Rezepts!</p>
+<p>Beste Grüße,<br>Ihr Grillfürst Team</p>
 </body>
 </html>

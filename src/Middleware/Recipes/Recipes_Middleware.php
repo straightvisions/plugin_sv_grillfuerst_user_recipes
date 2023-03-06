@@ -83,6 +83,11 @@ final class Recipes_Middleware implements Middleware_Interface {
             'args'  => ['methods' => 'GET, PUT', 'callback' => [$this, 'route_recipes_uuid']]
         ]);
 
+        $this->Api_Middleware->add([
+            'route' => '/recipes/(?P<uuid>\d+)/feedback', // wordpress specific
+            'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_update_recipe_feedback']]
+        ]);
+
         // GET / CREATE RECIPES BASED ON USER ID
         $this->Api_Middleware->add([
             'route' => '/recipes/user/(?P<user_id>\d+)', // wordpress specific
@@ -115,20 +120,28 @@ final class Recipes_Middleware implements Middleware_Interface {
         ]);
 
         // Test
-        $this->Api_Middleware->add([
-            'route' => '/test/email', // wordpress specific
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_send_email_recipe_published']]
-        ]);
+        if($this->settings['debug'] === true || $this->settings['env'] === 'development'){
+            $this->Api_Middleware->add([
+                'route' => '/test/email', // wordpress specific
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_send_email_recipe_published']]
+            ]);
 
-        $this->Api_Middleware->add([
-            'route' => '/test/voucher', // wordpress specific
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_create_voucher']]
-        ]);
+            $this->Api_Middleware->add([
+                'route' => '/test/voucher', // wordpress specific
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_create_voucher']]
+            ]);
 
-        $this->Api_Middleware->add([
-            'route' => '/test/voucher/check', // wordpress specific
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_check_voucher']]
-        ]);
+            $this->Api_Middleware->add([
+                'route' => '/test/voucher/check', // wordpress specific
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_check_voucher']]
+            ]);
+
+            $this->Api_Middleware->add([
+                'route' => '/test/user/info', // wordpress specific
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_get_user_info']]
+            ]);
+        }
+
     }
 
     // ROUTER ----------------------------------------------------------------------------
@@ -193,6 +206,29 @@ final class Recipes_Middleware implements Middleware_Interface {
         );
     }
 
+    public function rest_update_recipe_feedback($request) {
+        $Request = $this->Adapter->Request()->set($request);
+        $uuid    = $Request->getAttribute('uuid');
+        $results = $this->Recipe_Finder_Service->get($uuid);
+        $recipe  = $results->items[0];
+        $user_id = $recipe->get('user_id');
+        $info = $this->User_Info_Service->get($user_id, true);
+        $user = $info['body']['data'];
+        $url = rtrim(GF_USER_RECIPES_APP_ROOT, '/') . '/edit/'.$uuid;
+        $errors = [];
+
+        $email = [
+            'to'           => $user['email'],
+            'subject'      => 'Neues Feedback erhalten',
+            'name'         => $user['salutation'] . ' ' . $user['lastname'],
+            'recipe_name'  => $recipe->title,
+            'recipe_url'     => $url
+        ];
+
+        $errors = array_merge($errors, $this->send_email_recipe_feedback($email));
+
+        return $this->rest_update_recipe($request);
+    }
     // GETTER ----------------------------------------------------------------------------
 
     public function rest_get_recipes_by_user_id($request) {
@@ -336,7 +372,6 @@ final class Recipes_Middleware implements Middleware_Interface {
 
             $errors = array_merge($errors, $this->send_email_recipe_published($email));
             // no error handling for this operation, sry
-            //@todo check why voucher is not set
             $this->Recipe_Updater_Service->update(['voucher' => $voucher], $uuid);
         } else {
             $errors[] = ['Gutscheincode konnte nicht erstellt werden.'];
@@ -348,22 +383,37 @@ final class Recipes_Middleware implements Middleware_Interface {
     // EMAILS ----------------------------------------------------------------------------
     private function send_email_recipe_published(array $params): array {
         $params['template'] = 'published';
-
         return $this->Email_Middleware->send($params);
     }
 
+    private function send_email_recipe_feedback(array $params): array {
+        $params['template'] = 'feedback';
+        return $this->Email_Middleware->send($params);
+    }
+
+    // TEST FUNCTIONS ----------------------------------------------------------------------------
     public function test_send_email_recipe_published() {
         $params = [
             'to'      => 'dennis-heiden@straightvisions.com',
             'subject' => 'test',
-            'name'    => 'Dennis Heiden',
-            'salutation' => 'Herr',
+            'name'    => 'Herr Dennis Heiden',
             'voucher_code' => 12345,
             'shop_url' => 'https://google.com',
             'template' => 'published'
         ];
 
-        $this->Email_Middleware->send($params);
+        if($this->settings['debug'] || $this->settings['env'] === 'development') {
+            $this->Email_Middleware->send($params);
+        }
+
+    }
+
+    public function test_get_user_info() {
+        if($this->settings['debug'] || $this->settings['env'] === 'development') {
+            $info = $this->User_Info_Service->get(30, true);
+            $user = $info['body']['data'];
+            var_dump($user);
+        }
     }
 
 }

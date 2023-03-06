@@ -39,7 +39,6 @@ export function AlertPublished(props) {
 			<p className="font-bold">Dein Rezept wurde veröffentlicht!</p>
 			<p className="text-sm">Als Dankeschön erhälst du diesen exklusiven Gutschein-Code, den du in unserem <a className="link" href="https://www.grillfuerst.de/" target="_blank">Onlineshop</a> einlösen kannst: <br/><br/>
 				<span className="text-lg font-bold">{voucher}</span><br /><br />
-				<a className="link" href={link} target="_blank">Rezept auf Grillfürst.de anschauen...</a>
 			</p>
 		</div>
 	);

@@ -102,14 +102,14 @@ export default function RecipeDatasheet(props) {
 					</div>
 					{data.ingredients.length > 0 ?
 						data.ingredients.map(item => item.note === '' ?
-							<div key={item.id} className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+							<div key={item.id} className="py-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:py-5 sm:px-6">
 								<dt className="text-sm font-medium text-gray-500">{item.label}</dt>
-								<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{item.amount} {item.unit}</dd>
+								<dd className="mt-1 text-sm text-gray-900 sm:mt-0">{item.amount} {item.unit}</dd>
 							</div> :
-							<div key={item.id} className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
+							<div key={item.id} className="py-4 sm:grid sm:grid-cols-2 sm:gap-4 sm:py-5 sm:px-6">
 								<dt className="text-sm font-medium text-gray-500">{item.label}</dt>
-								<dd className="mt-1 text-sm text-gray-900 sm:col-span-2 sm:mt-0">{item.amount} {item.unit}</dd>
-								<dd className="mt-1 text-sm text-gray-900 sm:col-span-12 sm:mt-0"><i>{item.note}</i>
+								<dd className="mt-1 text-sm text-gray-900 sm:mt-0">{item.amount} {item.unit}</dd>
+								<dd className="mt-1 text-sm text-gray-900 sm:mt-0 col-span-2"><i>{item.note}</i>
 								</dd>
 							</div>
 						) : <div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">

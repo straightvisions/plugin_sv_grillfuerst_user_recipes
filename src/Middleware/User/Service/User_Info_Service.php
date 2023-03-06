@@ -55,7 +55,7 @@ final class User_Info_Service {
                 $data['email'] = $body_data['customers_email_address'];
             }
 
-            switch($body_data['gender']){
+            switch($data['gender']){
                 case 'm': $data['salutation'] = 'Herr'; break;
                 case 'f': $data['salutation'] = 'Frau'; break;
                 case 'c': $data['salutation'] = ''; break;
