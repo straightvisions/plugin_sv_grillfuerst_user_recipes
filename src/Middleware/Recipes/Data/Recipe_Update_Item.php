@@ -49,10 +49,6 @@ class Recipe_Update_Item extends Recipe_Model_Item {
         return $this->get($field);
     }
 
-    public function get($field){
-        return $this->{$field};
-    }
-
     public function unset(string $key){
         // check if attribute exists and check if key is NOT a function
         if(isset($this->{$key}) && method_exists($this, $key) === false){

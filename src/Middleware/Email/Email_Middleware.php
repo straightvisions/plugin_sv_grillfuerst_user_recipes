@@ -34,7 +34,8 @@ class Email_Middleware {
         $this->settings = $container->get('settings')['mailer'];
     }
 
-    public function send(array $data): void {
+    public function send(array $data): array {
+        $errors = [];
         $from = new Address(isset($data['from']) ? $data['from'] : $this->settings['from']);
         $to   = new Address($data['to']);
 
@@ -49,19 +50,19 @@ class Email_Middleware {
             $this->logger->info('Email sent successfully', $data);
         } catch (Throwable $exception) {
             $this->logger->error($exception->getMessage(), $data);
-            throw new RuntimeException('Failed to send email');
+            //throw new RuntimeException('Failed to send email');
+            $errors[] = 'Email konnte nicht gesendet werden';
         }
+
+        return $errors;
     }
 
     private function render(array $params): string {
-        return $this->twig->render($this->getTemplate((string)$params['template']), [
-            'subject' => $params['subject'],
-            'content' => $params['body'],
-        ]);
+        return $this->twig->render($this->getTemplate((string)$params['template']), $params);
     }
 
     private function getTemplate(string $templateName): string {
-        $templateName = 'Email/'.$templateName;
+        $templateName = 'Email/'.$templateName . '.html.twig';
         $defaultTemplate = 'Email/default.html.twig';
 
         try {

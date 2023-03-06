@@ -91,7 +91,6 @@ final class Recipe_Exporter_Service {
         }
 
         $file = file_get_contents($url);
-        $mime_type = mime_content_type($url);
 
         $c = curl_init(GF_USER_RECIPES_BASE_URL . '/wp-json/wp/v2/media');
         curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
@@ -103,7 +102,6 @@ final class Recipe_Exporter_Service {
         curl_setopt($c, CURLOPT_POSTFIELDS, $file);
         curl_setopt($c, CURLOPT_HTTPHEADER, [
             'Content-Disposition: form-data; filename="' . basename($url) . '"',
-            //'Content-Type: ' . $mime_type,
             'Content-Length: ' . strlen($file)
         ]);
 

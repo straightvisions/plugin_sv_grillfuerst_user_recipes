@@ -15,6 +15,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Ingredients_Fi
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Kitchen_Styles_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Menu_Types_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Updater_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Voucher_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Info_Service;
 
 final class Recipes_Middleware implements Middleware_Interface {
@@ -24,6 +25,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     private Recipe_Creator_Service $Recipe_Creator_Service;
     private Recipe_Updater_Service $Recipe_Updater_Service;
     private Recipe_Exporter_Service $Recipe_Exporter_Service;
+    private Recipe_Voucher_Service $Recipe_Voucher_Service;
     private Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service;
     private Recipe_Menu_Types_Finder_Service $Recipe_Menu_Types_Finder_Service;
     private Jwt_Middleware $Jwt_Middleware;
@@ -41,6 +43,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service,
         Recipe_Menu_Types_Finder_Service $Recipe_Menu_Types_Finder_Service,
         Recipe_Exporter_Service $Recipe_Exporter_Service,
+        Recipe_Voucher_Service $Recipe_Voucher_Service,
         Jwt_Middleware $Jwt_Middleware,
         Email_Middleware $Email_Middleware,
         User_Info_Service $User_Info_Service,
@@ -56,6 +59,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         $this->Recipe_Menu_Types_Finder_Service     = $Recipe_Menu_Types_Finder_Service;
         $this->Recipe_Ingredients_Finder_Service    = $Recipe_Ingredients_Finder_Service;
         $this->Recipe_Exporter_Service              = $Recipe_Exporter_Service;
+        $this->Recipe_Voucher_Service               = $Recipe_Voucher_Service;
         $this->Jwt_Middleware                       = $Jwt_Middleware;
         $this->Email_Middleware                     = $Email_Middleware;
         $this->User_Info_Service                    = $User_Info_Service;
@@ -114,6 +118,16 @@ final class Recipes_Middleware implements Middleware_Interface {
         $this->Api_Middleware->add([
             'route' => '/test/email', // wordpress specific
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_send_email_recipe_published']]
+        ]);
+
+        $this->Api_Middleware->add([
+            'route' => '/test/voucher', // wordpress specific
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_create_voucher']]
+        ]);
+
+        $this->Api_Middleware->add([
+            'route' => '/test/voucher/check', // wordpress specific
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_check_voucher']]
         ]);
     }
 
@@ -185,7 +199,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $this->Api_Middleware->response(
             $request,
             function ($Request) {
-                $params = $Request->getParams();
+                $params  = $Request->getParams();
                 $user_id = (int)$Request->getAttribute('user_id');
                 $results = $this->Recipe_Finder_Service->get_list($user_id, $params);
 
@@ -235,11 +249,24 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $this->Api_Middleware->response($request, function ($Request) {
             $uuid    = $Request->getAttribute('uuid');
             $results = $this->Recipe_Exporter_Service->export($uuid);
+            $errors  = []; // @todo implement an errors service to provide better error handling in all components
 
             if ($results['status'] === 200) {
-                $this->handle_after_recipe_published($uuid); // should be its own service
+                // change state to published + add link to post
+                $this->Recipe_Updater_Service->update(
+                    [
+                    'state' => 'published',
+                    'link' => GF_USER_RECIPES_BASE_URL . '/wp-admin/post.php?post=' . $results['postId'] . '&action=edit'
+                    ], $uuid);
+
+                $errors = array_merge(
+                    $errors,
+                    $this->handle_after_recipe_published($uuid)
+                ); // should be its own service
             }
 
+            $results['errors'] = $errors;
+            //@todo check why we get 1 instead of the return
             return $results;
         }, ['admin', 'export']);
     }
@@ -257,8 +284,6 @@ final class Recipes_Middleware implements Middleware_Interface {
             return [$results, 200];
         }, ['customer', 'view']);
     }
-
-    // SETTER ----------------------------------------------------------------------------
 
     public function rest_get_ingredients($request) {
         return $this->Api_Middleware->response($request, function ($Request) {
@@ -287,40 +312,55 @@ final class Recipes_Middleware implements Middleware_Interface {
     // handler ----------------------------------------------------------------------------
     // @todo these should be services
     private function handle_after_recipe_published(int $uuid) {
+        $errors  = [];
         $results = $this->Recipe_Finder_Service->get($uuid);
-        $recipe = $results->items[0];
+        $recipe  = $results->items[0];
         $user_id = $recipe->get('user_id');
+
         // get the data
         $info = $this->User_Info_Service->get($user_id, true);
         $user = $info['body']['data'];
         // $todo update recipe to published
         //@todo get voucher infos, get recipe title, build email
-        $voucher = '';
-        $email = [
-            'to'=>$user['email'],
-            'subject'=>'Ihr Rezept wurde freigeschaltet',
-            'name'=>$user['salutation']. ' ' .$user['lastname'],
-            'recipe_name'=>$recipe->title,
-            'voucher_code'=>$voucher,
-            'shop_url'=>'https://grillfuerst.de', //@todo move this to settings
-        ];
-        var_dump($email);die;
-        $this->send_email_recipe_published($email);
+        $voucher = $this->Recipe_Voucher_Service->create();
 
+        if ($voucher !== '') {
+            $email = [
+                'to'           => $user['email'],
+                'subject'      => 'Ihr Rezept wurde freigeschaltet',
+                'name'         => $user['salutation'] . ' ' . $user['lastname'],
+                'recipe_name'  => $recipe->title,
+                'voucher_code' => $voucher,
+                'shop_url'     => 'https://grillfuerst.de', //@todo move this to settings
+            ];
 
+            $errors = array_merge($errors, $this->send_email_recipe_published($email));
+            // no error handling for this operation, sry
+            //@todo check why voucher is not set
+            $this->Recipe_Updater_Service->update(['voucher' => $voucher], $uuid);
+        } else {
+            $errors[] = ['Gutscheincode konnte nicht erstellt werden.'];
+        }
+
+        return $errors;
     }
 
     // EMAILS ----------------------------------------------------------------------------
-    private function send_email_recipe_published(array $params) {
+    private function send_email_recipe_published(array $params): array {
         $params['template'] = 'published';
-        $this->Email_Middleware->send($params);
+
+        return $this->Email_Middleware->send($params);
     }
 
     public function test_send_email_recipe_published() {
         $params = [
             'to'      => 'dennis-heiden@straightvisions.com',
             'subject' => 'test',
-            'body'    => '<strong>Hellow World </strong>'
+            'name'    => 'Dennis Heiden',
+            'salutation' => 'Herr',
+            'voucher_code' => 12345,
+            'shop_url' => 'https://google.com',
+            'template' => 'published'
         ];
 
         $this->Email_Middleware->send($params);
