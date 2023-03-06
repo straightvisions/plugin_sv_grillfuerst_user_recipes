@@ -312,6 +312,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     public function rest_get_recipes($request) {
         return $this->Api_Middleware->response($request, function ($Request) {
             $params = $Request->getParams();
+
             if ($this->Jwt_Middleware->isRole('admin')) {
                 $results = $this->Recipe_Finder_Service->get_list(0, $params);
             } else {

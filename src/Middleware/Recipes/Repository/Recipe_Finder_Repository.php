@@ -18,6 +18,17 @@ final class Recipe_Finder_Repository {
     }
 
     public function get($id = null, array $params = []): array {
+        $limit = $params['limit'] ? (int)$params['limit'] : false;
+        $page = $params['page'] ? (int)$params['page'] : false;
+        $filter = isset($params['filter']) ? $params['filter'] : [];
+        $where = [];
+        // strip not allowed fields for where
+        unset($params['limit']);
+        unset($params['page']);
+        unset($params['uuid']);
+        unset($params['id']);
+        unset($params['user_id']);
+
         $query = $this->Query_Factory->newSelect('svgfur_recipes');
 
         $query->select(
@@ -28,15 +39,34 @@ final class Recipe_Finder_Repository {
 
         // filter by recipe id
         if($id){
-            $query->where(['uuid' => (int)$id]);
+            $where[] = ['uuid' => (int)$id];
         }
+
+        // generate wheres
+        // DANGER ZONE
+        //@todo add array field support
+        /*foreach($filter as $field => $value){
+            if( in_array($field, [
+                'state'
+            ])){
+                $where[$field] = implode($value);
+            }
+        }*/
+        // replace this after refactoring -----------
+        unset($filter['uuid']);
+        unset($filter['user_id']);
+        $where = array_merge($filter, $where);
+        // ------------------------------------------
+
+        $query->where($where);
 
         // counting before limit
         $this->apply_counting($query, $params);
 
         // pagination
-        if($params['limit']) $query->limit((int)$params['limit']);
-        if($params['page']) $query->page((int)$params['page']);
+        if($limit) $query->limit($limit);
+        if($page) $query->page($page);
+
 
         return $query->execute()->fetchAll('assoc') ?: [];
     }
