@@ -63,6 +63,42 @@ final class Product_Repository {
                            ->execute();
     }
 
+    public function get(array $params = []): array {
+        $limit = $params['limit'] ? (int)$params['limit'] : false;
+        $page = $params['page'] ? (int)$params['page'] : false;
+        $filter = isset($params['filter']) ? $params['filter'] : [];
+        $where = [];
+
+        $query = $this->Query_Factory->newSelect($this->table);
+
+        $query->select(
+            [
+                '*',
+            ]
+        );
+
+        // prepare filter
+        if(empty($filter) === false){
+            foreach($filter as $column => $value){
+                $filter[$column] = \sanitize_text_field($column) . " = '".\sanitize_text_field($value)."'";
+            }
+        }
+
+        // //@todo remove when categories are enabled
+        $filter = [];
+
+        $where = array_merge($filter, $where);
+        // ------------------------------------------
+
+        $query->where($where);
+
+        // pagination
+        if($limit) $query->limit($limit);
+        if($page) $query->page($page);
+
+        return $query->execute()->fetchAll('assoc') ?: [];
+    }
+
     public function exists_id(int $product_id): bool {
         $query = $this->Query_Factory->newSelect($this->table);
         $query->select('products_id')->where(['products_id' => $product_id]);

@@ -112,7 +112,7 @@ final class Query_Factory {
                 $sql .= ',';
             }
         }
-var_dump($sql);die;
+
         return $this->connection->execute($sql);
     }
     */

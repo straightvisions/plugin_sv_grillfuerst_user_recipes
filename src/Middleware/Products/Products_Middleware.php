@@ -6,6 +6,7 @@ use Psr\Container\ContainerInterface;
 use SV_Grillfuerst_User_Recipes\Interfaces\Middleware_Interface;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Products\Service\Product_Import_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Products\Service\Product_Finder_Service;
 
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 
@@ -14,18 +15,21 @@ final class Products_Middleware implements Middleware_Interface {
     private Api_Middleware $Api_Middleware;
     private $Adapter;
     private $settings;
-    private Product_Import_Service $Product_Service;
+    private Product_Import_Service $Product_Import_Service;
+    private Product_Finder_Service $Product_Finder_Service;
 
 
     public function __construct(
         Api_Middleware $Api_Middleware,
         Adapter $Adapter,
-        Product_Import_Service $Product_Service,
+        Product_Import_Service $Product_Import_Service,
+        Product_Finder_Service $Product_Finder_Service,
         ContainerInterface $container
     ) {
         $this->Api_Middleware  = $Api_Middleware;
         $this->Adapter         = $Adapter;
-        $this->Product_Import_Service = $Product_Service;
+        $this->Product_Import_Service = $Product_Import_Service;
+        $this->Product_Finder_Service = $Product_Finder_Service;
         $this->settings        = $container->get('settings');
 
         // get product by id
@@ -39,15 +43,37 @@ final class Products_Middleware implements Middleware_Interface {
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_sync_products']]
         ]);
 
+        $this->Api_Middleware->add([
+            'route' => '/products/accessories',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_accessories']]
+        ]);
+
+        $this->Api_Middleware->add([
+            'route' => '/products/ingredients',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_ingredients']]
+        ]);
 
     }
 
     // GETTER ----------------------------------------------------------------------------
-    public function rest_get_product($request) {
+    public function rest_get_product($request) {}
 
-
+    public function rest_get_accessories($request){
+        return $this->Api_Middleware->response_public($request, function ($Request) {
+            $results = $this->Product_Finder_Service->get_list(['filter'=>['category'=>1]]); //@todo replace filter when available
+            return [$results, 200];
+        },['client','view'], ['Cache-Control' => 'max-age=3600']);
     }
 
+    public function rest_get_ingredients($request){
+        return $this->Api_Middleware->response_public($request, function ($Request) {
+            $results = $this->Product_Finder_Service->get_list(['filter'=>['category'=>1]]); //@todo replace filter when available
+            return [$results, 200];
+        },['client','view'], ['Cache-Control' => 'max-age=3600']);
+    }
+
+    // sync for cronjob
+    //@todo secure this route with a token
     public function rest_sync_products($request){
         return $this->Api_Middleware->response_public($request, function ($Request) {
 

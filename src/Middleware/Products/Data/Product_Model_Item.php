@@ -2,7 +2,6 @@
 namespace SV_Grillfuerst_User_Recipes\Middleware\Products\Data;
 
 class Product_Model_Item {
-    public int $id = 0;
     public int $products_id = 0;
     public string $model = '';
     public string $ean = '';
