@@ -16,6 +16,34 @@ License URI: https://www.gnu.org/licenses/gpl-3.0-standalone.html
 if ( ! defined('ABSPATH')) {
     exit;
 }
+// activation
+register_activation_hook( __FILE__, 'sv_grillfuerst_user_recipes_plugin_activation' );
+
+function sv_grillfuerst_user_recipes_plugin_activation() {
+    global $wpdb;
+    $table_name = 'svgfur_recipes_products';
+    // Check if the table exists
+    if ($wpdb->get_var('SHOW TABLES LIKE \'' . $table_name . '\'') != $table_name) {
+        // Table does not exist, create it
+        $sql = 'CREATE TABLE ' . $table_name . ' (
+        products_id mediumint(9) NOT NULL,
+        model varchar(255) NOT NULL,
+        ean varchar(255) NOT NULL,
+        name varchar(255) NOT NULL, 
+        brand varchar(255) NOT NULL,
+        description_short text NOT NULL,
+        images json NOT NULL DEFAULT \'[]\',
+        link varchar(255) NOT NULL,
+        PRIMARY KEY (products_id)) ' . $wpdb->get_charset_collate() . ';
+        ALTER TABLE ' . $table_name . ' ADD INDEX (ean, name, brand);
+        ';
+
+        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
+        dbDelta($sql);
+    }
+
+}
+
 // wordpress specific
 add_action('init', 'sv_grillfuerst_user_recipes_rewrite_permalink_rules');
 

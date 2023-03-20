@@ -39,10 +39,6 @@ class Recipe_Insert_Item extends Recipe_Model_Item {
         return $this->get($field);
     }
 
-    public function get($field){
-        return $this->{$field};
-    }
-
     public function to_json($val){
         if(!is_array($val) && !is_object($val)){
             return $val;

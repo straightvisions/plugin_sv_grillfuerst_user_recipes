@@ -41,6 +41,7 @@ $settings['register_server_url'] = GF_USER_RECIPES_REGISTER_SERVER_URL;
 $settings['customer_info_server_url'] = GF_USER_RECIPES_USER_INFO_SERVER_URL;
 $settings['voucher_create_server_url'] = GF_USER_RECIPES_VOUCHER_CREATE_SERVER_URL;
 $settings['voucher_check_server_url'] = GF_USER_RECIPES_VOUCHER_CHECK_SERVER_URL;
+$settings['get_products_server_url'] = GF_USER_RECIPES_GET_PRODUCTS_URL;
 
 $settings['logger'] = [
     'name' => 'app',

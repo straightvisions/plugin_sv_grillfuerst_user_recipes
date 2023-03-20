@@ -18,7 +18,7 @@ final class Api_Http_Service {
             //@todo add env based default
             'base_uri' => 'localhost',
             // You can set any number of default request options.
-            'timeout'  => 2.0,
+            'timeout'  => 30.0,
             'http_errors' => false,
         ]);
 

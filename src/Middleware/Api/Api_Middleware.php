@@ -11,7 +11,6 @@ use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 use function add_action;
 
 final class Api_Middleware implements Middleware_Interface {
-    //private Action_Adapter $Action_Adapter;
     private Api_Route_Service $Api_Route_Service;
     private Api_Http_Service $Api_Http_Service;
     private Jwt_Middleware $Jwt_Middleware;

@@ -60,6 +60,63 @@ final class Query_Factory {
                     ->values($data);
     }
 
+    // @todo replace this with cake php connection when out of beta
+    public function newBulkInsert(string $table_name, array $items){
+        global $wpdb;
+
+        $first_item = reset( $items );
+        $keys = array_keys( $first_item );
+
+        $placeholders = array_fill( 0, count( $keys ), '%s' );
+        $placeholder_string = '(' . implode( ', ', $placeholders ) . ')';
+        $value_strings = array();
+
+        foreach ( $items as $item ) {
+            $values = array();
+            foreach ( $keys as $key ) {
+                $values[] = $item[ $key ];
+            }
+            $value_strings[] = $wpdb->prepare( $placeholder_string, $values );
+        }
+
+        $sql = "INSERT INTO $table_name (" . implode( ', ', $keys ) . ") VALUES " . implode( ', ', $value_strings );
+        $update_sql = " ON DUPLICATE KEY UPDATE ";
+        foreach ( $keys as $key ) {
+            $update_sql .= "$key=VALUES($key), ";
+        }
+        $update_sql = rtrim( $update_sql, ', ' );
+
+        $wpdb->query( $sql . $update_sql );
+    }
+    // bulk cake
+    /*
+    public function newBulkInsert(string $table, array $list): mixed {
+
+        if(empty($list))return false;
+
+
+        $keys = implode(',', array_keys($list[0]));
+
+        $sql = 'INSERT INTO '.$table.' ('.$keys.') VALUES ';
+        foreach($list as $key => $item){
+            $tmp = implode('#####,####', $item);
+            $tmp = json_encode($tmp);
+            $tmp = str_replace('####,####', "','");
+            $tmp = "('".$tmp."')";
+            $sql .= $tmp;
+
+            //@todo optimise this
+            if($key+1 === count($list)){
+                $sql .= ';';
+            }else{
+                $sql .= ',';
+            }
+        }
+var_dump($sql);die;
+        return $this->connection->execute($sql);
+    }
+    */
+
     /**
      * Create a 'delete' query for the given table.
      *
