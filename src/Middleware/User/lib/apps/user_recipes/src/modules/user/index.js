@@ -28,7 +28,7 @@ const user = {
 						storage.set(key, value);
 					}
 				}else{
-					window.location.href = routes.login;
+					//window.location.href = routes.login;
 				}
 				
 				user.initialised = true;

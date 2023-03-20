@@ -2,7 +2,7 @@ const root = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-use
 
 export default {
 	
-	"login": 'https://relaunch-magazin.grillfuerst.de/nutzerrezepte/login',
+	"login": 'https://relaunch-magazin.grillfuerst.de/community-rezepte/login',
 	"isLoggedIn": root + '/users/is_logged_in',
 	"getUserInfo": root + '/users/info',
 	"getUserInfoById": root + '/users/{id}/info',

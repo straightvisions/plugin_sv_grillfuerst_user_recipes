@@ -23,7 +23,7 @@ export default function App(){
 				// check if user is already logged-in
 				if(res.loggedIn){
 					storage.set('userId', res.userId);
-					window.location.href = res.url + '&ref=https%3A%2F%2Frelaunch-magazin.grillfuerst.de%2Fnutzerrezepte';
+					window.location.href = res.url + '&ref=https%3A%2F%2Frelaunch-magazin.grillfuerst.de%2Fcommunity-rezepte';
 				}
 				
 				setLoadingState(false);
