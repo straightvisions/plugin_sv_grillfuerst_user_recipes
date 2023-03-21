@@ -12,8 +12,8 @@ module.exports = {
     },
     extend: {
       colors: {
-        'redgr': '#d51417',
-        'orangegr': '#f59b00'
+        'red': '#d51417',
+        'orange': '#f59b00'
       },
       minWidth: {
         'max': 'max-content'

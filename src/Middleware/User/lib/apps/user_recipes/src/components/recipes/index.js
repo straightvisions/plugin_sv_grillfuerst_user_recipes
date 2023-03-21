@@ -1,5 +1,4 @@
 import React, {useEffect, useState} from "react";
-import DayJS from 'react-dayjs';
 import routes from '../../models/routes';
 import storage from '../../modules/storage';
 import {useNavigate} from "react-router-dom";
@@ -74,7 +73,9 @@ export default function Recipes(props) {
 	}
 	
 	const getDate = (date) => {
-		return <DayJS format="DD.MM.YYYY HH:mm">{date}</DayJS>;
+		//@todo replace datejs
+		return date;
+		//return <DayJS format="DD.MM.YYYY HH:mm">{date}</DayJS>;
 	}
 	
 	const handleCopyCode = (e, c) => {

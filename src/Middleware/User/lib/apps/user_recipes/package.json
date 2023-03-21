@@ -15,9 +15,10 @@
   "dependencies": {
     "@headlessui/react": "^1.7.4",
     "@heroicons/react": "^2.0.13",
+    "@tailwindcss/aspect-ratio": "^0.4.2",
+    "@tailwindcss/typography": "^0.5.9",
     "dayjs": "^1.11.6",
     "react": "^18.2.0",
-    "react-dayjs": "^0.3.2",
     "react-dom": "^18.2.0",
     "react-router-dom": "^6.4.3",
     "usehooks-ts": "^2.9.1"
@@ -40,7 +41,7 @@
     "tailwindcss": "^3.2.1",
     "url-loader": "^4.1.1",
     "webpack": "^5.74.0",
-    "webpack-cli": "^4.10.0",
-    "webpack-dev-server": "^4.11.1"
+    "webpack-cli": "^5",
+    "webpack-dev-server": "^4.13.1"
   }
 }

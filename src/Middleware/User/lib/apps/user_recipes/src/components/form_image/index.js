@@ -19,7 +19,7 @@ export default function Image(props) {
 				<div className="h-full w-full hidden group-hover:flex justify-center align-center rounded-md bg-white/[.8] absolute">
 					<div
 						onClick={()=>onDelete(image)}
-						className="justify-center m-auto p-6 rounded-full bg-redgr/[.6] cursor-pointer">
+						className="justify-center m-auto p-6 rounded-full bg-red-500/[.6] cursor-pointer">
 						<svg
 							xmlns="http://www.w3.org/2000/svg"
 							fill="none"

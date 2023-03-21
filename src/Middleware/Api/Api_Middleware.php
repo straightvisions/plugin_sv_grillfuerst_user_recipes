@@ -76,7 +76,8 @@ final class Api_Middleware implements Middleware_Interface {
     // public api route without any validation -> login route for example
     public function response_public($request, $callback){
         $Request = $this->Adapter->Request()->set($request);
-        return $callback($Request);
+        $res = $callback($Request);
+        return new \WP_REST_Response($res[0], isset($res[1]) ? $res[1] : 200);
     }
 
 }

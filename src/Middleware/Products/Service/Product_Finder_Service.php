@@ -36,6 +36,15 @@ final class Product_Finder_Service {
             if (property_exists($item, $key)) {
                 $item->set($key, $value);
             }
+
+            // custom
+            if($key === 'products_id'){
+                $item->setId($value);
+            }
+
+            if($key === 'name'){
+                $item->setLabel($value);
+            }
         }
 
         return $item;
