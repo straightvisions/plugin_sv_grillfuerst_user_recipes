@@ -50,7 +50,7 @@ export default function ProductFinder(props) {
 						onChange={handleSearchChange}
 					/>
 				</div>
-				<div id="results" className="h-full max-h-[100%] overflow-y-scroll bg-grey p-6">
+				<div id="results" className="h-full max-h-[100%] overflow-y-scroll bg-grey-50 p-6">
 					<div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
 						{filteredAccessories.length > 0 ? filteredAccessories.map((accessory) => (
 								<div
