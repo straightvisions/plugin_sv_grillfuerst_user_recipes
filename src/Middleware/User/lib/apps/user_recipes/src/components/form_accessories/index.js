@@ -66,7 +66,7 @@ export default function Accessories(props) {
 			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Zubehör</h3>
-					<p className="mt-1 text-sm text-gray-500">Gib alles Zubehör ein, das für das Rezept benötigt oder von dir empfohlen werden.</p>
+					<p className="mt-1 text-sm text-gray-500">Gib alles Zubehör ein, das für das Rezept benötigt oder von dir empfohlen wird.</p>
 					<div className="col-span-6 sm:col-span-4 my-4">
 						<button
 							onClick={()=>setShowProductFinder(true)}
