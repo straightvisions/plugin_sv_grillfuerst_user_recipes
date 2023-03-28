@@ -60,14 +60,14 @@ final class Products_Middleware implements Middleware_Interface {
 
     public function rest_get_accessories($request){
         return $this->Api_Middleware->response_public($request, function ($Request) {
-            $results = $this->Product_Finder_Service->get_list(['filter'=>['category'=>1]]); //@todo replace filter when available
+            $results = $this->Product_Finder_Service->get_list(['filter'=>['is_food'=>0]]); //@todo replace filter when available
             return [$results, 200];
         },['client','view'], ['Cache-Control' => 'max-age=3600']);
     }
 
     public function rest_get_ingredients($request){
         return $this->Api_Middleware->response_public($request, function ($Request) {
-            $results = $this->Product_Finder_Service->get_list(['filter'=>['category'=>1]]); //@todo replace filter when available
+            $results = $this->Product_Finder_Service->get_list(['filter'=>['is_food'=>1]]); //@todo replace filter when available
             return [$results, 200];
         },['client','view'], ['Cache-Control' => 'max-age=3600']);
     }

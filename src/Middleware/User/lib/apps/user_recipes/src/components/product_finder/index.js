@@ -36,7 +36,6 @@ export default function ProductFinder(props) {
 		onSelect(item);
 	}
 	
-	
 	return (
 		<div id="wrapper" className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-50">
 			<div id="innerWrapper" className="bg-white rounded-lg p-6 w-full w-3/4 h-[100vh] max-h-[80vh] flex flex-col">
@@ -57,7 +56,7 @@ export default function ProductFinder(props) {
 									onClick={()=>handleSelect(accessory)}
 									key={accessory.id}
 									className="relative  flex flex-col items-center justify-center bg-white round  shadow-md hover:shadow-lg cursor-pointer">
-									<img src={JSON.parse(accessory.images)[0]} alt={accessory.label} className="w-auto h-1/2 max-h-[200px]" />
+									<img src={accessory.images[0]} alt={accessory.label} className="w-auto h-1/2 max-h-[200px]" />
 									<div className="p-6 text-sm">
 										{accessory.label}
 									</div>

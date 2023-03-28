@@ -80,12 +80,9 @@ final class Product_Repository {
         // prepare filter
         if(empty($filter) === false){
             foreach($filter as $column => $value){
-                $filter[$column] = \sanitize_text_field($column) . " = '".\sanitize_text_field($value)."'";
+                $filter[\sanitize_text_field($column)] = \sanitize_text_field($value);
             }
         }
-
-        // //@todo remove when categories are enabled
-        $filter = [];
 
         $where = array_merge($filter, $where);
         // ------------------------------------------

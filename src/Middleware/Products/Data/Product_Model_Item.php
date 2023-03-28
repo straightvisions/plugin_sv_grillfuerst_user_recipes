@@ -10,6 +10,7 @@ class Product_Model_Item {
     public string $description_short = '';
     public array|string $images = '[]';
     public string $link = '';
+    public int $is_food = 0;
 
     // useful functions to convert data before output
     public function __construct(){}

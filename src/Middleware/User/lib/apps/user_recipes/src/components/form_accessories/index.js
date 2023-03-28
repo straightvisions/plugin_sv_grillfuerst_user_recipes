@@ -26,7 +26,26 @@ export default function Accessories(props) {
 			},
 		}).then(response => response.json())
 		.then(data => {
-			setAccessoriesDB(data.items);
+			
+			// remove "ersatzteile"
+			const filteredItems = data.items.filter(item => {
+				let check = true;
+				// word in name
+				if(item.name.toLowerCase().indexOf('ersatz') !== -1 ){
+					check = false;
+				}
+				// word in thumb url
+				if(check && item.images.length > 0){
+					for(let i=0; i < item.images.length;i++){
+						if(item.images[i].toLowerCase().indexOf('ersatz') !== -1 ){
+							check = false;
+						}
+					}
+				}
+				return check;
+			});
+	
+			setAccessoriesDB(filteredItems);
 			setLoadingState(false);
 		});
 	}, []);
@@ -68,13 +87,16 @@ export default function Accessories(props) {
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Zubehör</h3>
 					<p className="mt-1 text-sm text-gray-500">Gib alles Zubehör ein, das für das Rezept benötigt oder von dir empfohlen wird.</p>
 					<div className="col-span-6 sm:col-span-4 my-4">
-						<button
-							onClick={()=>setShowProductFinder(true)}
-							type="button"
-							className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-						>
-							Zubehör hinzufügen
-						</button>
+						{loading ?
+						<Spinner /> :
+							<button
+								onClick={()=>setShowProductFinder(true)}
+								type="button"
+								className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+							>
+								Zubehör hinzufügen
+							</button>
+						}
 					</div>
 				</div>
 				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
