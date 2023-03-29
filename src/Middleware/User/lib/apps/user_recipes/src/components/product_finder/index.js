@@ -3,27 +3,39 @@ import React, { useState } from "react";
 export default function ProductFinder(props) {
 	const {
 		id = 'productFinder',
-		accessories,
-		accessoriesSelected = [],
+		items,
+		itemsSelected = [],
 		setShow = ()=>{},
 		onSelect = ()=>{}
 	} = props;
-	
+
 	const localStorageSearchQueryKey = id + 'SearchQuery';
-	const selectedIds = accessoriesSelected.map(accessory => accessory.id);
+	const selectedIds = itemsSelected.map(item => item.id);
 	const [searchQuery, setSearchQuery] = useState(
 		localStorage.getItem(localStorageSearchQueryKey) || ""
 	);
 	const [numToShow, setNumToShow] = useState(20);
-	const filteredAccessories = searchQuery.length >= 3 ?
-		accessories.filter((accessory) => {
-			return accessory.label.toLowerCase().includes(searchQuery.toLowerCase());
-		}).slice(0, numToShow)
-		: [];
+	
+	let filteredItems = [];
+	console.log(searchQuery);
+	if (searchQuery.length > 0 && searchQuery[0].length >= 3) {
+		filteredItems = items.filter((item) => {
+			return item.name.toLowerCase().includes(searchQuery[0].toLowerCase());
+		});
+		
+		for (let i = 1; i < searchQuery.length; i++) {
+			filteredItems = filteredItems.filter((item) => {
+				return item.name.toLowerCase().includes(searchQuery[i].toLowerCase());
+			});
+		}
+		
+		filteredItems = filteredItems.slice(0, numToShow);
+		
+	}
 	
 	const handleSearchChange = (event) => {
 		const query = event.target.value;
-		setSearchQuery(query);
+		setSearchQuery(query.split(','));
 		localStorage.setItem(localStorageSearchQueryKey, query);
 		setNumToShow(20); // reset number of results shown when query changes
 	};
@@ -51,16 +63,16 @@ export default function ProductFinder(props) {
 				</div>
 				<div id="results" className="h-full max-h-[100%] overflow-y-scroll bg-grey-50 p-6">
 					<div className="w-full grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 lg:grid-cols-5 gap-8">
-						{filteredAccessories.length > 0 ? filteredAccessories.map((accessory) => (
+						{filteredItems.length > 0 ? filteredItems.map((item) => (
 								<div
-									onClick={()=>handleSelect(accessory)}
-									key={accessory.id}
+									onClick={()=>handleSelect(item)}
+									key={item.id}
 									className="relative  flex flex-col items-center justify-center bg-white round  shadow-md hover:shadow-lg cursor-pointer">
-									<img src={accessory.images[0]} alt={accessory.label} className="w-auto h-1/2 max-h-[200px]" />
+									<img src={item.images[0]} alt={item.name} className="w-auto h-1/2 max-h-[200px]" />
 									<div className="p-6 text-sm">
-										{accessory.label}
+										{item.name}
 									</div>
-									{selectedIds.includes(accessory.id) && (
+									{selectedIds.includes(item.id) && (
 										<div className="absolute bg-orange-500 top-0 left-0 w-full h-full bg-black bg-opacity-60 flex flex-col items-center justify-center">
 											<svg xmlns="http://www.w3.org/2000/svg" className="h-16 w-16 text-white" viewBox="0 0 20 20" fill="currentColor">
 												<path d="M6 11.586l-2.293-2.293a1 1 0 0 1 1.414-1.414l1.88 1.88 4.59-4.59a1 1 0 0 1 1.414 1.414L7.414 11.586a1 1 0 0 1-1.414 0z" />
@@ -73,7 +85,7 @@ export default function ProductFinder(props) {
 							<p><strong>Keine Ergebnisse</strong></p>
 						}
 					</div>
-					{filteredAccessories.length !== 0 && filteredAccessories.length < accessories.length &&
+					{filteredItems.length !== 0 && filteredItems.length < items.length &&
 						<div className="flex justify-center mt-4">
 							<button type="button" className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded" onClick={handleShowMore}>Mehr anzeigen</button>
 						</div>

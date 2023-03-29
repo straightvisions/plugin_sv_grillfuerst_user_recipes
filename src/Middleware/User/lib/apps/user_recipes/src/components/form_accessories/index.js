@@ -81,7 +81,7 @@ export default function Accessories(props) {
 	
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-			{showProductFinder === true && <ProductFinder id="AccessoriesFinder" accessories={accessoriesDB} accessoriesSelected={accessories} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
+			{showProductFinder === true && <ProductFinder id="AccessoriesFinder" items={accessoriesDB} itemsSelected={accessories} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
 			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Zubehör</h3>
