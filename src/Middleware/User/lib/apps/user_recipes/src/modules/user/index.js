@@ -22,8 +22,9 @@ const user = {
 			cache.match(routes.getUserInfo).then((response) => {
 				if (response && Date.now() - new Date(response.headers.get("date")).getTime() < maxAge) {
 					// If the response is in the cache and not older than 24 hours, return it
-					return response.json().then((data) => {
-						const { payload } = headers.parseResponse(data);
+					return response.then(response => headers.parseResponse(response)).then(res => {
+						
+						const { payload } = res;
 						if (payload.isLoggedIn) {
 							for (const [key, value] of Object.entries(payload.data)) {
 								storage.set(key, value);
@@ -42,16 +43,16 @@ const user = {
 					})
 						.then((response) => {
 							cache.put(routes.getUserInfo, response.clone());
-							return response.json();
+							return headers.parseResponse(response);
 						})
-						.then((data) => {
-							const { payload } = headers.parseResponse(data);
+						.then(res => {
+							const { payload } = res;
 							if (payload.isLoggedIn) {
 								for (const [key, value] of Object.entries(payload.data)) {
 									storage.set(key, value);
 								}
 							} else {
-								//window.location.href = routes.login;
+								window.location.href = routes.login;
 							}
 							
 							user.initialised = true;

@@ -12,12 +12,11 @@ export default function ProductFinder(props) {
 	const localStorageSearchQueryKey = id + 'SearchQuery';
 	const selectedIds = itemsSelected.map(item => item.id);
 	const [searchQuery, setSearchQuery] = useState(
-		localStorage.getItem(localStorageSearchQueryKey) || ""
+		localStorage.getItem(localStorageSearchQueryKey).split(',') || []
 	);
 	const [numToShow, setNumToShow] = useState(20);
-	
 	let filteredItems = [];
-	console.log(searchQuery);
+	
 	if (searchQuery.length > 0 && searchQuery[0].length >= 3) {
 		filteredItems = items.filter((item) => {
 			return item.name.toLowerCase().includes(searchQuery[0].toLowerCase());
@@ -30,9 +29,8 @@ export default function ProductFinder(props) {
 		}
 		
 		filteredItems = filteredItems.slice(0, numToShow);
-		
 	}
-	console.log();
+	
 	const handleSearchChange = (event) => {
 		const query = event.target.value;
 		setSearchQuery(query.split(','));

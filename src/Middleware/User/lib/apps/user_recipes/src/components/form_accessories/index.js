@@ -52,7 +52,7 @@ export default function Accessories(props) {
 		
 		function filterAccessories(items) {
 			// remove "ersatzteile"
-			const filteredItems = items.filter((item) => {
+			return items.filter((item) => {
 				let check = true;
 				// word in name
 				if (item.name.toLowerCase().indexOf("ersatz") !== -1) {
@@ -68,8 +68,6 @@ export default function Accessories(props) {
 				}
 				return check;
 			});
-			
-			return filteredItems;
 		}
 	}, []);
 	
