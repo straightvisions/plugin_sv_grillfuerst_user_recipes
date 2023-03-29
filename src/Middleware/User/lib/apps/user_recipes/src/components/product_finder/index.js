@@ -17,14 +17,19 @@ export default function ProductFinder(props) {
 	const [numToShow, setNumToShow] = useState(20);
 	let filteredItems = [];
 	
+	const isNumeric = (str) => {
+		return /^\d+$/.test(str);
+	}
+	
 	if (searchQuery.length > 0 && searchQuery[0].length >= 3) {
 		filteredItems = items.filter((item) => {
-			return item.name.toLowerCase().includes(searchQuery[0].toLowerCase());
+			const field = isNumeric(searchQuery[0]) ? item.ean.trim() : item.name.toLowerCase().trim();
+			return field.includes(searchQuery[0].toLowerCase().trim());
 		});
 		
 		for (let i = 1; i < searchQuery.length; i++) {
 			filteredItems = filteredItems.filter((item) => {
-				return item.name.toLowerCase().includes(searchQuery[i].toLowerCase());
+				return item.name.toLowerCase().trim().includes(searchQuery[i].toLowerCase().trim());
 			});
 		}
 		

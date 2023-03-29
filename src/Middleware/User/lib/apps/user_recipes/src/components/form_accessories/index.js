@@ -127,9 +127,6 @@ export default function Accessories(props) {
 							<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 								Zubehör
 							</th>
-							<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-								Menge
-							</th>
 							<th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
 								<span className="sr-only">Löschen</span>
 							</th>
@@ -140,16 +137,6 @@ export default function Accessories(props) {
 							<tr key={accessory.id}>
 								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
 									{accessory.label}
-								</td>
-								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-									<input
-										value={accessory.amount}
-										onChange={e => { accessory.amount = e.target.value; setAccessory(accessory); }}
-										type="number"
-										placeholder="1"
-										min="1"
-										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-									/>
 								</td>
 								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
 									<button
