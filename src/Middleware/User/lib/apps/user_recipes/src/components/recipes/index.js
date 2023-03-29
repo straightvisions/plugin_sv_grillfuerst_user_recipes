@@ -72,10 +72,14 @@ export default function Recipes(props) {
 		);
 	}
 	
-	const getDate = (date) => {
-		//@todo replace datejs
-		return date;
-		//return <DayJS format="DD.MM.YYYY HH:mm">{date}</DayJS>;
+	const getDate = (dateString) => {
+		const date = new Date(dateString);
+		const day = date.getDate().toString().padStart(2, "0");
+		const month = (date.getMonth() + 1).toString().padStart(2, "0");
+		const year = date.getFullYear().toString();
+		const hours = date.getHours().toString().padStart(2, "0");
+		const minutes = date.getMinutes().toString().padStart(2, "0");
+		return `${day}.${month}.${year} ${hours}:${minutes}`;
 	}
 	
 	const handleCopyCode = (e, c) => {

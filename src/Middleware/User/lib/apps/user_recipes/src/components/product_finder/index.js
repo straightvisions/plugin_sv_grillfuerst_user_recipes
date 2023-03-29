@@ -32,7 +32,7 @@ export default function ProductFinder(props) {
 		filteredItems = filteredItems.slice(0, numToShow);
 		
 	}
-	
+	console.log();
 	const handleSearchChange = (event) => {
 		const query = event.target.value;
 		setSearchQuery(query.split(','));

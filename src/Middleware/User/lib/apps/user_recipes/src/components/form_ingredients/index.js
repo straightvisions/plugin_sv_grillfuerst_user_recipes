@@ -23,15 +23,36 @@ export default function Ingredients(props) {
 	
 	// database stuff
 	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
+	const cacheName = "ingredients-cache";
 	
 	// ingredients list from db for TermSearch
 	useEffect( () => {
-		fetch(routes.getIngredients,{
-			headers: {
-				'Authorization': 'Bearer ' + storage.get('token'),
-			},
-		}).then(response => response.json())
-			.then(data => { setIngredientsDB(data.items); setLoadingState(false); });
+		caches.open(cacheName).then((cache) => {
+			cache.match(routes.getIngredients).then((response) => {
+				if (response) {
+					// If the response is in the cache, return it
+					return response.json().then((data) => {
+						setIngredientsDB(data.items);
+						setLoadingState(false);
+					});
+				} else {
+					// If the response is not in the cache, fetch it and add it to the cache
+					return fetch(routes.getIngredients, {
+						headers: {
+							Authorization: "Bearer " + storage.get("token"),
+						},
+					})
+						.then((response) => {
+							cache.put(routes.getIngredients, response.clone());
+							return response.json();
+						})
+						.then((data) => {
+							setIngredientsDB(data.items);
+							setLoadingState(false);
+						});
+				}
+			});
+		});
 	}, []);
 	
 	// needs custom function to apply data to the right array item

@@ -18,36 +18,59 @@ export default function Accessories(props) {
 	const [loading, setLoadingState] = useState(true);
 	const [accessoriesDB, setAccessoriesDB] = useState([]); // data from db
 	const [showProductFinder, setShowProductFinder] = useState(false); // data from db
+	const cacheName = "accessories-cache";
 
 	useEffect( () => {
-		fetch(routes.getAccessories,{
-			headers: {
-				'Authorization': 'Bearer ' + storage.get('token'),
-			},
-		}).then(response => response.json())
-		.then(data => {
-			
+		caches.open(cacheName).then((cache) => {
+			cache.match(routes.getAccessories).then((response) => {
+				if (response) {
+					// If the response is in the cache, return it
+					return response.json().then((data) => {
+						const filteredItems = filterAccessories(data.items);
+						setAccessoriesDB(filteredItems);
+						setLoadingState(false);
+					});
+				} else {
+					// If the response is not in the cache, fetch it and add it to the cache
+					return fetch(routes.getAccessories, {
+						headers: {
+							Authorization: "Bearer " + storage.get("token"),
+						},
+					})
+						.then((response) => {
+							cache.put(routes.getAccessories, response.clone());
+							return response.json();
+						})
+						.then((data) => {
+							const filteredItems = filterAccessories(data.items);
+							setAccessoriesDB(filteredItems);
+							setLoadingState(false);
+						});
+				}
+			});
+		});
+		
+		function filterAccessories(items) {
 			// remove "ersatzteile"
-			const filteredItems = data.items.filter(item => {
+			const filteredItems = items.filter((item) => {
 				let check = true;
 				// word in name
-				if(item.name.toLowerCase().indexOf('ersatz') !== -1 ){
+				if (item.name.toLowerCase().indexOf("ersatz") !== -1) {
 					check = false;
 				}
 				// word in thumb url
-				if(check && item.images.length > 0){
-					for(let i=0; i < item.images.length;i++){
-						if(item.images[i].toLowerCase().indexOf('ersatz') !== -1 ){
+				if (check && item.images.length > 0) {
+					for (let i = 0; i < item.images.length; i++) {
+						if (item.images[i].toLowerCase().indexOf("ersatz") !== -1) {
 							check = false;
 						}
 					}
 				}
 				return check;
 			});
-	
-			setAccessoriesDB(filteredItems);
-			setLoadingState(false);
-		});
+			
+			return filteredItems;
+		}
 	}, []);
 	
 	const setAccessory = (item) => {
