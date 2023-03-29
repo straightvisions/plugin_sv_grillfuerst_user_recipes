@@ -17,7 +17,7 @@ export default function Accessories(props) {
 	
 	const [loading, setLoadingState] = useState(true);
 	const [accessoriesDB, setAccessoriesDB] = useState([]); // data from db
-	const [showProductFinder, setShowProductFinder] = useState(false); // data from db
+	const [showProductFinder, setShowProductFinder] = useState(false);
 	const cacheName = "accessories-cache";
 
 	useEffect( () => {

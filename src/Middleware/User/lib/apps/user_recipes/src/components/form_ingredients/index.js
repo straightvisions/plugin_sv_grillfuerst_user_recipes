@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import Spinner from '../spinner';
 import TermSearch from "../combobox/term_search.js";
 import Dropdown from "../dropdown";
-
+import ProductFinder from "../product_finder";
 import routes from "../../models/routes";
 import ingredientUnitValues from "../../models/ingredient/units";
 import ingredientModel from "../../models/ingredient";
@@ -19,6 +19,10 @@ export default function Ingredients(props) {
 		ingredients
 	} = formState;
 	
+	const [showProductFinder, setShowProductFinder] = useState(false);
+	const [productSelected, setProductSelected] = useState(0);
+	const [productParent, setProductParent] = useState({});
+	const [products, setProducts] = useState([]);
 	const [loading, setLoadingState] = useState(true);
 	
 	// database stuff
@@ -27,6 +31,7 @@ export default function Ingredients(props) {
 	
 	// ingredients list from db for TermSearch
 	useEffect( () => {
+		// ingredients
 		caches.open(cacheName).then((cache) => {
 			cache.match(routes.getIngredients).then((response) => {
 				if (response) {
@@ -53,7 +58,41 @@ export default function Ingredients(props) {
 				}
 			});
 		});
+		
+		// products
+		caches.open(cacheName).then((cache) => {
+			cache.match(routes.getIngredientsProducts).then((response) => {
+				if (response) {
+					// If the response is in the cache, return it
+					return response.json().then((data) => {
+						const filteredItems = data.items;
+						setProducts(filteredItems);
+						setLoadingState(false);
+					});
+				} else {
+					// If the response is not in the cache, fetch it and add it to the cache
+					return fetch(routes.getIngredientsProducts, {
+						headers: {
+							Authorization: "Bearer " + storage.get("token"),
+						},
+					})
+						.then((response) => {
+							cache.put(routes.getIngredientsProducts, response.clone());
+							return response.json();
+						})
+						.then((data) => {
+							const filteredItems = data.items;
+							setProducts(filteredItems);
+							setLoadingState(false);
+						});
+				}
+			});
+		});
 	}, []);
+	
+	const isFalsy = (value) => {
+		return typeof value === "undefined" || value === null || value === '' || value === 0 || value === '0';
+	}
 	
 	// needs custom function to apply data to the right array item
 	const setIngredient = (item) => {
@@ -76,11 +115,57 @@ export default function Ingredients(props) {
 		setFormState({ingredients: newIngredients});
 	}
 	
+	const handleFinderSelect = (product) => {
+		// link product
+		let item = productParent;
+	console.log(item.products_id);
+	console.log(product.products_id);
+		item.products_id = item.products_id === product.products_id ? 0 : product.products_id;
+		const _product = isFalsy(item.products_id) ? [] : [product];
+		console.log(item.products_id);
+		console.log(isFalsy(item.products_id));
+		setProductParent(item);
+		setProductSelected(_product);
+		setIngredient(item);
+	}
+	
+	const handleShowProductFinder = (item) => {
+		setProductParent(item);
+		const _product = {
+			id: isFalsy(item.products_id) ? 0 : item.products_id
+		};
+		
+		setProductSelected([_product]);
+		setShowProductFinder(true);
+	}
+	
+	const getThumb = (id) => {
+		const item = products.find(item => item.products_id === id);
+		let thumb = 'abc';
+		
+		if(isFalsy(item) === false && item.images.length > 0){
+			thumb = item.images[0];
+		}
+		
+		return thumb;
+	}
+	
+	const getName = (id) => {
+		const item = products.find(item => item.products_id === id);
+		let name = 'unbekannt';
+		
+		if(isFalsy(item) === false && item.images.length > 0){
+			name = item.name;
+		}
+		
+		return name;
+	}
+	
 	// conditional rendering for TermSearch
 	const TermSearchComp = loading ? <Spinner /> : <TermSearch label={"Neue Zutat hinzufügen"} items={ingredientsDB} onChange={addIngredient} />;
-	
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
+			{showProductFinder && <ProductFinder id="IngredientsProductFinder" description="Hier kannst du Grillfürst Shop-Produkte als Zutat verlinken." items={products} itemsSelected={productSelected} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
 			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Zutaten</h3>
@@ -108,7 +193,7 @@ export default function Ingredients(props) {
 							<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 								Zutat
 							</th>
-							<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+							<th scope="col" className="w-1/5 px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
 								Menge
 							</th>
 							<th scope="col" className="min-w-[140px] px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -116,6 +201,9 @@ export default function Ingredients(props) {
 							</th>
 							<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
 								Anmerkung
+							</th>
+							<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+								Produkt
 							</th>
 							<th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
 								<span className="sr-only">Löschen</span>
@@ -128,7 +216,7 @@ export default function Ingredients(props) {
 								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
 									{ingredient.label}
 								</td>
-								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+								<td className="w-1/5 whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 									<input
 										value={ingredient.amount}
 										onChange={e => { ingredient.amount = e.target.value; setIngredient(ingredient); }}
@@ -153,10 +241,35 @@ export default function Ingredients(props) {
 									/>
 								</td>
 								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+									{ isFalsy(ingredient.products_id) ?
+										<button
+											onClick={() => handleShowProductFinder(ingredient)}
+											type="button"
+											className="text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
+											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+											     strokeWidth="1.5" stroke="currentColor"
+											     className="w-6 h-6 transform rotate-45">
+												<path strokeLinecap="round" strokeLinejoin="round"
+												      d="M6 18L18 6M6 6l12 12"></path>
+											</svg>
+											<span className="sr-only">Mit Shop Produtk verlinken</span>
+										</button>
+										:
+										<button
+											onClick={() => handleShowProductFinder(ingredient)}
+											type="button"
+											className="w-[46px] h-[46px] max-h-[46px] overflow-hidden text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
+												<img width="24" height="24" src={getThumb(ingredient.products_id)} alt={getName(ingredient.products_id)} title={getName(ingredient.products_id)}/>
+											<span className="sr-only">Verlinken</span>
+										</button>
+									}
+									
+								</td>
+								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
 									<button
 										onClick={() => removeIngredient(ingredient)}
 										type="button"
-										className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
+										className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
 										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
 										     strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
 											<path strokeLinecap="round" strokeLinejoin="round"

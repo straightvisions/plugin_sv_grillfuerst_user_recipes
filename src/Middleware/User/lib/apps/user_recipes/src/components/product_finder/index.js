@@ -6,30 +6,32 @@ export default function ProductFinder(props) {
 		items,
 		itemsSelected = [],
 		setShow = ()=>{},
-		onSelect = ()=>{}
+		onSelect = ()=>{},
+		description = '',
 	} = props;
 
 	const localStorageSearchQueryKey = id + 'SearchQuery';
 	const selectedIds = itemsSelected.map(item => item.id);
 	const [searchQuery, setSearchQuery] = useState(
-		localStorage.getItem(localStorageSearchQueryKey).split(',') || []
+		localStorage.getItem(localStorageSearchQueryKey) || ''
 	);
 	const [numToShow, setNumToShow] = useState(20);
-	let filteredItems = [];
+	let filteredItems = items.slice(0, numToShow);
 	
 	const isNumeric = (str) => {
 		return /^\d+$/.test(str);
 	}
 	
-	if (searchQuery.length > 0 && searchQuery[0].length >= 3) {
+	if (searchQuery.length >= 3) {
+		const _sQuery = searchQuery.split(',');
 		filteredItems = items.filter((item) => {
-			const field = isNumeric(searchQuery[0]) ? item.ean.trim() : item.name.toLowerCase().trim();
-			return field.includes(searchQuery[0].toLowerCase().trim());
+			const field = isNumeric(_sQuery[0]) ? item.ean.trim() : item.name.toLowerCase().trim();
+			return field.includes(_sQuery[0].toLowerCase().trim());
 		});
 		
-		for (let i = 1; i < searchQuery.length; i++) {
+		for (let i = 1; i < _sQuery.length; i++) {
 			filteredItems = filteredItems.filter((item) => {
-				return item.name.toLowerCase().trim().includes(searchQuery[i].toLowerCase().trim());
+				return item.name.toLowerCase().trim().includes(_sQuery[i].toLowerCase().trim());
 			});
 		}
 		
@@ -38,7 +40,7 @@ export default function ProductFinder(props) {
 	
 	const handleSearchChange = (event) => {
 		const query = event.target.value;
-		setSearchQuery(query.split(','));
+		setSearchQuery(query);
 		localStorage.setItem(localStorageSearchQueryKey, query);
 		setNumToShow(20); // reset number of results shown when query changes
 	};
@@ -56,6 +58,9 @@ export default function ProductFinder(props) {
 			<div id="innerWrapper" className="bg-white rounded-lg p-6 w-full w-3/4 h-[100vh] max-h-[80vh] flex flex-col">
 				<div id="searchBar" className="mb-4">
 					<h3>Produktfinder</h3>
+					{description !== '' &&
+					<p className="mb-2">{description}</p>
+					}
 					<input
 						type="text"
 						className="border-gray-400 border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
@@ -70,8 +75,8 @@ export default function ProductFinder(props) {
 								<div
 									onClick={()=>handleSelect(item)}
 									key={item.id}
-									className="relative  flex flex-col items-center justify-center bg-white round  shadow-md hover:shadow-lg cursor-pointer">
-									<img src={item.images[0]} alt={item.name} className="w-auto h-1/2 max-h-[200px]" />
+									className="relative flex flex-col items-center justify-center bg-white round  shadow-md hover:shadow-lg cursor-pointer">
+									<img src={item.images[0]} alt={item.name} title={item.name} className="w-auto h-1/2 max-h-[200px]" />
 									<div className="p-6 text-sm">
 										{item.name}
 									</div>
