@@ -1,4 +1,6 @@
 const root = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-user-recipes/v1';
+//@todo replace this with config url
+const rootStatic = 'https://relaunch-magazin.grillfuerst.de/community-rezepte';
 
 export default {
 	
