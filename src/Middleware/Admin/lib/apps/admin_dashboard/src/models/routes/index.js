@@ -4,7 +4,7 @@ const rootStatic = 'https://relaunch-magazin.grillfuerst.de/community-rezepte';
 
 export default {
 	
-	"login": root + '/login',
+	"login": rootStatic + '/login',
 	"isLoggedIn": root + '/admin/is_logged_in',
 	"getAdminInfo": root + '/admin/info',
 	"getUserInfoById": root + '/users/{id}/info',

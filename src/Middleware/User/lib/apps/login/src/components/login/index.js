@@ -49,7 +49,7 @@ export default function Login(props){
 				if(data.status === 'success'){
 					storage.set('userId', data.customerId);
 					storage.set('token', token);
-					window.location.href = data.url + '&ref=https%3A%2F%2Frelaunch-magazin.grillfuerst.de%2Fcommnuity-rezepte';
+					window.location.href = data.url + '&ref=https%3A%2F%2Frelaunch-magazin.grillfuerst.de%2Fcommunity-rezepte';
 				} else {
 					setMessage(data.message);
 					// clean storage just in case

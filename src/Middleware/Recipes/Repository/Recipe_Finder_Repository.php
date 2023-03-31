@@ -17,17 +17,31 @@ final class Recipe_Finder_Repository {
         $this->Query_Factory = $Query_Factory;
     }
 
+    private function parseFilter($filter){
+        $filter = is_string($filter) ? json_decode($filter) : $filter;
+        $parsed = [];
+
+        foreach($filter as $key => $pair){
+            $parsed[$pair[0]] = $pair[1];
+        }
+
+        return $parsed;
+    }
+
     public function get($id = null, array $params = []): array {
         $limit = $params['limit'] ? (int)$params['limit'] : false;
         $page = $params['page'] ? (int)$params['page'] : false;
-        $filter = isset($params['filter']) ? $params['filter'] : [];
+        $order = $params['order'] ? explode(' ',$params['order']) : false;
+
+        $filter = isset($params['filter']) ? $this->parseFilter($params['filter']) : [];
+        $query = isset($filter['query']) ? $filter['query'] : false;
         $where = [];
+
         // strip not allowed fields for where
-        unset($params['limit']);
-        unset($params['page']);
-        unset($params['uuid']);
-        unset($params['id']);
-        unset($params['user_id']);
+        $blacklist = ['page','order','uuid','id','user_id','query'];
+        foreach($blacklist as $key => $field){
+            if(isset($filter[$field])) unset($filter[$field]);
+        }
 
         $query = $this->Query_Factory->newSelect('svgfur_recipes');
 
@@ -42,23 +56,22 @@ final class Recipe_Finder_Repository {
             $where[] = ['uuid' => (int)$id];
         }
 
-        // generate wheres
-        // DANGER ZONE
-        //@todo add array field support
-        /*foreach($filter as $field => $value){
-            if( in_array($field, [
-                'state'
-            ])){
-                $where[$field] = implode($value);
-            }
-        }*/
-        // replace this after refactoring -----------
-        unset($filter['uuid']);
-        unset($filter['user_id']);
+        if($query && 1===2){
+            $where[] = ['OR' => [
+                'title'=>$query,
+                'uuid'=>$query,
+            ]];
+        }
+
         $where = array_merge($filter, $where);
         // ------------------------------------------
-
         $query->where($where);
+
+        if($order){
+            $query->orderBy([
+                $order[0] => isset($order[1]) ? $order[1] : 'ASC'
+            ]);
+        }
 
         // counting before limit
         $this->apply_counting($query, $params);

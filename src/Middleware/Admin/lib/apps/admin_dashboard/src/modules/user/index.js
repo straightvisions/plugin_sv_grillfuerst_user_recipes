@@ -15,22 +15,52 @@ const user = {
 	},
 	
 	init: () => {
-		return fetch(routes.getAdminInfo, {
-			headers:headers.get()
-		})
-			.then(res => res.json())
-			.then(res => {
-				if(res.isLoggedIn){
-					for (const [key, value] of Object.entries(res.data)) {
-						storage.set(key, value);
-					}
-				}else{
-					window.location.href = routes.login;
+		const cacheName = "admin-info-cache";
+		const maxAge = 24 * 60 * 60 * 1000; // 24 hours in milliseconds
+		
+		caches.open(cacheName).then((cache) => {
+			cache.match(routes.getAdminInfo).then((response) => {
+				if (response && Date.now() - new Date(response.headers.get("date")).getTime() < maxAge) {
+					// If the response is in the cache and not older than 24 hours, return it
+					return response.then(response => headers.parseResponse(response)).then(res => {
+						
+						const { payload } = res;
+						if (payload.isLoggedIn) {
+							for (const [key, value] of Object.entries(payload.data)) {
+								storage.set(key, value);
+							}
+						} else {
+							window.location.href = routes.login;
+						}
+						
+						user.initialised = true;
+						user.isLoggedIn = payload.isLoggedIn;
+					});
+				} else {
+					// If the response is not in the cache or older than 24 hours, fetch it and add it to the cache
+					return fetch(routes.getAdminInfo, {
+						headers: headers.get(),
+					})
+						.then((response) => {
+							cache.put(routes.getAdminInfo, response.clone());
+							return headers.parseResponse(response);
+						})
+						.then(res => {
+							const { payload } = res;
+							if (payload.isLoggedIn) {
+								for (const [key, value] of Object.entries(payload.data)) {
+									storage.set(key, value);
+								}
+							} else {
+								//window.location.href = routes.login;
+							}
+							
+							user.initialised = true;
+							user.isLoggedIn = payload.isLoggedIn;
+						});
 				}
-				
-				user.initialised = true;
-				user.isLoggedIn = res.isLoggedIn;
 			});
+		});
 	}
 }
 

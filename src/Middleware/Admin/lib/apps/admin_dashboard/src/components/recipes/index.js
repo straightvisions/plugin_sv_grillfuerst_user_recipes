@@ -2,11 +2,13 @@ import React, { useState, useEffect } from 'react';
 import routes from '../../models/routes';
 import { useNavigate } from 'react-router-dom';
 import Spinner from '../spinner';
-import Filter from './filter';
+import SearchBar from '../search_bar';
 import Pagination from '../pagination';
 import {Image as ImagePH} from '../placeholder';
 import { LinkIcon } from '@heroicons/react/20/solid'
 import headers from "../../modules/headers";
+import storage from '../../modules/storage';
+
 
 const states = {
 	draft: {
@@ -34,15 +36,32 @@ export default function Recipes(props) {
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(20);
 	const navigate = useNavigate();
-
+	const [filter, setFilter] = useState([
+		{key: 'limit', value: limit},
+		{key: 'page', value: page},
+		{key: 'order', value: 'edited desc'},
+		{key: 'filter', value: [
+			{key:'state',value:'review_pending'},
+			]}
+	]);
+	
 	useEffect(() => {
 		let route = routes.getRecipes;
 		setLoadingState(true);
 		// filter
 		route += '?';
-		route +='limit='+parseInt(limit);
-		route +='&page=' + parseInt(page);
-		route += '&filter[state]=review_pending';
+		
+		route += new URLSearchParams(filter.map(param => {
+			if (Array.isArray(param.value)) {
+				return [
+					param.key,
+					JSON.stringify(param.value.map(subparam => [subparam.key, subparam.value]))
+				];
+			} else {
+				return [param.key, param.value];
+			}
+		})).toString();
+
 		fetch(route,{
 			headers:headers.get()
 		})
@@ -52,7 +71,7 @@ export default function Recipes(props) {
 				setPagination({rows:data.totalRows, pages:data.totalPages, page:data.page});
 				setLoadingState(false);
 			});
-	}, [page])
+	}, [page, filter])
 	
 	if(loading){
 		return (
@@ -63,6 +82,8 @@ export default function Recipes(props) {
 	}
 	
 	return (
+<>
+			<SearchBar id="adminRecipesList" filter={filter} onChange={setFilter} />
 
 			<div className="shadow ring-1 ring-black ring-opacity-5 md:rounded-lg bg-white">
 				<table className="min-w-full divide-y divide-gray-300">
@@ -163,5 +184,6 @@ export default function Recipes(props) {
 					/>
 				</div>
 			</div>
+</>
 	)
 }
