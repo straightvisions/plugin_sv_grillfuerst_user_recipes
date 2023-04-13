@@ -48,32 +48,32 @@ final class User_Middleware implements Middleware_Interface {
 
         $this->Api_Middleware->add([
             'route' => '/users/register',
-            'args'  => ['methods' => 'POST', 'callback' => [$this, 'rest_register']]
+            'args'  => ['methods' => 'POST', 'callback' => [$this, 'rest_register'], 'permission_callback' => '__return_true']
         ]);
 
         $this->Api_Middleware->add([
             'route' => '/users/reset',
-            'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_reset']]
+            'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_reset'], 'permission_callback' => '__return_true']
         ]);
 
         $this->Api_Middleware->add([
             'route' => '/users/login',
-            'args'  => ['methods' => 'POST,GET', 'callback' => [$this, 'rest_login']]
+            'args'  => ['methods' => 'POST', 'callback' => [$this, 'rest_login'], 'permission_callback' => '__return_true']
         ]);
 
         $this->Api_Middleware->add([
             'route' => '/users/login/check',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_login_check']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_login_check'], 'permission_callback' => '__return_true']
         ]);
 
         $this->Api_Middleware->add([
             'route' => '/users/info',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_user_info']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_user_info'], 'permission_callback' => '__return_true']
         ]);
 
         $this->Api_Middleware->add([
             'route' => '/users/logout',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_logout']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_logout'], 'permission_callback' => '__return_true']
         ]);
     }
 
@@ -122,9 +122,10 @@ final class User_Middleware implements Middleware_Interface {
         }
 
         // implement wp_response adapter + services
-        $response = new WP_REST_Response($body, $code); // @todo remove this when adapter is available
+        $response = new WP_REST_Response($body, $code);
         $response->header('Authorization', $auth_header);
         $response->header('Access-Control-Expose-Headers', 'Authorization');
+
 
         return $response;
     }

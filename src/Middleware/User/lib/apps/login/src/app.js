@@ -11,15 +11,13 @@ import {
 import storage from "./components/storage";
 
 export default function App(){
-	const routeLoggedIn = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-user-recipes/v1/users/login/check';
-	//@todo check token + validation if still logged in
+
 	const [loadingState,setLoadingState] = useState(true);
 	
 	useEffect(() => {
 		fetch(routeLoggedIn)
 			.then(response => response.json())
 			.then(res => {
-				console.log(res);
 				// check if user is already logged-in
 				if(res.loggedIn){
 					storage.set('userId', res.userId);

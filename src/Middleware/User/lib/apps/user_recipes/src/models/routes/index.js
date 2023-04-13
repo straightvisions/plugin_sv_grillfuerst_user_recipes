@@ -1,8 +1,9 @@
-const root = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-user-recipes/v1';
+const domain = process.env.REACT_APP_API_DOMAIN ? process.env.REACT_APP_API_DOMAIN : window.location.hostname;
+const root = 'https://' + domain + '/wp-json/sv-grillfuerst-user-recipes/v1';
+const rootApp = process.env.REACT_APP_ROOT ? process.env.REACT_APP_ROOT : 'https%3A%2F%2F' + domain + '%2Fcommunity-rezepte';
 
 export default {
-	
-	"login": 'https://relaunch-magazin.grillfuerst.de/community-rezepte/login',
+	"login": root + '/users/login',
 	"isLoggedIn": root + '/users/is_logged_in',
 	"getUserInfo": root + '/users/info',
 	"getUserInfoById": root + '/users/{id}/info',
@@ -17,5 +18,6 @@ export default {
 	"getAccessories": root + '/products/accessories', // GET
 	"getIngredientsProducts": root + '/products/ingredients', // GET
 	"uploadMedia": root + '/media/upload', // POST
-
+	//
+	"rootApp": rootApp,
 }

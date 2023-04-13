@@ -4,13 +4,15 @@ import Recipes from './components/recipes';
 import Form from './components/form';
 import user from './modules/user';
 import Spinner from './components/spinner';
+import Login from './components/login';
+import Register from './components/register';
+import Reset from './components/reset';
 import { Routes, Route} from "react-router-dom";
 
 const App = () => {
-	
 	// initiate user first - this also checks if user is loggedIn
 	// if not, we redirect to the given login url
-	const [userInited, setUserInited] = useState(false);
+	const [userInited, setUserInited] = useState(user.initialised);
 	
 	useEffect(()=>{
 		const initUser = async()=> {
@@ -21,9 +23,39 @@ const App = () => {
 		initUser();
 	}, []);
 	
+	// loading state
 	if(userInited === false){
 		return (<Spinner />);
-	}else{
+	}
+	
+	// not logged-in state
+	if(user.isLoggedIn === false){
+		return (
+			<div className="mx-auto max-w-7xl">
+				<Routes>
+					<Route
+						path="/register"
+						element={<Register />}
+					/>
+					<Route
+						path="/reset"
+						element={<Reset />}
+					/>
+					<Route
+						path="/login"
+						element={<Login />}
+					/>
+					<Route
+						path="/"
+						element={<Login />}
+					/>
+				</Routes>
+			</div>
+		);
+	}
+	
+	// logged-in state
+	if(user.isLoggedIn === true) {
 		return (
 			<div className="mx-auto max-w-7xl">
 				<Header />
@@ -39,8 +71,8 @@ const App = () => {
 				</Routes>
 			</div>
 		);
-		
 	}
+
 	
 };
 

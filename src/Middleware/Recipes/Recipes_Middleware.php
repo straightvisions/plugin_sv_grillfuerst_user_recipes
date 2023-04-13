@@ -74,71 +74,71 @@ final class Recipes_Middleware implements Middleware_Interface {
         // GET ALL RECIPES
         $this->Api_Middleware->add([
             'route' => '/recipes',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_recipes']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_recipes'], 'permission_callback' => '__return_true']
         ]);
 
         // GET / UPDATE A SPECIFIC RECIPE
         $this->Api_Middleware->add([
             'route' => '/recipes/(?P<uuid>\d+)', // wordpress specific
-            'args'  => ['methods' => 'GET, PUT', 'callback' => [$this, 'route_recipes_uuid']]
+            'args'  => ['methods' => 'GET, PUT', 'callback' => [$this, 'route_recipes_uuid'], 'permission_callback' => '__return_true']
         ]);
 
         $this->Api_Middleware->add([
             'route' => '/recipes/(?P<uuid>\d+)/feedback', // wordpress specific
-            'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_update_recipe_feedback']]
+            'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_update_recipe_feedback'], 'permission_callback' => '__return_true']
         ]);
 
         // GET / CREATE RECIPES BASED ON USER ID
         $this->Api_Middleware->add([
             'route' => '/recipes/user/(?P<user_id>\d+)', // wordpress specific
-            'args'  => ['methods' => 'GET, POST', 'callback' => [$this, 'route_recipes_user_id']]
+            'args'  => ['methods' => 'GET, POST', 'callback' => [$this, 'route_recipes_user_id'], 'permission_callback' => '__return_true']
         ]);
 
         // Ingredients
         $this->Api_Middleware->add([
             'route' => '/recipes/ingredients', // wordpress specific
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_ingredients']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_ingredients'], 'permission_callback' => '__return_true']
         ]);
 
         // Menu Types
         $this->Api_Middleware->add([
             'route' => '/recipes/menutypes', // wordpress specific
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_menu_types']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_menu_types'], 'permission_callback' => '__return_true']
         ]);
 
         // Kitchen Styles
         $this->Api_Middleware->add([
             'route' => '/recipes/kitchenstyles', // wordpress specific
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_kitchen_styles']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_kitchen_styles'], 'permission_callback' => '__return_true']
         ]);
 
         // Export
         // GET / CREATE RECIPES BASED ON USER ID
         $this->Api_Middleware->add([
             'route' => '/recipes/(?P<uuid>\d+)/export', // wordpress specific
-            'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_recipe_export']]
+            'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_recipe_export'], 'permission_callback' => '__return_true']
         ]);
 
         // Test
         if($this->settings['debug'] === true || $this->settings['env'] === 'development'){
             $this->Api_Middleware->add([
                 'route' => '/test/email', // wordpress specific
-                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_send_email_recipe_published']]
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_send_email_recipe_published'], 'permission_callback' => '__return_true']
             ]);
 
             $this->Api_Middleware->add([
                 'route' => '/test/voucher', // wordpress specific
-                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_create_voucher']]
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_create_voucher'], 'permission_callback' => '__return_true']
             ]);
 
             $this->Api_Middleware->add([
                 'route' => '/test/voucher/check', // wordpress specific
-                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_check_voucher']]
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_check_voucher'], 'permission_callback' => '__return_true']
             ]);
 
             $this->Api_Middleware->add([
                 'route' => '/test/user/info', // wordpress specific
-                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_get_user_info']]
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_get_user_info'], 'permission_callback' => '__return_true']
             ]);
         }
 
