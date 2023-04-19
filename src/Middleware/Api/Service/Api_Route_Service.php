@@ -38,5 +38,15 @@ final class Api_Route_Service {
         }
     }
 
+    public function get_list(): array{
+        $list = [];
+
+        foreach($this->routes as $key => $route){
+            $list[] = $route['route'];
+        }
+
+        return $list;
+    }
+
 
 }

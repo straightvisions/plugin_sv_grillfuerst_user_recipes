@@ -26,10 +26,26 @@ final class Api_Middleware implements Middleware_Interface {
         $this->Api_Http_Service = new Api_Http_Service();
         $this->Adapter = $Adapter;
         $this->Jwt_Middleware = $Jwt_Middleware;
+
+        \add_filter( 'rest_authentication_errors', [$this, 'allow_custom_routes']);
+    }
+
+    public function allow_custom_routes($result){
+        if(empty($result)){return $result;}
+        $allowed_routes = $this->Api_Route_Service->get_list();
+        $request_route = $_SERVER['REQUEST_URI'];
+
+        //@todo extend this
+        if(strpos($request_route, 'sv-grillfuerst-user-recipes') !== false){
+            $result->set_status(200);
+            $result->is_success = true;
+            return $result;
+        }
+
+        return $result;
     }
 
     // custom shortcode handler
-
     public function add(array $route): void {
         $this->Api_Route_Service->add($route);
     }

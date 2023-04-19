@@ -8,27 +8,66 @@ export default function Steps(props) {
 		setFormState
 	} = props
 	
-	let {steps} = formState;
+	const [steps, setSteps] = useState(formState.steps);
+	
+	const [orderedSteps, setOrderedSteps] = useState(steps.sort((a, b) => a.order - b.order));
 	
 	// needs custom function to apply data to the right array item
 	const setStep = (index, item) => {
 		steps[index] = item;
-		setFormState({steps: steps});
+		
+		// order
+		const _steps = steps.sort((a, b) => a.order - b.order);
+		
+		setFormState({steps: _steps});
+		setSteps(_steps);
 	}
-	
+
 	const addStep = () =>{
 		const step = { ...stepModel, order: steps.length + 1};
 		steps.push(step);
 		setFormState({steps: steps});
+		setSteps(steps);
 	}
-	
 	
 	const removeStep = (index) => {
 		// filter out the item from list
 		steps.splice(index, 1);
 		setFormState({steps: steps});
+		setSteps(steps);
 	}
-
+	
+	// -1
+	const handleChangeOrderUp = (index, item) => {
+		item.order = item.order > 1 ? item.order -1 : item.order;
+		steps[index] = item;
+		
+		if(steps[index - 1]){
+			steps[index - 1].order = steps[index - 1].order + 1;
+		}
+		
+		const _steps = steps.sort((a, b) => a.order - b.order);
+		console.log('up');
+		console.log(_steps);
+		setFormState({steps: _steps});
+		setSteps(_steps);
+	}
+	
+	// +1
+	const handleChangeOrderDown = (index, item) => {
+		item.order = item.order < steps.length ? item.order + 1 : item.order;
+		steps[index] = item;
+		
+		if(steps[index + 1]){
+			steps[index + 1].order = steps[index + 1].order - 1;
+		}
+		
+		const _steps = steps.sort((a, b) => a.order - b.order);
+		console.log('down');
+		console.log(_steps);
+		setFormState({steps: _steps});
+		setSteps(_steps);
+	}
 	
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
@@ -67,10 +106,12 @@ export default function Steps(props) {
 						</tr>
 						</thead>
 						<tbody className="divide-y divide-gray-200 bg-white" id="gf_recipe_steps">
-						{steps.map((item, i) => (
+						{orderedSteps.map((item, i) => (
 								<Step
 									key={i}
 									onChange={(i, _item) => setStep(i, _item)}
+									onChangeOrderUp={() => handleChangeOrderUp(i, item)}
+									onChangeOrderDown={() => handleChangeOrderDown(i, item)}
 									onDelete={() => removeStep(i)}
 									item={item}
 									index={i}

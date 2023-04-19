@@ -75,6 +75,11 @@ final class User_Middleware implements Middleware_Interface {
             'route' => '/users/logout',
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_logout'], 'permission_callback' => '__return_true']
         ]);
+
+        $this->Api_Middleware->add([
+            'route' => '/users/test',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_user_test'], 'permission_callback' => '__return_true']
+        ]);
     }
 
     // custom shortcode handler
@@ -255,11 +260,22 @@ final class User_Middleware implements Middleware_Interface {
         $info = $this->User_Info_Service->get($user_id);
 
         // implement wp_response adapter + services
-        $response = new WP_REST_Response($info['body'], $info['status']); // @todo remove this when adapter is available
+        $response = new WP_REST_Response($info['body'], 200); // @todo remove this when adapter is available
         $response->header('Authorization', $auth_header);
         $response->header('Access-Control-Expose-Headers', 'Authorization');
 
         return $response;
+    }
+
+
+    public function rest_user_Test($request) {
+        return $this->Api_Middleware->response(
+            $request,
+            function ($Request) {
+                return [[], 200];
+            },
+            []
+        );
     }
 
 }

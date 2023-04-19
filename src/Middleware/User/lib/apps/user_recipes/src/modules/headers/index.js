@@ -2,7 +2,7 @@ import storage from './../storage';
 
 const basicAuth = {
 	user: process.env.REACT_APP_BASIC_AUTH_USER,
-	password: process.env.REACT_APP_BASIC_AUTH_PASSWOD
+	password: process.env.REACT_APP_BASIC_AUTH_PASSWORD
 };
 
 const headers = {

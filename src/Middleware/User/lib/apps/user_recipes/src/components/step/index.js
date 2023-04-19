@@ -7,7 +7,9 @@ export default function Step(props){
 		item,
 		onChange,
 		onDelete,
-		uuid
+		uuid,
+		onChangeOrderUp,
+		onChangeOrderDown,
 	} = props;
 	
 	/* legacy item fix */
@@ -30,11 +32,28 @@ export default function Step(props){
 		});
 		onChange(item);
 	}
-
+	
 	return (
 		<tr key={index}>
 			<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-				<div className="bg-black text-white flex justify-center rounded-full w-10 h-10 font-bold text-center cursor-pointer"><span className="m-auto">{index+1}</span></div>
+				<div className="flex flex-col justify-center items-center gap-[5px] items-center">
+					<button
+						onClick={onChangeOrderUp}
+						type="button"
+						className="bg-white border border-lightgrey text-lightgrey px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+					>
+						&#x25B2;
+					</button>
+					<span className="flex justify-center items-center bg-black text-white rounded-full w-10 h-10 font-bold text-center cursor-pointer">{index + 1}</span>
+					<button
+						onClick={onChangeOrderDown}
+						type="button"
+						className="bg-white border border-lightgrey text-lightgrey px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+					>
+						&#x25BC;
+					</button>
+				</div>
+			
 			</td>
 			<td className="h-72 rounded-md overflow-hidden whitespace-nowrap py-4 text-sm font-medium text-gray-900">
 				<Image onChange={handleImageUpload} onDelete={handleImageDelete} image={item.images[0]} uuid={uuid} />
