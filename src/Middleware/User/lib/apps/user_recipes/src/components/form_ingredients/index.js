@@ -28,7 +28,7 @@ export default function Ingredients(props) {
 	// database stuff
 	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
 	const cacheName = "ingredients-cache";
-	
+
 	// ingredients list from db for TermSearch
 	useEffect( () => {
 		// ingredients
@@ -118,12 +118,10 @@ export default function Ingredients(props) {
 	const handleFinderSelect = (product) => {
 		// link product
 		let item = productParent;
-	console.log(item.products_id);
-	console.log(product.products_id);
+
 		item.products_id = item.products_id === product.products_id ? 0 : product.products_id;
 		const _product = isFalsy(item.products_id) ? [] : [product];
-		console.log(item.products_id);
-		console.log(isFalsy(item.products_id));
+
 		setProductParent(item);
 		setProductSelected(_product);
 		setIngredient(item);

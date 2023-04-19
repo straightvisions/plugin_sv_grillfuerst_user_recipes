@@ -47,8 +47,6 @@ export default function Steps(props) {
 		}
 		
 		const _steps = steps.sort((a, b) => a.order - b.order);
-		console.log('up');
-		console.log(_steps);
 		setFormState({steps: _steps});
 		setSteps(_steps);
 	}
@@ -63,8 +61,6 @@ export default function Steps(props) {
 		}
 		
 		const _steps = steps.sort((a, b) => a.order - b.order);
-		console.log('down');
-		console.log(_steps);
 		setFormState({steps: _steps});
 		setSteps(_steps);
 	}
