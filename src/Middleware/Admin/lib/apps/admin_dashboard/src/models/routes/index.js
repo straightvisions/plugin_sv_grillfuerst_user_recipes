@@ -16,5 +16,8 @@ export default {
 	"getIngredients": root + '/recipes/ingredients', // GET
 	"getMenuTypes": root + '/recipes/menutypes', // GET
 	"getKitchenStyles": root + '/recipes/kitchenstyles', // GET
+	"getAccessories": root + '/products/accessories', // GET
+	"getIngredientsProducts": root + '/products/ingredients', // GET
+	"uploadMedia": root + '/media/upload', // POST
 
 }

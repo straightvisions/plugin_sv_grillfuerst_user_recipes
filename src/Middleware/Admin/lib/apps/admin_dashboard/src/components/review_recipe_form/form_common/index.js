@@ -1,11 +1,10 @@
-import React, {useEffect, useState} from "react";
-import Image from "../form_image";
-import Dropdown from "../dropdown/";
-import MultiSelect from "../multi_select/";
-import TermDropdown from "../dropdown/term_dropdown";
-import routes from "../../models/routes";
-import Spinner from "../spinner";
-import storage from "../../modules/storage";
+import React, {useEffect, useState} from 'react';
+import Image from '../form_image';
+import Dropdown from '../dropdown/';
+import MultiSelect from '../multi_select/';
+import routes from '../../../models/routes';
+import Spinner from '../../spinner';
+import headers from '../../../modules/headers';
 
 const difficultyValues = [
 	{
@@ -22,7 +21,6 @@ const difficultyValues = [
 	},
 	
 ];
-
 
 export default function Common(props) {
 	const {
@@ -61,19 +59,22 @@ export default function Common(props) {
 	// async call
 	useEffect( () => {
 		fetch(routes.getMenuTypes,{
-			headers: {
-				'Authorization': 'Bearer ' + storage.get('token'),
-			},
+			headers: headers.get()
 		})
 			.then(response => response.json())
 			.then(data => {
-				// reduced given object items
-				const _options = data.items.map(i => { return { label: i.name, value: i.term_id }; }); // all items
-				const _selection = _options.filter(i => menuTypes.includes(i.value)); // filtered items
+				if(data){
+					// reduced given object items
+					const _options = data.items.map(i => { return { label: i.name, value: i.term_id }; }); // all items
+					const _selection = _options.filter(i => menuTypes.includes(i.value)); // filtered items
+					
+					setMenuTypeOptions(_options);
+					setMenuTypeOptionsSelected(_selection);
+					setLoadingMenuTypesState(false);
+				}else{
+					setLoadingMenuTypesState(false);
+				}
 				
-				setMenuTypeOptions(_options);
-				setMenuTypeOptionsSelected(_selection);
-				setLoadingMenuTypesState(false);
 			});
 	}, []); // if deps are an empty array -> effect runs only once
 	// MENU TYPES -----------------------------------------------------------------------------------------------------
@@ -101,9 +102,7 @@ export default function Common(props) {
 	// async call
 	useEffect( () => {
 		fetch(routes.getKitchenStyles,{
-			headers: {
-				'Authorization': 'Bearer ' + storage.get('token'),
-			},
+			headers: headers.get()
 		})
 			.then(response => response.json())
 			.then(data => {

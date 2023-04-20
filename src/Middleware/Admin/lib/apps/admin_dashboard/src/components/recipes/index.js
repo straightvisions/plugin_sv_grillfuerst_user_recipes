@@ -75,12 +75,6 @@ export default function Recipes(props) {
 			});
 	}, [page, filter])
 	
-	if(1===2){
-		return (
-			<SearchBar id="adminRecipesList" filter={filter} onChange={setFilter} />
-		);
-	}
-	
 	if(loading){
 		return (
 			<>

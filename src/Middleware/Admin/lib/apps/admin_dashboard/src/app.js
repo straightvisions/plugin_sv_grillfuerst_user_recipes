@@ -36,7 +36,7 @@ const App = () => {
 						/>
 						<Route
 							path="/"
-							element={<Recipes/>}
+							element={<Recipes user={user}/>}
 						/>
 					</Routes>
 				</div>

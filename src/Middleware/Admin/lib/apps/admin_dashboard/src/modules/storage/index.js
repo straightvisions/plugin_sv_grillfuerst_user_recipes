@@ -16,10 +16,17 @@ const storage = {
 		storage.setStorage(_storage);
 	},
 	
-	get : (key, def = '') => {
+	get: (key, def = '') => {
 		const _storage = storage.getStorage();
-		return _storage.hasOwnProperty(key) ? _storage[key] : def;
+		const value = _storage.hasOwnProperty(key) ? _storage[key] : def;
+		
+		try {
+			return JSON.parse(value);
+		} catch (error) {
+			return value;
+		}
 	}
+	
 }
 
 window.addEventListener('storage', function(event) {
