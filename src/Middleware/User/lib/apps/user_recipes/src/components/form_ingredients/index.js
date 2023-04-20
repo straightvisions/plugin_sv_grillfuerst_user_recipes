@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, {useEffect, useReducer, useState} from "react";
 import Spinner from '../spinner';
 import TermSearch from "../combobox/term_search.js";
 import Dropdown from "../dropdown";
@@ -31,6 +31,13 @@ export default function Ingredients(props) {
 
 	// ingredients list from db for TermSearch
 	useEffect( () => {
+		// migrate ingredients
+		const _ingredients = ingredients.map((item, i) => {
+			item = { ...ingredientModel, ...item };
+			item.order = ('order' in item && item.order !== 0) ? item.order : i + 1;
+			return item;
+		});
+		setFormState({ingredients: sort(_ingredients)});
 		// ingredients
 		caches.open(cacheName).then((cache) => {
 			cache.match(routes.getIngredients).then((response) => {
@@ -94,25 +101,30 @@ export default function Ingredients(props) {
 		return typeof value === "undefined" || value === null || value === '' || value === 0 || value === '0';
 	}
 	
+	const sort = (items) => {
+		return items.sort((a, b) => a.order - b.order);
+	}
+	
 	// needs custom function to apply data to the right array item
 	const setIngredient = (item) => {
-		const newIngredients =
+		const _ingredients =
 			ingredients.map(ingredient => { return ingredient.id === item.id ? item : ingredient; });
-		
-		setFormState({ingredients: newIngredients});
+	
+		setFormState({ingredients: sort(_ingredients)});
 	}
 	
 	const addIngredient = (item) =>{
-		const ingredient = { ...ingredientModel, id: item.id, label: item.name };
+		const ingredient = { ...ingredientModel, ...{id: item.id, label: item.name, order: ingredients.length + 1} };
 		
 		ingredients.push(ingredient);
-		setFormState({ingredients: ingredients});
+
+		setFormState({ingredients: sort(ingredients)});
 	}
 	
-	const removeIngredient = (item) => {
+	const removeIngredient = (index, item) => {
 		// filter out the item from list
-		const newIngredients = ingredients.filter(ingredient => ingredient.id !== item.id);
-		setFormState({ingredients: newIngredients});
+		ingredients.splice(index, 1);
+		setFormState({ingredients: sort(ingredients)});
 	}
 	
 	const handleFinderSelect = (product) => {
@@ -159,6 +171,34 @@ export default function Ingredients(props) {
 		return name;
 	}
 	
+	// -1
+	const handleOrderUp = (index, item) => {
+		// handle missing order property
+		if(!item.order) item.order = index + 1;
+		//---
+		item.order = item.order > 1 ? item.order -1 : item.order;
+		ingredients[index] = item;
+		
+		if(ingredients[index - 1]){
+			if(!item.order) item.order = index + 1;
+			ingredients[index - 1].order = ingredients[index - 1].order + 1;
+		}
+		
+		setIngredient(sort(ingredients));
+	}
+	
+	// +1
+	const handleOrderDown = (index, item) => {
+		item.order = item.order < ingredients.length ? item.order + 1 : item.order;
+		ingredients[index] = item;
+		
+		if(ingredients[index + 1]){
+			ingredients[index + 1].order = ingredients[index + 1].order - 1;
+		}
+		
+		setIngredient(sort(ingredients));
+	}
+	
 	// conditional rendering for TermSearch
 	const TermSearchComp = loading ? <Spinner /> : <TermSearch label={"Neue Zutat hinzufügen"} items={ingredientsDB} onChange={addIngredient} />;
 	return (
@@ -188,6 +228,8 @@ export default function Ingredients(props) {
 					<table className="min-w-full divide-y divide-gray-300">
 						<thead className="bg-gray-50">
 						<tr>
+							<th scope="col" className="">
+							</th>
 							<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 								Zutat
 							</th>
@@ -209,8 +251,24 @@ export default function Ingredients(props) {
 						</tr>
 						</thead>
 						<tbody className="divide-y divide-gray-200 bg-white">
-						{ingredients.map(ingredient => (
-							<tr key={ingredient.id}>
+						{ingredients.map((ingredient, index) => (
+							<tr key={ingredient.id + '-' + index}>
+								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+									<button
+										onClick={()=>handleOrderUp(index, ingredient)}
+										type="button"
+										className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+									>
+										&#x25B2;
+									</button>
+									<button
+										onClick={()=>handleOrderDown(index, ingredient)}
+										type="button"
+										className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+									>
+										&#x25BC;
+									</button>
+								</td>
 								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
 									{ingredient.label}
 								</td>
@@ -265,7 +323,7 @@ export default function Ingredients(props) {
 								</td>
 								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
 									<button
-										onClick={() => removeIngredient(ingredient)}
+										onClick={() => removeIngredient(index, ingredient)}
 										type="button"
 										className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
 										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"

@@ -40,7 +40,7 @@ export default function Step(props){
 					<button
 						onClick={onChangeOrderUp}
 						type="button"
-						className="bg-white border border-lightgrey text-lightgrey px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+						className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
 					>
 						&#x25B2;
 					</button>
@@ -48,7 +48,7 @@ export default function Step(props){
 					<button
 						onClick={onChangeOrderDown}
 						type="button"
-						className="bg-white border border-lightgrey text-lightgrey px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+						className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
 					>
 						&#x25BC;
 					</button>
