@@ -3,3 +3,4 @@
 /src/Middleware/Admin/lib/apps/admin_dashboard/node_modules/
 /src/Middleware/User/lib/apps/login/node_modules/
 *.env
+/src/Middleware/User/lib/apps/user_recipes/.env.production
