@@ -16,7 +16,8 @@ export default function Ingredients(props) {
 	
 	const {
 		servings,
-		ingredients
+		ingredients,
+		ingredients_custom_wish
 	} = formState;
 	
 	const [showProductFinder, setShowProductFinder] = useState(false);
@@ -24,6 +25,7 @@ export default function Ingredients(props) {
 	const [productParent, setProductParent] = useState({});
 	const [products, setProducts] = useState([]);
 	const [loading, setLoadingState] = useState(true);
+	const [showCustomIngredientBox, setShowCustomIngredientBox] = useState(false);
 	
 	// database stuff
 	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
@@ -223,6 +225,19 @@ export default function Ingredients(props) {
 						</select>
 					</div>
 					{TermSearchComp}
+					<div className="mt-2 text-[12px] text-gray-500 ">
+						<p onClick={()=>setShowCustomIngredientBox(!showCustomIngredientBox)} className="inline cursor-pointer border-b border-dashed border-gray-500 hover:text-gray-700 hover:border-gray-700">
+							Deine Zutat ist nicht dabei? Klick hier!
+						</p>
+						{ showCustomIngredientBox &&
+							<div className="mt-2">
+								<textarea onChange={e => setFormState({"ingredients_custom_wish": e.target.value})} placeholder="Teile uns deinen Zutatenwunsch hier mit und wir fügen die Zutat für dich hinzu." className="text-[12px] w-full min-h-[200px] max-h-[300px] rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none">{ingredients_custom_wish}</textarea>
+							</div>
+							
+						}
+					</div>
+					
+				
 				</div>
 				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
 					<table className="min-w-full divide-y divide-gray-300">

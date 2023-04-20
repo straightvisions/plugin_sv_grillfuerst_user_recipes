@@ -21,6 +21,7 @@ class Recipe_Model_Item {
     public ?int $cooking_time = 0;
     public ?int $waiting_time = 0;
     public array|string $ingredients = [];
+    public string $ingredients_custom_wish = '';
     public array|string $accessories = [];
     public array|string $steps = [];
     public int $newsletter = 0;

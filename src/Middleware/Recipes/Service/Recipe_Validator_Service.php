@@ -119,6 +119,11 @@ final class Recipe_Validator_Service {
                         $constraint->type('array')
                     ]
                 ),
+                'ingredients_custom_wish' => $constraint->optional(
+                    [
+                        $constraint->type('string')
+                    ]
+                ),
                 'accessories' => $constraint->optional(
                     [
                         $constraint->type('array')
