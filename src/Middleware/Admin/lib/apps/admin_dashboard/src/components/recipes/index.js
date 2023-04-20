@@ -44,6 +44,8 @@ export default function Recipes(props) {
 			{key:'state',value:'review_pending'},
 			]}
 	]);
+
+	const recipesCount = recipes ? recipes.length : 0;
 	
 	useEffect(() => {
 		let route = routes.getRecipes;
@@ -73,11 +75,20 @@ export default function Recipes(props) {
 			});
 	}, [page, filter])
 	
+	if(1===2){
+		return (
+			<SearchBar id="adminRecipesList" filter={filter} onChange={setFilter} />
+		);
+	}
+	
 	if(loading){
 		return (
-			<div className="bg-white px-4 py-12 shadow sm:rounded-lg  h-full">
-				<Spinner />
-			</div>
+			<>
+				<div className="bg-white px-4 py-12 shadow sm:rounded-lg  h-full">
+					<Spinner />
+				</div>
+			</>
+			
 		);
 	}
 	
@@ -123,7 +134,7 @@ export default function Recipes(props) {
 					</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-200 bg-white">
-					{recipes.map((recipe) => (
+					{recipes && recipes.map((recipe) => (
 						<tr className="cursor-pointer hover:bg-gray-50" key={recipe.uuid} onClick={() => navigate('/edit/' + recipe.uuid)}>
 							<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 								<span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900">
@@ -179,7 +190,7 @@ export default function Recipes(props) {
 						pages={pagination.pages}
 						rows={pagination.rows}
 						page={pagination.page}
-						showingCount={recipes.length}
+						showingCount={recipesCount}
 						onChange={setPage}
 					/>
 				</div>

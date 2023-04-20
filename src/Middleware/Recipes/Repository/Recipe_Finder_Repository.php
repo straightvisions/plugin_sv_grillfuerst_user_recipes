@@ -56,6 +56,10 @@ final class Recipe_Finder_Repository {
             $where[] = ['uuid' => (int)$id];
         }
 
+        if(isset($filter['state']) && strtolower($filter['state']) === 'all'){
+            unset($filter['state']);
+        }
+
         if($query && 1===2){
             $where[] = ['OR' => [
                 'title'=>$query,
