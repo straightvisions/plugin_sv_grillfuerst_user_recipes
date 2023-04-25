@@ -6,4 +6,5 @@ export default {
 	unit: "g",
 	note: "",
 	order: 0,
+	custom: false,
 }
