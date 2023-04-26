@@ -126,7 +126,7 @@ export default function Form(props) {
 		);
 	}else{
 		return (
-			<form className="space-y-6" >
+			<form className="space-y-6">
 				{getAlerts()}
 				<Common formState={formState} setFormState={_setFormState} />
 				<Ingredients formState={formState} setFormState={_setFormState} />

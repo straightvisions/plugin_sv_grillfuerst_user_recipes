@@ -123,6 +123,14 @@ export default function Ingredients(props) {
 		setFormState({ingredients: sort(ingredients)});
 	}
 	
+	const addCustomIngredient = () =>{
+		const ingredient = { ...ingredientModel, ...{id: 0, label: '', order: ingredients.length + 1, custom: true} };
+		
+		ingredients.push(ingredient);
+		
+		setFormState({ingredients: sort(ingredients)});
+	}
+	
 	const removeIngredient = (index, item) => {
 		// filter out the item from list
 		ingredients.splice(index, 1);
@@ -201,6 +209,37 @@ export default function Ingredients(props) {
 		setIngredient(sort(ingredients));
 	}
 	
+	const handleCommaInput = (e, ingredient, cleanUp = false) => {
+		let value = e.target.value;
+		const stringWithoutChars = value.replace(/[^,\d]/g, ''); // Remove all non-numeric characters except the commas
+		const lastIndex = stringWithoutChars.lastIndexOf(',');
+		value = stringWithoutChars.slice(0, lastIndex).replace(/,/g, '') + stringWithoutChars.slice(lastIndex);
+		
+		// if comma is at the end, check for decimals, if decimals parse as float
+		if(value.includes(',')){
+			value = value.replace(',','.');
+			
+			// trim empty decimals if not in focus anymore
+			if(cleanUp){
+				value = value.replace(/\.00$/, '').replace(/\.0$/, '').replace(/\.$/, '');
+			}
+			
+			let _value = value.split('.');
+			if(_value.length >= 2 && _value[1] !== ''){
+				value = parseFloat(value).toFixed(2);
+			}
+		}else{
+			// not a potential float, parse as int
+			value = parseInt(value);
+		}
+		
+		if(isNaN(value)){
+			value = 0;
+		}
+		
+		setIngredient({ ...ingredient, amount: value });
+	}
+	
 	// conditional rendering for TermSearch
 	const TermSearchComp = loading ? <Spinner /> : <TermSearch label={"Neue Zutat hinzufügen"} items={ingredientsDB} onChange={addIngredient} />;
 	return (
@@ -226,15 +265,16 @@ export default function Ingredients(props) {
 					</div>
 					{TermSearchComp}
 					<div className="mt-2 text-[12px] text-gray-500 ">
-						<p onClick={()=>setShowCustomIngredientBox(!showCustomIngredientBox)} className="inline cursor-pointer border-b border-dashed border-gray-500 hover:text-gray-700 hover:border-gray-700">
-							Deine Zutat ist nicht dabei? Klick hier!
+						<p className="inline cursor-pointer border-b border-dashed border-gray-500 hover:text-gray-700 hover:border-gray-700">
+							Deine Zutat ist nicht dabei?:
 						</p>
-						{ showCustomIngredientBox &&
-							<div className="mt-2">
-								<textarea onChange={e => setFormState({"ingredients_custom_wish": e.target.value})} placeholder="Teile uns deinen Zutatenwunsch hier mit und wir fügen die Zutat für dich hinzu." className="text-[12px] w-full min-h-[200px] max-h-[300px] rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none">{ingredients_custom_wish}</textarea>
-							</div>
-							
-						}
+						<button
+							onClick={()=>addCustomIngredient()}
+							type="button"
+							className="bg-white border border-grey-500 text-grey-500 px-2 py-1 mt-2 rounded hover:text-white hover:bg-orange-600"
+						>
+							Eigene Zutat hinzufügen
+						</button>
 					</div>
 					
 				
@@ -285,17 +325,27 @@ export default function Ingredients(props) {
 									</button>
 								</td>
 								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-									{ingredient.label}
+									{ingredient.custom === false ?
+										ingredient.label
+									: <input
+											placeholder="Zutat"
+											type="text"
+											className="min-w-max mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+											value={ingredient.label}
+											onChange={e => { ingredient.label = e.target.value; setIngredient(ingredient); }}
+										/>
+									}
 								</td>
 								<td className="w-1/5 whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 									<input
-										value={ingredient.amount}
-										onChange={e => { ingredient.amount = e.target.value; setIngredient(ingredient); }}
-										type="number"
+										value={ingredient.amount.toString().replace('.', ',')}
+										onChange={(e) => handleCommaInput(e, ingredient)}
+										onBlur={(e) => handleCommaInput(e, ingredient, true)}
+										type="text"
 										placeholder="1"
-										min="1"
 										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									/>
+								
 								</td>
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 									<Dropdown value={ingredient.unit} items={ingredientUnitValues}
