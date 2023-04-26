@@ -330,7 +330,7 @@ export default function Ingredients(props) {
 									: <input
 											placeholder="Zutat"
 											type="text"
-											className="min-w-max mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+											className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 											value={ingredient.label}
 											onChange={e => { ingredient.label = e.target.value; setIngredient(ingredient); }}
 										/>
@@ -343,7 +343,7 @@ export default function Ingredients(props) {
 										onBlur={(e) => handleCommaInput(e, ingredient, true)}
 										type="text"
 										placeholder="1"
-										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+										className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									/>
 								
 								</td>
@@ -356,7 +356,7 @@ export default function Ingredients(props) {
 								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 									<input
 										type="text"
-										className="min-w-max mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+										className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 										value={ingredient.note}
 										onChange={e => { ingredient.note = e.target.value; setIngredient(ingredient); }}
 									/>
