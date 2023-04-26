@@ -67,25 +67,6 @@ export default function Submit(props) {
 										Bildern zu besitzen und trittst diese an uns ab.</p>
 								</div>
 							</div>
-							<div className="flex items-start">
-								<div className="flex h-5 items-center">
-									<input
-										id="newsletter"
-										name="newsletter"
-										type="checkbox"
-										className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-										checked={newsletter}
-										onChange={handleNewsletter}
-									/>
-								</div>
-								<div className="ml-3 text-sm">
-									<label htmlFor="newsletter" className="font-medium text-gray-700">
-										Newsletteranmeldung
-									</label>
-									<p className="text-gray-500">Manche Rezepte stellen wir in unserem Newsletter vor -
-										nicht verpassen!</p>
-								</div>
-							</div>
 						</div>
 					</fieldset>
 				</div>
