@@ -6,9 +6,9 @@ export default function FeedbackEditor(props) {
 		feedback,
 		setAttributes
 	} = props;
-console.log(props);
+
 	return (
-		<div>
+		<div className="sticky top-5">
 			<WYSIWYG onChange={val => setAttributes({feedback:val})} value={feedback}/>
 		</div>
 	);
