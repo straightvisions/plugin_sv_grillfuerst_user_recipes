@@ -46,6 +46,11 @@ export default function ActivityMap(props) {
 		return User;
 	}
 	
+	const convertDate = (date) => {
+		const [month, day, year] = date.split('/');
+		return `${day}.${month}.${year}`;
+	}
+	
 	// layout reference https://tailwindui.com/components/application-ui/lists/feeds
 	if (items.length > 0) {
 		return (
@@ -81,7 +86,7 @@ export default function ActivityMap(props) {
 															{getUser(activityItem.userId).name}
 														</p>
 													</div>
-													<p className="mt-0.5 text-sm text-gray-500">Commented {activityItem.date}</p>
+													<p className="mt-0.5 text-sm text-gray-500">{convertDate(activityItem.date)}</p>
 												</div>
 												<div className="mt-2 text-sm text-gray-700">
 													{parse(activityItem.text)}
@@ -103,17 +108,5 @@ export default function ActivityMap(props) {
 			</>
 		);
 	}
-	/*
-	const getCommentHistory = () => {
-		const history = formState.feedback;
-		
-		return history.length > 0 ? steps.map((step, index) => (
-			
-			<p
-			
-		)) : <p>Bisher kein Feedback eingereicht.</p>;
-	}
-	*/
-	
 	
 }

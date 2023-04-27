@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import Spinner from "../spinner";
+import Spinner from '../../spinner';
 
 export default function Dropzone(props) {
 	const {

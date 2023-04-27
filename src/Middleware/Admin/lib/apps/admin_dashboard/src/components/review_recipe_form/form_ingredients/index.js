@@ -1,5 +1,5 @@
 import React, {useEffect, useReducer, useState} from "react";
-import Spinner from '../spinner';
+import Spinner from '../../spinner';
 import TermSearch from "../combobox/term_search.js";
 import Dropdown from "../dropdown";
 import ProductFinder from "../product_finder";
@@ -300,7 +300,7 @@ export default function Ingredients(props) {
 						</thead>
 						<tbody className="divide-y divide-gray-200 bg-white">
 						{ingredients.map((ingredient, index) => (
-							<tr key={ingredient.id + '-' + index}>
+							<tr key={ingredient.id + '-' + index} className={ingredient.custom ? 'bg-red-100' : ''}>
 								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
 									<button
 										onClick={()=>handleOrderUp(index, ingredient)}

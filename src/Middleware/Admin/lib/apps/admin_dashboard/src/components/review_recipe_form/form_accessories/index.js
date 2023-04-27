@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Spinner from '../spinner';
+import Spinner from '../../spinner';
 import routes from "../../../models/routes";
 import accessoryModel from "../../../models/accessory";
 import storage from "../../../modules/storage";
