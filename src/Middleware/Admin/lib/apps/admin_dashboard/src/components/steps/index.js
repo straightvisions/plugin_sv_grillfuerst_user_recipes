@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import Image from "../image";
+import Image from "../../image";
 
 export default function Steps(props) {
 	const {

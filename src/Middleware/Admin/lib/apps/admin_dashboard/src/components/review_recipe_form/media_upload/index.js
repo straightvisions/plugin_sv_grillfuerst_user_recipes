@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import Dropzone from '../dropzone';
 import routes from '../../../models/routes';
+import headers from '../../../modules/headers';
 
 export default function MediaUpload(props) {
 	const {
@@ -23,13 +24,16 @@ export default function MediaUpload(props) {
 		Array.from(files).forEach((item, index) => {
 			formData.append(index, item);
 		});
-	
+		
+		let modifiedHeaders = {...{}, ...headers.get()};
+		delete modifiedHeaders['Content-Type'];
+		console.log(modifiedHeaders);
 		// upload fetch
 		fetch(
 			routes.uploadMedia + route,
 			{
 				method: 'POST',
-				headers,
+				headers: modifiedHeaders,
 				body: formData,
 			}
 		)

@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from "react";
 import Spinner from '../spinner';
-import routes from "../../models/routes";
-import accessoryModel from "../../models/accessory";
-import storage from "../../modules/storage";
+import routes from "../../../models/routes";
+import accessoryModel from "../../../models/accessory";
+import storage from "../../../modules/storage";
 import ProductFinder from "../product_finder";
 
 export default function Accessories(props) {
@@ -101,7 +101,7 @@ export default function Accessories(props) {
 	}
 	
 	return (
-		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
+		<div className="mt-5 bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			{showProductFinder === true && <ProductFinder id="AccessoriesFinder" items={accessoriesDB} itemsSelected={accessories} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
 			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">

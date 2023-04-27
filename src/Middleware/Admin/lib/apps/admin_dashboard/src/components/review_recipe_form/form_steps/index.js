@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Step from "../step";
-import stepModel from "../../models/step";
+import stepModel from "../../../models/step";
 
 export default function Steps(props) {
 	const {
@@ -9,7 +9,6 @@ export default function Steps(props) {
 	} = props
 	
 	const [steps, setSteps] = useState(formState.steps);
-	
 	const [orderedSteps, setOrderedSteps] = useState(steps.sort((a, b) => a.order - b.order));
 	
 	// needs custom function to apply data to the right array item
@@ -66,7 +65,7 @@ export default function Steps(props) {
 	}
 	
 	return (
-		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
+		<div className="mt-5 bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Schritte</h3>

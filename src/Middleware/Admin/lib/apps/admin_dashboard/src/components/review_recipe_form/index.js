@@ -1,6 +1,8 @@
 import React from 'react';
 import Common from './form_common';
 import Ingredients from './form_ingredients';
+import Accessories from './form_accessories';
+import Steps from './form_steps';
 
 export default function ReviewRecipeForm(props) {
 	const {
@@ -17,14 +19,8 @@ export default function ReviewRecipeForm(props) {
 		<div className="w-full max-w-full">
 			<Common formState={data} setFormState={_setAttributes} />
 			<Ingredients formState={data} setFormState={_setAttributes} />
-			{/*
-			<Common formState={formState} setFormState={_setFormState} />
-				<Ingredients formState={formState} setFormState={_setFormState} />
-				<Accessories formState={formState} setFormState={_setFormState} />
-				<Steps formState={formState} setFormState={_setFormState} />
-				<Submit saving={saving} formState={formState} setFormState={_setFormState} onSave={handleSave} onSubmit={handleSubmit}/>
-				*/
-			}
+			<Accessories formState={data} setFormState={_setAttributes} />
+			<Steps formState={data} setFormState={_setAttributes} />
 		</div>
 	);
 }
