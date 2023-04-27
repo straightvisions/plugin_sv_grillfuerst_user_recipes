@@ -5,5 +5,6 @@ export default {
 	amount: 0,
 	unit: "g",
 	note: "",
-	order: 0,
+	order: 1,
+	custom: false,
 }

@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Step from "../step";
-import stepModel from "../../../models/step";
+import stepModel from "../../models/step";
 
 export default function Steps(props) {
 	const {

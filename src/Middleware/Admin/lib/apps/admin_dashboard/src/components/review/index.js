@@ -21,6 +21,7 @@ export default function Review() {
 		// default
 		storage.get(storageSlug, {
 		data: {},
+		_data: {}, // hidden backup
 		feedback: '',
 	}));
 	
@@ -35,7 +36,9 @@ export default function Review() {
 			})
 				.then(response => response.json())
 				.then(data => {
-					setAttributes({data});
+					// create a hidden backup of the data, might be useful later
+					const _data = Object.keys(attributes._data).length <= 0 ? data : attributes._data;
+					setAttributes({data, _data});
 					setLoading(false);
 				});
 		}else{
@@ -58,7 +61,7 @@ export default function Review() {
 			<ReviewToolbar {...attributes} />
 			<div className="flex gap-5 w-full max-w-full">
 				<div className="flex-grow">
-					<ReviewRecipeForm {...attributes} />
+					<ReviewRecipeForm {...attributes} setAttributes={setAttributes}/>
 				</div>
 				<div className="w-full max-w-[600px]">
 					<FeedbackEditor {...attributes} setAttributes={setAttributes}/>

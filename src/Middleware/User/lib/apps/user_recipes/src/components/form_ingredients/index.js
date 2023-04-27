@@ -16,8 +16,7 @@ export default function Ingredients(props) {
 	
 	const {
 		servings,
-		ingredients,
-		ingredients_custom_wish
+		ingredients
 	} = formState;
 	
 	const [showProductFinder, setShowProductFinder] = useState(false);
@@ -25,7 +24,6 @@ export default function Ingredients(props) {
 	const [productParent, setProductParent] = useState({});
 	const [products, setProducts] = useState([]);
 	const [loading, setLoadingState] = useState(true);
-	const [showCustomIngredientBox, setShowCustomIngredientBox] = useState(false);
 	
 	// database stuff
 	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
