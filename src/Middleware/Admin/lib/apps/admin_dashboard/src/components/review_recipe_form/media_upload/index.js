@@ -27,7 +27,7 @@ export default function MediaUpload(props) {
 		
 		let modifiedHeaders = {...{}, ...headers.get()};
 		delete modifiedHeaders['Content-Type'];
-		console.log(modifiedHeaders);
+	
 		// upload fetch
 		fetch(
 			routes.uploadMedia + route,

@@ -42,7 +42,6 @@ export default function Review() {
 	const [loading, setLoading] = useState(true);
 	const [refresh, setRefresh] = useState(false);
 	
-	console.log(attributes.data.steps);
 	// load data from db
 	useEffect(() => {
 		if(Object.keys(attributes.data).length === 0 || refresh){

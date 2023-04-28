@@ -17,22 +17,25 @@ final class Media_Update_Service {
 
     private function renameFile(array $item, string $folder): array {
         if (isset($item['newFilename']) && !empty($item['newFilename'])) {
-            // kinda bad, all functions should share the correct model setup
-            $item['name'] = $item['filename'];
-            $item = array_merge($item, $this->Adapter->Filesystem()->prepare($item, $folder));
-
+            //@todo this should be part of the filesystem
             $filename = basename($item['filename']);
             $extension = pathinfo($filename, PATHINFO_EXTENSION);
             $newFilename = basename($item['newFilename'], '.' . $extension);
             $newFilename .= '.' . $extension;
+
+            $newFilename = $this->Adapter->Filesystem()->prepare_filename($newFilename, $folder);
+
             $oldPath = $item['path'] . '/' . $filename;
             $newPath = $folder . '/' . $newFilename; // using folder here prevents malicious path injection
 
+            $_item = $item;
+            $_item['filename'] = $newFilename;
+            $_item = array_merge($_item, $this->Adapter->Filesystem()->prepare($_item, $folder, true));
+
             if( $this->Adapter->Filesystem()->rename($oldPath, $newPath) ){
-                // hotfix bad convention for prepare
-                $item['name'] = $item['newFilename'];
-                $item = array_merge($item, $this->Adapter->Filesystem()->prepare($item, $folder));
+                $item = $_item;
             }
+
         }
         return $item;
     }

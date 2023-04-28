@@ -38,6 +38,7 @@ final class Filesystem {
         if($this->validate($file) === false) $this->_throw([], 422);
         // get file array
         $file_array = $this->prepare($file, $folder);
+
         // get absolute destination path
         $path = $this->get_path($file_array['path']);
         // create destination folder(s) if not exist
@@ -52,17 +53,26 @@ final class Filesystem {
         return !file_exists($this->get_path($newPath)) ? rename($this->get_path($oldPath), $this->get_path($newPath)) : false;
     }
 
-    public function prepare($file, $folder): array{
+    public function prepare($file, $folder, bool $skipFilename = false): array{
         $folder = sanitize_text_field($folder);
 
         $file_array = [
             'path' => $folder,
             'url' => trailingslashit($this->url) . trailingslashit($folder),
-            'filename' => sanitize_file_name($file['name']) //@todo check upload pipe to replace name with filename to support other functions like the media updater
+            'filename' => isset($file['filename']) ? sanitize_file_name($file['filename']) : sanitize_file_name($file['name'])
         ];
 
-        if (file_exists($this->get_path($folder) . '/' . $file_array['filename'])) {
-            $filename = $file_array['filename'];
+        // check for duplicates and rename the file if necessary -> NAME(n).EXTENSION
+        $file_array['filename'] = $skipFilename ? $file_array['filename'] : $this->prepare_filename($file_array['filename'], $folder);
+
+        // complete file url
+        $file_array['url'] .= $file_array['filename'];
+
+        return $file_array;
+    }
+
+    public function prepare_filename(string $filename, string $folder){
+        if (file_exists($this->get_path($folder) . '/' . $filename)) {
             $extension = pathinfo($filename, PATHINFO_EXTENSION);
             $filenameWithoutExtension = pathinfo($filename, PATHINFO_FILENAME);
             $counter = 1;
@@ -73,13 +83,10 @@ final class Filesystem {
                 $newFilename = $filenameWithoutExtension . '(' . $counter . ')' . '.' . $extension;
             }
 
-            $file_array['filename'] = $newFilename;
+            $filename = $newFilename;
         }
 
-        // complete file url
-        $file_array['url'] .= $file_array['filename'];
-
-        return $file_array;
+        return $filename;
     }
 
     public function remove($file_array) {
@@ -94,7 +101,8 @@ final class Filesystem {
     }
 
     private function get_path(string $appendix = ''){
-        return trailingslashit( trailingslashit($this->root) . trailingslashit($appendix) );
+        $path = trailingslashit($this->root) . $appendix;
+        return is_dir($path) ? trailingslashit($path) : $path; // !is_dir = file, don't add slash
     }
 
     public function dir_exists(string $dir): bool{

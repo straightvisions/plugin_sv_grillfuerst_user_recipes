@@ -130,6 +130,11 @@ export default function Common(props) {
 		setFormState(formState);
 	}
 	
+	const handleImageChange = (image) => {
+		formState.featured_image = image;
+		setFormState(formState);
+	}
+	
 	// conditional
 	const Difficulties = <Dropdown label={"Schwierigkeitsgrad"} value={difficulty} items={difficultyValues} onChange={val => setFormState({difficulty: val})}/>;
 	
@@ -181,7 +186,7 @@ export default function Common(props) {
 						
 						<div className="h-200 rounded-md overflow-hidden">
 							<label className="block text-sm font-medium text-gray-700">Hauptbild</label>
-							<Image onChange={handleImageUpload} onDelete={handleImageDelete} image={featured_image} uuid={formState.uuid} />
+							<Image onChange={handleImageChange} onUpload={handleImageUpload} onDelete={handleImageDelete} image={featured_image} uuid={formState.uuid} />
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">
