@@ -32,10 +32,21 @@ final class Media_Upload_Service {
         $Media = new Media_Item();
 
         foreach($Media as $key => &$val){
+            if($key === 'id' && empty($item[$key])){
+                $item[$key] = $this->generateUniqueID($item);
+            }
             $val = isset($item[$key]) ? $item[$key] : $val;
         }
 
         return $Media;
+    }
+
+    private function generateUniqueID(array $item){
+        $salt = bin2hex(random_bytes(8));
+        $item['_salt'] = $salt;
+
+        $json = json_encode($item);
+        return substr(str_shuffle(base64_encode($json)), 0, 16);
     }
 
     private function get_hashed_folder_name(int $length = 32): string{

@@ -1,14 +1,12 @@
-import React, { useState, useEffect } from 'react';
+import React, {useEffect, useState} from 'react';
 import routes from '../../models/routes';
-import { useNavigate } from 'react-router-dom';
+import {useNavigate} from 'react-router-dom';
 import Spinner from '../spinner';
 import SearchBar from '../search_bar';
 import Pagination from '../pagination';
 import {Image as ImagePH} from '../placeholder';
-import { LinkIcon } from '@heroicons/react/20/solid'
+import {LinkIcon} from '@heroicons/react/20/solid'
 import headers from "../../modules/headers";
-import storage from '../../modules/storage';
-
 
 const states = {
 	draft: {
@@ -31,7 +29,7 @@ const states = {
 
 export default function Recipes(props) {
 	const [recipes, setRecipes] = useState([]);
-	const [pagination, setPagination] = useState({rows:0,pages:0,page:1});
+	const [pagination, setPagination] = useState({rows: 0, pages: 0, page: 1});
 	const [loading, setLoadingState] = useState(true);
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(20);
@@ -40,11 +38,13 @@ export default function Recipes(props) {
 		{key: 'limit', value: limit},
 		{key: 'page', value: page},
 		{key: 'order', value: 'edited desc'},
-		{key: 'filter', value: [
-			{key:'state',value:'review_pending'},
-			]}
+		{
+			key: 'filter', value: [
+				{key: 'state', value: 'review_pending'},
+			]
+		}
 	]);
-
+	
 	const recipesCount = recipes ? recipes.length : 0;
 	
 	useEffect(() => {
@@ -63,33 +63,33 @@ export default function Recipes(props) {
 				return [param.key, param.value];
 			}
 		})).toString();
-
-		fetch(route,{
-			headers:headers.get()
+		
+		fetch(route, {
+			headers: headers.get()
 		})
 			.then(response => response.json())
 			.then(data => {
 				setRecipes(data.items);
-				setPagination({rows:data.totalRows, pages:data.totalPages, page:data.page});
+				setPagination({rows: data.totalRows, pages: data.totalPages, page: data.page});
 				setLoadingState(false);
 			});
 	}, [page, filter])
 	
-	if(loading){
+	if (loading) {
 		return (
 			<>
 				<div className="bg-white px-4 py-12 shadow sm:rounded-lg  h-full">
-					<Spinner />
+					<Spinner/>
 				</div>
 			</>
-			
+		
 		);
 	}
 	
 	return (
-<>
-			<SearchBar id="adminRecipesList" filter={filter} onChange={setFilter} />
-
+		<>
+			<SearchBar id="adminRecipesList" filter={filter} onChange={setFilter}/>
+			
 			<div className="shadow ring-1 ring-black ring-opacity-5 md:rounded-lg bg-white">
 				<table className="min-w-full divide-y divide-gray-300">
 					<thead className="bg-gray-50">
@@ -124,14 +124,16 @@ export default function Recipes(props) {
 							className="w-10/12 py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-6">
 							Link
 						</th>
-						
+					
 					</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-200 bg-white">
 					{recipes && recipes.map((recipe) => (
-						<tr className="cursor-pointer hover:bg-gray-50" key={recipe.uuid} onClick={() => navigate('/edit/' + recipe.uuid)}>
+						<tr className="cursor-pointer hover:bg-gray-50" key={recipe.uuid}
+						    onClick={() => navigate('/edit/' + recipe.uuid)}>
 							<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-								<span className="inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900">
+								<span
+									className="inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900">
 								  {recipe.uuid}
 								</span>
 							</td>
@@ -151,7 +153,7 @@ export default function Recipes(props) {
 											<img
 												className="h-10 object-cover"
 												src={recipe.featured_image.url} alt=""
-											/> : <ImagePH />
+											/> : <ImagePH/>
 											
 										}
 									</div>
@@ -168,13 +170,13 @@ export default function Recipes(props) {
 							</td>
 							<td className="whitespace-nowrap py-4 pl-4 pr-4 text-sm sm:pl-6">
 								{recipe.state === 'published' ?
-									<a href={recipe.link} target="_blank" onClick={e=>e.stopPropagation()}>
+									<a href={recipe.link} target="_blank" onClick={e => e.stopPropagation()}>
 										<LinkIcon className="hover:stroke-black stroke-green-700 w-[20px]"/>
 									</a>
 									: ''
 								}
 							</td>
-							
+						
 						</tr>
 					))}
 					</tbody>
@@ -189,6 +191,6 @@ export default function Recipes(props) {
 					/>
 				</div>
 			</div>
-</>
+		</>
 	)
 }

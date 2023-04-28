@@ -48,14 +48,33 @@ final class Filesystem {
         return $file_array;
     }
 
-    private function prepare($file, $folder): array{
+    public function rename(string $oldPath, string $newPath){
+        return !file_exists($this->get_path($newPath)) ? rename($this->get_path($oldPath), $this->get_path($newPath)) : false;
+    }
+
+    public function prepare($file, $folder): array{
         $folder = sanitize_text_field($folder);
 
         $file_array = [
             'path' => $folder,
             'url' => trailingslashit($this->url) . trailingslashit($folder),
-            'filename' => sanitize_file_name($file['name'])
+            'filename' => sanitize_file_name($file['name']) //@todo check upload pipe to replace name with filename to support other functions like the media updater
         ];
+
+        if (file_exists($this->get_path($folder) . '/' . $file_array['filename'])) {
+            $filename = $file_array['filename'];
+            $extension = pathinfo($filename, PATHINFO_EXTENSION);
+            $filenameWithoutExtension = pathinfo($filename, PATHINFO_FILENAME);
+            $counter = 1;
+            $newFilename = $filenameWithoutExtension . '(' . $counter . ')' . '.' . $extension;
+
+            while (file_exists($this->get_path($folder) . '/' . $newFilename)) {
+                $counter++;
+                $newFilename = $filenameWithoutExtension . '(' . $counter . ')' . '.' . $extension;
+            }
+
+            $file_array['filename'] = $newFilename;
+        }
 
         // complete file url
         $file_array['url'] .= $file_array['filename'];

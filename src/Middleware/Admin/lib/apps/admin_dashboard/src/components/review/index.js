@@ -42,6 +42,7 @@ export default function Review() {
 	const [loading, setLoading] = useState(true);
 	const [refresh, setRefresh] = useState(false);
 	
+	console.log(attributes.data.steps);
 	// load data from db
 	useEffect(() => {
 		if(Object.keys(attributes.data).length === 0 || refresh){
@@ -154,10 +155,10 @@ export default function Review() {
 	
 	return (
 		<div>
-			<ReviewToolbar {...attributes} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish}/>
+			<ReviewToolbar {...attributes} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)}/>
 			<div className="flex gap-5 w-full max-w-full">
 				<div className="flex-grow">
-					<ReviewRecipeForm {...attributes} setAttributes={setAttributes}/>
+					<ReviewRecipeForm {...attributes} setAttributes={setAttributes} />
 				</div>
 				<div className="w-full max-w-[600px] relative">
 					<FeedbackEditor {...attributes} setAttributes={setAttributes}/>

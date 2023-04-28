@@ -12,13 +12,13 @@ export default function Steps(props) {
 	const [orderedSteps, setOrderedSteps] = useState(steps.sort((a, b) => a.order - b.order));
 	
 	// needs custom function to apply data to the right array item
-	const setStep = (index, item) => {
+	const setStep = (index, item, save = false) => {
 		steps[index] = item;
 		
 		// order
 		const _steps = steps.sort((a, b) => a.order - b.order);
 		
-		setFormState({steps: _steps});
+		setFormState({steps: _steps}, save);
 		setSteps(_steps);
 	}
 
@@ -104,7 +104,7 @@ export default function Steps(props) {
 						{orderedSteps.map((item, i) => (
 								<Step
 									key={i}
-									onChange={(i, _item) => setStep(i, _item)}
+									onChange={(_item, save) => setStep(i, _item, save)}
 									onChangeOrderUp={() => handleChangeOrderUp(i, item)}
 									onChangeOrderDown={() => handleChangeOrderDown(i, item)}
 									onDelete={() => removeStep(i)}

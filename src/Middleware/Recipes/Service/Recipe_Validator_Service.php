@@ -80,7 +80,7 @@ final class Recipe_Validator_Service {
                 ),
                 'featured_image' => $constraint->optional(
                     [
-                        $constraint->type('array')
+                        //$constraint->type('array')
                     ]
                 ),
                 'menu_type' => $constraint->optional(

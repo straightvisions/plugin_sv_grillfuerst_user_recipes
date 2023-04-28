@@ -1,4 +1,4 @@
-import React from 'react';
+import React, {useState, useEffect} from 'react';
 import Common from './form_common';
 import Ingredients from './form_ingredients';
 import Accessories from './form_accessories';
@@ -10,7 +10,7 @@ export default function ReviewRecipeForm(props) {
 		setAttributes
 	} = props;
 	
-	const _setAttributes = (state) => {
+	const _setAttributes = (state, save = false) => {
 		const updatedData = {...data, ...state};
 		setAttributes({data:updatedData});
 	};

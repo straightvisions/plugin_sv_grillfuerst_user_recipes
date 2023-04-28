@@ -19,5 +19,6 @@ export default {
 	"getAccessories": root + '/products/accessories', // GET
 	"getIngredientsProducts": root + '/products/ingredients', // GET
 	"uploadMedia": root + '/media/upload', // POST
+	"updateMedia": root + '/media/update', // PUT
 
 }

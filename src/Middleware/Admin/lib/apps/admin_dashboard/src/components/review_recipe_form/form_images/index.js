@@ -3,7 +3,7 @@ import MediaUpload from "../media_upload";
 
 export default function Images(props) {
 	const {
-		onChange = (e) => console.log(e),
+		onChange = (e) => {},
 		multiple = false,
 		images = [],
 		uuid = 0,

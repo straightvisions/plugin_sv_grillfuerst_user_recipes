@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from "react";
 import Image from "../form_image";
+import Modal from "../../modal";
 
 export default function Step(props){
 	const {
@@ -11,6 +12,8 @@ export default function Step(props){
 		onChangeOrderUp,
 		onChangeOrderDown,
 	} = props;
+	
+	const [showModalImageDelete, setShowModalImageDelete] = useState(false);
 	
 	/* legacy item fix */
 	if(item.hasOwnProperty('images') === false){
@@ -24,9 +27,20 @@ export default function Step(props){
 		onChange(item);
 	}
 	
+	const handleImageChange = (image) => {
+		item.images = item.images.map(img => {
+			if(image.id === img.id){
+				img = image;
+			}
+			return img;
+		});
+
+		onChange(item, true);
+	}
+	
 	const handleImageDelete = (image) => {
 		item.images = item.images.map(img => {
-			if(image.url !== img.url){
+			if(image.id !== img.id){
 				return img;
 			}
 		});
@@ -56,7 +70,15 @@ export default function Step(props){
 			
 			</td>
 			<td className="h-72 rounded-md overflow-hidden whitespace-nowrap py-4 text-sm font-medium text-gray-900">
-				<Image onChange={handleImageUpload} onDelete={handleImageDelete} image={item.images[0]} uuid={uuid} />
+				{showModalImageDelete &&
+					<Modal
+						message={'Bild wirklich löschen?'}
+						isOpen={showModalImageDelete}
+						onClose={()=>setShowModalImageDelete(false)}
+						name="modalImageDelete"
+						onConfirm={()=>{setShowModalImageDelete(false);handleImageDelete(item.images[0]);}}/>
+				}
+				<Image onChange={handleImageChange} onUpload={handleImageUpload} onDelete={()=>setShowModalImageDelete(true)} image={item.images[0]} uuid={uuid} />
 			</td>
 			<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 w-full">
 				<textarea
