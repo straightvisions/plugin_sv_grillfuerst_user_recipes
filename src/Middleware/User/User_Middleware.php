@@ -12,7 +12,6 @@ use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Info_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Login_Frontend_Service;
 use WP_REST_Response;
 
-
 final class User_Middleware implements Middleware_Interface {
     private User_Dashboard_Frontend_Service $User_Dashboard_Frontend_Service;
     private User_Login_Frontend_Service $User_Login_Frontend_Service;

@@ -285,16 +285,15 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $this->Api_Middleware->response($request, function ($Request) {
             $uuid    = $Request->getAttribute('uuid');
             $results = $this->Recipe_Exporter_Service->export($uuid);
-            $errors  = []; // @todo implement an errors service to provide better error handling in all components
-            $results['link'] = '';
+            $errors  = $results['errors'];
 
-            if ($results['status'] === 200) {
+            if ($results['status'] === 200 || $results['status'] === 201) {
+                $body = $results['body'];
                 // change state to published + add link to post
-                $results['link'] = GF_USER_RECIPES_BASE_URL . '/wp-admin/post.php?post=' . $results['postId'] . '&action=edit';
                 $this->Recipe_Updater_Service->update(
                     [
                     'state' => 'published',
-                    'link' => $results['link']
+                    'link' => $body['link']
                     ], $uuid);
 
                 $errors = array_merge(

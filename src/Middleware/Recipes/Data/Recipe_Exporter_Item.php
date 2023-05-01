@@ -29,7 +29,7 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
             $output[] =  [
                 'acf_fc_layout' => 'ingredient',
                 'ingredient' => $d->id,
-                'amount' => $d->amount,
+                'amount' => (string)$d->amount,
                 'comment' => $d->note,
                 'differing_unit' => $d->unit,
                 'shop_product_name' => $d->label,
@@ -54,7 +54,8 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
             // skip if empty
             if(!$product) continue;
 
-            $image = !isset($product->images[0]) ?? '';
+            $image = $product->images[0] ?? '';
+
             $output[] =  [
                 'acf_fc_layout' => 'accessory',
                 'shop_product_name' => $product->name,

@@ -9,12 +9,17 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Recipe_Finder_Repo
 
 final class Recipe_Finder_Service {
     private Recipe_Finder_Repository $repository;
+    private Recipe_Exporter_Item $Recipe_Exporter_Item;
 
     /**
      * @param Recipe_Finder_Repository     $repository
      */
-    public function __construct(Recipe_Finder_Repository $repository) {
+    public function __construct(
+        Recipe_Finder_Repository $repository,
+        Recipe_Exporter_Item $Recipe_Exporter_Item
+    ) {
         $this->repository = $repository;
+        $this->Recipe_Exporter_Item = $Recipe_Exporter_Item;
     }
 
     public function get_list(int $user_id = null, array $params = []): Recipe_Finder_Result {
@@ -31,7 +36,7 @@ final class Recipe_Finder_Service {
 
     public function getRaw(int $recipe_id): Recipe_Exporter_Item {
         $row = $this->repository->getRaw($recipe_id);
-        $item = new Recipe_Exporter_Item();
+        $item = $this->Recipe_Exporter_Item;
         return $this->apply_data_raw($item, $row);
     }
 

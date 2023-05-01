@@ -4,24 +4,28 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service;
 
 use Psr\Log\LoggerInterface;
 use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
-use SV_Grillfuerst_User_Recipes\Middleware\Products\Service\Product_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Recipe_Repository;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Exporter_Item;
+use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
+use Psr\Container\ContainerInterface;
 
 final class Recipe_Exporter_Service {
     private Recipe_Repository $repository;
     private Recipe_Validator_Service $Recipe_Validator;
-    private Product_Finder_Service $Product_Finder_Service;
     private LoggerInterface $logger;
     private $uploadedMediaIDs = array();
-    private $response = ['message' => '', 'status' => 200];
+    private $response = ['message' => '', 'status' => 400];
     private $Recipe_Finder_Service;
+    private Api_Middleware $Api_Middleware;
+    private $settings;
 
     public function __construct(
         Recipe_Repository $repository,
         Recipe_Validator_Service $Recipe_Validator,
         Recipe_Finder_Service $Recipe_Finder_Service,
-        Logger_Factory $Logger_Factory
+        Logger_Factory $Logger_Factory,
+        Api_Middleware $Api_Middleware,
+        ContainerInterface $container
     ) {
         $this->repository            = $repository;
         $this->Recipe_Validator      = $Recipe_Validator;
@@ -29,6 +33,8 @@ final class Recipe_Exporter_Service {
         $this->logger                = $Logger_Factory
             ->addFileHandler('user_updater.log')
             ->createLogger();
+        $this->Api_Middleware = $Api_Middleware;
+        $this->settings = $container->get('settings');
     }
 
     // controller fn -----------------------------------------------
@@ -36,14 +42,15 @@ final class Recipe_Exporter_Service {
     // controller fn -----------------------------------------------
     public function export(int $uuid): array {
         if($this->check_config()){
-            $this->products = $this->Product_Finder_Service->get_list();
             $item = $this->get_data($uuid);
+
             // export images
             foreach ($item->steps as $key => &$step) {
                 $step->images = $this->export_images($step->images);
             }
             // export data
             $post = $this->export_data($item);
+            var_dump($post);die;
             // link images to post
             $this->map_media_to_post($post);
             // Logging
@@ -61,12 +68,12 @@ final class Recipe_Exporter_Service {
 
     // process fns -----------------------------------------------
     private function check_config(): bool{
-        if ( ! defined('GF_USER_RECIPES_BASE_URL')) {#
+        if ( empty($this->settings['wordpress_export_url']) ) {#
             $this->response = ['message' => 'Config error - base url missing.', 'status' => 500];
             return false;
         }
 
-        if ( ! defined('GF_USER_RECIPES_AUTH')) {
+        if ( empty($this->settings['wordpress_export_auth']) ) {
             $this->response = ['message' => 'Config error - recipes auth not set.', 'status' => 401];
             return false;
         }
@@ -86,7 +93,7 @@ final class Recipe_Exporter_Service {
         return $images;
     }
 
-    private function export_media($image, $title, $description): int {
+    private function export_media($image): int {
         $url = $image->url;
         $title = $image->title ?? '';
         $description = $image->description ?? '';
@@ -96,9 +103,10 @@ final class Recipe_Exporter_Service {
         }
 
         $file = file_get_contents($url);
+        $auth = str_replace('Basic ', '', base64_decode($this->settings['wordpress_export_auth']));
 
-        $c = curl_init(GF_USER_RECIPES_BASE_URL . '/wp-json/wp/v2/media');
-        curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
+        $c = curl_init($this->settings['wordpress_domain'] . '/wp-json/wp/v2/media');
+        curl_setopt($c, CURLOPT_USERPWD, $auth);
         curl_setopt($c, CURLOPT_TIMEOUT, 30);
         curl_setopt($c, CURLOPT_POST, 1);
         curl_setopt($c, CURLOPT_CUSTOMREQUEST, "POST");
@@ -132,8 +140,9 @@ final class Recipe_Exporter_Service {
     private function export_data(Recipe_Exporter_Item $item){
 
         // REST Post Array
-        $d = json_encode([
+        $payload = [
             'title'           => $item->get('title'),
+            'status'          => 'publish',
             'content'         => '<!-- wp:acf/sv-grillfuerst-custom-recipe-steps {"name":"acf/sv-grillfuerst-custom-recipe-steps","mode":"preview"} /-->',
             'excerpt'         => $item->get('excerpt'),
             'featured_media'  => $this->export_media($item->get('featured_image')),
@@ -152,26 +161,29 @@ final class Recipe_Exporter_Service {
                     'gf_user_recipe_user_id' => $item->get('user_id')
                 ]
             ]
-        ]);
+        ];
 
+        $client = $this->Api_Middleware->http();
 
-        $c = curl_init(GF_USER_RECIPES_BASE_URL . '/wp-json/wp/v2/grillrezepte');
-        curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
-        curl_setopt($c, CURLOPT_TIMEOUT, 30);
-        curl_setopt($c, CURLOPT_POST, 1);
-        curl_setopt($c, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+        $response = $client->request(
+            'POST',
+            $this->settings['wordpress_export_url'],
+            [
+                'content-type' => 'application/json',
+                'json'         => $payload, // don't encode manually, client does it for us
+                'headers'      => ['Authorization' => $this->settings['wordpress_export_auth']],
+                'debug'        => false
+            ]
+        );
 
-        curl_setopt($c, CURLOPT_POSTFIELDS, $d);
-        curl_setopt($c, CURLOPT_HTTPHEADER, [
-            'Content-Type: application/json',
-            'Content-Length: ' . strlen($d)
-        ]);
+        $body = json_decode($response->getBody(), true);
+        $code = $response->getStatusCode();
 
-        $r = json_decode(curl_exec($c));
-        curl_close($c);
-
-        return $r;
+        return [
+            'body'=>$body,
+            'status'=>$code,
+            'errors'=> [] // implement errors here
+        ];
     }
 
     private function map_media_to_post($post) {
@@ -186,8 +198,11 @@ final class Recipe_Exporter_Service {
                 'post' => $post->id,
             ]);
 
-            $c = curl_init(GF_USER_RECIPES_BASE_URL . '/wp-json/wp/v2/media/' . $ID);
-            curl_setopt($c, CURLOPT_USERPWD, GF_USER_RECIPES_AUTH);
+            //hotfix for curl - remove after API Client implementation here
+            $auth = str_replace('Basic ', '', base64_decode($this->settings['wordpress_export_auth']));
+
+            $c = curl_init($this->settings['wordpress_domain'] . '/wp-json/wp/v2/media/' . $ID);
+            curl_setopt($c, CURLOPT_USERPWD, $auth);
             curl_setopt($c, CURLOPT_TIMEOUT, 30);
             curl_setopt($c, CURLOPT_POST, 1);
             curl_setopt($c, CURLOPT_CUSTOMREQUEST, "POST");

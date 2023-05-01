@@ -35,7 +35,7 @@ export default function Review() {
 		// Default state:
 		// If storage is empty, return the model
 		// If storage has data, merge the model with the stored data
-		{...attributesModel ,...storage.get(storageSlug, attributesModel)}
+		{...attributesModel ,...storage.get(storageSlug, attributesModel), ...{saving: false, loading: false, publishing: false}}
 		);
 
 	// local states
@@ -123,7 +123,34 @@ export default function Review() {
 	}
 	
 	const onPublish = () => {
-	
+		if (attributes.publishing) return;
+		setAttributes({publishing: true});
+		const route = routes.exportRecipe.replace('{id}', params.uuid);
+		
+		fetch(route, {
+			method: 'PUT',
+			cache: 'no-cache',
+			headers: headers.get()
+		})
+			.then((response) => {
+				return new Promise((resolve) => response.json()
+					.then((json) => resolve({
+						status: response.status,
+						ok: response.ok,
+						json,
+					})));
+			}).then(({status, json, ok}) => {
+			setExportState({
+				message:
+					json.message
+					+ '<br />Link: <a href="' + json.link + '" target="_blank">' + json.link + '</a>'
+					+ '<br />Errors: ' + json.errors.join('<br />')
+				,
+				status
+			});
+			setInfoExportOpen(true);
+			setAttributes({submitting: false});
+		});
 	}
 	
 	const createFeedback = (value) => {

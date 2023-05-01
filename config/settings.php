@@ -28,12 +28,14 @@ $settings['template'] = $settings['root'] . '/templates';
 // AUTH
 $settings['basic_auth_header'] = GF_USER_RECIPES_APP_BASIC_AUTH;
 $settings['bearer_auth_header'] = GF_USER_RECIPES_APP_BEARER_AUTH;
+$settings['wordpress_export_auth'] = GF_USER_RECIPES_WORDPRESS_EXPORT_AUTH; // format: "Basic base64String"
 // combine auth headers to final header
 $settings['auth_header'] = [];
 $settings['auth_header'][] = $settings['basic_auth_header'] ? 'Basic ' . $settings['basic_auth_header'] : '';
 $settings['auth_header'][] = $settings['bearer_auth_header'] ? 'Bearer ' . $settings['bearer_auth_header'] : '';
 $settings['auth_header'] = implode(',', $settings['auth_header']);
 // URLS
+$settings['wordpress_domain'] = GF_USER_RECIPES_BASE_URL;
 $settings['login_server_url'] = GF_USER_RECIPES_LOGIN_SERVER_URL;
 $settings['loggedin_server_url'] = GF_USER_RECIPES_LOGGEDIN_SERVER_URL;
 $settings['reset_server_url'] = GF_USER_RECIPES_RESET_SERVER_URL;
@@ -42,6 +44,7 @@ $settings['customer_info_server_url'] = GF_USER_RECIPES_USER_INFO_SERVER_URL;
 $settings['voucher_create_server_url'] = GF_USER_RECIPES_VOUCHER_CREATE_SERVER_URL;
 $settings['voucher_check_server_url'] = GF_USER_RECIPES_VOUCHER_CHECK_SERVER_URL;
 $settings['get_products_server_url'] = GF_USER_RECIPES_GET_PRODUCTS_URL;
+$settings['wordpress_export_url'] = GF_USER_RECIPES_WORDPRESS_EXPORT_URL;
 
 $settings['logger'] = [
     'name' => 'app',

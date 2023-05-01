@@ -12,8 +12,6 @@ export default function ReviewRecipeForm(props) {
 	
 	const _setAttributes = (state, save = false) => {
 		const updatedData = {...data, ...state};
-		console.log('updatedData');
-		console.log(updatedData);
 		setAttributes({data:updatedData});
 	};
 	
