@@ -9,5 +9,5 @@ export default {
 	brand: "",
 	description_short: "",
 	images: [],
-	linke: "",
+	link: "",
 }

@@ -19,6 +19,12 @@ final class Product_Finder_Service {
         return $this->create_result($rows);
     }
 
+    public function get(int $products_id): Product_Finder_Result {
+        $rows = [$this->repository->get_by_id($products_id)];
+
+        return $this->create_result($rows);
+    }
+
     private function create_result(array $rows): Product_Finder_Result {
         $result = new Product_Finder_Result();
 

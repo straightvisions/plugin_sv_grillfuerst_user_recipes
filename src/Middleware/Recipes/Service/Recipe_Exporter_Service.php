@@ -4,12 +4,14 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service;
 
 use Psr\Log\LoggerInterface;
 use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
+use SV_Grillfuerst_User_Recipes\Middleware\Products\Service\Product_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Recipe_Repository;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Exporter_Item;
 
 final class Recipe_Exporter_Service {
     private Recipe_Repository $repository;
     private Recipe_Validator_Service $Recipe_Validator;
+    private Product_Finder_Service $Product_Finder_Service;
     private LoggerInterface $logger;
     private $uploadedMediaIDs = array();
     private $response = ['message' => '', 'status' => 200];
@@ -34,6 +36,7 @@ final class Recipe_Exporter_Service {
     // controller fn -----------------------------------------------
     public function export(int $uuid): array {
         if($this->check_config()){
+            $this->products = $this->Product_Finder_Service->get_list();
             $item = $this->get_data($uuid);
             // export images
             foreach ($item->steps as $key => &$step) {
@@ -83,8 +86,10 @@ final class Recipe_Exporter_Service {
         return $images;
     }
 
-    private function export_media($image): int {
+    private function export_media($image, $title, $description): int {
         $url = $image->url;
+        $title = $image->title ?? '';
+        $description = $image->description ?? '';
 
         if (empty($url)) {
             return 0;
@@ -99,7 +104,13 @@ final class Recipe_Exporter_Service {
         curl_setopt($c, CURLOPT_CUSTOMREQUEST, "POST");
         curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
 
-        curl_setopt($c, CURLOPT_POSTFIELDS, $file);
+        $data = array(
+            'file' => $file,
+            'title' => $title,
+            'description' => $description
+        );
+
+        curl_setopt($c, CURLOPT_POSTFIELDS, $data);
         curl_setopt($c, CURLOPT_HTTPHEADER, [
             'Content-Disposition: form-data; filename="' . basename($url) . '"',
             'Content-Length: ' . strlen($file)
@@ -117,6 +128,7 @@ final class Recipe_Exporter_Service {
         return property_exists($r,'id') ? $r->id : 0;
     }
 
+
     private function export_data(Recipe_Exporter_Item $item){
 
         // REST Post Array
@@ -133,6 +145,7 @@ final class Recipe_Exporter_Service {
                 'waiting_time'     => $item->get('waiting_time'),
                 'difficulty'       => $item->get('difficulty'),
                 'ingredients'      => $item->get('ingredients'),
+                'accessories'      => $item->get('accessories'),
                 'steps'            => $item->get('steps'),
                 'gf_user_recipe'   => [
                     'gf_user_recipe_uuid'    => $item->get('uuid'),
