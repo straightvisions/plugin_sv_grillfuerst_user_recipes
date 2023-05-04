@@ -125,7 +125,7 @@ export default function Login(props){
 						
 						<div className="flex items-center justify-between">
 							<div className="text-sm">
-								<a href="/reset" className="font-medium text-indigo-600 hover:text-indigo-500">
+								<a href={routes.getUrl('/reset')} className="font-medium text-indigo-600 hover:text-indigo-500">
 									Passwort vergessen?
 								</a>
 							</div>
@@ -160,7 +160,7 @@ export default function Login(props){
 							/>
 							<a
 								className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
-								href="/register"
+								href={routes.getUrl('/register')}
 							>
 								Neuen Account erstellen
 							</a>

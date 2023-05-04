@@ -30,7 +30,7 @@ const App = () => {
 	}
 	
 	// not logged-in state and not in root
-	if(user.isLoggedIn === false && !routes.isAppRoot()){
+	if(user.isLoggedIn === false && !routes.isAppRoot() && !routes.isRegister() && !routes.isReset()){
 		window.location.href = routes.config.appURL;
 		return (<Spinner />);
 	}
