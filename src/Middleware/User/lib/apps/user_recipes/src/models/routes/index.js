@@ -1,23 +1,33 @@
-const domain = process.env.REACT_APP_API_DOMAIN ? process.env.REACT_APP_API_DOMAIN : window.location.hostname;
-const root = 'https://' + domain + '/wp-json/sv-grillfuerst-user-recipes/v1';
-const rootApp = process.env.REACT_APP_ROOT ? process.env.REACT_APP_ROOT : 'https%3A%2F%2F' + domain + '%2Fcommunity-rezepte';
+// host domain and url
+const domain = process.env.REACT_APP_DOMAIN ? process.env.REACT_APP_DOMAIN : window.location.hostname;
+const domainURL = process.env.REACT_APP_DOMAIN_URL ? process.env.REACT_APP_DOMAIN_URL : window.location.origin;
+const appURL = process.env.REACT_APP_APP_URL ? process.env.REACT_APP_APP_URL : domainURL + '/community-rezepte/';
+const apiURL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL + '/wp-json/sv-grillfuerst-user-recipes/v1' : domainURL + '/wp-json/sv-grillfuerst-user-recipes/v1';
+
 
 export default {
-	"login": root + '/users/login',
-	"isLoggedIn": root + '/users/is_logged_in',
-	"getUserInfo": root + '/users/info',
-	"getUserInfoById": root + '/users/{id}/info',
-	"getRecipes": root + '/recipes', // GET
-	"getRecipesByUser": root + '/recipes/user/', // GET + {user_id}
-	"getRecipeByUuid": root + '/recipes/', // GET + {recipe_id}
-	"createRecipe": root + '/recipes/user/', // POST + {user_id}
-	"updateRecipe": root + '/recipes/', // PUT + {recipe_id}
-	"getIngredients": root + '/recipes/ingredients', // GET
-	"getMenuTypes": root + '/recipes/menutypes', // GET
-	"getKitchenStyles": root + '/recipes/kitchenstyles', // GET
-	"getAccessories": root + '/products/accessories', // GET
-	"getIngredientsProducts": root + '/products/ingredients', // GET
-	"uploadMedia": root + '/media/upload', // POST
-	//
-	"rootApp": rootApp,
+	config:{
+		domain,
+		domainURL,
+		appURL,
+		apiURL,
+	},
+	// check current url without params
+	isAppRoot: () => appURL.replace(/\/$/, '') === window.location.origin + window.location.pathname.replace(/\/$/, ''),
+	"login": apiURL + '/users/login',
+	"isLoggedIn": apiURL + '/users/is_logged_in',
+	"getUserInfo": apiURL + '/users/info',
+	"getUserInfoById": apiURL + '/users/{id}/info',
+	"getRecipes": apiURL + '/recipes', // GET
+	"getRecipesByUser": apiURL + '/recipes/user/', // GET + {user_id}
+	"getRecipeByUuid": apiURL + '/recipes/', // GET + {recipe_id}
+	"createRecipe": apiURL + '/recipes/user/', // POST + {user_id}
+	"updateRecipe": apiURL + '/recipes/', // PUT + {recipe_id}
+	"getIngredients": apiURL + '/recipes/ingredients', // GET
+	"getMenuTypes": apiURL + '/recipes/menutypes', // GET
+	"getKitchenStyles": apiURL + '/recipes/kitchenstyles', // GET
+	"getAccessories": apiURL + '/products/accessories', // GET
+	"getIngredientsProducts": apiURL + '/products/ingredients', // GET
+	"uploadMedia": apiURL + '/media/upload', // POST
+	
 }

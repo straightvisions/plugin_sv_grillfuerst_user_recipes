@@ -7,7 +7,8 @@ import Spinner from './components/spinner';
 import Login from './components/login';
 import Register from './components/register';
 import Reset from './components/reset';
-import { Routes, Route} from "react-router-dom";
+import { Routes, Route } from "react-router-dom";
+import routes from './models/routes';
 
 const App = () => {
 	// initiate user first - this also checks if user is loggedIn
@@ -28,6 +29,12 @@ const App = () => {
 		return (<Spinner />);
 	}
 	
+	// not logged-in state and not in root
+	if(user.isLoggedIn === false && !routes.isAppRoot()){
+		window.location.href = routes.config.appURL;
+		return (<Spinner />);
+	}
+	
 	// not logged-in state
 	if(user.isLoggedIn === false){
 		return (
@@ -40,10 +47,6 @@ const App = () => {
 					<Route
 						path="/reset"
 						element={<Reset />}
-					/>
-					<Route
-						path="/login"
-						element={<Login />}
 					/>
 					<Route
 						path="/"

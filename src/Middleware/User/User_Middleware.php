@@ -39,12 +39,14 @@ final class User_Middleware implements Middleware_Interface {
         $this->User_Info_Service               = $User_Info_Service;
         $this->Jwt_Middleware                  = $Jwt_Middleware;
         $this->Adapter                         = $Adapter;
+
+        // SHORTCODES
         $this->Adapter->Shortcode()->add(
             'sv_grillfuerst_user_recipes_user_dashboard',
             [$this, 'get_frontend_user_dashboard']
         );
-        $this->Adapter->Shortcode()->add('sv_grillfuerst_user_recipes_user_login', [$this, 'get_frontend_user_login']);
 
+        // API ROUTES
         $this->Api_Middleware->add([
             'route' => '/users/register',
             'args'  => ['methods' => 'POST', 'callback' => [$this, 'rest_register'], 'permission_callback' => '__return_true']

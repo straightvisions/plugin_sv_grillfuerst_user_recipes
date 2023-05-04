@@ -26,7 +26,7 @@ module.exports = (env, argv) => {
 			historyApiFallback: true,
 		},
 		optimization: {
-			minimize: false
+			minimize: true
 		},
 		module: {
 			rules: [

@@ -12,11 +12,12 @@ final class Asset {
 
     public function add(string $handle, string $src, array $localize = []): void {
         $src = plugin_dir_url('sv-grillfuerst-user-recipes/*') . 'src/Middleware/' . $src;
+        $path = plugin_dir_path('sv-grillfuerst-user-recipes/*') . 'src/Middleware/' . $src;
         // save origin
         $this->assets[$handle] = $src;
 
         // wordpress specific
-        wp_register_script( $handle, $src, [], filemtime( $src ), true);
+        wp_register_script( $handle, $src, [], filemtime( $path ), true);
         wp_enqueue_script( $handle, $src);
         if($localize){
             foreach($localize as $key => $script){

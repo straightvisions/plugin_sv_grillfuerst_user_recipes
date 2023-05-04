@@ -48,7 +48,7 @@ export default function Login(props){
 				if(data.status === 'success'){
 					storage.set('userId', data.customerId);
 					storage.set('token', token);
-					window.location.href = data.url + '&ref=' + encodeURIComponent(routes.rootApp);
+					window.location.href = data.url + '&ref=' + encodeURIComponent(routes.config.appURL);
 				} else {
 					setMessage(data.message);
 					// clean storage just in case
