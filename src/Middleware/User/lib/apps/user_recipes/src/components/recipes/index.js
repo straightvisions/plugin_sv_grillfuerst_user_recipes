@@ -7,6 +7,7 @@ import Pagination from "../pagination";
 import {DocumentDuplicateIcon, PlusIcon, TrashIcon} from "@heroicons/react/20/solid";
 import user from '../../modules/user';
 const User = user.get();
+import {fetchError} from '../../modules/fetch';
 
 const states = {
 	draft: {
@@ -48,6 +49,7 @@ export default function Recipes(props) {
 				'Authorization': 'Bearer ' + storage.get('token'),
 			}
 		})
+			.then(response => !response.ok ? fetchError(response) : response)
 			.then(response => response.json())
 			.then(data => {
 				// sort new to old
@@ -58,8 +60,9 @@ export default function Recipes(props) {
 
 				setRecipes(_sorted);
 				setPagination({rows:data.totalRows, pages:data.totalPages, page:data.page});
-				setLoadingState(false);
-			});
+			}).finally(() => {
+			setLoadingState(false);
+		});
 	}, [page])
 	
 	//@todo migrate list items to external component !!

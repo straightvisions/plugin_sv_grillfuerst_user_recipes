@@ -58,8 +58,6 @@ function FormButton(props){
 }
 
 export default function Header(props) {
-	console.log(user);
-	console.log(headers.get());
 	const handleLogout = () => {
 		user.logout();
 	}

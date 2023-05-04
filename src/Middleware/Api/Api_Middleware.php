@@ -60,6 +60,7 @@ final class Api_Middleware implements Middleware_Interface {
     }
 
     public function response($request, $callback, array $perms = [], array $headers = []){
+        //@todo refactor to align with RFC 7807 https://tools.ietf.org/html/rfc7807
         $Request = $this->Adapter->Request()->set($request);
         $JWT = $this->Jwt_Middleware;
 
