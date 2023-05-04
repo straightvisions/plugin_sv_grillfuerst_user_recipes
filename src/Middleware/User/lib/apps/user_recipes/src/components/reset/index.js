@@ -37,11 +37,9 @@ export default function Reset(props){
 				}else{
 					setMessage(res.message);
 				}
-				
-				setIsSending(false);
-				
 			}).catch(function(error) {
 			setMessage(error.message);
+		}).finally(() => {
 			setIsSending(false);
 		});
 	}

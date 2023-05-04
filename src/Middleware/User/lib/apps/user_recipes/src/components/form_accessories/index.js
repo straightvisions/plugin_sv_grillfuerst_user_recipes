@@ -44,6 +44,7 @@ export default function Accessories(props) {
 						.then((data) => {
 							const filteredItems = filterAccessories(data.items);
 							setAccessoriesDB(filteredItems);
+						}).finally(() => {
 							setLoadingState(false);
 						});
 				}

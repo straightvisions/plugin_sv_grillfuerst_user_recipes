@@ -60,6 +60,7 @@ export default function Ingredients(props) {
 						})
 						.then((data) => {
 							setIngredientsDB(data.items);
+						}).finally(() => {
 							setLoadingState(false);
 						});
 				}
@@ -90,6 +91,7 @@ export default function Ingredients(props) {
 						.then((data) => {
 							const filteredItems = data.items;
 							setProducts(filteredItems);
+						}).finally(() => {
 							setLoadingState(false);
 						});
 				}

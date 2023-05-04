@@ -55,9 +55,9 @@ export default function Login(props){
 					storage.set('userId', 0);
 					storage.set('token', '');
 				}
-				setIsSending(false);
 			}).catch(function(error) {
 			setMessage(error.message);
+		}).finally(() => {
 			setIsSending(false);
 		});
 	}

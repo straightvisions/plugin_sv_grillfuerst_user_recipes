@@ -33,8 +33,9 @@ export default function Form(props) {
 			.then(response => response.json())
 			.then(data => {
 				setFormState(data);
-				setLoadingState(false);
-			});
+			}).finally(() => {
+			setLoadingState(false);
+		});;
 			
 	}, []);
 	
@@ -66,13 +67,9 @@ export default function Form(props) {
 		})
 			.then(response => response.json())
 			.then(data => {
-				setSavingState(false);
 				//@todo give a notice on success
-			}).catch(function(error) {
-				// do error handling
-				//@todo give a notice on error
-				console.log(error);
-				setSavingState(false);
+			}).finally(() => {
+			setSavingState(false);
 		});
 	};
 	

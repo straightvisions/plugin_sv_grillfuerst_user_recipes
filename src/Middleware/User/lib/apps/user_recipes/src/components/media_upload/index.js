@@ -39,13 +39,13 @@ export default function MediaUpload(props) {
 			.then((response) => response.json())
 			.then((result) => {
 				onChange(result);
-				setUploadingState(false);
 			})
 			.catch((error) => {
 				// error handling here
 				console.error('Error:', error);
-				setUploadingState(false);
-			});
+			}).finally(() => {
+			setUploadingState(false);
+		});
 	};
 	
 	return (

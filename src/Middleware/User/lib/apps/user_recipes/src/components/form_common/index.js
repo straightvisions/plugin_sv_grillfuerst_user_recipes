@@ -73,8 +73,9 @@ export default function Common(props) {
 				
 				setMenuTypeOptions(_options);
 				setMenuTypeOptionsSelected(_selection);
-				setLoadingMenuTypesState(false);
-			});
+			}).finally(() => {
+			setLoadingMenuTypesState(false);
+		});
 	}, []); // if deps are an empty array -> effect runs only once
 	// MENU TYPES -----------------------------------------------------------------------------------------------------
 	// MENU TYPES -----------------------------------------------------------------------------------------------------
@@ -113,8 +114,9 @@ export default function Common(props) {
 				
 				setKitchenStyleOptions(_options);
 				setKitchenStyleOptionsSelected(_selection);
-				setLoadingKitchenStylesState(false);
-			});
+			}).finally(() => {
+			setLoadingKitchenStylesState(false);
+		});
 	}, []); // if deps are an empty array -> effect runs only once
 	
 	// KITCHEN STYLES -------------------------------------------------------------------------------------------------

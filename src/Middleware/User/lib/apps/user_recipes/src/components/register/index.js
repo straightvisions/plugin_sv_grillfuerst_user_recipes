@@ -114,11 +114,9 @@ export default function Register(props){
 				}else{
 					setMessage({payload: res.message.error});
 				}
-				
-				setIsSending(false);
-				
 			}).catch(function(error) {
 			setMessage({payload: error.message});
+		}).finally(() => {
 			setIsSending(false);
 		});
 	}
