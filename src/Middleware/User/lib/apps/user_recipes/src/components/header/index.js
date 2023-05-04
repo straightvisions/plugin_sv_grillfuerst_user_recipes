@@ -4,7 +4,7 @@ import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
 import {  useLocation } from 'react-router-dom';
 import routes from '../../models/routes';
 import user from '../../modules/user';
-import storage from "../../modules/storage";
+import headers from "../../modules/headers";
 const User = user.get();
 
 function FormButton(props){
@@ -14,9 +14,10 @@ function FormButton(props){
 	const handleNewRecipe = () => {
 		fetch(routes.createRecipe + User.id, {
 			method: 'POST',
-			headers: {
+			/*headers: {
 				'Authorization': 'Bearer ' + storage.get('token'),
-			},
+			},*/
+			headers: headers.get(),
 			cache: 'no-cache',
 			body: JSON.stringify({})
 		})
@@ -57,43 +58,21 @@ function FormButton(props){
 }
 
 export default function Header(props) {
+	console.log(user);
+	console.log(headers.get());
+	const handleLogout = () => {
+		user.logout();
+	}
+	
 	return (
-		<div className="px-4 sm:px-6 lg:px-8 mb-4 bg-white shadow">
-			<div className="flex h-16 justify-between">
-				<div className="flex items-center">
-					<div className="flex flex-shrink-0 items-center">
-						<a href="https://www.grillfuerst.de" target="_blank">
-						<img
-							className="block h-8 w-auto"
-							src="https://www.grillfuerst.de/magazin/wp-content/uploads/2022/09/Logo.svg"
-							alt="Grillfürst"
-						/>
-						</a>
-					</div>
-				</div>
-				<div className="flex items-center">
-					<div className="flex-shrink-0">
-						<FormButton {...props} />
-					</div>
-					<div className="ml-4 flex flex-shrink-0 items-center">
-						<button
-							type="button"
-							className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-						>
-							{User.avatar !== '' ?
-							<img
-								className="h-8 w-8 rounded-full"
-								src={User.avatar}
-								alt=""
-							/> : <svg className="h-8 w-8 rounded-full" fill="currentColor"
-							          viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
-									<path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z"
-									      clipRule="evenodd"></path>
-								</svg>}
-						</button>
-					</div>
-				</div>
-			</div>
+		<div className="flex items-center px-4 sm:px-6 lg:px-8 mb-4 gap-2">
+			<FormButton {...props} />
+			<button
+				className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
+				onClick={handleLogout}
+			>
+				Logout
+			</button>
 		</div>
 	)
 }
