@@ -9,6 +9,8 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Exporter_Item;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use Psr\Container\ContainerInterface;
 
+//@todo this heavily relies on wordpress, so we need to refactor this to be more generic and add an adapter layer to it
+
 final class Recipe_Exporter_Service {
     private Recipe_Repository $repository;
     private Recipe_Validator_Service $Recipe_Validator;
@@ -18,6 +20,7 @@ final class Recipe_Exporter_Service {
     private $Recipe_Finder_Service;
     private Api_Middleware $Api_Middleware;
     private $settings;
+    private $_errors = [];
 
     public function __construct(
         Recipe_Repository $repository,
@@ -48,19 +51,27 @@ final class Recipe_Exporter_Service {
             foreach ($item->steps as $key => &$step) {
                 $step->images = $this->export_images($step->images);
             }
+
             // export data
-            $post = $this->export_data($item);
-            var_dump($post);die;
+            $res_post = $this->export_data($item);
+
+            $post = $res_post['errors'] ? null : $res_post['body'];
             // link images to post
             $this->map_media_to_post($post);
             // Logging
-            if (isset($post->id)) {
+            if ($this->errors()) {
                 $this->logger->info(sprintf('Recipe exported successfully: %s', $uuid));
                 $this->response = ['message' => sprintf('Recipe exported successfully: %s', $uuid), 'postId' => $post->id, 'status' => 200];
             }
         }
 
-        return $this->response;
+        $this->logger->info(implode("\n\r", $this->errors()));
+
+        return ['message' => $this->errors() ? sprintf('Recipe exported with errors: %s', $uuid) : sprintf('Recipe exported successfully: %s', $uuid),
+                'postId' => $post ?? 0,
+                'status' => $post ? 200 : 400,
+                'errors' => $this->errors()
+        ];
     }
     // controller fn -----------------------------------------------
     // controller fn -----------------------------------------------
@@ -86,66 +97,78 @@ final class Recipe_Exporter_Service {
     }
 
     private function export_images(array $images): array {
-        foreach ($images as $key => &$image) {
-            $image->id = $this->export_media($image);
-        }
+        // remove empty images
+        $_images = [];
 
-        return $images;
+            foreach ($images as $key => $image) {
+                $res = $this->export_media($image);
+                if($this->is_ok($res)){
+                    $_images[] = $image;
+                }
+            }
+
+        return $_images;
     }
 
-    private function export_media($image): int {
-        $url = $image->url;
-        $title = $image->title ?? '';
-        $description = $image->description ?? '';
+    private function export_media($image){
+        $res = [
+            'body'=> '',
+            'status'=> 400, //@todo check if any better code available
+            'errors'=> [] // implement errors here
+        ];
 
-        if (empty($url)) {
-            return 0;
+        if(empty($image->url)) {
+            $res['errors'][] = sprintf('Error uploading image - no image url: %s', $image->id ?? 0);
+        }else{
+
+            $client = $this->Api_Middleware->http();
+            $file = file_get_contents($image->url);
+
+            $response = $client->request(
+                'POST',
+                $this->settings['wordpress_export_media_url'],
+                [
+                    'multipart' => [
+                        [
+                            'name' => 'file',
+                            'contents' => $file,
+                            'filename' => basename($image->url)
+                        ]
+                    ],
+                    'headers'      => ['Authorization' => $this->settings['wordpress_export_auth']],
+                    'debug'        => false
+                ]
+            );
+
+            $res['body'] = json_decode($response->getBody(), true);
+            $res['status'] = $response->getStatusCode();
+
+            if($this->is_ok($res)){
+                $image->id = $res['body']['id'];
+                $image->url = $res['body']['source_url'];
+                // add to array of uploaded media
+                $this->uploadedMediaIDs[] = $image->id;
+            }else{
+                $res['errors'][] = sprintf('Error uploading image: %s', $image->url);
+            }
         }
 
-        $file = file_get_contents($url);
-        $auth = str_replace('Basic ', '', base64_decode($this->settings['wordpress_export_auth']));
+        $this->errors($res['errors']);
 
-        $c = curl_init($this->settings['wordpress_domain'] . '/wp-json/wp/v2/media');
-        curl_setopt($c, CURLOPT_USERPWD, $auth);
-        curl_setopt($c, CURLOPT_TIMEOUT, 30);
-        curl_setopt($c, CURLOPT_POST, 1);
-        curl_setopt($c, CURLOPT_CUSTOMREQUEST, "POST");
-        curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
-
-        $data = array(
-            'file' => $file,
-            'title' => $title,
-            'description' => $description
-        );
-
-        curl_setopt($c, CURLOPT_POSTFIELDS, $data);
-        curl_setopt($c, CURLOPT_HTTPHEADER, [
-            'Content-Disposition: form-data; filename="' . basename($url) . '"',
-            'Content-Length: ' . strlen($file)
-        ]);
-
-        $r = (object) json_decode(curl_exec($c));
-        curl_close($c);
-
-        // Logging
-        if (property_exists($r, 'id')) {
-            $this->logger->info(sprintf('Media exported successfully: %s', $url));
-            $this->uploadedMediaIDs[] = $r->id;
-        }
-
-        return property_exists($r,'id') ? $r->id : 0;
+        return $res;
     }
-
 
     private function export_data(Recipe_Exporter_Item $item){
-
         // REST Post Array
+        $feat_image = $item->get('featured_image');
+        $feat_image_res = $this->export_media($feat_image);
+
         $payload = [
             'title'           => $item->get('title'),
             'status'          => 'publish',
             'content'         => '<!-- wp:acf/sv-grillfuerst-custom-recipe-steps {"name":"acf/sv-grillfuerst-custom-recipe-steps","mode":"preview"} /-->',
             'excerpt'         => $item->get('excerpt'),
-            'featured_media'  => $this->export_media($item->get('featured_image')),
+            'featured_media'  => $this->is_ok($feat_image_res) ? $feat_image_res['body']['id'] : 0,
             'cp_menutype'     => $item->get('menu_type'),
             'cp_kitchenstyle' => $item->get('kitchen_style'),
             'acf'             => [
@@ -176,46 +199,83 @@ final class Recipe_Exporter_Service {
             ]
         );
 
-        $body = json_decode($response->getBody(), true);
-        $code = $response->getStatusCode();
+        $res = [
+            'body'=> (object) json_decode($response->getBody(), true),
+            'status'=>$response->getStatusCode(),
+            'errors'=> []
+        ];
 
-        return [
-            'body'=>$body,
-            'status'=>$code,
+        if(!isset($res['body']->id)){
+            $res['errors'][] = 'Error exporting recipe - no post id';
+        }
+
+        $this->errors($res['errors']);
+
+        return $res;
+    }
+
+    private function map_media_to_post($post): array {
+        $res = [
+            'body'=> '',
+            'status'=> 200,
             'errors'=> [] // implement errors here
         ];
-    }
 
-    private function map_media_to_post($post) {
-        // no data
-        if (count($this->uploadedMediaIDs) === 0) return;
-        // broken post
-        if(isset($post->id)) return;
-        // map
-        foreach ($this->uploadedMediaIDs as $ID) {
-            // REST Media Array
-            $d = json_encode([
-                'post' => $post->id,
-            ]);
+        // Broken post
+        if (!$post || !isset($post->id) || !$post->id) {
+            $res['status'] = 400;
+            $res['errors'][] = 'Error mapping media to post - no post id';
+        }else{
+            // Map
+            foreach ($this->uploadedMediaIDs as $ID) {
+                // REST Media Array
+                $payload = [
+                    'post' => $post->id,
+                ];
 
-            //hotfix for curl - remove after API Client implementation here
-            $auth = str_replace('Basic ', '', base64_decode($this->settings['wordpress_export_auth']));
+                // Make the request
+                $client = $this->Api_Middleware->http();
 
-            $c = curl_init($this->settings['wordpress_domain'] . '/wp-json/wp/v2/media/' . $ID);
-            curl_setopt($c, CURLOPT_USERPWD, $auth);
-            curl_setopt($c, CURLOPT_TIMEOUT, 30);
-            curl_setopt($c, CURLOPT_POST, 1);
-            curl_setopt($c, CURLOPT_CUSTOMREQUEST, "POST");
-            curl_setopt($c, CURLOPT_RETURNTRANSFER, true);
+                $response = $client->request(
+                    'POST',
+                    $this->settings['wordpress_export_media_url'] . '/' . $ID,
+                    [
+                        'content-type' => 'application/json',
+                        'json'         => $payload, // don't encode manually, client does it for us
+                        'headers'      => ['Authorization' => $this->settings['wordpress_export_auth']],
+                        'debug'        => false
+                    ]
+                );
 
-            curl_setopt($c, CURLOPT_POSTFIELDS, $d);
-            curl_setopt($c, CURLOPT_HTTPHEADER, [
-                'Content-Type: application/json',
-                'Content-Length: ' . strlen($d)
-            ]);
+                // Handle the response
+                $loop_res = [
+                    'body'=> json_decode($response->getBody(), true),
+                    'status'=> $response->getStatusCode(),
+                    //'errors'=> []
+                ];
 
-            $r = json_decode(curl_exec($c));
-            curl_close($c);
+                // Handle errors (if any)
+                if (!$this->is_ok($loop_res)) {
+                    $res['errors'][] = sprintf('Error linking media to post: %s', $loop_res['body']['message']);
+                }
+            }
         }
+
+        $this->errors($res['errors']);
+
+        return $res;
     }
+
+    private function errors(array $err = []): array{
+        if(!empty($err)){
+            $this->_errors = array_merge($this->_errors, $err);
+        }
+
+        return $this->_errors;
+    }
+
+    private function is_ok($res): bool{
+        return $res['status'] >= 200 && $res['status'] <= 299;
+    }
+
 }

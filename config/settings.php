@@ -45,6 +45,7 @@ $settings['voucher_create_server_url'] = GF_USER_RECIPES_VOUCHER_CREATE_SERVER_U
 $settings['voucher_check_server_url'] = GF_USER_RECIPES_VOUCHER_CHECK_SERVER_URL;
 $settings['get_products_server_url'] = GF_USER_RECIPES_GET_PRODUCTS_URL;
 $settings['wordpress_export_url'] = GF_USER_RECIPES_WORDPRESS_EXPORT_URL;
+$settings['wordpress_export_media_url'] = GF_USER_RECIPES_WORDPRESS_EXPORT_MEDIA_URL;
 
 $settings['logger'] = [
     'name' => 'app',
