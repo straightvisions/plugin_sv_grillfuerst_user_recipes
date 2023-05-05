@@ -26,17 +26,20 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
         $list = $this->ingredients;
         $output = [];
         foreach($list as $k => $d){
+            $product = $d->products_id ? $this->get_product($d->products_id) : null;
+            $image = $this->get_product_thumb($product);
+
             $output[] =  [
                 'acf_fc_layout' => 'ingredient',
                 'ingredient' => $d->id,
                 'amount' => (string)$d->amount,
                 'comment' => $d->note,
                 'differing_unit' => $d->unit,
-                'shop_product_name' => $d->label,
-                'shop_product_id' => $d->id ?? '',
-                'shop_product_url' => $d->url ?? '',
-                'shop_product_thumb' => $d->image ?? '',
-                'shop_product_sku' => $d->sku ?? '',
+                'shop_product_name' => $product ? $product->name : '',
+                'shop_product_id' => $product ? (int) $product->products_id : 0,
+                'shop_product_url' => $product ? $product->link : '',
+                'shop_product_thumb' => $product ? $image  : '',
+                'shop_product_sku' => $product ? $product->model : '',
                 'position'=>0,
             ];
         }
@@ -54,12 +57,12 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
             // skip if empty
             if(!$product) continue;
 
-            $image = $product->images[0] ?? '';
+            $image = $this->get_product_thumb($product);
 
             $output[] =  [
                 'acf_fc_layout' => 'accessory',
                 'shop_product_name' => $product->name,
-                'shop_product_id' => $product->products_id ?? '',
+                'shop_product_id' => (int) $product->products_id ?? 0,
                 'shop_product_url' => $product->link ?? '',
                 'shop_product_thumb' => $image,
                 'shop_product_sku' => $product->model ?? '',
@@ -91,6 +94,18 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
         }
 
         return $output;
+    }
+
+    private function get_product_thumb($product) {
+        if (!$product) {
+            return null; // Return null if $product is null
+        }
+
+        if (!isset($product->images) || !isset($product->images[0])) {
+            return null; // Return null if images array or images[0] is not set
+        }
+
+        return $product->images[0];
     }
 
 }

@@ -162,7 +162,17 @@ final class Recipe_Exporter_Service {
         // REST Post Array
         $feat_image = $item->get('featured_image');
         $feat_image_res = $this->export_media($feat_image);
-
+        /*
+        echo "item";
+var_dump($item);
+echo "-------------------- data -...........";
+var_dump(['preparation_time' => $item->get('preparation_time'),
+          'cooking_time'     => $item->get('cooking_time'),
+          'waiting_time'     => $item->get('waiting_time'),
+          'difficulty'       => $item->get('difficulty'),
+          'ingredients'      => $item->get('ingredients'),
+          'accessories'      => $item->get('accessories'),
+          'steps'            => $item->get('steps'),]);die;*/
         $payload = [
             'title'           => $item->get('title'),
             'status'          => 'publish',
