@@ -186,7 +186,7 @@ export default function Review() {
 				<div className="flex-grow">
 					<ReviewRecipeForm {...attributes} setAttributes={setAttributes} />
 				</div>
-				<div className="w-full max-w-[600px] relative">
+				<div className="w-full max-w-[450px] relative">
 					<FeedbackEditor {...attributes} setAttributes={setAttributes}/>
 				</div>
 			</div>

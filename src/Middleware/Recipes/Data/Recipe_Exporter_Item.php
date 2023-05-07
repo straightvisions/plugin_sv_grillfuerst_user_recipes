@@ -32,7 +32,7 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
             $output[] =  [
                 'acf_fc_layout' => 'ingredient',
                 'ingredient' => $d->id,
-                'amount' => (string)$d->amount,
+                'amount' => (string) $this->get_amount4p($d),
                 'comment' => $d->note,
                 'differing_unit' => $d->unit,
                 'shop_product_name' => $product ? $product->name : '',
@@ -106,6 +106,13 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
         }
 
         return $product->images[0];
+    }
+
+    function get_amount4p($ingredient){
+        $servings = $this->servings;
+        $factor = $servings / 4;
+        $amount4p = isset($ingredient->amount4p) ? $ingredient->amount4p : $ingredient->amount * $factor;
+        return $amount4p;
     }
 
 }

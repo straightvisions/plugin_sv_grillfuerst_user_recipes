@@ -230,7 +230,40 @@ export default function Ingredients(props) {
 			value = 0;
 		}
 		
+		return value;
+	}
+	
+	const handleInputAmount = (e, ingredient, cleanUp = false) => {
+		const value = handleCommaInput(e, ingredient, cleanUp);
 		setIngredient({ ...ingredient, amount: value });
+	}
+	
+	const handleInputAmount4p = (e, ingredient, cleanUp = false) => {
+		const value = handleCommaInput(e, ingredient, cleanUp);
+		setIngredient({ ...ingredient, amount4p: value });
+	}
+	
+	const getAmount4p = (ingredient) => {
+		const amount = ingredient.amount;
+		let amount4p = ingredient.amount4p ?? 0;
+
+		if(!amount4p){
+			// calculate amount for 4 persons/servings
+			const factor = 4 / servings;
+			amount4p = amount * factor;
+			//amount4p = roundUpToHalf(amount4p); // round to nearest 0.5
+		}
+		
+		return amount4p;
+	}
+	
+	function roundUpToHalf(number) {
+		const roundedNumber = Math.ceil(number);
+		if (roundedNumber < 1.7) {
+			return roundedNumber / 2;
+		} else {
+			return 2;
+		}
 	}
 	
 	// conditional rendering for TermSearch
@@ -261,6 +294,7 @@ export default function Ingredients(props) {
 						<p className="inline border-b border-dashed border-gray-500 hover:text-gray-700 hover:border-gray-700">
 							Deine Zutat ist nicht dabei?:
 						</p>
+						<br/>
 						<button
 							onClick={()=>addCustomIngredient()}
 							type="button"
@@ -283,6 +317,9 @@ export default function Ingredients(props) {
 							</th>
 							<th scope="col" className="w-1/5 px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
 								Menge
+							</th>
+							<th scope="col" className="w-1/5 px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+								Menge 4P
 							</th>
 							<th scope="col" className="min-w-[140px] px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
 								Einheit
@@ -332,8 +369,19 @@ export default function Ingredients(props) {
 								<td className="w-1/5 whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 									<input
 										value={ingredient.amount.toString().replace('.', ',')}
-										onChange={(e) => handleCommaInput(e, ingredient)}
-										onBlur={(e) => handleCommaInput(e, ingredient, true)}
+										onChange={(e) => handleInputAmount(e, ingredient)}
+										onBlur={(e) => handleInputAmount(e, ingredient, true)}
+										type="text"
+										placeholder="1"
+										className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+									/>
+								
+								</td>
+								<td className="w-1/5 whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+									<input
+										value={ingredient.amount4p ? ingredient.amount4p.toString().replace('.', ',')  : getAmount4p(ingredient)}
+										onChange={(e) => handleInputAmount4p(e, ingredient)}
+										onBlur={(e) => handleInputAmount4p(e, ingredient, true)}
 										type="text"
 										placeholder="1"
 										className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"

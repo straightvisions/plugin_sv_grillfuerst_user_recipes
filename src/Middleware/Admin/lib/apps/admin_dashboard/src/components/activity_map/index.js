@@ -1,6 +1,6 @@
 import React, {useEffect, useState} from "react";
 import parse from 'html-react-parser';
-import { ChatBubbleLeftEllipsisIcon } from '@heroicons/react/20/solid'
+import user from '../../modules/user';
 
 export default function ActivityMap(props) {
 	const {
@@ -67,17 +67,18 @@ export default function ActivityMap(props) {
 									{activityItem.type === 'comment' ? (
 										<>
 											<div className="relative">
-												<img
-													className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400 ring-8 ring-white"
-													src={getUser(activityItem.userId).avatar}
-													alt=""
-												/>
-												
-												<span
-													className="absolute -bottom-0.5 -right-1 rounded-tl bg-white px-0.5 py-px">
-								                        <ChatBubbleLeftEllipsisIcon className="h-5 w-5 text-gray-400"
-								                                                    aria-hidden="true"/>
-								                      </span>
+												{getUser(activityItem.userId).avatar ? (
+													<img
+														className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400 ring-8 ring-white"
+														src={getUser(activityItem.userId).avatar}
+														alt=""
+													/>
+												) : (
+													<div className="flex h-10 w-10 items-center justify-center rounded-full bg-gray-400 ring-8 ring-white">
+														<span className="text-white font-bold text-lg">?</span>
+													</div>
+												)}
+										
 											</div>
 											<div className="min-w-0 flex-1">
 												<div>

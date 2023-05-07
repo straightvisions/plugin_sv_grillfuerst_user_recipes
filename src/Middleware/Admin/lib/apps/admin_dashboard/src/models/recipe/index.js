@@ -18,18 +18,21 @@ export default {
 			"label": "Zucchini",
 			"amount": 1,
 			"unit": "kg",
+			"review_amount": 4,
 		},
 		{
 			"id": 4999,
 			"label": "Zwiebel",
 			"amount": 200,
 			"unit": "g",
+			"review_amount": 4,
 		},
 		{
 			"id": 5000,
 			"label": "Knoblauchzehen",
 			"amount": 2,
 			"unit": "",
+			"review_amount": 4,
 		}*/
 	],
 	"steps": [
