@@ -109,10 +109,11 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
     }
 
     function get_amount4p($ingredient){
+        // fallback for old recipes
         $servings = $this->servings;
         $factor = $servings / 4;
         $amount4p = isset($ingredient->amount4p) ? $ingredient->amount4p : $ingredient->amount * $factor;
-        return $amount4p;
+        return $ingredient->sacalable ? $amount4p : $ingredient->amount;
     }
 
 }
