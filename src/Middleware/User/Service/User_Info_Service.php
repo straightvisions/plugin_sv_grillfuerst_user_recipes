@@ -37,19 +37,22 @@ final class User_Info_Service {
             ]);
 
         $body = json_decode($response->getBody(), true);
+
         $code = $response->getStatusCode();
         $body['isLoggedIn'] = true;
         $body['userId'] = $user_id;
 
         // @todo implement a model
         $body_data = isset($body['data']) ? $body['data'] : null;
+
         // map data to meet frontend user model
         if($body_data){
             $data = [];
             $data['firstname'] = isset($body_data['customers_firstname']) ? $body_data['customers_firstname'] : '';
             $data['lastname'] = isset($body_data['customers_lastname']) ? $body_data['customers_lastname'] : '';
             $data['gender'] = isset($body_data['customers_gender']) ? $body_data['customers_gender'] : '';
-            $data['avatar'] = isset($body_data['customers_avatar']) ? $body_data['customers_avatar'] : '';            $body['salutation'] = '';
+            $data['avatar'] = isset($body_data['customers_avatar']) ? $body_data['customers_avatar'] : '';
+            $body['salutation'] = '';
             // SECRET DATA ONLY FOR BACKEND PROCESSING
             if($trusted === true){
                 $data['email'] = $body_data['customers_email_address'];

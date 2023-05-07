@@ -73,6 +73,11 @@ final class User_Middleware implements Middleware_Interface {
         ]);
 
         $this->Api_Middleware->add([
+            'route' => '/users/(?P<id>\d+)/info',
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_user_info_by_id'], 'permission_callback' => '__return_true']
+        ]);
+
+        $this->Api_Middleware->add([
             'route' => '/users/logout',
             'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_logout'], 'permission_callback' => '__return_true']
         ]);
@@ -268,6 +273,15 @@ final class User_Middleware implements Middleware_Interface {
         return $response;
     }
 
+    public function rest_user_info_by_id($request) {
+        return $this->Api_Middleware->response($request,
+            function ($Request) {
+                $user_id = (int)$Request->getAttribute('id');
+                $results = $this->User_Info_Service->get($user_id, true);
+
+                return [$results['body'], $results['code']];
+            }, ['admin', 'edit']);
+    }
 
     public function rest_user_Test($request) {
         return $this->Api_Middleware->response(

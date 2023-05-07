@@ -15,6 +15,7 @@ export default function Review() {
 	const attributesModel = {
 		data: {},      // Placeholder for the recipe data
 		_data: {},     // Hidden backup of the recipe data
+		customer: {},
 		feedback: '',  // Placeholder for the feedback
 		saving: false, // Flag indicating if the recipe is being saved
 		submitting: false, // Flag indicating if the recipe is being submitted
@@ -41,6 +42,26 @@ export default function Review() {
 	// local states
 	const [loading, setLoading] = useState(true);
 	const [refresh, setRefresh] = useState(false);
+	
+	// load customer data
+	useEffect(() => {
+		// customer not set -> wait
+		if(!attributes.data.user_id) return;
+		// customer already set -> skip
+		if(Object.keys(attributes.customer).length) return;
+		fetch(routes.getUserInfoById.replace('{id}', attributes.data.user_id),{
+			method: 'GET',
+			headers: headers.get(),
+		})
+			.then(response => response.json())
+			.then(res => {
+				//@todo implement error handling here
+				if(res.status === 'success'){
+					setAttributes({customer:res.data});
+				}
+				
+			});
+	}, [attributes.data.user_id]);
 	
 	// load data from db
 	useEffect(() => {
