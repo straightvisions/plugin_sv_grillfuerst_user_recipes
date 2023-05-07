@@ -14,9 +14,16 @@ export default function ReviewRecipeForm(props) {
 		const updatedData = {...data, ...state};
 		setAttributes({data:updatedData});
 	};
+	//@todo move this to attribute to allow forced overwrite
+	const disabled = data.state !== 'review_pending';
 	
 	return (
-		<div className="w-full max-w-full">
+		<div className="w-full max-w-full relative">
+			{disabled && (
+				<div className="z-10 absolute top-0 left-0 h-full w-full bg-gray-500 opacity-20 flex items-start justify-end">
+					<p className="text-white font-bold p-2">This form is disabled</p>
+				</div>
+			)}
 			<Common formState={data} setFormState={_setAttributes} />
 			<Ingredients formState={data} setFormState={_setAttributes} />
 			<Accessories formState={data} setFormState={_setAttributes} />
