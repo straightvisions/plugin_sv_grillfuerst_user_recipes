@@ -140,14 +140,14 @@ export default function Common(props) {
 	
 	return (
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-				<div className="md:grid md:grid-cols-4 md:gap-6">
+				<div className="md:grid md:grid-cols-5 md:gap-6">
 					<div className="md:col-span-1">
 						<h3 className="text-lg font-medium leading-6 text-gray-900">Allgemeines</h3>
 						<p className="mt-1 text-sm text-gray-500">
 							Bearbeite hier die Basisinformationen zu deinem Rezept.
 						</p>
 					</div>
-					<div className="mt-5 space-y-6 md:col-span-3 md:mt-0">
+					<div className="mt-5 space-y-6 md:col-span-4 md:mt-0">
 						<div className="col-span-3 sm:col-span-2">
 							<label htmlFor="recipe_title" className="block text-sm font-medium text-gray-700">
 								Titel

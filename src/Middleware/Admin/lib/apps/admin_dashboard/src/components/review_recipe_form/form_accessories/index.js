@@ -103,7 +103,7 @@ export default function Accessories(props) {
 	return (
 		<div className="mt-5 bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			{showProductFinder === true && <ProductFinder id="AccessoriesFinder" items={accessoriesDB} itemsSelected={accessories} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
-			<div className="md:grid md:grid-cols-4 md:gap-6">
+			<div className="md:grid md:grid-cols-5 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Zubehör</h3>
 					<p className="mt-1 text-sm text-gray-500">Gib alles Zubehör ein, das für das Rezept benötigt oder von dir empfohlen wird.</p>
@@ -120,7 +120,7 @@ export default function Accessories(props) {
 						}
 					</div>
 				</div>
-				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
+				<div className="mt-5 md:col-span-4 md:mt-0 overflow-x-auto">
 					<table className="min-w-full divide-y divide-gray-300">
 						<thead className="bg-gray-50">
 						<tr>

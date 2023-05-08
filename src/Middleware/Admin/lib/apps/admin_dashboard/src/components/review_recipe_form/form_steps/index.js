@@ -66,7 +66,7 @@ export default function Steps(props) {
 	
 	return (
 		<div className="mt-5 bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-			<div className="md:grid md:grid-cols-4 md:gap-6">
+			<div className="md:grid md:grid-cols-5 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Schritte</h3>
 					<p className="mt-1 text-sm text-gray-500">Gib alle Zubereitungsschritte ein.</p>
@@ -80,7 +80,7 @@ export default function Steps(props) {
 						</button>
 					</div>
 				</div>
-				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
+				<div className="mt-5 md:col-span-4 md:mt-0 overflow-x-auto">
 					<table className="w-full divide-y divide-gray-300">
 						<thead className="bg-gray-50 font-semibold text-left text-gray-900 text-sm">
 						<tr>
