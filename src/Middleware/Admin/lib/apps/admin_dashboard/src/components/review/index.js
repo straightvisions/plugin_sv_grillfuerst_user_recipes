@@ -70,7 +70,7 @@ export default function Review() {
 		setLoading(true);
 		if(Object.keys(attributes.data).length === 0 || refresh){
 			fetch(routes.getRecipeByUuid + params.uuid,{
-				headers:headers.get()
+				headers:headers.get(),
 			})
 				.then(response => response.json())
 				.then(data => {
@@ -101,6 +101,7 @@ export default function Review() {
 	// add refresh stuff here
 	const onSave = () => {
 		if(attributes.saving) return;
+		setForcedEditing(false);
 		setAttributes({saving: true});
 		
 		let data = {
@@ -127,18 +128,14 @@ export default function Review() {
 	
 	const onSubmit = () => {
 		if(attributes.submitting) return;
-		setAttributes({submitting: true});
 		
-		let data = {
-			...attributes.data,
-			...{
-				state: 'reviewed',
-				feedback: [...attributes.data.feedback, ...[createFeedback(attributes.feedback)]]
-			}
-		};
+		// prevent empty feedback additions
+		const feedback = attributes.feedback.length <= 0 ? attributes.data.feedback : [...attributes.data.feedback, ...[createFeedback(attributes.feedback)]]
+		let data = {...attributes.data, ...{state: 'reviewed', feedback}};
 		
 		// empty feedback storage
-		setAttributes({feedback: ''});
+		setForcedEditing(false);
+		setAttributes({data, feedback: '', submitting: true});
 		
 		fetch(routes.updateRecipe + params.uuid + '/feedback', {
 			method: 'PUT',
@@ -147,7 +144,7 @@ export default function Review() {
 			body: JSON.stringify(data),
 		})
 			.then(response => response.json())
-			.then(data => {
+			.then(res => {
 				setAttributes({submitting: false});
 				setRefresh(true);
 			}).catch(function(error) {
@@ -160,6 +157,7 @@ export default function Review() {
 	
 	const onPublish = () => {
 		if (attributes.publishing) return;
+		setForcedEditing(false);
 		setAttributes({publishing: true});
 		const route = routes.exportRecipe.replace('{id}', params.uuid);
 		
