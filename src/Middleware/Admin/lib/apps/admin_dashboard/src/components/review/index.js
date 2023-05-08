@@ -8,6 +8,7 @@ import {useParams} from "react-router-dom";
 import storage from "../../modules/storage";
 import ReviewRecipeForm from "../review_recipe_form";
 import ActivityMap from "../activity_map";
+import Modal from "../modal";
 
 export default function Review() {
 	const params = useParams();
@@ -42,6 +43,8 @@ export default function Review() {
 
 	// local states
 	const [loading, setLoading] = useState(true);
+	const [message, setMessage] = useState('');
+	const [messageOpen, setMessageOpen] = useState(false);
 	const [forcedEditing, setForcedEditing] = useState(false);
 	const [refresh, setRefresh] = useState(false);
 	
@@ -157,6 +160,14 @@ export default function Review() {
 	
 	const onPublish = () => {
 		if (attributes.publishing) return;
+		
+		// check if recipe is valid
+		if( hasCustomIngredients() ){
+			setMessage('<strong>Veröffentlichung nicht möglich! Custom Zutaten vorhanden.</strong>');
+			setMessageOpen(true);
+			return;
+		}
+		
 		setForcedEditing(false);
 		setAttributes({publishing: true});
 		const route = routes.exportRecipe.replace('{id}', params.uuid);
@@ -166,25 +177,38 @@ export default function Review() {
 			cache: 'no-cache',
 			headers: headers.get()
 		})
-			.then((response) => {
-				return new Promise((resolve) => response.json()
-					.then((json) => resolve({
-						status: response.status,
-						ok: response.ok,
-						json,
-					})));
-			}).then(({status, json, ok}) => {
-			setExportState({
-				message:
-					json.message
-					+ '<br />Link: <a href="' + json.link + '" target="_blank">' + json.link + '</a>'
-					+ '<br />Errors: ' + json.errors.join('<br />')
-				,
-				status
-			});
-			setInfoExportOpen(true);
-			setAttributes({submitting: false});
+		.then((response) => {
+			return new Promise((resolve) => response.json()
+				.then((json) => resolve({
+					status: response.status,
+					ok: response.ok,
+					json,
+				})));
+		}).then(({status, json, ok}) => {
+			if(ok){
+				// export ok
+				setAttributes({data: {...attributes.data, ...{state: 'published', link: json.link}}});
+				setMessage(json.message
+					+ '<br />Link: <a class="text-red-500" target="_blank" href="' + json.link + '" target="_blank">' + json.link + '</a>');
+			}else{
+				// export error
+				setMessage(json.message
+					+ '<br />Errors: ' + json.errors.join('<br />'));
+			}
+		}).finally(() => {
+			setAttributes({publishing: false});
+			setMessageOpen(true);
 		});
+	}
+	
+	const hasCustomIngredients = () => {
+		let hasCustomIngredients = false;
+		attributes.data.ingredients.forEach((ingredient) => {
+			if(ingredient.custom){
+				hasCustomIngredients = true;
+			}
+		});
+		return hasCustomIngredients;
 	}
 	
 	const createFeedback = (value) => {
@@ -213,6 +237,17 @@ export default function Review() {
 	
 	return (
 		<div>
+			{message &&
+				<Modal
+					message={message}
+					isOpen={messageOpen}
+					onClose={() => setMessageOpen(false)}
+					onConfirm={() => setMessageOpen(false)}
+					confirmText='Ok'
+					cancelText=''
+					name="modalMessage"
+					/>
+			}
 			<ReviewToolbar {...attributes} setAttributes={setAttributes} forcedEditing={forcedEditing} setForcedEditing={setForcedEditing} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)}/>
 			<div className="flex gap-5 w-full max-w-full">
 				<div className="flex-grow">

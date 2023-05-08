@@ -1,6 +1,7 @@
 import React, {useEffect, useState} from 'react';
 import { LockOpenIcon } from '@heroicons/react/24/solid';
 import Spinner from '../spinner';
+import Modal from "../modal";
 
 export default function ReviewToolbar(props) {
 	const {
@@ -24,12 +25,25 @@ export default function ReviewToolbar(props) {
 		voucher = '',
 		link = '',
 	} = props.data
+	
+	const [confirmReleaseOpen, setConfirmReleaseOpen] = useState(false);
 
 	const state = props.data.state;
 	const _disabled = disabled || saving || submitting || publishing || refreshing || state === 'published' || state === 'draft';
 
 	return (
 		<div className="flex flex-row items-center items-stretch mb-2 gap-2">
+			{confirmReleaseOpen &&
+				<Modal
+					message={'Rezept wirklich freigeben? Dies kann <strong>nicht</strong> rückgängig gemacht werden!'}
+					isOpen={confirmReleaseOpen}
+					onClose={() => setConfirmReleaseOpen(false)}
+					name="modalReleaseConfirm"
+					onConfirm={() => {
+						setConfirmReleaseOpen(false);
+						onPublish();
+					}}/>
+			}
 			{disabled && !forcedEditing &&
 				<button title="Editierung erzwingen" onClick={()=>setForcedEditing(true)} type="button"
 				        className="flex items-center gap-2 px-2 py-1 bg-white border rounded text-sm border-gray-200 bg-red-600">
@@ -46,7 +60,7 @@ export default function ReviewToolbar(props) {
 					<> Feedback senden </>
 				}
 			</button>
-			<button disabled={_disabled} onClick={onPublish} type="button" className="flex items-center gap-2 px-2 py-1 bg-white border rounded text-sm border-gray-200 bg-red-600 text-white">
+			<button disabled={_disabled && !forcedEditing} onClick={()=>setConfirmReleaseOpen(true)} type="button" className="flex items-center gap-2 px-2 py-1 bg-white border rounded text-sm border-gray-200 bg-red-600 text-white">
 				{ publishing ? <> <Spinner width="4" height="4" /> Veröffentlichen </> :
 					<> Veröffentlichen </>
 				}
@@ -63,9 +77,12 @@ export default function ReviewToolbar(props) {
 				{voucher &&
 					<><span>|</span><span>Gutschein: {voucher}</span></>
 				}
+				{ link &&
+					<><span>|</span><a href={link} target="_blank">Zum Rezept</a></>
+				}
 			</div>
 			<div className="mr-0 ml-auto flex gap-2 justify-end">
-				<button title="Daten vom Serer neu laden." disabled={_disabled} onClick={onRefresh} type="button" className="flex items-center gap-2 px-2 py-1 bg-white border rounded text-sm border-gray-200 bg-red-600 text-white">
+				<button title="Daten vom Serer neu laden." disabled={_disabled && !forcedEditing} onClick={onRefresh} type="button" className="flex items-center gap-2 px-2 py-1 bg-white border rounded text-sm border-gray-200 bg-red-600 text-white">
 					{ refreshing ? <Spinner width="4" height="4" /> : <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 26 26">
 						<path d="M13.8125 0C7.878906 0 4.082031 4.292969 4 10L0.5 10C0.300781 10 0.09375 10.113281 0.09375 10.3125C-0.0078125 10.511719 -0.0078125 10.710938 0.09375 10.8125L6.09375 18.5C6.195313 18.601563 6.300781 18.6875 6.5 18.6875C6.699219 18.6875 6.804688 18.601563 6.90625 18.5L12.90625 10.8125C13.007813 10.710938 13.007813 10.511719 12.90625 10.3125C12.804688 10.113281 12.601563 10 12.5 10L9 10C9.066406 2.464844 12.921875 0.789063 13.8125 0.09375C14.011719 -0.0078125 14.011719 0 13.8125 0ZM19.5 7.34375C19.351563 7.34375 19.195313 7.398438 19.09375 7.5L13.09375 15.1875C12.992188 15.386719 13 15.585938 13 15.6875C13.101563 15.886719 13.304688 16 13.40625 16L17 16C16.933594 23.535156 13.078125 25.210938 12.1875 25.90625C11.988281 26.007813 11.988281 26 12.1875 26C18.121094 26 21.917969 21.707031 22 16L25.40625 16C25.605469 16 25.8125 15.886719 25.8125 15.6875C26.011719 15.488281 26.007813 15.289063 25.90625 15.1875L19.90625 7.5C19.804688 7.398438 19.648438 7.34375 19.5 7.34375Z" fill="white"/>
 					</svg> }

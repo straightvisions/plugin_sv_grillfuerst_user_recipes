@@ -283,18 +283,31 @@ final class Recipes_Middleware implements Middleware_Interface {
 
     public function rest_recipe_export($request) {
         return $this->Api_Middleware->response($request, function ($Request) {
-            $uuid    = $Request->getAttribute('uuid');
-            $results = $this->Recipe_Exporter_Service->export($uuid);
+            $debug = false;
+            $uuid  = $Request->getAttribute('uuid');
+            // debug // skip real export and just test the response part
+            if($debug){
+                $results = ['status' => 200, 'link' => '', 'message'=>'Route success', 'errors' => []];
+                $results['body'] = ['post'=> (object)['guid'=>(object)['rendered'=>'https://www.google.com']]];
+            }else{
+                $results = $this->Recipe_Exporter_Service->export($uuid);
+            }
+
             $errors  = $results['errors'];
 
             if ($results['status'] === 200 || $results['status'] === 201) {
                 $body = $results['body'];
+                $post = $body['post'];
+
                 // change state to published + add link to post
                 $this->Recipe_Updater_Service->update(
                     [
                     'state' => 'published',
-                    'link' => $body['link']
+                    'link' => $post->guid->rendered
                     ], $uuid);
+
+                //@todo buggy
+                $results['link'] = $post->guid->rendered;
 
                 $errors = array_merge(
                     $errors,

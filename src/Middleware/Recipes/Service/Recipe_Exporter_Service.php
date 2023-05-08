@@ -68,7 +68,7 @@ final class Recipe_Exporter_Service {
         $this->logger->info(implode("\n\r", $this->errors()));
 
         return ['message' => $this->errors() ? sprintf('Recipe exported with errors: %s', $uuid) : sprintf('Recipe exported successfully: %s', $uuid),
-                'postId' => $post ?? 0,
+                'post' => $post ?? null,
                 'status' => $post ? 200 : 400,
                 'errors' => $this->errors()
         ];

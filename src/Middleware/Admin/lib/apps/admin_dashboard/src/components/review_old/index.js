@@ -167,7 +167,7 @@ export default function Review(props) {
 					<hr className="h-px bg-gray-400 border-0 col-span-12"/>
 					{ReleaseButton}
 					<Modal
-						message={'Rezept wirklich freigeben? Dies kann <strong>nicht</strong> rückgängig gemacht werden'}
+						message={'Rezept wirklich freigeben? Dies kann <strong>nicht</strong> rückgängig gemacht werden!'}
 						isOpen={confirmReleaseOpen}
 						onClose={() => setConfirmReleaseOpen(false)}
 						name="modalReleaseConfirm"

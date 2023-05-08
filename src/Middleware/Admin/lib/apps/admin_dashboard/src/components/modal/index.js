@@ -24,7 +24,7 @@ export default function Modal(props) {
 	return (
 		<>
 			{isOpen && (
-				<div className="fixed z-10 inset-0 overflow-y-auto">
+				<div className="fixed z-20 inset-0 overflow-y-auto">
 					<div className="flex items-center justify-center min-h-screen px-4 pt-6 pb-20 text-center sm:block sm:p-0">
 						<div className="fixed inset-0 transition-opacity bg-gray-500 bg-opacity-75" aria-hidden="true"></div>
 						
