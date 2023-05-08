@@ -20,6 +20,7 @@ export default function Review() {
 		saving: false, // Flag indicating if the recipe is being saved
 		submitting: false, // Flag indicating if the recipe is being submitted
 		publishing: false, // Flag indicating if the recipe is being published
+		disabled: false,
 	};
 	
 	// data handling
@@ -41,6 +42,7 @@ export default function Review() {
 
 	// local states
 	const [loading, setLoading] = useState(true);
+	const [forcedEditing, setForcedEditing] = useState(false);
 	const [refresh, setRefresh] = useState(false);
 	
 	// load customer data
@@ -65,6 +67,7 @@ export default function Review() {
 	
 	// load data from db
 	useEffect(() => {
+		setLoading(true);
 		if(Object.keys(attributes.data).length === 0 || refresh){
 			fetch(routes.getRecipeByUuid + params.uuid,{
 				headers:headers.get()
@@ -82,6 +85,18 @@ export default function Review() {
 			setRefresh(false);
 		}
 	}, [refresh]);
+	
+	// handle form locking
+	useEffect(() => {
+		// override if forced editing is set
+		if(forcedEditing) return setAttributes({disabled: false});
+		
+		if(attributes.data.state !== 'review_pending' || attributes.saving || attributes.submitting || attributes.publishing){
+			setAttributes({disabled: true});
+		}else{
+			setAttributes({disabled: false});
+		}
+	}, [attributes.data.state, attributes.saving, attributes.submitting, attributes.publishing, forcedEditing]);
 	
 	// add refresh stuff here
 	const onSave = () => {
@@ -175,8 +190,6 @@ export default function Review() {
 	}
 	
 	const createFeedback = (value) => {
-		let feedbackHistory = attributes.data.feedback;
-		
 		var today = new Date();
 		var dd = String(today.getDate()).padStart(2, '0');
 		var mm = String(today.getMonth() + 1).padStart(2, '0'); //January is 0!
@@ -202,7 +215,7 @@ export default function Review() {
 	
 	return (
 		<div>
-			<ReviewToolbar {...attributes} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)}/>
+			<ReviewToolbar {...attributes} setAttributes={setAttributes} forcedEditing={forcedEditing} setForcedEditing={setForcedEditing} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)}/>
 			<div className="flex gap-5 w-full max-w-full">
 				<div className="flex-grow">
 					<ReviewRecipeForm {...attributes} setAttributes={setAttributes} />

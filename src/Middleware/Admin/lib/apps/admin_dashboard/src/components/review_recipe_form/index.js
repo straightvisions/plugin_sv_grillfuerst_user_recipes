@@ -7,6 +7,7 @@ import Steps from './form_steps';
 export default function ReviewRecipeForm(props) {
 	const {
 		data,
+		disabled,
 		setAttributes
 	} = props;
 	
@@ -14,8 +15,6 @@ export default function ReviewRecipeForm(props) {
 		const updatedData = {...data, ...state};
 		setAttributes({data:updatedData});
 	};
-	//@todo move this to attribute to allow forced overwrite
-	const disabled = data.state !== 'review_pending';
 	
 	return (
 		<div className="w-full max-w-full relative">
