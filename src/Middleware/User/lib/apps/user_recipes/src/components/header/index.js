@@ -14,9 +14,6 @@ function FormButton(props){
 	const handleNewRecipe = () => {
 		fetch(routes.createRecipe + User.id, {
 			method: 'POST',
-			/*headers: {
-				'Authorization': 'Bearer ' + storage.get('token'),
-			},*/
 			headers: headers.get(),
 			cache: 'no-cache',
 			body: JSON.stringify({})

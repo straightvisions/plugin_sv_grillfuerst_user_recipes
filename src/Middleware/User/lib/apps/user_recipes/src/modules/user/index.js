@@ -18,7 +18,7 @@ const user = {
 	
 	init: () => {
 		const _user = user.get();
-
+		
 		if(_user.id === 0){
 			return fetch(routes.getUserInfo, {
 				headers: headers.get(),

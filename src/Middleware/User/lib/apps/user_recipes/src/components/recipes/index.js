@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import routes from '../../models/routes';
 import storage from '../../modules/storage';
 import {useNavigate} from "react-router-dom";
@@ -8,6 +8,7 @@ import {DocumentDuplicateIcon, PlusIcon, TrashIcon} from "@heroicons/react/20/so
 import user from '../../modules/user';
 const User = user.get();
 import {fetchError} from '../../modules/fetch';
+import {GlobalContext} from '../../modules/context';
 
 const states = {
 	draft: {
@@ -29,11 +30,15 @@ const states = {
 }
 
 export default function Recipes(props) {
+	const { globalMessage, setGlobalMessage } = useContext(GlobalContext);
 	const [recipes, setRecipes] = useState([]);
 	const [pagination, setPagination] = useState({rows:0,pages:0,page:1});
 	const [loading, setLoadingState] = useState(true);
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(20);
+	const [panelVisible, setPanelVisible] = useState(false);
+	const [panelMessage, setPanelMessage] = useState('');
+	const [panelType, setPanelType] = useState('');
 	const navigate = useNavigate();
 	
 	useEffect(() => {
@@ -90,7 +95,7 @@ export default function Recipes(props) {
 		
 		if(typeof c === 'string' && c !== ''){
 			navigator.clipboard.writeText(c);
-			//@todo add infobox here
+			setGlobalMessage({message: 'Gutschein kopiert!'});
 		}
 	}
 	

@@ -123,6 +123,7 @@ export default function Login(props){
 							</div>
 						</div>
 						
+						{/*}
 						<div className="flex items-center justify-between">
 							<div className="text-sm">
 								<a href={routes.getUrl('/reset')} className="font-medium text-indigo-600 hover:text-indigo-500">
@@ -130,7 +131,7 @@ export default function Login(props){
 								</a>
 							</div>
 						</div>
-						
+						*/}
 						<div>
 							<button
 								disabled={isSending}

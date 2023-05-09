@@ -25,7 +25,6 @@ const storage = {
 window.addEventListener('storage', function(event) {
 	if (event.key === storage.appStorage) {
 		// Do something with the updated localStorage data
-		console.log('localStorage data updated:', event.newValue);
 	}
 });
 
