@@ -231,9 +231,23 @@ final class User_Middleware implements Middleware_Interface {
 
     //@todo add Api Response wrapper
     public function rest_register($request) {
+        $debug  = false;
         $Request = $this->Adapter->Request()->set($request);
         $data    = $Request->getJSONParams();
         $client  = $this->Api_Middleware->http();
+
+        //debug
+        if($debug) return new WP_REST_Response(
+            ["status"=>"error",
+            "message"=>
+                ["error"=>
+                     [
+                         ["info_message"=>"Es existiert bereits ein Kundenkonto mit dieser E-Mail Adresse <a href=https:\/\/staging.grillfuerst.de\/customer\/password_reset>Passwort vergessen?<\/a>"],
+                         ["info_message"=>"Passwort zu kurz"]
+                     ]
+                ]
+            ], 500
+        ); // @todo remove this when adapter is available*/
 
         $response = $client->request(
             'POST',
@@ -246,9 +260,23 @@ final class User_Middleware implements Middleware_Interface {
             ]
         );
 
+        $body =  json_decode($response->getBody(), true);
+
+        $normalizedBody = [
+            'status' => $body['status'],
+            'message' => '',
+            'customerId'=> isset($body['customerId']) ? $body['customerId'] : 0,
+        ];
+
+        if($body['status'] === 'error'){
+            $normalizedBody['message'] = implode('<br>', array_map(function($error) {
+                return $error['info_message'];
+            }, $body['message']['error']));
+        }
+
         // implement wp_response adapter + services
         $response = new WP_REST_Response(
-            json_decode($response->getBody(), true), $response->getStatusCode()
+            $normalizedBody, $response->getStatusCode()
         ); // @todo remove this when adapter is available*/
 
         return $response;

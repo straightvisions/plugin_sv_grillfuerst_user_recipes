@@ -104,7 +104,7 @@ export default function Register(props){
 					setMessage('Registrierung erfolgreich!')
 					setIsSuccess(true);
 				}else{
-					setMessage(res.message.error);
+					setMessage(res.message);
 				}
 			}).catch(function(error) {
 			setMessage(error.message);
@@ -112,9 +112,6 @@ export default function Register(props){
 			setIsSending(false);
 		});
 	}
-	
-	
-	
 	
 	return (
 		<div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
