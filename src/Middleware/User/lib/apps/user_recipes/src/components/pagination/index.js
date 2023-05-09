@@ -68,8 +68,7 @@ export default function Pagination(props) {
 			<div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
 				<div>
 					<p className="text-sm text-gray-700">
-						Showing  <span className="font-medium">{showingCount}</span> of{' '}
-						<span className="font-medium">{rows}</span> results
+						Zeige <span className="font-medium">{showingCount}</span> von <span className="font-medium">{rows}</span> Ergebnissen
 					</p>
 				</div>
 				<div>

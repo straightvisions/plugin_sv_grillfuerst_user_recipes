@@ -26,9 +26,8 @@ function FormButton(props){
 	
 	if(location.pathname.includes('/edit/')) {
 		return (
-			
 			<Link
-				className="relative inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-black hover:border-black focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+				className="relative inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-black hover:border-black focus:outline-none"
 				role="button"
 				to="/"
 			>
@@ -40,17 +39,14 @@ function FormButton(props){
 	
 	// default
 	return (
-		
 		<button
-			className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+			className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none"
 			role="button"
 			onClick={handleNewRecipe}
 		>
 			<PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
 			<span>Neues Rezept</span>
 		</button>
-		
-	
 	);
 }
 
@@ -60,10 +56,10 @@ export default function Header(props) {
 	}
 	
 	return (
-		<div className="flex items-center px-4 sm:px-6 lg:px-8 mb-4 gap-2">
+		<div className="flex items-center mb-4 gap-2 justify-between">
 			<FormButton {...props} />
 			<button
-				className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded focus:outline-none focus:ring-2 focus:ring-red-600"
+				className="bg-white hover:bg-grey-400 hover:text-white border border-grey-400 text-grey-400 py-2 px-4 rounded text-sm font-medium text-white "
 				onClick={handleLogout}
 			>
 				Logout
