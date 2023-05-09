@@ -249,7 +249,7 @@ final class User_Middleware implements Middleware_Interface {
         // implement wp_response adapter + services
         $response = new WP_REST_Response(
             json_decode($response->getBody(), true), $response->getStatusCode()
-        ); // @todo remove this when adapter is available
+        ); // @todo remove this when adapter is available*/
 
         return $response;
     }

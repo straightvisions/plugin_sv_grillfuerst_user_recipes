@@ -29,9 +29,7 @@ export default function Register(props){
 		}
 	});
 	
-	const [message, setMessage] = useReducer((state, action)=>{
-		return action.payload.map(i=>i.info_message).join('<br><br>');
-	},'');
+	const [message, setMessage] = useState('');
 	
 	const [isSending, setIsSending] = useState(false);
 	const [password, setPassword] = useState({
@@ -42,13 +40,6 @@ export default function Register(props){
 	
 	const [isSuccess, setIsSuccess] = useState(false);
 	const navigate = useNavigate();
-	
-	useEffect(()=>{
-		if(isSuccess === true){
-			navigate('/');
-		}
-		
-	},[isSuccess])
 	
 	const handleAddress = (key, val) => {
 		if(credentials.default_address.hasOwnProperty(key)){
@@ -110,12 +101,13 @@ export default function Register(props){
 			.then(response => response.json())
 			.then(res => {
 				if(res.status === 'success'){
+					setMessage('Registrierung erfolgreich!')
 					setIsSuccess(true);
 				}else{
-					setMessage({payload: res.message.error});
+					setMessage(res.message.error);
 				}
 			}).catch(function(error) {
-			setMessage({payload: error.message});
+			setMessage(error.message);
 		}).finally(() => {
 			setIsSending(false);
 		});
@@ -137,6 +129,25 @@ export default function Register(props){
 					{ isSending &&
 						<Overlay />
 					}
+					
+					{isSuccess &&
+						<div className="space-y-6 flex flex-col justify-center items-center gap-5">
+							<h3>Registrierung erfolgreich!</h3>
+							<span className="text-center bold-text">
+								Du erhälst zusätzlich eine Email als Bestätigung.
+							</span>
+							
+							<button
+								type="button"
+								onClick={()=> navigate('/')}
+								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+							>
+								Weiter zum Login
+							</button>
+						</div>
+					}
+					
+					{ !isSuccess &&
 					<form className="space-y-6 grid grid-cols-2 gap-x-4" onSubmit={handleSubmit}>
 						{message !== '' &&
 							<div role="alert" className="col-span-2">
@@ -355,20 +366,7 @@ export default function Register(props){
 						<div className="col-span-2 inset-0 flex items-center">
 							<div className="w-full border-t border-gray-300" />
 						</div>
-						{ /*
-						<div className="flex items-center col-span-2">
-							<input
-								id="newsletter"
-								name="newsletter"
-								type="checkbox"
-								className="h-4 w-4 rounded border-gray-300 text-indigo-600 focus:ring-indigo-500"
-							/>
-							<label htmlFor="newsletter" className="ml-2 block text-sm text-gray-900">
-								Ja, ich möchte den Newsletter erhalten.
-							</label>
-						</div>
-						*/}
-						
+					
 						<div className="col-span-2">
 							<input
 								id="email-second"
@@ -384,7 +382,7 @@ export default function Register(props){
 							</button>
 						</div>
 					</form>
-					
+					}
 				</div>
 			</div>
 		</div>
