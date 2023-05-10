@@ -1,17 +1,23 @@
-import React from 'react';
+import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
 import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
 import {  useLocation } from 'react-router-dom';
 import routes from '../../models/routes';
 import user from '../../modules/user';
-import headers from "../../modules/headers";
+import headers from '../../modules/headers';
+import Spinner from '../spinner';
 const User = user.get();
+
 
 function FormButton(props){
 	const location = useLocation();
 	const navigate = useNavigate();
 	
+	const [loading, setLoading] = useState(false);
+	
 	const handleNewRecipe = () => {
+		setLoading(true);
+		
 		fetch(routes.createRecipe + User.id, {
 			method: 'POST',
 			headers: headers.get(),
@@ -21,8 +27,11 @@ function FormButton(props){
 			.then(response => response.json())
 			.then(data => {
 				navigate('/edit/' + data.uuid)
+			}).finally(() => {
+				setLoading(false);
 			});
-	}
+		};
+
 	
 	if(location.pathname.includes('/edit/')) {
 		return (
@@ -40,11 +49,14 @@ function FormButton(props){
 	// default
 	return (
 		<button
-			className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none"
+			className="relative inline-flex gap-2 items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none"
 			role="button"
 			onClick={handleNewRecipe}
+			disabled={loading}
 		>
-			<PlusIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
+			{loading ? <Spinner width="4" height="4"/>:
+				<PlusIcon className="-ml-1 h-5 w-5" aria-hidden="true"/>
+			}
 			<span>Neues Rezept</span>
 		</button>
 	);
