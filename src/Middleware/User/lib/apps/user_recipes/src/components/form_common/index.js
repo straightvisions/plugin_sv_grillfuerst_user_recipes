@@ -124,11 +124,13 @@ export default function Common(props) {
 	// KITCHEN STYLES -------------------------------------------------------------------------------------------------
 	
 	const handleImageUpload = (files) => {
+		if(formState.state === 'review_pending' || formState.state === 'published') return;
 		formState.featured_image = files[0];
 		setFormState(formState);
 	}
 	
 	const handleImageDelete = (image) => {
+		if(formState.state === 'review_pending' || formState.state === 'published') return;
 		formState.featured_image = {};
 		setFormState(formState);
 	}

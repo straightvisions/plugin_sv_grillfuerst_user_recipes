@@ -10,6 +10,7 @@ export default function Step(props){
 		uuid,
 		onChangeOrderUp,
 		onChangeOrderDown,
+		formState,
 	} = props;
 	
 	/* legacy item fix */
@@ -20,11 +21,13 @@ export default function Step(props){
 	}
 	
 	const handleImageUpload = (files) => {
+		if(formState.state === 'review_pending' || formState.state === 'published') return;
 		item.images = files;
 		onChange(item);
 	}
 	
 	const handleImageDelete = (image) => {
+		if(formState.state === 'review_pending' || formState.state === 'published') return;
 		item.images = item.images.map(img => {
 			if(image.url !== img.url){
 				return img;

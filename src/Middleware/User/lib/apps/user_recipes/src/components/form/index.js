@@ -55,6 +55,7 @@ export default function Form(props) {
 	
 	// manual save
 	const handleSave = () => {
+		if(formState.state === 'review_pending' || formState.state === 'published') return;
 		if(saving || loading) return;
 		setSavingState(true);
 		//@todo change route in backend to match stateless route here
@@ -110,28 +111,24 @@ export default function Form(props) {
 		}
 	}
 	
-	if(formState.state === 'published' || formState.state === 'review_pending'){
-		return (
-			<div className="flex gap-4">
-				<div className="w-1/2">
-					<RecipeDatasheet data={formState} />
-				</div>
-				<div className="w-1/2">
-					{getAlerts()}
-				</div>
-			</div>
-		);
-	}else{
-		return (
-			<form className="space-y-6">
-				{getAlerts()}
+	return (
+		<>
+			{getAlerts()}
+			<form className="space-y-6 relative">
+				
+				{(formState.state === 'review_pending' || formState.state === 'published') && (
+					<div className="z-10 absolute top-0 left-0 h-full w-full bg-gray-500 opacity-20 flex items-start justify-end">
+						<p className="text-red-900 font-bold p-2">Die Bearbeitung ist derzeit gesperrt.</p>
+					</div>
+				)}
 				<Common formState={formState} setFormState={_setFormState} />
 				<Ingredients formState={formState} setFormState={_setFormState} />
 				<Accessories formState={formState} setFormState={_setFormState} />
 				<Steps formState={formState} setFormState={_setFormState} />
 				<Submit saving={saving} formState={formState} setFormState={_setFormState} onSave={handleSave} onSubmit={handleSubmit}/>
 			</form>
-		);
-	}
+		</>
+	);
+
 	
 }

@@ -112,6 +112,7 @@ export default function Steps(props) {
 									item={item}
 									index={i}
 									uuid={formState.uuid}
+									formState={formState}
 								/>
 						))}
 						</tbody>
