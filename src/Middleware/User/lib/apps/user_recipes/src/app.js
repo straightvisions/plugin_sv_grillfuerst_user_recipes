@@ -48,36 +48,23 @@ const App = () => {
 	// not logged-in state
 	if(user.isLoggedIn === false){
 		return (
-			<>
-				{panelVisible &&
-					<SlideInPanel
-						message={panelMessage}
-						type={panelType}
-						visible={panelVisible}
-						onClose={() => setPanelVisible(false)}
-					/>
-					
-				}
-				
-				<div className="mx-auto max-w-7xl">
-					<Routes>
-						<Route
-							path="/register"
-							element={<Register />}
-						/>
-						{/* TODO: implement when shop server is ready
+			<div className="mx-auto max-w-7xl">
+				<Routes>
 					<Route
-						path="/reset"
-						element={<Reset />}
-					/>*/}
-						<Route
-							path="/"
-							element={<Login />}
-						/>
-					</Routes>
-				</div>
-			</>
-			
+						path="/register"
+						element={<Register />}
+					/>
+					{/* TODO: implement when shop server is ready
+				<Route
+					path="/reset"
+					element={<Reset />}
+				/>*/}
+					<Route
+						path="/"
+						element={<Login />}
+					/>
+				</Routes>
+			</div>
 		);
 	}
 	
