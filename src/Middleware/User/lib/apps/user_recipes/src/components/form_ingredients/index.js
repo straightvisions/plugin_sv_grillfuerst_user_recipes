@@ -24,6 +24,7 @@ export default function Ingredients(props) {
 	const [productParent, setProductParent] = useState({});
 	const [products, setProducts] = useState([]);
 	const [loading, setLoadingState] = useState(true);
+	const [showCustomIngredientButton, setShowCustomIngredientButton] = useState(false);
 	
 	// database stuff
 	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
@@ -248,7 +249,7 @@ export default function Ingredients(props) {
 			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Zutaten</h3>
-					<p className="mt-1 text-sm text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden.</p>
+					<p className="mt-1 text-sm text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden. Wir empfehlen das Rezept für 4 Personen anzulegen und entsprechend die Zutatenmengen anzupassen.</p>
 					<div className="col-span-6 sm:col-span-4 my-4">
 						<label htmlFor="recipe_servings" className="mr-4 text-sm font-medium text-gray-700">
 							Rezept für
@@ -265,16 +266,19 @@ export default function Ingredients(props) {
 					</div>
 					{TermSearchComp}
 					<div className="mt-2 text-[12px] text-gray-500 ">
-						<p className="inline cursor-pointer border-b border-dashed border-gray-500 hover:text-gray-700 hover:border-gray-700">
-							Deine Zutat ist nicht dabei?:
+						<p onClick={()=>setShowCustomIngredientButton(!showCustomIngredientButton)} className="select-none inline cursor-pointer border-b border-dashed border-gray-500 hover:text-gray-700 hover:border-gray-700">
+							Deine Zutat ist nicht dabei? Klick hier!
 						</p>
-						<button
-							onClick={()=>addCustomIngredient()}
-							type="button"
-							className="bg-white border border-grey-500 text-grey-500 px-2 py-1 mt-2 rounded hover:text-white hover:bg-orange-600"
-						>
-							Eigene Zutat hinzufügen
-						</button>
+						{showCustomIngredientButton &&
+							<button
+								onClick={()=>addCustomIngredient()}
+								type="button"
+								className="bg-white border border-grey-500 text-grey-500 px-2 py-1 mt-2 rounded hover:text-white hover:bg-orange-600"
+							>
+								Eigene Zutat hinzufügen
+							</button>
+						}
+						
 					</div>
 					
 				

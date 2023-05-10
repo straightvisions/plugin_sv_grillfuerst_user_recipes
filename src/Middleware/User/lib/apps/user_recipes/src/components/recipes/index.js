@@ -36,9 +36,6 @@ export default function Recipes(props) {
 	const [loading, setLoadingState] = useState(true);
 	const [page, setPage] = useState(1);
 	const [limit, setLimit] = useState(20);
-	const [panelVisible, setPanelVisible] = useState(false);
-	const [panelMessage, setPanelMessage] = useState('');
-	const [panelType, setPanelType] = useState('');
 	const navigate = useNavigate();
 	
 	useEffect(() => {
