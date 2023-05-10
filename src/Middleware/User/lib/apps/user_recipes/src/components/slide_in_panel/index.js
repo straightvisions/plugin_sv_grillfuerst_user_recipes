@@ -32,7 +32,7 @@ const SlideInPanel = (props) => {
 		<>
 			{globalMessage.visible && (
 				<div onClick={handleClose}
-					className={`fixed z-50 right-4 bottom-0 w-64 max-w-[200px] px-2 py-2 mb-4 rounded shadow-md transform transition-all duration-300 ${panelClass}`}
+					className={`fixed text-sm z-50 right-4 bottom-0 w-64 max-w-[200px] px-2 py-2 mb-4 rounded shadow-md transform transition-all duration-300 ${panelClass}`}
 				>
 					<div dangerouslySetInnerHTML={{ __html: message }}></div>
 				</div>

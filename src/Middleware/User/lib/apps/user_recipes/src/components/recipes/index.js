@@ -6,9 +6,11 @@ import Spinner from "../spinner";
 import Pagination from "../pagination";
 import {DocumentDuplicateIcon, PlusIcon, TrashIcon} from "@heroicons/react/20/solid";
 import user from '../../modules/user';
+import headers from '../../modules/headers';
 const User = user.get();
 import {fetchError} from '../../modules/fetch';
 import {GlobalContext} from '../../modules/context';
+
 
 const states = {
 	draft: {
@@ -30,52 +32,60 @@ const states = {
 }
 
 export default function Recipes(props) {
+	const storageSlug = 'recipesCache' + user.id; // multiple tabs support anyone?
+	const localCache = storage.get(storageSlug, {
+		recipes: [],
+		pagination: {rows: 0, pages: 0, page: 1},
+		page: 1,
+		limit: 20,
+		timestamp: 0,
+	});
+	
 	const { globalMessage, setGlobalMessage } = useContext(GlobalContext);
-	const [recipes, setRecipes] = useState([]);
-	const [pagination, setPagination] = useState({rows:0,pages:0,page:1});
 	const [loading, setLoadingState] = useState(true);
-	const [page, setPage] = useState(1);
-	const [limit, setLimit] = useState(20);
+	const [recipes, setRecipes] = useState(localCache.recipes);
+	const [pagination, setPagination] = useState(localCache.pagination);
+	const [page, setPage] = useState(localCache.page);
+	const [limit, setLimit] = useState(localCache.limit);
 	const navigate = useNavigate();
 	
 	useEffect(() => {
-		let route = routes.getRecipes;
 		setLoadingState(true);
+		
+		let route = routes.getRecipes;
 		// filter
 		route += '?';
-		route +='limit='+parseInt(limit);
-		route +='&page=' + parseInt(page);
+		route += 'limit=' + parseInt(limit);
+		route += '&page=' + parseInt(page);
 		
-		fetch(route,{
-			headers: {
-				'Authorization': 'Bearer ' + storage.get('token'),
-			}
+		fetch(route, {
+			headers: headers.get()
 		})
 			.then(response => !response.ok ? fetchError(response) : response)
 			.then(response => response.json())
 			.then(data => {
 				// sort new to old
 				const _sorted = data.items.sort((a, b) => {
-						return a.created < b.created ? 1 : -1;
-					}
-				);
-
+					return a.created < b.created ? 1 : -1;
+				});
+				
 				setRecipes(_sorted);
-				setPagination({rows:data.totalRows, pages:data.totalPages, page:data.page});
+				setPagination({rows: data.totalRows, pages: data.totalPages, page: data.page});
+				
+				// update the cache with the new data
+				storage.set(storageSlug, JSON.stringify({
+					recipes: _sorted,
+					pagination: {rows: data.totalRows, pages: data.totalPages, page: data.page},
+					page: page,
+					limit: limit,
+					timestamp: Date.now(),
+				}));
 			}).finally(() => {
 			setLoadingState(false);
 		});
-	}, [page])
+	}, [page]);
 	
 	//@todo migrate list items to external component !!
-	
-	if (loading) {
-		return (
-			<div className="bg-white px-4 py-12 shadow sm:rounded-lg  h-full">
-				<Spinner/>
-			</div>
-		);
-	}
 	
 	const getDate = (dateString) => {
 		const date = new Date(dateString);
@@ -123,7 +133,8 @@ export default function Recipes(props) {
 									<th
 										scope="col"
 										className="w-1/12 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
-										#
+										 { loading ? <Spinner width="4" height="4" align="start"/> : <>#</>}
+										
 									</th>
 									<th
 										scope="col"

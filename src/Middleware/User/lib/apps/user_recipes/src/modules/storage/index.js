@@ -3,7 +3,7 @@ const storage = {
 	
 	getStorage : () => {
 		let _storage = localStorage.getItem(storage.appStorage);
-		return _storage ? JSON.parse(_storage) : {};
+		return _storage ? storage.parseJSONRecursively(_storage) : {};
 	},
 	
 	setStorage : (_storage) => {
@@ -19,7 +19,27 @@ const storage = {
 	get : (key, def = '') => {
 		const _storage = storage.getStorage();
 		return _storage.hasOwnProperty(key) ? _storage[key] : def;
+	},
+	
+	parseJSONRecursively : (json) => {
+	let obj;
+	
+	try {
+		obj = JSON.parse(json);
+	} catch (e) {
+		return json;
 	}
+	
+	if (typeof obj !== "object" || obj === null) {
+		return obj;
+	}
+	
+	for (const key in obj) {
+		obj[key] = storage.parseJSONRecursively(obj[key]);
+	}
+	
+	return obj;
+}
 }
 
 window.addEventListener('storage', function(event) {

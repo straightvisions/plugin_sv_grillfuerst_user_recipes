@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
 
 export default function Spinner(props){
-	
 	const {
-		height = 6,
 		width = 6,
+		height = 6,
+		align = "center"
 	} = props;
 	
 	return (
-		<div className="flex justify-center" aria-label="Loading..." role="status">
+		<div className={`flex justify-${align}`} aria-label="Loading..." role="status">
 			<svg className={`h-${height} w-${width} animate-spin`} viewBox="3 3 18 18">
 				<path
 					className="fill-gray-200"
