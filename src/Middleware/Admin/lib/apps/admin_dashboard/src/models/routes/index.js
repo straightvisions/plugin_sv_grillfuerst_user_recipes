@@ -3,7 +3,6 @@ const root = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-use
 const rootStatic = 'https://relaunch-magazin.grillfuerst.de/community-rezepte';
 
 export default {
-	
 	"login": rootStatic + '/login',
 	"isLoggedIn": root + '/admin/is_logged_in',
 	"getAdminInfo": root + '/admin/info',

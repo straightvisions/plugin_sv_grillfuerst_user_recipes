@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from "react";
+import React, {useEffect, useState, useContext} from "react";
 import { useInterval } from 'usehooks-ts'
 import Common from '../form_common';
 import Ingredients from '../form_ingredients';
@@ -9,7 +9,7 @@ import Spinner from '../spinner';
 import routes from "../../models/routes";
 import { useParams } from "react-router-dom";
 import { AlertReviewed, AlertReviewPending, AlertPublished } from '../form_alerts';
-import RecipeDatasheet  from '../recipe_datasheet';
+import {GlobalContext} from "../../modules/context";
 import storage from "../../modules/storage";
 
 function dateIsValid(date) {
@@ -17,6 +17,8 @@ function dateIsValid(date) {
 }
 
 export default function Form(props) {
+	const { globalMessage, setGlobalMessage } = useContext(GlobalContext);
+	
 	const {user} = props;
 	const params = useParams();
 	const [formState, setFormState] = useState({});
@@ -35,8 +37,7 @@ export default function Form(props) {
 				setFormState(data);
 			}).finally(() => {
 			setLoadingState(false);
-		});;
-			
+		});
 	}, []);
 	
 	useEffect(()=>{
@@ -68,6 +69,8 @@ export default function Form(props) {
 			.then(response => response.json())
 			.then(data => {
 				//@todo give a notice on success
+				// fallback
+				window.scrollTo({top: 0, behavior: 'smooth'});
 			}).finally(() => {
 			setSavingState(false);
 		});
@@ -79,8 +82,9 @@ export default function Form(props) {
 	
 	// auto save
 	useInterval(() => {
+		if(formState.state === 'review_pending' || formState.state === 'published') return;
 		handleSave();
-	}, 20000);
+	}, 60000);
 	
 	if(loading){
 		return (
