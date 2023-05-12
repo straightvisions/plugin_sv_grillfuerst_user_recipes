@@ -54,8 +54,7 @@ export default function Submit(props) {
 								</div>
 								<div className="ml-3">
 									<label htmlFor="legals" className="font-bold cursor-pointer">
-										Rechteabtretung
-										<p className="text-gray-500 font-normal">Du bestätigst, alle Rechte an dem Rezept und den
+										Rechteabtretung<p className="text-gray-500 font-normal">Du bestätigst, alle Rechte an dem Rezept und den
 											Bildern zu besitzen und trittst diese an uns ab.</p>
 									</label>
 									

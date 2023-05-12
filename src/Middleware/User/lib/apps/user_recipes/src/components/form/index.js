@@ -55,7 +55,6 @@ export default function Form(props) {
 	
 	// manual save
 	const handleSave = () => {
-		if(formState.state === 'review_pending' || formState.state === 'published') return;
 		if(saving || loading) return;
 		setSavingState(true);
 		//@todo change route in backend to match stateless route here
