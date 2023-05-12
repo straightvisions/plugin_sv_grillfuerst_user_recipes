@@ -16,7 +16,6 @@ const App = () => {
 	// initiate user first - this also checks if user is loggedIn
 	// if not, we redirect to the given login url
 	const [userInited, setUserInited] = useState(user.initialised);
-	
 	const [globalMessage, setGlobalMessage] = useReducer((state, newState) => {
 		return {...state, ...{type:'success', visible:true}, ...newState}
 		}, {

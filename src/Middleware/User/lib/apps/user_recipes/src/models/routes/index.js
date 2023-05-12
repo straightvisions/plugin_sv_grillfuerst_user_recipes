@@ -4,7 +4,6 @@ const domainURL = process.env.REACT_APP_DOMAIN_URL ? process.env.REACT_APP_DOMAI
 const appURL = process.env.REACT_APP_APP_URL ? process.env.REACT_APP_APP_URL : domainURL + '/community-rezepte/';
 const apiURL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL + '/wp-json/sv-grillfuerst-user-recipes/v1' : domainURL + '/wp-json/sv-grillfuerst-user-recipes/v1';
 
-
 export default {
 	config:{
 		domain,

@@ -1,9 +1,11 @@
 html,
 body {
-	font-family: 'Gentona Book', sans-serif;
+	font-family: 'Gentona', sans-serif;
+	font-weight: 500;
 	/*background: rgb(249, 250, 251);*/
 	background: white;
 	padding-bottom:60px;
+	color: #1e1e1e;
 }
 
 #sv-grillfuerst-user-recipes-app{
@@ -19,42 +21,132 @@ a.link:hover {
 	@apply underline;
 }
 
-
-h1 {
-	font-size: 2rem;
-	font-weight: bold;
-	margin-bottom: 1rem;
+h1{
+	-webkit-hyphens:manual;
+	-moz-hyphens:manual;
+	hyphens:manual;
+	font-family:"Gentona", sans-serif;
+	font-weight:700;
+	line-height:1;
+	color:#1e1e1e;
 }
 
-h2 {
-	font-size: 1.5rem;
-	font-weight: bold;
-	margin-bottom: 0.75rem;
+@media ( min-width: 0px ) and (orientation: portrait) {
+	h1{
+		font-size:20px;
+	}
 }
 
-h3 {
-	font-size: 1.17rem;
-	font-weight: bold;
-	margin-bottom: 0.5rem;
+@media ( min-width: 0px ) and (orientation: landscape) {
+	h1{
+		font-size:35px;
+	}
 }
 
-h4 {
-	font-size: 1rem;
-	font-weight: bold;
-	margin-bottom: 0.5rem;
+@media ( min-width: 768px ) and (orientation: portrait) {
+	h1{
+		font-size:30px;
+	}
 }
 
-h5 {
-	font-size: 0.83rem;
-	font-weight: bold;
-	margin-bottom: 0.5rem;
+@media ( min-width: 992px ) and (orientation: landscape) {
+	h1{
+		font-size:30px;
+	}
 }
 
-h6 {
-	font-size: 0.67rem;
-	font-weight: bold;
-	margin-bottom: 0.5rem;
+@media ( min-width: 1024px ) and (orientation: portrait) {
+	h1{
+		font-size:35px;
+	}
 }
+
+@media ( min-width: 1366px ) and (orientation: landscape) {
+	h1{
+		font-size:35px;
+	}
+}
+
+@media ( min-width: 1600px ) {
+	h1{
+		font-size:35px;
+	}
+}
+
+h2{
+	-webkit-hyphens:manual;
+	-moz-hyphens:manual;
+	hyphens:manual;
+	font-family:"Gentona", sans-serif;
+	font-weight:700;
+	color:#1e1e1e;
+}
+
+@media ( min-width: 0px ) and (orientation: portrait) {
+	h2{
+		font-size:18px;
+	}
+}
+
+@media ( min-width: 0px ) and (orientation: landscape) {
+	h2{
+		font-size:25px;
+	}
+}
+
+@media ( min-width: 768px ) and (orientation: portrait) {
+	h2{
+		font-size:25px;
+	}
+}
+
+@media ( min-width: 1600px ) {
+	h2{
+		font-size:25px;
+	}
+}
+
+h3{
+	-webkit-hyphens:manual;
+	-moz-hyphens:manual;
+	hyphens:manual;
+	font-family:"Gentona", sans-serif;
+	font-weight:700;
+	font-size:22px;
+	color:#1e1e1e;
+}
+
+h4{
+	-webkit-hyphens:manual;
+	-moz-hyphens:manual;
+	hyphens:manual;
+	font-family:"Gentona", sans-serif;
+	font-weight:700;
+	font-size:20px;
+	color:#1e1e1e;
+}
+
+h5{
+	-webkit-hyphens:manual;
+	-moz-hyphens:manual;
+	hyphens:manual;
+	font-family:"Gentona", sans-serif;
+	font-weight:700;
+	font-size:18px;
+	color:#1e1e1e;
+	
+}
+
+h6{
+	-webkit-hyphens:manual;
+	-moz-hyphens:manual;
+	hyphens:manual;
+	font-family:"Gentona", sans-serif;
+	font-weight:700;
+	font-size:16px;
+	color:#1e1e1e;
+}
+
 
 /* Optional: Add additional styles as needed */
 body {

@@ -6,10 +6,25 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
-      sans: [
-        "Gentona Book, sans-serif"
-      ],
+      heading: ['Gentona', 'sans-serif'],
+      sans: ['Gentona', 'sans-serif'],
     },
+    /*
+    red #D51417
+    orange #F59B00
+    grey1 #F4F4F4
+    grey2 #C6C6C6
+    grey3 #6F6E6E.
+    
+    
+    font-family: "Gentona", sans-serif;
+    font-weight: 400;
+    font-size: 16px;
+    line-height: 1.5;
+    color:  #1e1e1e;
+    
+    
+     */
     extend: {
       colors: {
         red: {
