@@ -4,7 +4,7 @@ import Overlay from '../overlay';
 import storage from '../../modules/storage';
 import routes from '../../models/routes';
 
-export default function Login(props){
+export default function Login(props) {
 	const [credentials, setCredentials] = useState({
 		username: '',
 		password: ''
@@ -27,9 +27,9 @@ export default function Login(props){
 	
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		if(isSending) return;
+		if (isSending) return;
 		setIsSending(true);
-	
+		
 		fetch(routes.login, {
 			method: 'POST',
 			cache: 'no-cache',
@@ -44,8 +44,8 @@ export default function Login(props){
 			})
 			.then(res => {
 				const {data, token} = res;
-			
-				if(data.status === 'success'){
+				
+				if (data.status === 'success') {
 					storage.set('userId', data.customerId);
 					storage.set('token', token);
 					window.location.href = data.url + '&ref=' + encodeURIComponent(routes.config.appURL);
@@ -55,7 +55,7 @@ export default function Login(props){
 					storage.set('userId', 0);
 					storage.set('token', '');
 				}
-			}).catch(function(error) {
+			}).catch(function (error) {
 			setMessage(error.message);
 		}).finally(() => {
 			setIsSending(false);
@@ -65,15 +65,16 @@ export default function Login(props){
 	return (
 		<div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
-				<Logo />
+				<Logo/>
 				<h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Community Rezepte</h2>
-				<p className="mt-2 text-center text-sm text-gray-600">Melde dich mit deinem Grillfürst Shop Account an!</p>
+				<p className="mt-2 text-center text-sm text-gray-600">Melde dich mit deinem Grillfürst Shop Account
+					an!</p>
 			</div>
 			
 			<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
 				<div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 relative">
-					{ isSending &&
-						<Overlay />
+					{isSending &&
+						<Overlay/>
 					}
 					<form className="space-y-6" onSubmit={handleSubmit}>
 						{message !== '' &&
@@ -81,8 +82,9 @@ export default function Login(props){
 								<div className="bg-red-500 text-sm text-white font-bold rounded-t px-4 py-2">
 									Login fehlgeschlagen
 								</div>
-								<div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-sm text-red-700"
-								     dangerouslySetInnerHTML={{__html: message}}
+								<div
+									className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-sm text-red-700"
+									dangerouslySetInnerHTML={{__html: message}}
 								>
 								</div>
 							</div>
@@ -146,7 +148,7 @@ export default function Login(props){
 					<div className="mt-6">
 						<div className="relative">
 							<div className="absolute inset-0 flex items-center">
-								<div className="w-full border-t border-gray-300" />
+								<div className="w-full border-t border-gray-300"/>
 							</div>
 							<div className="relative flex justify-center text-sm">
 								<span className="bg-white px-2 text-gray-500">Oder</span>

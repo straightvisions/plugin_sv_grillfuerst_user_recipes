@@ -37,6 +37,10 @@ const user = {
 					
 					user.initialised = true;
 					user.isLoggedIn = payload.isLoggedIn;
+				}).catch((error) => {
+					storage.set('id', 0);
+					user.initialised = true;
+					user.isLoggedIn = false;
 				});
 		}else{
 			user.initialised = true;
