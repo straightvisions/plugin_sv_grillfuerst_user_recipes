@@ -126,29 +126,29 @@ export default function Recipes(props) {
 			<div className="mt-8 flex flex-col">
 				<div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
 					<div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-						<div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
+						<div className="overflow-hidden shadow">
 							<table className="min-w-full divide-y divide-gray-300">
 								<thead className="bg-gray-50">
 								<tr>
 									<th
 										scope="col"
-										className="w-1/12 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+										className="w-1/12 py-3.5 pl-4 pr-3 text-left font-semibold text-gray-900 sm:pl-6">
 										 { loading ? <Spinner width="4" height="4" align="start"/> : <>#</>}
 										
 									</th>
 									<th
 										scope="col"
-										className="w-1/12 px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+										className="w-1/12 px-3 py-3.5 text-left font-semibold text-gray-900">
 										Status
 									</th>
 									<th
 										scope="col"
-										className="w-10/12 py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+										className="w-10/12 py-3.5 pl-4 pr-3 text-left font-semibold text-gray-900 sm:pl-6">
 										Rezept
 									</th>
 									<th
 										scope="col"
-										className="w-10/12 py-3.5 pl-4 pr-4 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+										className="w-10/12 py-3.5 pl-4 pr-4 text-left font-semibold text-gray-900 sm:pl-6">
 										Gutschein
 									</th>
 								</tr>
@@ -157,19 +157,19 @@ export default function Recipes(props) {
 								{recipes.length > 0 ? recipes.map((recipe) => (
 									<tr key={recipe.uuid} onClick={() => navigate('/edit/' + recipe.uuid)}
 									    className="cursor-pointer hover:bg-gray-100">
-										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+										<td className="whitespace-nowrap px-3 py-4 text-gray-500">
 											<span
-												className="inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900">
+												className="inline-flex rounded-full px-2 text-sm font-semibold leading-5 text-gray-900">
 											  {recipe.uuid}
 											</span>
 										</td>
-										<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+										<td className="whitespace-nowrap px-3 py-4 text-gray-500">
 											<span
-												className={"inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900 " + states[recipe.state].color}>
+												className={"inline-flex rounded-full px-2 text-sm font-semibold leading-5 text-gray-900 " + states[recipe.state].color}>
 											  {states[recipe.state].label}
 											</span>
 										</td>
-										<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm sm:pl-6">
+										<td className="whitespace-nowrap py-4 pl-4 pr-3 sm:pl-6">
 											<div className="flex items-center">
 												<div className="h-10 flex-shrink-0">
 													{recipe.featured_image.url &&
@@ -180,21 +180,18 @@ export default function Recipes(props) {
 													}
 												</div>
 												<div className="ml-4">
-													<div className="font-medium text-gray-900">{recipe.title}</div>
+													<div className="font-bold text-gray-900">{recipe.title}</div>
 													<div className="text-gray-500">{getDate(recipe.created)}</div>
 												</div>
 											</div>
 										</td>
-										<td className="whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+										<td className="whitespace-nowrap px-4 py-4 text-gray-500">
 											{recipe.voucher !== '' &&
 												<button
 													onClick={e=>handleCopyCode(e, recipe.voucher)}
 													title="Code kopieren"
 													type="button"
-													className="flex px-3 py-2 bg-orange-600 text-white
-													border border-transparent justify-center align-center
-													hover:bg-white hover:text-orange-600 hover:border-orange-600
-													font-semibold rounded">
+													className="btn secondary">
 													<DocumentDuplicateIcon className="stroke-white w-[16px]"/>
 													<span className="ml-1">{recipe.voucher}</span>
 												</button>
@@ -203,9 +200,9 @@ export default function Recipes(props) {
 									</tr>
 								)) :
 									<tr>
-										<td key="0" className="col-span-4 whitespace-nowrap px-4 py-4 text-sm text-gray-500">
+										<td key="0" className="col-span-4 whitespace-nowrap px-4 py-4 text-gray-500">
 											<button
-												className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+												className="btn"
 												role="button"
 												onClick={handleNewRecipe}
 											>

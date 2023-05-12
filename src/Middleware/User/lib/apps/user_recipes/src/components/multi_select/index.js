@@ -40,7 +40,7 @@ export default function MultiSelect(props) {
 	return (
 		<div>
 			{label !== '' &&
-				<label htmlFor="recipe_menu_type" className="block text-sm font-medium text-gray-700">{label}</label>
+				<label htmlFor="recipe_menu_type" className="block font-bold text-gray-700">{label}</label>
 			}
 			<div className="relative">
 				<Listbox
@@ -49,7 +49,7 @@ export default function MultiSelect(props) {
 					multiple
 				>
 					<Listbox.Button
-						className="relative mt-2 w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-1 focus:ring-indigo-500 sm:text-sm"
+						className="relative mt-2 w-full cursor-default rounded-md border border-gray-300 bg-white py-2 pl-3 pr-10 text-left shadow-sm focus:border-orange-500 focus:outline-none focus:ring-1 focus:ring-orange-500 "
 					>
 						<span className="block truncate">{selectionAsString()}</span>
 						<span className="pointer-events-none absolute inset-y-0 right-0 flex items-center pr-2">
@@ -64,7 +64,7 @@ export default function MultiSelect(props) {
 					>
 					<Listbox.Options
 						static
-						className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none sm:text-sm"
+						className="absolute z-10 mt-1 max-h-60 w-full overflow-auto rounded-md bg-white py-1 text-base shadow-lg ring-1 ring-black ring-opacity-5 focus:outline-none "
 						>
 						{options.map((i, index) => (
 							<Listbox.Option
@@ -72,7 +72,7 @@ export default function MultiSelect(props) {
 								value={i}
 								className={({active}) =>
 									classNames(
-										active ? 'text-white bg-indigo-600' : 'text-gray-900',
+										active ? 'text-white bg-orange-500' : 'text-gray-900',
 										'relative cursor-default select-none py-2 pl-3 pr-9 cursor-pointer'
 									)
 								}
@@ -85,7 +85,7 @@ export default function MultiSelect(props) {
 										{isSelected(i.value) ? (
 											<span
 												className={classNames(
-													active ? 'text-white' : 'text-indigo-600',
+													active ? 'text-white' : 'text-orange-500',
 													'absolute inset-y-0 right-0 flex items-center pr-4'
 												)}
 											>

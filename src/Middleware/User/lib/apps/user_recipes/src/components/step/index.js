@@ -38,12 +38,12 @@ export default function Step(props){
 	
 	return (
 		<tr key={index}>
-			<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+			<td className="whitespace-nowrap px-3 py-4 text-gray-500">
 				<div className="flex flex-col justify-center items-center gap-[5px] items-center">
 					<button
 						onClick={onChangeOrderUp}
 						type="button"
-						className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+						className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-500 hover:border-orange-500"
 					>
 						&#x25B2;
 					</button>
@@ -51,30 +51,30 @@ export default function Step(props){
 					<button
 						onClick={onChangeOrderDown}
 						type="button"
-						className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+						className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-500 hover:border-orange-500"
 					>
 						&#x25BC;
 					</button>
 				</div>
 			
 			</td>
-			<td className="h-72 rounded-md overflow-hidden whitespace-nowrap py-4 text-sm font-medium text-gray-900">
+			<td className="h-72 rounded-md overflow-hidden whitespace-nowrap py-4 font-bold text-gray-900">
 				<Image onChange={handleImageUpload} onDelete={handleImageDelete} image={item.images[0]} uuid={uuid} />
 			</td>
-			<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500 w-full">
+			<td className="whitespace-nowrap px-3 py-4 text-gray-500 w-full">
 				<textarea
 					rows={12}
-					className="block w-full h-full min-h-[260px] rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+					className="block w-full h-full min-h-[260px] rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
 					placeholder="Die leckersten Grillspieße..."
 					value={item.description}
 					onChange={(e) => {item.description = e.target.value; onChange(item);}}
 				/>
 			</td>
-			<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+			<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-bold sm:pr-6">
 				<button
 					onClick={onDelete}
 					type="button"
-					className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
+					className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
 					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
 					     strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
 						<path strokeLinecap="round" strokeLinejoin="round"

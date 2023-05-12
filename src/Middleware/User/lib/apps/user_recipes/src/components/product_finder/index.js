@@ -77,7 +77,7 @@ export default function ProductFinder(props) {
 									key={item.id}
 									className="relative flex flex-col items-center justify-center bg-white round  shadow-md hover:shadow-lg cursor-pointer">
 									<img src={item.images[0]} alt={item.name} title={item.name} className="w-auto h-1/2 max-h-[200px]" />
-									<div className="p-6 text-sm">
+									<div className="p-6">
 										{item.name}
 									</div>
 									{selectedIds.includes(item.id) && (

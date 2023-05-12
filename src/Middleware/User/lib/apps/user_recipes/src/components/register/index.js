@@ -137,7 +137,7 @@ export default function Register(props){
 							<button
 								type="button"
 								onClick={()=> navigate('/')}
-								className="flex w-full justify-center rounded-md border border-transparent bg-orange-500 py-2 px-4 font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								className="flex w-full justify-center rounded-md border border-transparent bg-orange-500 py-2 px-4 font-bold text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
 							>
 								Weiter zum Login
 							</button>
@@ -158,7 +158,7 @@ export default function Register(props){
 							</div>
 						}
 						<div className="sm:col-span-2">
-							<label htmlFor="salutation" className="block font-medium text-gray-700">
+							<label htmlFor="salutation" className="block font-bold text-gray-700">
 								Anrede
 							</label>
 							<div className="mt-1">
@@ -167,7 +167,7 @@ export default function Register(props){
 									name="salutation"
 									defaultValue="Frau"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e) => handleAddress('customers_gender', e.target.value)}
 								>
 									<option value="f">Frau</option>
@@ -178,7 +178,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="firstname" className="block font-medium text-gray-700">
+							<label htmlFor="firstname" className="block font-bold text-gray-700">
 								Vorname
 							</label>
 							<div className="mt-1">
@@ -188,14 +188,14 @@ export default function Register(props){
 									type="text"
 									autoComplete="given-name"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e) => handleAddress('customers_firstname', e.target.value)}
 								/>
 							</div>
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="lastname" className="block font-medium text-gray-700">
+							<label htmlFor="lastname" className="block font-bold text-gray-700">
 								Nachname
 							</label>
 							<div className="mt-1">
@@ -205,14 +205,14 @@ export default function Register(props){
 									type="text"
 									autoComplete="family-name"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e) => handleAddress('customers_lastname', e.target.value)}
 								/>
 							</div>
 						</div>
 						
 						<div className="sm:col-span-2">
-							<label htmlFor="address" className="block font-medium text-gray-700">
+							<label htmlFor="address" className="block font-bold text-gray-700">
 								Straße und Hausnummer
 							</label>
 							<div className="mt-1">
@@ -222,14 +222,14 @@ export default function Register(props){
 									type="text"
 									autoComplete="street-address"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e) => handleAddress('customers_street_address', e.target.value)}
 								/>
 							</div>
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="zip" className="block font-medium text-gray-700">
+							<label htmlFor="zip" className="block font-bold text-gray-700">
 								Postleiztzahl
 							</label>
 							<div className="mt-1">
@@ -239,14 +239,14 @@ export default function Register(props){
 									type="text"
 									autoComplete="postal-code"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e) => handleAddress('customers_postcode', e.target.value)}
 								/>
 							</div>
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="city" className="block font-medium text-gray-700">
+							<label htmlFor="city" className="block font-bold text-gray-700">
 								Ort
 							</label>
 							<div className="mt-1">
@@ -256,14 +256,14 @@ export default function Register(props){
 									type="text"
 									autoComplete="address-level2"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e) => handleAddress('customers_city', e.target.value)}
 								/>
 							</div>
 						</div>
 						
 						<div className="sm:col-span-2">
-							<label htmlFor="country" className="block font-medium text-gray-700">
+							<label htmlFor="country" className="block font-bold text-gray-700">
 								Land
 							</label>
 							<div className="mt-1">
@@ -272,7 +272,7 @@ export default function Register(props){
 									name="country"
 									defaultValue="DE"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e) => handleAddress('customers_country_code', e.target.value)}
 								>
 									<option value="DE">Deutschland</option>
@@ -282,7 +282,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="email" className="block font-medium text-gray-700">
+							<label htmlFor="email" className="block font-bold text-gray-700">
 								Email
 							</label>
 							<div className="mt-1">
@@ -292,14 +292,14 @@ export default function Register(props){
 									type="email"
 									autoComplete="email"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={handleEmail}
 								/>
 							</div>
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="phone" className="block font-medium text-gray-700">
+							<label htmlFor="phone" className="block font-bold text-gray-700">
 								Telefonnummer
 							</label>
 							<div className="mt-1">
@@ -309,7 +309,7 @@ export default function Register(props){
 									type="text"
 									autoComplete="tel"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e) => handleAddress('customers_phone', e.target.value)}
 								/>
 							</div>
@@ -329,7 +329,7 @@ export default function Register(props){
 						}
 						
 						<div className="sm:col-span-2">
-							<label htmlFor="password" className="block font-medium text-gray-700">
+							<label htmlFor="password" className="block font-bold text-gray-700">
 								Passwort
 							</label>
 							<div className="mt-1">
@@ -338,14 +338,14 @@ export default function Register(props){
 									name="password"
 									type="password"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e)=>handlePassword('password1', e.target.value)}
 								/>
 							</div>
 						</div>
 						
 						<div className="sm:col-span-2">
-							<label htmlFor="password-repeat" className="block font-medium text-gray-700">
+							<label htmlFor="password-repeat" className="block font-bold text-gray-700">
 								Passwort wiederholen
 							</label>
 							<div className="mt-1">
@@ -354,7 +354,7 @@ export default function Register(props){
 									name="password-repeat"
 									type="password"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e)=>handlePassword('password2', e.target.value)}
 								/>
 							</div>
@@ -373,7 +373,7 @@ export default function Register(props){
 							/>
 							<button
 								type="submit"
-								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 font-bold text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
 							>
 								Neuen Account erstellen
 							</button>

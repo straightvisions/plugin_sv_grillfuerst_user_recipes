@@ -1,17 +1,17 @@
 html,
 body {
 	font-family: 'Gentona', sans-serif !important;
-	font-size:16px;
+	font-size: 16px;
 	font-weight: 400;
 	/*background: rgb(249, 250, 251);*/
 	background: white;
-	padding-bottom:60px;
+	padding-bottom: 60px;
 	color: #1e1e1e;
 }
 
-#sv-grillfuerst-user-recipes-app{
-	width:100%;
-	max-width:100%;
+#sv-grillfuerst-user-recipes-app {
+	width: 100%;
+	max-width: 100%;
 }
 
 a.link {
@@ -22,130 +22,130 @@ a.link:hover {
 	@apply underline;
 }
 
-h1{
-	-webkit-hyphens:manual;
-	-moz-hyphens:manual;
-	hyphens:manual;
-	font-family:"Gentona", sans-serif;
-	font-weight:700;
-	line-height:1;
-	color:#1e1e1e;
+h1 {
+	-webkit-hyphens: manual;
+	-moz-hyphens: manual;
+	hyphens: manual;
+	font-family: "Gentona", sans-serif;
+	font-weight: 700;
+	line-height: 1;
+	color: #1e1e1e;
 }
 
 @media ( min-width: 0px ) and (orientation: portrait) {
-	h1{
-		font-size:20px;
+	h1 {
+		font-size: 20px;
 	}
 }
 
 @media ( min-width: 0px ) and (orientation: landscape) {
-	h1{
-		font-size:35px;
+	h1 {
+		font-size: 35px;
 	}
 }
 
 @media ( min-width: 768px ) and (orientation: portrait) {
-	h1{
-		font-size:30px;
+	h1 {
+		font-size: 30px;
 	}
 }
 
 @media ( min-width: 992px ) and (orientation: landscape) {
-	h1{
-		font-size:30px;
+	h1 {
+		font-size: 30px;
 	}
 }
 
 @media ( min-width: 1024px ) and (orientation: portrait) {
-	h1{
-		font-size:35px;
+	h1 {
+		font-size: 35px;
 	}
 }
 
 @media ( min-width: 1366px ) and (orientation: landscape) {
-	h1{
-		font-size:35px;
+	h1 {
+		font-size: 35px;
 	}
 }
 
 @media ( min-width: 1600px ) {
-	h1{
-		font-size:35px;
+	h1 {
+		font-size: 35px;
 	}
 }
 
-h2{
-	-webkit-hyphens:manual;
-	-moz-hyphens:manual;
-	hyphens:manual;
-	font-family:"Gentona", sans-serif;
-	font-weight:700;
-	color:#1e1e1e;
+h2 {
+	-webkit-hyphens: manual;
+	-moz-hyphens: manual;
+	hyphens: manual;
+	font-family: "Gentona", sans-serif;
+	font-weight: 700;
+	color: #1e1e1e;
 }
 
 @media ( min-width: 0px ) and (orientation: portrait) {
-	h2{
-		font-size:18px;
+	h2 {
+		font-size: 18px;
 	}
 }
 
 @media ( min-width: 0px ) and (orientation: landscape) {
-	h2{
-		font-size:25px;
+	h2 {
+		font-size: 25px;
 	}
 }
 
 @media ( min-width: 768px ) and (orientation: portrait) {
-	h2{
-		font-size:25px;
+	h2 {
+		font-size: 25px;
 	}
 }
 
 @media ( min-width: 1600px ) {
-	h2{
-		font-size:25px;
+	h2 {
+		font-size: 25px;
 	}
 }
 
-h3{
-	-webkit-hyphens:manual;
-	-moz-hyphens:manual;
-	hyphens:manual;
-	font-family:"Gentona", sans-serif;
-	font-weight:700;
-	font-size:22px;
-	color:#1e1e1e;
+h3 {
+	-webkit-hyphens: manual;
+	-moz-hyphens: manual;
+	hyphens: manual;
+	font-family: "Gentona", sans-serif;
+	font-weight: 700;
+	font-size: 22px;
+	color: #1e1e1e;
 }
 
-h4{
-	-webkit-hyphens:manual;
-	-moz-hyphens:manual;
-	hyphens:manual;
-	font-family:"Gentona", sans-serif;
-	font-weight:700;
-	font-size:20px;
-	color:#1e1e1e;
+h4 {
+	-webkit-hyphens: manual;
+	-moz-hyphens: manual;
+	hyphens: manual;
+	font-family: "Gentona", sans-serif;
+	font-weight: 700;
+	font-size: 20px;
+	color: #1e1e1e;
 }
 
-h5{
-	-webkit-hyphens:manual;
-	-moz-hyphens:manual;
-	hyphens:manual;
-	font-family:"Gentona", sans-serif;
-	font-weight:700;
-	font-size:18px;
-	color:#1e1e1e;
+h5 {
+	-webkit-hyphens: manual;
+	-moz-hyphens: manual;
+	hyphens: manual;
+	font-family: "Gentona", sans-serif;
+	font-weight: 700;
+	font-size: 18px;
+	color: #1e1e1e;
 	
 }
 
-h6{
-	-webkit-hyphens:manual;
-	-moz-hyphens:manual;
-	hyphens:manual;
-	font-family:"Gentona", sans-serif;
-	font-weight:700;
-	font-size:16px;
-	color:#1e1e1e;
+h6 {
+	-webkit-hyphens: manual;
+	-moz-hyphens: manual;
+	hyphens: manual;
+	font-family: "Gentona", sans-serif;
+	font-weight: 700;
+	font-size: 16px;
+	color: #1e1e1e;
 }
 
 
@@ -156,4 +156,30 @@ body {
 	line-height: 1.5;
 	margin: 0;
 	padding: 0;
+}
+
+.btn {
+	@apply border border-orange-500 rounded py-2 px-4 text-white bg-orange-500 hover:bg-white hover:text-orange-500 inline-flex gap-2 items-center;
+}
+
+.btn.primary {
+	@apply bg-black border-black hover:bg-white hover:text-black;
+}
+
+.btn.secondary {
+	@apply bg-white hover:bg-grey-400 hover:text-white border-grey-400 text-grey-400;
+}
+
+.btn:disabled,
+button:disabled{
+	@apply bg-gray-200 border-gray-200 text-gray-400;
+}
+
+input:focus,
+select:focus{
+	@apply focus:border-orange-500 focus:ring-orange-500;
+}
+
+input[type="checkbox"]{
+	@apply h-4 w-4 mt-2 rounded border-orange-500 text-orange-500 focus:ring-orange-500;
 }

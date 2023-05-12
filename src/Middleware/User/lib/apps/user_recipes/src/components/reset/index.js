@@ -49,7 +49,7 @@ export default function Reset(props){
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
 				<Logo />
 				<h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Community Rezepte</h2>
-				<p className="mt-2 text-center text-sm text-gray-600">Passwort erneuern</p>
+				<p className="mt-2 text-center text-gray-600">Passwort erneuern</p>
 			</div>
 			
 			<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
@@ -60,22 +60,22 @@ export default function Reset(props){
 					<form className="space-y-6" onSubmit={handleSubmit}>
 						{message !== '' &&
 							<div role="alert">
-								<div className="bg-red-500 text-sm text-white font-bold rounded-t px-4 py-2">
+								<div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
 									Reset fehlgeschlagen
 								</div>
-								<div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-sm text-red-700"
+								<div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700"
 								     dangerouslySetInnerHTML={{__html: message}}
 								>
 								</div>
 							</div>
 						}
-						<div className="text-sm text-gray-600">
+						<div className="text-gray-600">
 							Bitte geben Sie die E-Mail-Adresse ein, unter der Sie Ihr Konto in unserem Shop angelegt haben.
 							Klicken Sie danach auf "Weiter" und wir senden Ihnen eine E-Mail mit einem Bestätigungs-Link!
 						</div>
 						
 						<div>
-							<label htmlFor="email" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="email" className="block font-bold text-gray-700">
 								Email
 							</label>
 							<div className="mt-1">
@@ -85,7 +85,7 @@ export default function Reset(props){
 									type="email"
 									autoComplete="email"
 									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={handleEmail}
 								/>
 							</div>
@@ -100,7 +100,7 @@ export default function Reset(props){
 							/>
 							<button
 								type="submit"
-								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 font-bold text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
 							>
 								Neues Passwort anfordern
 							</button>

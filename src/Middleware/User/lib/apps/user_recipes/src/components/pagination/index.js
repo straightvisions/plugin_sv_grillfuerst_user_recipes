@@ -19,8 +19,8 @@ export default function Pagination(props) {
 	let pageLinks= () => {
 		let items = [];
 		for(let i=0; i < pages;i++){
-			let className = 'relative z-10 inline-flex items-center px-4 py-2 text-sm font-medium text-indigo-600 focus:z-20';
-			if(i+1 === page) className += ' border border-indigo-500 bg-indigo-50';
+			let className = 'relative z-10 inline-flex items-center px-4 py-2 font-bold text-orange-500 focus:z-20';
+			if(i+1 === page) className += ' border border-orange-500 bg-indigo-50';
 			items.push(<a
 				key={i+1}
 				href="#"
@@ -48,43 +48,43 @@ export default function Pagination(props) {
 			<div className="flex flex-1 justify-between sm:hidden">
 				<a
 					onClick={handlePrev}
-					className="cursor-pointer relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+					className="cursor-pointer relative inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 font-bold text-gray-700 hover:bg-gray-50"
 				>
 					Previous
 				</a>
 				<div>
-					<p className="text-sm text-gray-700">
-						<span className="font-medium">{showingCount}</span> of{' '}
-						<span className="font-medium">{rows}</span> results
+					<p className="text-gray-700">
+						<span className="font-bold">{showingCount}</span> of{' '}
+						<span className="font-bold">{rows}</span> results
 					</p>
 				</div>
 				<a
 					onClick={handleNext}
-					className="cursor-pointer relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 hover:bg-gray-50"
+					className="cursor-pointer relative ml-3 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 font-bold text-gray-700 hover:bg-gray-50"
 				>
 					Next
 				</a>
 			</div>
 			<div className="hidden sm:flex sm:flex-1 sm:items-center sm:justify-between">
 				<div>
-					<p className="text-sm text-gray-700">
-						Zeige <span className="font-medium">{showingCount}</span> von <span className="font-medium">{rows}</span> Ergebnissen
+					<p className="text-gray-700">
+						Zeige <span className="font-bold">{showingCount}</span> von <span className="font-bold">{rows}</span> Ergebnissen
 					</p>
 				</div>
 				<div>
 					<nav className="isolate inline-flex -space-x-px rounded-md shadow-sm" aria-label="Pagination">
 						<a
 							onClick={handlePrev}
-							className="cursor-pointer relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+							className="cursor-pointer relative inline-flex items-center rounded-l-md border border-gray-300 bg-white px-2 py-2 font-bold text-gray-500 hover:bg-gray-50 focus:z-20"
 						>
 							<span className="sr-only">Previous</span>
 							<ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
 						</a>
 						{pageLinks()}
-						{/* Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" */}
+						{/* Current: "z-10 bg-indigo-50 border-orange-500 text-orange-500", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" */}
 						<a
 							onClick={handleNext}
-							className="cursor-pointer relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
+							className="cursor-pointer relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 font-bold text-gray-500 hover:bg-gray-50 focus:z-20"
 						>
 							<span className="sr-only">Next</span>
 							<ChevronRightIcon className="h-5 w-5" aria-hidden="true" />

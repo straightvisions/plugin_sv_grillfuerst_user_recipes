@@ -248,16 +248,16 @@ export default function Ingredients(props) {
 			{showProductFinder && <ProductFinder id="IngredientsProductFinder" description="Hier kannst du Grillfürst Shop-Produkte als Zutat verlinken." items={products} itemsSelected={productSelected} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
 			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
-					<h3 className="text-lg font-medium leading-6 text-gray-900">Zutaten</h3>
-					<p className="mt-1 text-sm text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden. Wir empfehlen das Rezept für 4 Personen anzulegen und entsprechend die Zutatenmengen anzupassen.</p>
+					<h3 className="text-lg font-bold leading-6 text-gray-900">Zutaten</h3>
+					<p className="mt-1 text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden. Wir empfehlen das Rezept für 4 Personen anzulegen und entsprechend die Zutatenmengen anzupassen.</p>
 					<div className="col-span-6 sm:col-span-4 my-4">
-						<label htmlFor="recipe_servings" className="mr-4 text-sm font-medium text-gray-700">
+						<label htmlFor="recipe_servings" className="mr-4 font-bold text-gray-700">
 							Rezept für
 						</label>
 						<select
 							value={servings}
 							onChange={e => setFormState({"servings": parseInt(e.target.value)})}
-							className="w-52 max-w-full whitespace-nowrap mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-indigo-500 focus:outline-none focus:ring-indigo-500 sm:text-sm"
+							className="w-52 max-w-full whitespace-nowrap mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 						>
 							{[1,2,4,6,8,10,12,14,16,18,20].map(i => (
 								<option value={i} key={i}>{i} { i > 1 ? "Portionen" : "Portion"}</option>
@@ -289,19 +289,19 @@ export default function Ingredients(props) {
 						<tr>
 							<th scope="col" className="">
 							</th>
-							<th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+							<th scope="col" className="py-3.5 pl-4 pr-3 text-left font-semibold text-gray-900 sm:pl-6">
 								Zutat
 							</th>
-							<th scope="col" className="w-1/5 px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+							<th scope="col" className="w-1/5 px-3 py-3.5 text-left font-semibold text-gray-900">
 								Menge
 							</th>
-							<th scope="col" className="min-w-[140px] px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+							<th scope="col" className="min-w-[140px] px-3 py-3.5 text-left font-semibold text-gray-900">
 								Einheit
 							</th>
-							<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+							<th scope="col" className="px-3 py-3.5 text-left font-semibold text-gray-900">
 								Anmerkung
 							</th>
-							<th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+							<th scope="col" className="px-3 py-3.5 text-left font-semibold text-gray-900">
 								Produkt
 							</th>
 							<th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -312,65 +312,65 @@ export default function Ingredients(props) {
 						<tbody className="divide-y divide-gray-200 bg-white">
 						{ingredients.map((ingredient, index) => (
 							<tr key={ingredient.id + '-' + index}>
-								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+								<td className="whitespace-nowrap py-4 pl-4 pr-3 font-bold text-gray-900 sm:pl-6">
 									<button
 										onClick={()=>handleOrderUp(index, ingredient)}
 										type="button"
-										className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+										className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-500 hover:border-orange-500"
 									>
 										&#x25B2;
 									</button>
 									<button
 										onClick={()=>handleOrderDown(index, ingredient)}
 										type="button"
-										className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+										className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-500 hover:border-orange-500"
 									>
 										&#x25BC;
 									</button>
 								</td>
-								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+								<td className="whitespace-nowrap py-4 pl-4 pr-3 font-bold text-gray-900 sm:pl-6">
 									{ingredient.custom === false ?
 										ingredient.label
 									: <input
 											placeholder="Zutat"
 											type="text"
-											className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+											className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
 											value={ingredient.label}
 											onChange={e => { ingredient.label = e.target.value; setIngredient(ingredient); }}
 										/>
 									}
 								</td>
-								<td className="w-1/5 whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+								<td className="w-1/5 whitespace-nowrap px-3 py-4 text-gray-500">
 									<input
 										value={ingredient.amount.toString().replace('.', ',')}
 										onChange={(e) => handleCommaInput(e, ingredient)}
 										onBlur={(e) => handleCommaInput(e, ingredient, true)}
 										type="text"
 										placeholder="1"
-										className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+										className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
 									/>
 								
 								</td>
-								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+								<td className="whitespace-nowrap px-3 py-4 text-gray-500">
 									<Dropdown value={ingredient.unit} items={ingredientUnitValues}
 									          onChange={val => { ingredient.unit = val; setIngredient(ingredient);}}
 									          defaultValue={"g"}
 									/>
 								</td>
-								<td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+								<td className="whitespace-nowrap px-3 py-4 text-gray-500">
 									<input
 										type="text"
-										className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+										className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
 										value={ingredient.note}
 										onChange={e => { ingredient.note = e.target.value; setIngredient(ingredient); }}
 									/>
 								</td>
-								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-bold sm:pr-6">
 									{ isFalsy(ingredient.products_id) ?
 										<button
 											onClick={() => handleShowProductFinder(ingredient)}
 											type="button"
-											className="text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
+											className="text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
 											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
 											     strokeWidth="1.5" stroke="currentColor"
 											     className="w-6 h-6 transform rotate-45">
@@ -383,18 +383,18 @@ export default function Ingredients(props) {
 										<button
 											onClick={() => handleShowProductFinder(ingredient)}
 											type="button"
-											className="w-[46px] h-[46px] max-h-[46px] overflow-hidden text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
+											className="w-[46px] h-[46px] max-h-[46px] overflow-hidden text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
 												<img width="24" height="24" src={getThumb(ingredient.products_id)} alt={getName(ingredient.products_id)} title={getName(ingredient.products_id)}/>
 											<span className="sr-only">Verlinken</span>
 										</button>
 									}
 									
 								</td>
-								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-bold sm:pr-6">
 									<button
 										onClick={() => removeIngredient(index, ingredient)}
 										type="button"
-										className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-medium rounded-full text-sm p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
+										className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
 										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
 										     strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
 											<path strokeLinecap="round" strokeLinejoin="round"

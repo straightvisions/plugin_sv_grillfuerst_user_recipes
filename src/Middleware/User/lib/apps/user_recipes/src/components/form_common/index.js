@@ -142,50 +142,46 @@ export default function Common(props) {
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 				<div className="md:grid md:grid-cols-4 md:gap-6">
 					<div className="md:col-span-1">
-						<h3 className="text-lg font-medium leading-6 text-gray-900">Allgemeines</h3>
-						<p className="mt-1 text-sm text-gray-500">
+						<h3 className="text-lg font-bold leading-6 text-gray-900">Allgemeines</h3>
+						<p className="mt-1 text-gray-500">
 							Bearbeite hier die Basisinformationen zu deinem Rezept.
 						</p>
 					</div>
 					<div className="mt-5 space-y-6 md:col-span-3 md:mt-0">
 						<div className="col-span-3 sm:col-span-2">
-							<label htmlFor="recipe_title" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="recipe_title" className="block font-bold mb-1">
 								Titel
 							</label>
-							<div className="mt-1 flex rounded-md shadow-sm">
-								<input
-									type="text"
-									name="title"
-									id="title"
-									className="block w-full flex-1 rounded-none rounded-r-md border-gray-300 focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-									placeholder="Leckere Grillspieße"
-									value={title}
-									onChange={(e)=>setFormState({title: e.target.value})}
-									required
-								/>
-							</div>
+							<input
+								type="text"
+								name="title"
+								id="title"
+								className="block w-full flex-1 rounded-md border-gray-300 focus:border-orange-500 focus:ring-orange-500 "
+								placeholder="Leckere Grillspieße"
+								value={title}
+								onChange={(e)=>setFormState({title: e.target.value})}
+								required
+							/>
 						</div>
 						
 						<div>
-							<label htmlFor="recipe_excerpt" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="recipe_excerpt" className="block font-bold mb-1">
 								Zusammenfassung
 							</label>
-							<div className="mt-1">
-								<textarea
-									id="recipe_excerpt"
-									rows={3}
-									className="block w-full min-h-[120px] rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
-									placeholder="Die leckersten Grillspieße..."
-									value={excerpt}
-									onChange={(e)=>setFormState({excerpt: e.target.value})}
-									required
-								/>
-							</div>
-							<p className="mt-2 text-sm text-gray-500">Eine knackige Zusammenfassung oder Einführung in dein Rezept.</p>
+							<textarea
+								id="recipe_excerpt"
+								rows={3}
+								className="block w-full min-h-[120px] rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+								placeholder="Die leckersten Grillspieße..."
+								value={excerpt}
+								onChange={(e)=>setFormState({excerpt: e.target.value})}
+								required
+							/>
+							<p className="mt-2 text-gray-400">Eine knackige Zusammenfassung oder Einführung in dein Rezept.</p>
 						</div>
 						
 						<div className="h-200 rounded-md overflow-hidden">
-							<label className="block text-sm font-medium text-gray-700">Hauptbild</label>
+							<label className="block font-bold">Hauptbild</label>
 							<Image onChange={handleImageUpload} onDelete={handleImageDelete} image={featured_image} uuid={formState.uuid} />
 						</div>
 						
@@ -203,7 +199,7 @@ export default function Common(props) {
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">
 							<div className="mb-5">
-								<label htmlFor="recipe_preparation_time" className="block text-sm font-medium text-gray-700">
+								<label htmlFor="recipe_preparation_time" className="block font-bold">
 									Vorbereitungszeit
 								</label>
 								<div className="mt-1 flex rounded-md shadow-sm">
@@ -211,14 +207,14 @@ export default function Common(props) {
 										type="number"
 										name="recipe_preparation_time"
 										id="recipe_preparation_time"
-										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
 										onChange={(e)=>setFormState({preparation_time: parseInt(e.target.value)})}
 										value={preparation_time}
 									/>
 								</div>
 							</div>
 							<div className="mb-5">
-								<label htmlFor="recipe_cooking_time" className="block text-sm font-medium text-gray-700">
+								<label htmlFor="recipe_cooking_time" className="block font-bold">
 									Kochzeit
 								</label>
 								<div className="mt-1 flex rounded-md shadow-sm">
@@ -226,14 +222,14 @@ export default function Common(props) {
 										type="number"
 										name="recipe_cooking_time"
 										id="recipe_cooking_time"
-										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
 										onChange={(e)=>setFormState({cooking_time: parseInt(e.target.value)})}
 										value={cooking_time}
 									/>
 								</div>
 							</div>
 							<div className="mb-5">
-								<label htmlFor="recipe_waiting_time" className="block text-sm font-medium text-gray-700">
+								<label htmlFor="recipe_waiting_time" className="block font-bold">
 									Wartezeit
 								</label>
 								<div className="mt-1 flex rounded-md shadow-sm">
@@ -241,7 +237,7 @@ export default function Common(props) {
 										type="number"
 										name="recipe_waiting_time"
 										id="recipe_waiting_time"
-										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
+										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
 										onChange={(e)=>setFormState({waiting_time: parseInt(e.target.value)})}
 										value={waiting_time}
 									/>

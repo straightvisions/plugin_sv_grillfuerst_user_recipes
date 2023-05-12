@@ -69,13 +69,13 @@ export default function Steps(props) {
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
-					<h3 className="text-lg font-medium leading-6 text-gray-900">Schritte</h3>
-					<p className="mt-1 text-sm text-gray-500">Gib alle Zubereitungsschritte ein.</p>
+					<h3 className="text-lg font-bold leading-6 text-gray-900">Schritte</h3>
+					<p className="mt-1 text-gray-500">Gib alle Zubereitungsschritte ein.</p>
 					<div className="col-span-6 sm:col-span-4 my-4">
 						<button
 							onClick={addStep}
 							type="button"
-							className="relative inline-flex items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+							className="btn"
 						>
 							Schritt hinzufügen
 						</button>
@@ -83,7 +83,7 @@ export default function Steps(props) {
 				</div>
 				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
 					<table className="w-full divide-y divide-gray-300">
-						<thead className="bg-gray-50 font-semibold text-left text-gray-900 text-sm">
+						<thead className="bg-gray-50 font-semibold text-left text-gray-900">
 						<tr>
 							<th scope="col"
 								className="px-4 py-3.5 sm:px-6">

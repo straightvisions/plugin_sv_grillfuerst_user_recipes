@@ -1,6 +1,6 @@
 import React, {useState} from 'react';
 import {Link, useNavigate} from 'react-router-dom';
-import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid';
+import { PlusIcon, ArrowRightIcon, ArrowLeftIcon } from '@heroicons/react/20/solid';
 import {  useLocation } from 'react-router-dom';
 import routes from '../../models/routes';
 import user from '../../modules/user';
@@ -36,11 +36,11 @@ function FormButton(props){
 	if(location.pathname.includes('/edit/')) {
 		return (
 			<Link
-				className="relative inline-flex items-center rounded-md border border-transparent bg-black px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-black hover:border-black focus:outline-none"
+				className="btn primary"
 				role="button"
 				to="/"
 			>
-				<ArrowRightIcon className="-ml-1 mr-2 h-5 w-5" aria-hidden="true"/>
+				<ArrowLeftIcon className="-ml-1 h-5 w-5" aria-hidden="true"/>
 				<span>Übersicht</span>
 			</Link>
 		);
@@ -49,7 +49,7 @@ function FormButton(props){
 	// default
 	return (
 		<button
-			className="relative inline-flex gap-2 items-center rounded-md border border-transparent bg-orange-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-white hover:text-orange-600 hover:border-orange-600 focus:outline-none"
+			className="btn"
 			role="button"
 			onClick={handleNewRecipe}
 			disabled={loading}
@@ -71,7 +71,7 @@ export default function Header(props) {
 		<div className="flex items-center mb-4 gap-2 justify-between">
 			<FormButton {...props} />
 			<button
-				className="bg-white hover:bg-grey-400 hover:text-white border border-grey-400 text-grey-400 py-2 px-4 rounded text-sm font-medium text-white "
+				className="btn secondary"
 				onClick={handleLogout}
 			>
 				Logout
