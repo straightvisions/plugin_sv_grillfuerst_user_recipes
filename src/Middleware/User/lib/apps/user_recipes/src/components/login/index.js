@@ -67,30 +67,30 @@ export default function Login(props) {
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
 				<Logo/>
 				<h2 className="mt-6 text-center">Community Rezepte</h2>
-				<p className="mt-2 text-center text-sm text-gray-600">Melde dich mit deinem Grillfürst Shop Account
+				<p className="mt-2 text-center">Melde dich mit deinem Grillfürst Shop Account
 					an!</p>
 			</div>
 			
 			<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-				<div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 relative">
+				<div className="bg-white py-8 px-4 shadow-2xl sm:rounded-lg sm:px-10 relative">
 					{isSending &&
 						<Overlay/>
 					}
 					<form className="space-y-6" onSubmit={handleSubmit}>
 						{message !== '' &&
 							<div role="alert">
-								<div className="bg-red-500 text-sm text-white font-bold rounded-t px-4 py-2">
+								<div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
 									Login fehlgeschlagen
 								</div>
 								<div
-									className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-sm text-red-700"
+									className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700"
 									dangerouslySetInnerHTML={{__html: message}}
 								>
 								</div>
 							</div>
 						}
 						<div>
-							<label htmlFor="email" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="email" className="block font-medium text-gray-700">
 								Email
 							</label>
 							<div className="mt-1">
@@ -108,7 +108,7 @@ export default function Login(props) {
 						</div>
 						
 						<div>
-							<label htmlFor="password" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="password" className="block font-medium text-gray-700">
 								Password
 							</label>
 							<div className="mt-1">
@@ -138,7 +138,7 @@ export default function Login(props) {
 							<button
 								disabled={isSending}
 								type="submit"
-								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 							>
 								Anmelden
 							</button>
@@ -162,7 +162,7 @@ export default function Login(props) {
 								className="hidden"
 							/>
 							<a
-								className="flex w-full justify-center rounded-md border border-transparent bg-indigo-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								className="flex w-full justify-center rounded-md border border-transparent bg-black py-2 px-4 font-medium text-white shadow-sm hover:bg-grey3 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 								href={routes.getUrl('/register')}
 							>
 								Neuen Account erstellen

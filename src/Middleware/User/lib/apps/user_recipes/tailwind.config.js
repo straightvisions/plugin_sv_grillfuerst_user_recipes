@@ -6,8 +6,19 @@ module.exports = {
   ],
   theme: {
     fontFamily: {
+      Body: ['Gentona', 'Arial', 'sans-serif'],
       heading: ['Gentona', 'sans-serif'],
       sans: ['Gentona', 'sans-serif'],
+    },
+    fontSize: {
+      'base': '16px',
+      'xs': '12px',
+      'sm': '14px',
+      'md': '18px',
+      'lg': '22px',
+      'xl': '24px',
+      '2xl': '28px',
+      '3xl': '30px'
     },
     /*
     red #D51417
@@ -26,6 +37,9 @@ module.exports = {
     
      */
     extend: {
+      fontFamily: {
+        gentona: ['Gentona', 'Arial', 'sans-serif'],
+      },
       colors: {
         red: {
           50: '#FFE3E3',
@@ -64,20 +78,21 @@ module.exports = {
           900: '#262626',
         },
         'greyLight':'#FDFDFD',
-        'greyDark':'#473930'
+        'greyDark':'#473930',
+        'grey1': '#F4F4F4',
+        'grey2': '#C6C6C6',
+        'grey3': '#6F6E6E',
+        'black': '#1e1e1e',
       },
-      /*
-      minWidth: {
-        'max': 'max-content'
+      boxShadow: {
+        '2xl': '0 10px 25px rgba(0, 0, 0, 0.15)',
       },
-      height: {
-        '200': '20rem'
-      }*/
     },
   },
   plugins: [
     require('@tailwindcss/typography'),
     require('@tailwindcss/forms'),
     require('@tailwindcss/aspect-ratio'),
+    require('tailwindcss-box-shadow'),
   ]
 }

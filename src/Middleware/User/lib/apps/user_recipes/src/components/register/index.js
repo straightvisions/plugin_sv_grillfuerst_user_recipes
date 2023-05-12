@@ -117,12 +117,12 @@ export default function Register(props){
 		<div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
 				<Logo />
-				<h2 className="mt-6 text-center text-3xl font-bold tracking-tight text-gray-900">Community Rezepte</h2>
-				<p className="mt-2 text-center text-sm text-gray-600">Mit deinen Daten erstellen wir einen Account im Grillfürst-Shop damit du dort später deine Gutscheine einlösen kannst!</p>
+				<h2 className="mt-6 text-center ">Community Rezepte</h2>
+				<p className="mt-2 text-center text-gray-600">Mit deinen Daten erstellen wir einen Account im Grillfürst-Shop damit du dort später deine Gutscheine einlösen kannst!</p>
 			</div>
 			
 			<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-xl">
-				<div className="bg-white py-8 px-4 shadow sm:rounded-lg sm:px-10 relative">
+				<div className="bg-white py-8 px-4 shadow-2xl sm:rounded-lg sm:px-10 relative">
 					{ isSending &&
 						<Overlay />
 					}
@@ -137,7 +137,7 @@ export default function Register(props){
 							<button
 								type="button"
 								onClick={()=> navigate('/')}
-								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								className="flex w-full justify-center rounded-md border border-transparent bg-orange-500 py-2 px-4 font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 							>
 								Weiter zum Login
 							</button>
@@ -148,17 +148,17 @@ export default function Register(props){
 					<form className="space-y-6 grid grid-cols-2 gap-x-4" onSubmit={handleSubmit}>
 						{message !== '' &&
 							<div role="alert" className="col-span-2">
-								<div className="bg-red-500 text-sm text-white font-bold rounded-t px-4 py-2">
+								<div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
 									Registrierung fehlgeschlagen
 								</div>
-								<div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-sm text-red-700"
+								<div className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700"
 								     dangerouslySetInnerHTML={{__html: message}}
 								>
 								</div>
 							</div>
 						}
 						<div className="sm:col-span-2">
-							<label htmlFor="salutation" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="salutation" className="block font-medium text-gray-700">
 								Anrede
 							</label>
 							<div className="mt-1">
@@ -178,7 +178,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="firstname" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="firstname" className="block font-medium text-gray-700">
 								Vorname
 							</label>
 							<div className="mt-1">
@@ -195,7 +195,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="lastname" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="lastname" className="block font-medium text-gray-700">
 								Nachname
 							</label>
 							<div className="mt-1">
@@ -212,7 +212,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-2">
-							<label htmlFor="address" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="address" className="block font-medium text-gray-700">
 								Straße und Hausnummer
 							</label>
 							<div className="mt-1">
@@ -229,7 +229,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="zip" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="zip" className="block font-medium text-gray-700">
 								Postleiztzahl
 							</label>
 							<div className="mt-1">
@@ -246,7 +246,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="city" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="city" className="block font-medium text-gray-700">
 								Ort
 							</label>
 							<div className="mt-1">
@@ -263,7 +263,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-2">
-							<label htmlFor="country" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="country" className="block font-medium text-gray-700">
 								Land
 							</label>
 							<div className="mt-1">
@@ -282,7 +282,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="email" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="email" className="block font-medium text-gray-700">
 								Email
 							</label>
 							<div className="mt-1">
@@ -299,7 +299,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-1">
-							<label htmlFor="phone" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="phone" className="block font-medium text-gray-700">
 								Telefonnummer
 							</label>
 							<div className="mt-1">
@@ -321,7 +321,7 @@ export default function Register(props){
 						
 						{password.message !== '' &&
 							<div role="alert" className="col-span-2">
-								<div className="border border-red-400 rounded-b bg-red-100 px-4 py-3 text-sm text-red-700"
+								<div className="border border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700"
 								     dangerouslySetInnerHTML={{__html: password.message}}
 								>
 								</div>
@@ -329,7 +329,7 @@ export default function Register(props){
 						}
 						
 						<div className="sm:col-span-2">
-							<label htmlFor="password" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="password" className="block font-medium text-gray-700">
 								Passwort
 							</label>
 							<div className="mt-1">
@@ -345,7 +345,7 @@ export default function Register(props){
 						</div>
 						
 						<div className="sm:col-span-2">
-							<label htmlFor="password-repeat" className="block text-sm font-medium text-gray-700">
+							<label htmlFor="password-repeat" className="block font-medium text-gray-700">
 								Passwort wiederholen
 							</label>
 							<div className="mt-1">
@@ -373,7 +373,7 @@ export default function Register(props){
 							/>
 							<button
 								type="submit"
-								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 text-sm font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
+								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 font-medium text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
 							>
 								Neuen Account erstellen
 							</button>
