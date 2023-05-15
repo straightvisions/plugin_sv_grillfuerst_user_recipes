@@ -405,19 +405,26 @@ final class Recipes_Middleware implements Middleware_Interface {
     }
 
     // TEST FUNCTIONS ----------------------------------------------------------------------------
-    public function test_send_email_recipe_published() {
-        $params = [
-            'to'      => 'dennis-heiden@straightvisions.com',
-            'subject' => 'test',
-            'name'    => 'Herr Dennis Heiden',
-            'voucher_code' => 12345,
-            'shop_url' => 'https://google.com',
-            'template' => 'published'
-        ];
+    public function test_send_email_recipe_published($request) {
+        return $this->Api_Middleware->response_public($request, function ($Request) {
+            $urlParams  = $Request->getParams();
 
-        if($this->settings['debug'] || $this->settings['env'] === 'development') {
-            $this->Email_Middleware->send($params);
-        }
+            $params = [
+                'to'      => $urlParams['email'] ?? 'dennis-heiden@straightvisions.com',
+                'subject' => 'test',
+                'name'    => 'Herr Dennis Heiden',
+                'voucher_code' => 12345,
+                'shop_url' => 'https://google.com',
+                'template' => 'published'
+            ];
+
+            if($this->settings['debug'] || $this->settings['env'] === 'development') {
+                $this->Email_Middleware->send($params);
+            }
+
+            return [$params, 200];
+        });
+
 
     }
 
