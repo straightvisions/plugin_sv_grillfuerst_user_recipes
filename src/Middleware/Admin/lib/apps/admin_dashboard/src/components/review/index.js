@@ -71,7 +71,7 @@ export default function Review() {
 	// load data from db
 	useEffect(() => {
 		setLoading(true);
-		if(Object.keys(attributes.data).length === 0 || refresh){
+		//if(Object.keys(attributes.data).length === 0 || refresh){
 			fetch(routes.getRecipeByUuid + params.uuid,{
 				headers:headers.get(),
 			})
@@ -83,11 +83,11 @@ export default function Review() {
 					setLoading(false);
 					setRefresh(false);
 				});
-		}else{
+		/*}else{
 			setLoading(false);
 			setRefresh(false);
-		}
-	}, [refresh]);
+		}*/
+	}, []);
 	
 	// handle form locking
 	useEffect(() => {
@@ -96,6 +96,7 @@ export default function Review() {
 		
 		if(attributes.data.state !== 'review_pending' || attributes.saving || attributes.submitting || attributes.publishing){
 			setAttributes({disabled: true});
+			//setRefresh(true);
 		}else{
 			setAttributes({disabled: false});
 		}
@@ -149,7 +150,7 @@ export default function Review() {
 			.then(response => response.json())
 			.then(res => {
 				setAttributes({submitting: false});
-				setRefresh(true);
+				//setRefresh(true);
 			}).catch(function(error) {
 			// do error handling
 			//@todo give a notice on error

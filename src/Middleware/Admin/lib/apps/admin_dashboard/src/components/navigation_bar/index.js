@@ -3,8 +3,9 @@ import {Link, useNavigate} from "react-router-dom";
 import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-
+import routes from '../../models/routes';
 import {  useLocation } from 'react-router-dom';
+
 const user = {
 	name: 'Tom Cook',
 	email: 'tom@example.com',
@@ -13,7 +14,9 @@ const user = {
 }
 
 const navigation = [
-	{ name: 'Dashboard', href: '/', current: true },
+	//hotfix
+	//{ name: 'Dashboard', href: '/', current: true },
+	{ name: 'Dashboard', href: window.location.hostname === 'localhost' ? '/' : '/community-rezepte/admin', current: true },
 ]
 
 const userNavigation = [
@@ -25,6 +28,7 @@ function classNames(...classes) {
 }
 
 export default function NavigationBar(props) {
+	
 	return (
 		<Disclosure as="nav" className="bg-white shadow-sm">
 			{({ open }) => (

@@ -81,6 +81,7 @@ export default function ReviewToolbar(props) {
 					<><span>|</span><a href={link} target="_blank">Zum Rezept</a></>
 				}
 			</div>
+			{/*
 			<div className="mr-0 ml-auto flex gap-2 justify-end">
 				<button title="Daten vom Serer neu laden." disabled={_disabled && !forcedEditing} onClick={onRefresh} type="button" className="flex items-center gap-2 px-2 py-1 bg-white border rounded text-sm border-gray-200 bg-red-600 text-white">
 					{ refreshing ? <Spinner width="4" height="4" /> : <svg xmlns="http://www.w3.org/2000/svg" className="w-4 h-4" viewBox="0 0 26 26">
@@ -88,7 +89,7 @@ export default function ReviewToolbar(props) {
 					</svg> }
 				</button>
 			</div>
-			
+			*/}
 			
 		</div>
 	);
