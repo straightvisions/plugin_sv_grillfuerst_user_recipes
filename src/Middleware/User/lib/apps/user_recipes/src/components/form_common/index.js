@@ -200,7 +200,7 @@ export default function Common(props) {
 						<div className="md:grid md:grid-cols-3 md:gap-6">
 							<div className="mb-5">
 								<label htmlFor="recipe_preparation_time" className="block font-bold">
-									Vorbereitungszeit
+									Vorbereitungszeit in Minuten
 								</label>
 								<div className="mt-1 flex rounded-md shadow-sm">
 									<input
@@ -215,7 +215,7 @@ export default function Common(props) {
 							</div>
 							<div className="mb-5">
 								<label htmlFor="recipe_cooking_time" className="block font-bold">
-									Kochzeit
+									Kochzeit in Minuten
 								</label>
 								<div className="mt-1 flex rounded-md shadow-sm">
 									<input
@@ -230,7 +230,7 @@ export default function Common(props) {
 							</div>
 							<div className="mb-5">
 								<label htmlFor="recipe_waiting_time" className="block font-bold">
-									Wartezeit
+									Wartezeit in Minuten
 								</label>
 								<div className="mt-1 flex rounded-md shadow-sm">
 									<input

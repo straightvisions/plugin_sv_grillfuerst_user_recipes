@@ -90,15 +90,15 @@ export default function RecipeDatasheet(props) {
 						}</dd>
 					</div>
 					<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-						<dt className="font-bold text-gray-500">Vorbereitungszeit</dt>
+						<dt className="font-bold text-gray-500">Vorbereitungszeit in Minuten</dt>
 						<dd className="mt-1 text-gray-900 sm:col-span-2 sm:mt-0">{data.preparation_time}</dd>
 					</div>
 					<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-						<dt className="font-bold text-gray-500">Kochzeit</dt>
+						<dt className="font-bold text-gray-500">Kochzeit in Minuten</dt>
 						<dd className="mt-1 text-gray-900 sm:col-span-2 sm:mt-0">{data.cooking_time}</dd>
 					</div>
 					<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
-						<dt className="font-bold text-gray-500">Wartezeit</dt>
+						<dt className="font-bold text-gray-500">Wartezeit in Minuten</dt>
 						<dd className="mt-1 text-gray-900 sm:col-span-2 sm:mt-0">{data.waiting_time}</dd>
 					</div>
 					<div className="py-4 sm:grid sm:grid-cols-3 sm:gap-4 sm:py-5 sm:px-6">
