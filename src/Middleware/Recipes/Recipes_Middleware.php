@@ -383,9 +383,9 @@ final class Recipes_Middleware implements Middleware_Interface {
                 'shop_url'     => 'https://grillfuerst.de', //@todo move this to settings
             ];
 
-            $errors = array_merge($errors, $this->send_email_recipe_published($email));
-            // no error handling for this operation, sry
             $this->Recipe_Updater_Service->update(['voucher' => $voucher], $uuid);
+
+            $errors = array_merge($errors, $this->send_email_recipe_published($email));
         } else {
             $errors[] = ['Gutscheincode konnte nicht erstellt werden.'];
         }

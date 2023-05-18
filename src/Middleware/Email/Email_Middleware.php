@@ -36,16 +36,16 @@ class Email_Middleware {
 
     public function send(array $data): array {
         $errors = [];
-        $from = new Address(isset($data['from']) ? $data['from'] : $this->settings['from']);
-        $to   = new Address($data['to']);
-
-        $email = (new Email())
-            ->from($from)
-            ->to($to)
-            ->subject($data['subject'])
-            ->html($this->render($data));
-
         try {
+            $from = new Address(isset($data['from']) ? $data['from'] : $this->settings['from']);
+            $to   = new Address($data['to']);
+
+            $email = (new Email())
+                ->from($from)
+                ->to($to)
+                ->subject($data['subject'])
+                ->html($this->render($data));
+
             $this->mailer->send($email);
             $this->logger->info('Email sent successfully', $data);
         } catch (Throwable $exception) {

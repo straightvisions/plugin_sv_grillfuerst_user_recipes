@@ -50,6 +50,7 @@ final class User_Info_Service {
             $data = [];
             $data['firstname'] = isset($body_data['customers_firstname']) ? $body_data['customers_firstname'] : '';
             $data['lastname'] = isset($body_data['customers_lastname']) ? $body_data['customers_lastname'] : '';
+            $data['username'] = isset($body_data['customer_username']) ? $body_data['customer_username'] : '';
             $data['gender'] = isset($body_data['customers_gender']) ? $body_data['customers_gender'] : '';
             $data['avatar'] = isset($body_data['customers_avatar']) ? $body_data['customers_avatar'] : '';
             $body['salutation'] = '';
@@ -75,6 +76,11 @@ final class User_Info_Service {
         }
 
        return ['body'=>$body, 'status' => $code];
+    }
+
+    public function get_raw(int $user_id, bool $trusted = false){
+        $response = $this->get($user_id, $trusted);
+        return $response['status'] === 200 || $response['status'] === 201 ? $response['body']['data'] : null;
     }
 
 }

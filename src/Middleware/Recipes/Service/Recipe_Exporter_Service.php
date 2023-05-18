@@ -7,6 +7,7 @@ use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Recipe_Repository;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Exporter_Item;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
+use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Info_Service;
 use Psr\Container\ContainerInterface;
 
 //@todo this heavily relies on wordpress, so we need to refactor this to be more generic and add an adapter layer to it
@@ -28,11 +29,13 @@ final class Recipe_Exporter_Service {
         Recipe_Finder_Service $Recipe_Finder_Service,
         Logger_Factory $Logger_Factory,
         Api_Middleware $Api_Middleware,
+        User_Info_Service $User_Info_Service,
         ContainerInterface $container
     ) {
         $this->repository            = $repository;
         $this->Recipe_Validator      = $Recipe_Validator;
         $this->Recipe_Finder_Service = $Recipe_Finder_Service;
+        $this->User_Info_Service = $User_Info_Service;
         $this->logger                = $Logger_Factory
             ->addFileHandler('user_updater.log')
             ->createLogger();
@@ -163,16 +166,29 @@ final class Recipe_Exporter_Service {
         $feat_image = $item->get('featured_image');
         $feat_image_res = $this->export_media($feat_image);
         /*
+         // debug
         echo "item";
-var_dump($item);
-echo "-------------------- data -...........";
-var_dump(['preparation_time' => $item->get('preparation_time'),
+        var_dump($item);
+        echo "-------------------- data -...........";
+        var_dump(['preparation_time' => $item->get('preparation_time'),
           'cooking_time'     => $item->get('cooking_time'),
           'waiting_time'     => $item->get('waiting_time'),
           'difficulty'       => $item->get('difficulty'),
           'ingredients'      => $item->get('ingredients'),
           'accessories'      => $item->get('accessories'),
-          'steps'            => $item->get('steps'),]);die;*/
+          'steps'            => $item->get('steps'),]);
+        die;*/
+
+        $user = $this->User_Info_Service->get_raw($item->get('user_id'), true);
+
+        $author = [
+            'user_id'=>$item->get('user_id'),
+            'username'=> $user ? $user['username'] : '',
+            'firstname'=> $user ? $user['firstname'] : '',
+            'lastname'=> $user ? $user['lastname'] : '',
+            'voucher'=>$item->get('voucher'),
+        ];
+
         $payload = [
             'title'           => $item->get('title'),
             'status'          => 'publish',
@@ -189,9 +205,14 @@ var_dump(['preparation_time' => $item->get('preparation_time'),
                 'ingredients'      => $item->get('ingredients'),
                 'accessories'      => $item->get('accessories'),
                 'steps'            => $item->get('steps'),
-                'gf_user_recipe'   => [
-                    'gf_user_recipe_uuid'    => $item->get('uuid'),
-                    'gf_user_recipe_user_id' => $item->get('user_id')
+                'gf_community_recipe_is' => '1',
+                'gf_community_recipe'   => [
+                    'uuid'    => $item->get('uuid'),
+                    'user_id' => $author['user_id'],
+                    'firstname' => $author['firstname'],
+                    'lastname' => $author['lastname'],
+                    'username' => $author['username'],
+                    'voucher' => $author['voucher'],
                 ]
             ]
         ];
