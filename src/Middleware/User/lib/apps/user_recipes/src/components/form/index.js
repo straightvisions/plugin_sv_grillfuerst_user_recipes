@@ -59,12 +59,15 @@ export default function Form(props) {
 		if(saving || loading) return;
 		setSavingState(true);
 		//@todo change route in backend to match stateless route here
-		
+		const formStateCopy = { ...formState, ...{} };
+		if(formStateCopy.state !== 'review_pending'){
+			delete formStateCopy.state;
+		}
 		fetch(routes.updateRecipe +  params.uuid, {
 			method: 'PUT',
 			cache: 'no-cache',
 			headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + storage.get('token')},
-			body: JSON.stringify(formState),
+			body: JSON.stringify(formStateCopy),
 		})
 			.then(response => response.json())
 			.then(data => {
