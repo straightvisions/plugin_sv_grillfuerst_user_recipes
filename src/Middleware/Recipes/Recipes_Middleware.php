@@ -288,7 +288,7 @@ final class Recipes_Middleware implements Middleware_Interface {
             // debug // skip real export and just test the response part
             if($debug){
                 $results = ['status' => 200, 'link' => '', 'message'=>'Route success', 'errors' => []];
-                $results['body'] = ['post'=> (object)['guid'=>(object)['rendered'=>'https://www.google.com']]];
+                $results['post'] = (object)['link'=>'https://www.google.com'];
             }else{
                 $results = $this->Recipe_Exporter_Service->export($uuid);
             }
@@ -296,18 +296,17 @@ final class Recipes_Middleware implements Middleware_Interface {
             $errors  = $results['errors'];
 
             if ($results['status'] === 200 || $results['status'] === 201) {
-                $body = $results['body'];
-                $post = $body['post'];
+                $post = $results['post'];
 
                 // change state to published + add link to post
                 $this->Recipe_Updater_Service->update(
                     [
                     'state' => 'published',
-                    'link' => $post->guid->rendered
+                    'link' => $post->link,
                     ], $uuid);
 
                 //@todo buggy
-                $results['link'] = $post->guid->rendered;
+                $results['link'] = $post->link;
 
                 $errors = array_merge(
                     $errors,
