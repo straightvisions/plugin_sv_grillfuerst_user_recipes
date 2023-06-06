@@ -73,7 +73,9 @@ export default function Form(props) {
 			.then(data => {
 				//@todo give a notice on success
 				// fallback
-				window.scrollTo({top: 0, behavior: 'smooth'});
+				if(formState.state === 'review_pending'){
+					window.scrollTo({top: 0, behavior: 'smooth'});
+				}
 			}).finally(() => {
 			setSavingState(false);
 		});
