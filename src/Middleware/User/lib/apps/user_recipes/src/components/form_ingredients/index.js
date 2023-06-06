@@ -255,7 +255,7 @@ export default function Ingredients(props) {
 	}
 	
 	// conditional rendering for TermSearch
-	const TermSearchComp = loading ? <Spinner /> : <TermSearch label={"Neue Zutat hinzufügen"} items={ingredientsDB} onChange={addIngredient} />;
+	const TermSearchComp = loading ? <Spinner /> : <TermSearch label="Zutat auswählen" placeholder="hier tippen" items={ingredientsDB} onChange={addIngredient} />;
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			{showProductFinder && <ProductFinder id="IngredientsProductFinder" description="Hier kannst du Grillfürst Shop-Produkte als Zutat verlinken." items={products} itemsSelected={productSelected} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
@@ -263,6 +263,11 @@ export default function Ingredients(props) {
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-bold leading-6 text-gray-900">Zutaten</h3>
 					<p className="mt-1 text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden. Wir empfehlen das Rezept für 4 Personen anzulegen und entsprechend die Zutatenmengen anzupassen. Du kannst hier auch die passenden Gewürze, Marinaden oder Rubs direkt aus unserem Shop wählen.</p>
+					<div className="my-4">
+						{TermSearchComp}
+						
+					</div>
+					
 					<div className="col-span-6 sm:col-span-4 my-4">
 						<label htmlFor="recipe_servings" className="mr-4 font-bold text-gray-700">
 							Rezept für
@@ -277,10 +282,10 @@ export default function Ingredients(props) {
 							))}
 						</select>
 					</div>
-					{TermSearchComp}
-					<div className="mt-2 text-[12px] text-gray-500 ">
+					
+					<div className="text-[12px] text-gray-500 mt-2">
 						<p onClick={()=>setShowCustomIngredientButton(!showCustomIngredientButton)} className="select-none inline cursor-pointer border-b border-dashed border-gray-500 hover:text-gray-700 hover:border-gray-700">
-							Deine Zutat ist nicht dabei? Klick hier!
+							Deine Zutat ist nicht im Katalog? Hier hinzufügen!
 						</p>
 						{showCustomIngredientButton &&
 							<button
@@ -291,10 +296,7 @@ export default function Ingredients(props) {
 								Eigene Zutat hinzufügen
 							</button>
 						}
-						
 					</div>
-					
-				
 				</div>
 				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
 					<table className="min-w-full divide-y divide-gray-300">
