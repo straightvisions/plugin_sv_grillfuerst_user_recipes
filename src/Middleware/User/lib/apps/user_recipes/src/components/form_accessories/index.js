@@ -107,7 +107,7 @@ export default function Accessories(props) {
 			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-bold leading-6 text-gray-900">Zubehör</h3>
-					<p className="mt-1 text-gray-500">Gib alles Zubehör ein, das für das Rezept benötigt oder von dir empfohlen wird.</p>
+					<p className="mt-1 text-gray-500">Hier kannst du passende Zubehörprodukte aus unserem Shop angeben, die du für die Zubereitung des Rezepts empfiehlst.</p>
 					<div className="col-span-6 sm:col-span-4 my-4">
 						{loading ?
 						<Spinner /> :
