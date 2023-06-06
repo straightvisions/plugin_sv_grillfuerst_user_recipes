@@ -116,7 +116,6 @@ export default function Register(props){
 	return (
 		<div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-md">
-				<Logo />
 				<h2 className="mt-6 text-center ">Community Rezepte</h2>
 				<p className="mt-2 text-center text-gray-600">Mit deinen Daten erstellen wir einen Account im Grillfürst-Shop damit du dort später deine Gutscheine einlösen kannst!</p>
 			</div>
