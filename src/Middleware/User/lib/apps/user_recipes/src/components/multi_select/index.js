@@ -13,6 +13,8 @@ export default function MultiSelect(props) {
 		selected = [],
 		onChange = () => {
 		},
+		className = '',
+		style = {},
 	} = props;
 	
 	const [selection, setSelection] = useState(selected);
@@ -38,7 +40,7 @@ export default function MultiSelect(props) {
 	};
 	
 	return (
-		<div>
+		<div className={className} style={style}>
 			{label !== '' &&
 				<label htmlFor="recipe_menu_type" className="block font-bold text-gray-700">{label}</label>
 			}

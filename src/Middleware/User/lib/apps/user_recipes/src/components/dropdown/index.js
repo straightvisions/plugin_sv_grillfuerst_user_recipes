@@ -11,14 +11,15 @@ export default function Dropdown(props) {
 		onChange = () => {
 		},
 		items = [],
-		defaultValue = ''
+		defaultValue = '',
+		className = '',
 	} = props;
 	
 	const [options, setOptions] = useState(items);
 	const _value = value !== '' ? value : defaultValue;
 	
 	return (
-		<div>
+		<div className={className}>
 			{label !== '' &&
 				<label htmlFor="recipe_menu_type" className="block font-bold text-gray-700">{label}</label>
 			}

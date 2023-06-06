@@ -1,11 +1,18 @@
-import React, {useEffect, useState} from "react";
-import Image from "../form_image";
-import Dropdown from "../dropdown/";
-import MultiSelect from "../multi_select/";
-import TermDropdown from "../dropdown/term_dropdown";
-import routes from "../../models/routes";
-import Spinner from "../spinner";
-import storage from "../../modules/storage";
+import React, {useEffect, useState} from 'react';
+import Image from '../form_image';
+import Dropdown from '../dropdown/';
+import MultiSelect from '../multi_select/';
+import {
+	IconPot,
+	IconClock,
+	IconClockFire,
+	IconMeter,
+	IconCutlery,
+	IconGrill,
+} from '../icons/';
+import routes from '../../models/routes';
+import Spinner from '../spinner';
+import storage from '../../modules/storage';
 
 const difficultyValues = [
 	{
@@ -53,6 +60,8 @@ export default function Common(props) {
 	// element
 	const MenuTypesSelect = loadingMenuTypes ? <Spinner /> :
 		<MultiSelect
+			className="flex-auto max-w-full"
+			style={{maxWidth: 'calc(100% - 59px)'}}
 			label={"Art des Gerichts"}
 			selected={menuTypeOptionsSelected}
 			options={menuTypeOptions}
@@ -94,6 +103,8 @@ export default function Common(props) {
 	// element
 	const KitchenStylesSelect = loadingKitchenStyles ? <Spinner /> :
 		<MultiSelect
+			className="flex-auto"
+			style={{maxWidth: 'calc(100% - 59px)'}}
 			label={"Kategorie"}
 			selected={kitchenStyleOptionsSelected}
 			options={kitchenStyleOptions}
@@ -136,7 +147,7 @@ export default function Common(props) {
 	}
 	
 	// conditional
-	const Difficulties = <Dropdown label={"Schwierigkeitsgrad"} value={difficulty} items={difficultyValues} onChange={val => setFormState({difficulty: val})}/>;
+	const Difficulties = <Dropdown className="flex-auto" label={"Schwierigkeitsgrad"} value={difficulty} items={difficultyValues} onChange={val => setFormState({difficulty: val})}/>;
 	
 	return (
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
@@ -186,62 +197,75 @@ export default function Common(props) {
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">
-							<div className="mb-5">
+							<div className="mb-5 flex items-center gap-[15px]">
+								<IconCutlery />
 								{MenuTypesSelect}
 							</div>
-							<div className="mb-5">
+							<div className="mb-5 flex items-center gap-[15px]">
+								<IconGrill />
 								{KitchenStylesSelect}
 							</div>
-							<div className="mb-5">
+							<div className="mb-5 flex items-center gap-[15px]">
+								<IconMeter />
 								{Difficulties}
 							</div>
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">
-							<div className="mb-5">
-								<label htmlFor="recipe_preparation_time" className="block font-bold">
-									Vorbereitungszeit in Min.
-								</label>
-								<div className="mt-1 flex rounded-md shadow-sm">
-									<input
-										type="number"
-										name="recipe_preparation_time"
-										id="recipe_preparation_time"
-										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
-										onChange={(e)=>setFormState({preparation_time: parseInt(e.target.value)})}
-										value={preparation_time}
-									/>
+							<div className="mb-5 flex items-center gap-[15px]">
+								<IconPot />
+								<div className="flex-auto">
+									<label htmlFor="recipe_preparation_time" className="block font-bold">
+										Vorbereitungszeit in Min.
+									</label>
+									<div className="mt-1 rounded-md shadow-sm">
+										<input
+											type="number"
+											name="recipe_preparation_time"
+											id="recipe_preparation_time"
+											className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+											onChange={(e)=>setFormState({preparation_time: parseInt(e.target.value)})}
+											value={preparation_time}
+										/>
+									</div>
 								</div>
 							</div>
-							<div className="mb-5">
-								<label htmlFor="recipe_cooking_time" className="block font-bold">
-									Kochzeit in Min.
-								</label>
-								<div className="mt-1 flex rounded-md shadow-sm">
-									<input
-										type="number"
-										name="recipe_cooking_time"
-										id="recipe_cooking_time"
-										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
-										onChange={(e)=>setFormState({cooking_time: parseInt(e.target.value)})}
-										value={cooking_time}
-									/>
+							<div className="mb-5 flex items-center gap-[15px]">
+								<IconClockFire />
+								<div className="flex-auto">
+									<label htmlFor="recipe_cooking_time" className="block font-bold">
+										Kochzeit in Min.
+									</label>
+									<div className="mt-1 rounded-md shadow-sm">
+										<input
+											type="number"
+											name="recipe_cooking_time"
+											id="recipe_cooking_time"
+											className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+											onChange={(e)=>setFormState({cooking_time: parseInt(e.target.value)})}
+											value={cooking_time}
+										/>
+									</div>
 								</div>
 							</div>
-							<div className="mb-5">
-								<label htmlFor="recipe_waiting_time" className="block font-bold">
-									Ruhezeit in Min.
-								</label>
-								<div className="mt-1 flex rounded-md shadow-sm">
-									<input
-										type="number"
-										name="recipe_waiting_time"
-										id="recipe_waiting_time"
-										className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
-										onChange={(e)=>setFormState({waiting_time: parseInt(e.target.value)})}
-										value={waiting_time}
-									/>
+							<div className="mb-5 flex items-center gap-[15px]">
+								<IconClock />
+								<div className="flex-auto">
+									<label htmlFor="recipe_waiting_time" className="block font-bold">
+										Ruhezeit in Min.
+									</label>
+									<div className="mt-1 rounded-md shadow-sm">
+										<input
+											type="number"
+											name="recipe_waiting_time"
+											id="recipe_waiting_time"
+											className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+											onChange={(e)=>setFormState({waiting_time: parseInt(e.target.value)})}
+											value={waiting_time}
+										/>
+									</div>
 								</div>
+								
 							</div>
 						</div>
 					</div>
