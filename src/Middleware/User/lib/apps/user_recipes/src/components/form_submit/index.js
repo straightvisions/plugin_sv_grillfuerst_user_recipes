@@ -89,8 +89,8 @@ export default function Submit(props) {
 						<Spinner width="4" height="4"/> Speichert..
 					</button> :
 					<button
-						type="button"
-						onClick={onSubmit}
+						type="submit"
+						
 						className="ml-3 btn"
 					>
 						<FireIcon className="-ml-0.5 h-4 w-4 stroke-white" aria-hidden="true" /> Abschicken

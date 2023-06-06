@@ -249,7 +249,7 @@ export default function Ingredients(props) {
 			<div className="md:grid md:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-bold leading-6 text-gray-900">Zutaten</h3>
-					<p className="mt-1 text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden. Wir empfehlen das Rezept für 4 Personen anzulegen und entsprechend die Zutatenmengen anzupassen.</p>
+					<p className="mt-1 text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden. Wir empfehlen das Rezept für 4 Personen anzulegen und entsprechend die Zutatenmengen anzupassen. Du kannst hier auch die passenden Gewürze, Marinaden oder Rubs direkt aus unserem Shop wählen.</p>
 					<div className="col-span-6 sm:col-span-4 my-4">
 						<label htmlFor="recipe_servings" className="mr-4 font-bold text-gray-700">
 							Rezept für

@@ -79,7 +79,8 @@ export default function Form(props) {
 		});
 	};
 	
-	const handleSubmit = () => {
+	const handleSubmit = (e) => {
+		e.preventDefault();
 		_setFormState({state: 'review_pending'});
 	}
 	
@@ -120,8 +121,7 @@ export default function Form(props) {
 	return (
 		<>
 			{getAlerts()}
-			<form className="space-y-6 relative">
-				
+			<form className="space-y-6 relative" onSubmit={(e)=>handleSubmit(e)}>
 				{(formState.state === 'review_pending' || formState.state === 'published') && (
 					<div className="z-10 absolute top-0 left-0 h-full w-full bg-gray-500 opacity-20 flex items-start justify-end">
 						<p className="text-red-900 font-bold p-2">Die Bearbeitung ist derzeit gesperrt.</p>
@@ -131,7 +131,7 @@ export default function Form(props) {
 				<Ingredients formState={formState} setFormState={_setFormState} />
 				<Accessories formState={formState} setFormState={_setFormState} />
 				<Steps formState={formState} setFormState={_setFormState} />
-				<Submit saving={saving} formState={formState} setFormState={_setFormState} onSave={handleSave} onSubmit={handleSubmit}/>
+				<Submit saving={saving} formState={formState} setFormState={_setFormState} onSave={handleSave} />
 			</form>
 		</>
 	);
