@@ -53,7 +53,7 @@ export default function Common(props) {
 	// element
 	const MenuTypesSelect = loadingMenuTypes ? <Spinner /> :
 		<MultiSelect
-			label={"Menüarten"}
+			label={"Art des Gerichts"}
 			selected={menuTypeOptionsSelected}
 			options={menuTypeOptions}
 			onChange={selection => setFormState({menu_type: selection})} />;
@@ -94,7 +94,7 @@ export default function Common(props) {
 	// element
 	const KitchenStylesSelect = loadingKitchenStyles ? <Spinner /> :
 		<MultiSelect
-			label={"Küchenstil"}
+			label={"Kategorie"}
 			selected={kitchenStyleOptionsSelected}
 			options={kitchenStyleOptions}
 			onChange={selection => setFormState({kitchen_style: selection})} />;
@@ -140,17 +140,17 @@ export default function Common(props) {
 	
 	return (
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-				<div className="md:grid md:grid-cols-4 md:gap-6">
+				<div className="md:grid md:grid-cols-4 md:gap-8">
 					<div className="md:col-span-1">
 						<h3 className="text-lg font-bold leading-6 text-gray-900">Allgemeines</h3>
 						<p className="mt-1 text-gray-500">
-							Bearbeite hier die Basisinformationen zu deinem Rezept.
+							Bitte trage die Kerninformationen zu deinem Rezept ein und lade ein passendes Hauptbild hoch.<br/>Die korrekte Kategorisierung des Rezeptes ist später wichtig für die Suche und die Filter, versuche daher bitte möglichste genau zu sein.
 						</p>
 					</div>
 					<div className="mt-5 space-y-6 md:col-span-3 md:mt-0">
 						<div className="col-span-3 sm:col-span-2">
 							<label htmlFor="recipe_title" className="block font-bold mb-1">
-								Titel
+								Name des Rezepts
 							</label>
 							<input
 								type="text"
@@ -166,7 +166,7 @@ export default function Common(props) {
 						
 						<div>
 							<label htmlFor="recipe_excerpt" className="block font-bold mb-1">
-								Zusammenfassung
+								Kurzbeschreibung des Rezepts
 							</label>
 							<textarea
 								id="recipe_excerpt"
@@ -200,7 +200,7 @@ export default function Common(props) {
 						<div className="md:grid md:grid-cols-3 md:gap-6">
 							<div className="mb-5">
 								<label htmlFor="recipe_preparation_time" className="block font-bold">
-									Vorbereitungszeit in Minuten
+									Vorbereitungszeit in Min.
 								</label>
 								<div className="mt-1 flex rounded-md shadow-sm">
 									<input
@@ -215,7 +215,7 @@ export default function Common(props) {
 							</div>
 							<div className="mb-5">
 								<label htmlFor="recipe_cooking_time" className="block font-bold">
-									Kochzeit in Minuten
+									Kochzeit in Min.
 								</label>
 								<div className="mt-1 flex rounded-md shadow-sm">
 									<input
@@ -230,7 +230,7 @@ export default function Common(props) {
 							</div>
 							<div className="mb-5">
 								<label htmlFor="recipe_waiting_time" className="block font-bold">
-									Wartezeit in Minuten
+									Ruhezeit in Min.
 								</label>
 								<div className="mt-1 flex rounded-md shadow-sm">
 									<input
