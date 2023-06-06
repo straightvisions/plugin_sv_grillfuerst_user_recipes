@@ -124,8 +124,21 @@ export default function Ingredients(props) {
 		setFormState({ingredients: sort(ingredients)});
 	}
 	
+	const getRandomId = () => {
+		const min = 10000000;
+		const max = 99999999;
+		let customNumber;
+		
+		do {
+			customNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+		} while (ingredients.find((ingredient) => ingredient.id === customNumber));
+		
+		return customNumber;
+	}
+	
 	const addCustomIngredient = () =>{
-		const ingredient = { ...ingredientModel, ...{id: 0, label: '', order: ingredients.length + 1, custom: true} };
+		
+		const ingredient = { ...ingredientModel, ...{id: getRandomId(), label: '', order: ingredients.length + 1, custom: true} };
 		
 		ingredients.push(ingredient);
 		
