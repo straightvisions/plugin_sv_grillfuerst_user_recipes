@@ -47,7 +47,7 @@ const ListItem = ({item, columns}) => {
 				const width = columns[index] && columns[index].width ? columns[index].width : 'w-1/'.columnsCount;
 				const columnLabel = columns[index] && columns[index].label ? columns[index].label : null;
 				return (
-					<span key={index} className={`overflow-hidden ${width}`}>{columnLabel && <span className="block italic font-bold md:hidden bg-gray-50 p-2 text-sm">{columnLabel}</span>}{content}</span>
+					<span key={index} className={`overflow-hidden ${width}`}>{columnLabel && <span className="block italic font-bold md:hidden bg-gray-50 p-2 text-sm mb-2">{columnLabel}</span>}{content}</span>
 				);
 			})}
 		</div>

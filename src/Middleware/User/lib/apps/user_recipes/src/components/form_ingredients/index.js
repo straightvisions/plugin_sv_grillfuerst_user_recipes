@@ -7,6 +7,8 @@ import routes from "../../models/routes";
 import ingredientUnitValues from "../../models/ingredient/units";
 import ingredientModel from "../../models/ingredient";
 import storage from "../../modules/storage";
+import Pagination from "../pagination";
+import List from "../list";
 
 export default function Ingredients(props) {
 	const {
@@ -254,18 +256,104 @@ export default function Ingredients(props) {
 		setIngredient({ ...ingredient, amount: value });
 	}
 	
+	const listItems = ingredients.map((ingredient, index) => {
+		return {
+			columns: [
+				<>
+					<button
+						onClick={()=>handleOrderUp(index, ingredient)}
+						type="button"
+						className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-500 hover:border-orange-500"
+					>
+						&#x25B2;
+					</button>
+					<button
+						onClick={()=>handleOrderDown(index, ingredient)}
+						type="button"
+						className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-500 hover:border-orange-500"
+					>
+						&#x25BC;
+					</button>
+				</>,
+				<>{ingredient.custom === false ?
+					ingredient.label
+					: <input
+						placeholder="Zutat"
+						type="text"
+						className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+						value={ingredient.label}
+						onChange={e => { ingredient.label = e.target.value; setIngredient(ingredient); }}
+					/>
+				}</>
+				,
+				<input
+					value={ingredient.amount.toString().replace('.', ',')}
+					onChange={(e) => handleCommaInput(e, ingredient)}
+					onBlur={(e) => handleCommaInput(e, ingredient, true)}
+					type="text"
+					placeholder="1"
+					className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+				/>,
+				<Dropdown value={ingredient.unit} items={ingredientUnitValues}
+				          onChange={val => { ingredient.unit = val; setIngredient(ingredient);}}
+				          defaultValue={"g"}
+				/>,
+				<input
+					type="text"
+					className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+					value={ingredient.note}
+					onChange={e => { ingredient.note = e.target.value; setIngredient(ingredient); }}
+				/>,
+				<>
+					{ isFalsy(ingredient.products_id) ?
+						<button
+							onClick={() => handleShowProductFinder(ingredient)}
+							type="button"
+							className="text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
+							<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+							     strokeWidth="1.5" stroke="currentColor"
+							     className="w-6 h-6 transform rotate-45">
+								<path strokeLinecap="round" strokeLinejoin="round"
+								      d="M6 18L18 6M6 6l12 12"></path>
+							</svg>
+							<span className="sr-only">Mit Shop Produtk verlinken</span>
+						</button>
+						:
+						<button
+							onClick={() => handleShowProductFinder(ingredient)}
+							type="button"
+							className="w-[46px] h-[46px] max-h-[46px] overflow-hidden text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
+							<img width="24" height="24" src={getThumb(ingredient.products_id)} alt={getName(ingredient.products_id)} title={getName(ingredient.products_id)}/>
+							<span className="sr-only">Verlinken</span>
+						</button>
+					}
+					</>,
+				<button
+					onClick={() => removeIngredient(index, ingredient)}
+					type="button"
+					className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
+					<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+					     strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+						<path strokeLinecap="round" strokeLinejoin="round"
+						      d="M6 18L18 6M6 6l12 12"/>
+					</svg>
+					<span className="sr-only">{ingredient.label} Entfernen</span>
+				</button>
+			]
+		};
+	});
+	
 	// conditional rendering for TermSearch
 	const TermSearchComp = loading ? <Spinner /> : <TermSearch label="Zutat auswählen" placeholder="hier tippen" items={ingredientsDB} onChange={addIngredient} />;
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			{showProductFinder && <ProductFinder id="IngredientsProductFinder" description="Hier kannst du Grillfürst Shop-Produkte als Zutat verlinken." items={products} itemsSelected={productSelected} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
-			<div className="md:grid md:grid-cols-4 md:gap-6">
+			<div className="md:grid lg:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-bold leading-6 text-gray-900">Zutaten</h3>
 					<p className="mt-1 text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden. Wir empfehlen das Rezept für 4 Personen anzulegen und entsprechend die Zutatenmengen anzupassen. Du kannst hier auch die passenden Gewürze, Marinaden oder Rubs direkt aus unserem Shop wählen.</p>
 					<div className="my-4">
 						{TermSearchComp}
-						
 					</div>
 					
 					<div className="col-span-6 sm:col-span-4 my-4">
@@ -299,6 +387,132 @@ export default function Ingredients(props) {
 					</div>
 				</div>
 				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
+					
+					<div className="flex flex-col rounded shadow">
+						{ /* header ---------------------------------------------------- */ }
+						<div className="flex flex-auto bg-gray-50 pt-4 pb-4 gap-4">
+							<span className="w-full lg:w-1/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block"></span>
+							<span className="w-full lg:w-3/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Zutat</span>
+							<span className="w-full lg:w-1/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Menge</span>
+							<span className="w-full lg:w-2/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Einheit</span>
+							<span className="w-full lg:w-3/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Anmerkung</span>
+							<span className="w-full lg:w-1/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block text-center">Produkt</span>
+							<span className="w-full lg:w-1/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block text-center"></span>
+						</div>
+						
+						{ /* body ---------------------------------------------------- */ }
+						<div className="flex flex-col flex-auto pt-4 pb-4 gap-4 overflow-hidden">
+							{ingredients.map((ingredient, index) => {
+								const classnames = [
+									'w-full lg:w-1/12 whitespace-nowrap overflow-hidden pr-2',
+									'w-4/12 lg:w-[200px] whitespace-nowrap overflow-hidden px-2 font-semibold',
+									'w-4/12 lg:w-[85px] whitespace-nowrap overflow-hidden px-2 ',
+									'w-4/12 lg:w-2/12 whitespace-nowrap overflow-hidden px-2 ',
+									'w-full lg:w-3/12 whitespace-nowrap overflow-hidden px-2 ',
+									'w-full lg:w-1/12 whitespace-nowrap overflow-hidden px-2 flex justify-center',
+									'w-full lg:w-1/12 whitespace-nowrap overflow-hidden px-2 flex justify-center',
+								];
+								
+								return (
+								<div key={ingredient.id + '-' + index} className="flex flex-wrap items-center overflow-hidden">
+									<div className={classnames[0]}>
+										<button
+											onClick={()=>handleOrderUp(index, ingredient)}
+											type="button"
+											className="w-[50%] lg:w-auto bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-500 hover:border-orange-500"
+										>
+											&#x25B2;
+										</button>
+										<button
+											onClick={()=>handleOrderDown(index, ingredient)}
+											type="button"
+											className="w-[50%] lg:w-auto bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-500 hover:border-orange-500"
+										>
+											&#x25BC;
+										</button>
+									</div>
+									<div className={classnames[1]}>
+										{ingredient.custom === false ?
+											ingredient.label
+											: <input
+												placeholder="Zutat"
+												type="text"
+												className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+												value={ingredient.label}
+												onChange={e => { ingredient.label = e.target.value; setIngredient(ingredient); }}
+											/>
+										}
+									</div>
+									<div className={classnames[2]}>
+										<input
+											value={ingredient.amount.toString().replace('.', ',')}
+											onChange={(e) => handleCommaInput(e, ingredient)}
+											onBlur={(e) => handleCommaInput(e, ingredient, true)}
+											type="text"
+											placeholder="1"
+											className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+										/>
+									
+									</div>
+									<div className={classnames[3]}>
+										<Dropdown value={ingredient.unit} items={ingredientUnitValues}
+										          onChange={val => { ingredient.unit = val; setIngredient(ingredient);}}
+										          defaultValue={"g"}
+										/>
+									</div>
+									<div className={classnames[4]}>
+										<input
+											type="text"
+											className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+											value={ingredient.note}
+											onChange={e => { ingredient.note = e.target.value; setIngredient(ingredient); }}
+										/>
+									</div>
+									<div className={classnames[5]}>
+										{ isFalsy(ingredient.products_id) ?
+											<button
+												onClick={() => handleShowProductFinder(ingredient)}
+												type="button"
+												className="text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
+												<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+												     strokeWidth="1.5" stroke="currentColor"
+												     className="w-6 h-6 transform rotate-45">
+													<path strokeLinecap="round" strokeLinejoin="round"
+													      d="M6 18L18 6M6 6l12 12"></path>
+												</svg>
+												<span className="sr-only">Mit Shop Produtk verlinken</span>
+											</button>
+											:
+											<button
+												onClick={() => handleShowProductFinder(ingredient)}
+												type="button"
+												className="w-[46px] h-[46px] max-h-[46px] overflow-hidden text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
+												<img width="24" height="24" src={getThumb(ingredient.products_id)} alt={getName(ingredient.products_id)} title={getName(ingredient.products_id)}/>
+												<span className="sr-only">Verlinken</span>
+											</button>
+										}
+									
+									</div>
+									<div className={classnames[6]}>
+										<button
+											onClick={() => removeIngredient(index, ingredient)}
+											type="button"
+											className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
+											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
+											     strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
+												<path strokeLinecap="round" strokeLinejoin="round"
+												      d="M6 18L18 6M6 6l12 12"/>
+											</svg>
+											<span className="sr-only">{ingredient.label} Entfernen</span>
+										</button>
+									</div>
+								</div>
+							)})}
+						</div>
+						
+						{ /* footer ---------------------------------------------------- */ }
+					</div>
+					
 					<table className="min-w-full divide-y divide-gray-300">
 						<thead className="bg-gray-50">
 						<tr>
