@@ -387,10 +387,10 @@ export default function Ingredients(props) {
 						}
 					</div>
 				</div>
-				<div className="col-span-1 xl:col-span-3 mt-5 md:mt-0 overflow-x-auto">
-					<div className="flex flex-col rounded shadow">
+				<div className="flex col-span-1 xl:col-span-3 mt-5 md:mt-0 overflow-x-auto">
+					<div className="flex flex-col rounded shadow w-full">
 						{ /* header ---------------------------------------------------- */ }
-						<div className="flex flex-auto bg-gray-50 pt-4 pb-4">
+						<div className="flex flex-auto bg-gray-50 pt-4 pb-4 grow-0">
 							<span className="w-full lg:w-1/12 px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block"></span>
 							<span className="w-full lg:w-[200px] px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Zutat</span>
 							<span className="w-full lg:w-[85px] px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Menge</span>
@@ -401,8 +401,8 @@ export default function Ingredients(props) {
 						</div>
 						
 						{ /* body ---------------------------------------------------- */ }
-						<div className="flex flex-col flex-auto pt-4 pb-4 gap-4 overflow-hidden">
-							{ingredients.map((ingredient, index) => {
+						<div className="flex flex-col min-h-[300px] lg:h-auto flex-auto pt-4 pb-4 gap-4 overflow-hidden">
+							{ingredients.length > 0 ? ingredients.map((ingredient, index) => {
 								const classnames = [
 									'w-full lg:w-1/12 whitespace-nowrap overflow-hidden px-2 py-2',
 									'w-full lg:w-[200px] whitespace-nowrap overflow-hidden px-2 py-2 font-semibold',
@@ -512,7 +512,7 @@ export default function Ingredients(props) {
 										</button>
 									</div>
 								</div>
-							)})}
+							)}) : <>{TermSearchComp}</>}
 						</div>
 						{ /* footer ---------------------------------------------------- */ }
 					</div>
