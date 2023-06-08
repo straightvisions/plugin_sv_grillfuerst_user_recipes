@@ -57,7 +57,7 @@ function FormButton(props){
 			{loading ? <Spinner width="4" height="4"/>:
 				<PlusIcon className="-ml-1 h-5 w-5" aria-hidden="true"/>
 			}
-			<span>Neues Rezept</span>
+			<span>Neues Rezept hinzufügen</span>
 		</button>
 	);
 }

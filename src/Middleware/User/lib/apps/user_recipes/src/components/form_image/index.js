@@ -14,7 +14,7 @@ export default function Image(props) {
 	if(image && image.hasOwnProperty('url') && image.url){
 		return (
 			<div
-				className="h-full w-full relative group overflow-hidden flex justify-center rounded-md bg-gray-100"
+				className="h-full w-full min-h-[300px] relative group overflow-hidden flex justify-center rounded-md bg-gray-100"
 			>
 				<div className="h-full w-full hidden group-hover:flex justify-center align-center rounded-md bg-white/[.8] absolute">
 					<div

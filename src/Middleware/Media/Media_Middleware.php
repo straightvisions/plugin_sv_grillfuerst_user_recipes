@@ -55,6 +55,7 @@ final class Media_Middleware implements Middleware_Interface {
             $request,
             function ($Request) {
                 $uuid = (int) $Request->getAttribute('uuid');
+
                 $data = $Request->getUploadedFiles();
                 $items = [];
 

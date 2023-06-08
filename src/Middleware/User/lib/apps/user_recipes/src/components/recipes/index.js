@@ -161,9 +161,9 @@ export default function Recipes(props) {
 			<List
 				columns={[
 					{label: <>{ loading ? <Spinner width="4" height="4" align="start"/> : <>#</>}</>, width: 'w-full md:w-1/12 md:w-1/12'},
-					{label: 'Status', width: 'w-full md:w-2/12 xl:w-1/12'},
-					{label: 'Rezept', width: 'w-full md:w-5/12 xl:w-6/12'},
-					{label: 'Gutschein', width: 'w-full md:w-3/12 xl:w-3/12'},
+					{label: 'Status', width: 'w-full md:w-2/12 xl:w-1/12 whitespace-nowrap'},
+					{label: 'Rezept', width: 'w-full md:w-5/12 xl:w-6/12 whitespace-nowrap'},
+					{label: 'Gutschein', width: 'w-full md:w-3/12 xl:w-3/12 whitespace-nowrap'},
 				]}
 				items={listItems}
 				footer={
