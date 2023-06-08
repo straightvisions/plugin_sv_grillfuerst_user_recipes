@@ -1,14 +1,14 @@
-import React, {useEffect, useReducer, useState} from "react";
+import React, {useEffect, useReducer, useState, useContext} from 'react';
 import Spinner from '../spinner';
-import TermSearch from "../combobox/term_search.js";
-import Dropdown from "../dropdown";
-import ProductFinder from "../product_finder";
-import routes from "../../models/routes";
-import ingredientUnitValues from "../../models/ingredient/units";
-import ingredientModel from "../../models/ingredient";
-import storage from "../../modules/storage";
-import Pagination from "../pagination";
-import List from "../list";
+import TermSearch from '../combobox/term_search.js';
+import Dropdown from '../dropdown';
+import ProductFinder from '../product_finder';
+import routes from '../../models/routes';
+import ingredientUnitValues from '../../models/ingredient/units';
+import ingredientModel from '../../models/ingredient';
+import storage from '../../modules/storage';
+import {IconTrash} from '../icons';
+import {GlobalContext} from "../../modules/context";
 
 export default function Ingredients(props) {
 	const {
@@ -27,6 +27,7 @@ export default function Ingredients(props) {
 	const [products, setProducts] = useState([]);
 	const [loading, setLoadingState] = useState(true);
 	const [showCustomIngredientButton, setShowCustomIngredientButton] = useState(false);
+	const { globalModalConfirm, setGlobalModalConfirm } = useContext(GlobalContext);
 	
 	// database stuff
 	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
@@ -347,6 +348,7 @@ export default function Ingredients(props) {
 	const TermSearchComp = loading ? <Spinner /> : <TermSearch label="Zutat auswählen" placeholder="hier tippen" items={ingredientsDB} onChange={addIngredient} />;
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
+			
 			{showProductFinder && <ProductFinder id="IngredientsProductFinder" description="Hier kannst du Grillfürst Shop-Produkte als Zutat verlinken." items={products} itemsSelected={productSelected} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
 			<div className="md:grid lg:grid-cols-4 md:gap-6">
 				<div className="md:col-span-1">
@@ -387,7 +389,6 @@ export default function Ingredients(props) {
 					</div>
 				</div>
 				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
-					
 					<div className="flex flex-col rounded shadow">
 						{ /* header ---------------------------------------------------- */ }
 						<div className="flex flex-auto bg-gray-50 pt-4 pb-4 gap-4">
@@ -404,17 +405,19 @@ export default function Ingredients(props) {
 						<div className="flex flex-col flex-auto pt-4 pb-4 gap-4 overflow-hidden">
 							{ingredients.map((ingredient, index) => {
 								const classnames = [
-									'w-full lg:w-1/12 whitespace-nowrap overflow-hidden pr-2',
-									'w-4/12 lg:w-[200px] whitespace-nowrap overflow-hidden px-2 font-semibold',
-									'w-4/12 lg:w-[85px] whitespace-nowrap overflow-hidden px-2 ',
-									'w-4/12 lg:w-2/12 whitespace-nowrap overflow-hidden px-2 ',
-									'w-full lg:w-3/12 whitespace-nowrap overflow-hidden px-2 ',
-									'w-full lg:w-1/12 whitespace-nowrap overflow-hidden px-2 flex justify-center',
-									'w-full lg:w-1/12 whitespace-nowrap overflow-hidden px-2 flex justify-center',
+									'w-full lg:w-1/12 whitespace-nowrap overflow-hidden px-2 py-2',
+									'w-full lg:w-[200px] whitespace-nowrap overflow-hidden px-2 py-2 font-semibold',
+									'w-1/2 lg:w-[85px] whitespace-nowrap overflow-hidden px-2 py-2',
+									'w-1/2 lg:w-2/12 whitespace-nowrap overflow-hidden px-2 py-2',
+									'w-full lg:w-3/12 whitespace-nowrap overflow-hidden px-2 py-2',
+									'w-1/2 lg:w-1/12 whitespace-nowrap overflow-hidden px-2 py-2 flex justify-center',
+									'w-1/2 lg:w-1/12 whitespace-nowrap overflow-hidden px-2 py-2 flex justify-center',
 								];
 								
+								const wrapperClassnames = parseInt(index) % 2 === 1 ? 'flex flex-wrap items-center overflow-hidden py-4 bg-grey-50' : 'flex flex-wrap items-center overflow-hidden';
+						
 								return (
-								<div key={ingredient.id + '-' + index} className="flex flex-wrap items-center overflow-hidden">
+								<div key={ingredient.id + '-' + index} className={wrapperClassnames}>
 									<div className={classnames[0]}>
 										<button
 											onClick={()=>handleOrderUp(index, ingredient)}
@@ -444,6 +447,7 @@ export default function Ingredients(props) {
 										}
 									</div>
 									<div className={classnames[2]}>
+										<span className="lg:hidden">Menge</span>
 										<input
 											value={ingredient.amount.toString().replace('.', ',')}
 											onChange={(e) => handleCommaInput(e, ingredient)}
@@ -455,12 +459,14 @@ export default function Ingredients(props) {
 									
 									</div>
 									<div className={classnames[3]}>
+										<span className="lg:hidden">Einheit</span>
 										<Dropdown value={ingredient.unit} items={ingredientUnitValues}
 										          onChange={val => { ingredient.unit = val; setIngredient(ingredient);}}
 										          defaultValue={"g"}
 										/>
 									</div>
 									<div className={classnames[4]}>
+										<span className="lg:hidden">Anmerkung</span>
 										<input
 											type="text"
 											className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
@@ -494,17 +500,21 @@ export default function Ingredients(props) {
 									
 									</div>
 									<div className={classnames[6]}>
+										
 										<button
-											onClick={() => removeIngredient(index, ingredient)}
+											onClick={() => setGlobalModalConfirm({
+												message: 'Möchtest du die Zutat wirklich löschen?',
+												onConfirm: () => removeIngredient(index, ingredient)
+											})}
 											type="button"
-											className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
-											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-											     strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-												<path strokeLinecap="round" strokeLinejoin="round"
-												      d="M6 18L18 6M6 6l12 12"/>
-											</svg>
+											className="opacity-20 hover:opacity-100 text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800"
+										>
+											<IconTrash width="24" height="24" />
 											<span className="sr-only">{ingredient.label} Entfernen</span>
 										</button>
+										
+										
+										
 									</div>
 								</div>
 							)})}
@@ -512,130 +522,6 @@ export default function Ingredients(props) {
 						
 						{ /* footer ---------------------------------------------------- */ }
 					</div>
-					
-					<table className="min-w-full divide-y divide-gray-300">
-						<thead className="bg-gray-50">
-						<tr>
-							<th scope="col" className="">
-							</th>
-							<th scope="col" className="py-3.5 pl-4 pr-3 text-left font-semibold text-gray-900 sm:pl-6">
-								Zutat
-							</th>
-							<th scope="col" className="w-1/5 px-3 py-3.5 text-left font-semibold text-gray-900">
-								Menge
-							</th>
-							<th scope="col" className="min-w-[140px] px-3 py-3.5 text-left font-semibold text-gray-900">
-								Einheit
-							</th>
-							<th scope="col" className="px-3 py-3.5 text-left font-semibold text-gray-900">
-								Anmerkung
-							</th>
-							<th scope="col" className="px-3 py-3.5 text-left font-semibold text-gray-900">
-								Produkt
-							</th>
-							<th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
-								<span className="sr-only">Löschen</span>
-							</th>
-						</tr>
-						</thead>
-						<tbody className="divide-y divide-gray-200 bg-white">
-						{ingredients.map((ingredient, index) => (
-							<tr key={ingredient.id + '-' + index}>
-								<td className="whitespace-nowrap py-4 pl-4 pr-3 font-bold text-gray-900 sm:pl-6">
-									<button
-										onClick={()=>handleOrderUp(index, ingredient)}
-										type="button"
-										className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-500 hover:border-orange-500"
-									>
-										&#x25B2;
-									</button>
-									<button
-										onClick={()=>handleOrderDown(index, ingredient)}
-										type="button"
-										className="bg-white border border-grey-500 text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-500 hover:border-orange-500"
-									>
-										&#x25BC;
-									</button>
-								</td>
-								<td className="whitespace-nowrap py-4 pl-4 pr-3 font-bold text-gray-900 sm:pl-6">
-									{ingredient.custom === false ?
-										ingredient.label
-									: <input
-											placeholder="Zutat"
-											type="text"
-											className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
-											value={ingredient.label}
-											onChange={e => { ingredient.label = e.target.value; setIngredient(ingredient); }}
-										/>
-									}
-								</td>
-								<td className="w-1/5 whitespace-nowrap px-3 py-4 text-gray-500">
-									<input
-										value={ingredient.amount.toString().replace('.', ',')}
-										onChange={(e) => handleCommaInput(e, ingredient)}
-										onBlur={(e) => handleCommaInput(e, ingredient, true)}
-										type="text"
-										placeholder="1"
-										className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
-									/>
-								
-								</td>
-								<td className="whitespace-nowrap px-3 py-4 text-gray-500">
-									<Dropdown value={ingredient.unit} items={ingredientUnitValues}
-									          onChange={val => { ingredient.unit = val; setIngredient(ingredient);}}
-									          defaultValue={"g"}
-									/>
-								</td>
-								<td className="whitespace-nowrap px-3 py-4 text-gray-500">
-									<input
-										type="text"
-										className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
-										value={ingredient.note}
-										onChange={e => { ingredient.note = e.target.value; setIngredient(ingredient); }}
-									/>
-								</td>
-								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-bold sm:pr-6">
-									{ isFalsy(ingredient.products_id) ?
-										<button
-											onClick={() => handleShowProductFinder(ingredient)}
-											type="button"
-											className="text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
-											<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-											     strokeWidth="1.5" stroke="currentColor"
-											     className="w-6 h-6 transform rotate-45">
-												<path strokeLinecap="round" strokeLinejoin="round"
-												      d="M6 18L18 6M6 6l12 12"></path>
-											</svg>
-											<span className="sr-only">Mit Shop Produtk verlinken</span>
-										</button>
-										:
-										<button
-											onClick={() => handleShowProductFinder(ingredient)}
-											type="button"
-											className="w-[46px] h-[46px] max-h-[46px] overflow-hidden text-orange-500 border border-orange-500 hover:bg-orange-500 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-80">
-												<img width="24" height="24" src={getThumb(ingredient.products_id)} alt={getName(ingredient.products_id)} title={getName(ingredient.products_id)}/>
-											<span className="sr-only">Verlinken</span>
-										</button>
-									}
-									
-								</td>
-								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-bold sm:pr-6">
-									<button
-										onClick={() => removeIngredient(index, ingredient)}
-										type="button"
-										className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-0 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
-										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-										     strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-											<path strokeLinecap="round" strokeLinejoin="round"
-											      d="M6 18L18 6M6 6l12 12"/>
-										</svg>
-										<span className="sr-only">{ingredient.label} Entfernen</span>
-									</button>
-								</td>
-							</tr>
-						))}
-						</tbody>
-					</table>
 				</div>
 			</div>
 		</div>
