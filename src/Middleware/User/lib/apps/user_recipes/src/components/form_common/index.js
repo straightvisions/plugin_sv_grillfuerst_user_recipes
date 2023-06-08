@@ -151,14 +151,14 @@ export default function Common(props) {
 	
 	return (
 			<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-				<div className="md:grid md:grid-cols-4 md:gap-8">
-					<div className="md:col-span-1">
+				<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+					<div className="col-span-1">
 						<h3 className="text-lg font-bold leading-6 text-gray-900">Allgemeines</h3>
 						<p className="mt-1 text-gray-500">
 							Bitte trage die Kerninformationen zu deinem Rezept ein und lade ein passendes Hauptbild hoch.<br/>Die korrekte Kategorisierung des Rezeptes ist später wichtig für die Suche und die Filter, versuche daher bitte möglichste genau zu sein.
 						</p>
 					</div>
-					<div className="mt-5 space-y-6 md:col-span-3 md:mt-0">
+					<div className="col-span-1 xl:col-span-3 mt-5 space-y-6 md:mt-0">
 						<div className="col-span-3 sm:col-span-2">
 							<label htmlFor="recipe_title" className="block font-bold mb-1">
 								Name des Rezepts

@@ -348,17 +348,16 @@ export default function Ingredients(props) {
 	const TermSearchComp = loading ? <Spinner /> : <TermSearch label="Zutat auswählen" placeholder="hier tippen" items={ingredientsDB} onChange={addIngredient} />;
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
-			
 			{showProductFinder && <ProductFinder id="IngredientsProductFinder" description="Hier kannst du Grillfürst Shop-Produkte als Zutat verlinken." items={products} itemsSelected={productSelected} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
-			<div className="md:grid lg:grid-cols-4 md:gap-6">
-				<div className="md:col-span-1">
+			<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
+				<div className="col-span-1">
 					<h3 className="text-lg font-bold leading-6 text-gray-900">Zutaten</h3>
 					<p className="mt-1 text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden. Wir empfehlen das Rezept für 4 Personen anzulegen und entsprechend die Zutatenmengen anzupassen. Du kannst hier auch die passenden Gewürze, Marinaden oder Rubs direkt aus unserem Shop wählen.</p>
 					<div className="my-4">
 						{TermSearchComp}
 					</div>
 					
-					<div className="col-span-6 sm:col-span-4 my-4">
+					<div className="my-4">
 						<label htmlFor="recipe_servings" className="mr-4 font-bold text-gray-700">
 							Rezept für
 						</label>
@@ -388,7 +387,7 @@ export default function Ingredients(props) {
 						}
 					</div>
 				</div>
-				<div className="mt-5 md:col-span-3 md:mt-0 overflow-x-auto">
+				<div className="col-span-1 xl:col-span-3 mt-5 md:mt-0 overflow-x-auto">
 					<div className="flex flex-col rounded shadow">
 						{ /* header ---------------------------------------------------- */ }
 						<div className="flex flex-auto bg-gray-50 pt-4 pb-4 gap-4">
