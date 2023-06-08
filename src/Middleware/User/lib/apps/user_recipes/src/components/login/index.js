@@ -44,7 +44,6 @@ export default function Login(props) {
 			})
 			.then(res => {
 				const {data, token} = res;
-				
 				if (data.status === 'success') {
 					storage.set('userId', data.customerId);
 					storage.set('token', token);

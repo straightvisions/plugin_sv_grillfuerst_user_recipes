@@ -123,6 +123,11 @@ final class Recipes_Middleware implements Middleware_Interface {
         if($this->settings['debug'] === true || $this->settings['env'] === 'development'){
             $this->Api_Middleware->add([
                 'route' => '/test/email', // wordpress specific
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_email_service'], 'permission_callback' => '__return_true']
+            ]);
+
+            $this->Api_Middleware->add([
+                'route' => '/test/email/publish', // wordpress specific
                 'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_send_email_recipe_published'], 'permission_callback' => '__return_true']
             ]);
 
@@ -407,32 +412,53 @@ final class Recipes_Middleware implements Middleware_Interface {
     public function test_send_email_recipe_published($request) {
         return $this->Api_Middleware->response_public($request, function ($Request) {
             $urlParams  = $Request->getParams();
+            $uuid = $urlParams['recipe'];
+
+            if($this->settings['debug'] || $this->settings['env'] === 'development') {
+                return $this->handle_after_recipe_published($uuid);
+            }else{
+                return [[],404];
+            }
+        });
+
+    }
+
+    public function test_send_email_service($request) {
+        return $this->Api_Middleware->response_public($request, function ($Request) {
+            $urlParams  = $Request->getParams();
 
             $params = [
                 'to'      => $urlParams['email'] ?? 'dennis-heiden@straightvisions.com',
-                'subject' => 'test',
-                'name'    => 'Herr Dennis Heiden',
-                'voucher_code' => 12345,
-                'shop_url' => 'https://google.com',
-                'template' => 'published'
+                'subject' => 'Test Email Service',
+                'content' => 'Hellow World',
+                'template' => 'default'
             ];
 
             if($this->settings['debug'] || $this->settings['env'] === 'development') {
                 $this->Email_Middleware->send($params);
+                return [$params, 200];
+            }else{
+
+                return [[],404];
             }
 
-            return [$params, 200];
         });
-
 
     }
 
-    public function test_get_user_info() {
-        if($this->settings['debug'] || $this->settings['env'] === 'development') {
-            $info = $this->User_Info_Service->get(30, true);
-            $user = $info['body']['data'];
-            var_dump($user);
-        }
+    public function test_get_user_info($request) {
+        return $this->Api_Middleware->response_public($request, function ($Request) {
+            if($this->settings['debug'] || $this->settings['env'] === 'development') {
+                $urlParams  = $Request->getParams();
+                $id = $urlParams['id'] ? $urlParams['id'] : 30;
+                $info = $this->User_Info_Service->get($id, true);
+                $user = $info['body']['data'];
+                var_dump($user);
+            }else{
+                return [[],404];
+            }
+        });
+
     }
 
 }
