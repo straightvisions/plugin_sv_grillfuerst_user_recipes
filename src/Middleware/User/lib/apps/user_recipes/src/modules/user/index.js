@@ -52,11 +52,14 @@ const user = {
 	flush : () => {
 		user.initialised = false;
 		user.isLoggedIn = false;
+		storage.flush();
+		/*
 		storage.set('token', '');
 		storage.set('userId', 0);
 		storage.set('firstname', '');
 		storage.set('lastname', '');
 		storage.set('avatar','');
+		 */
 	},
 	
 	logout: () => {

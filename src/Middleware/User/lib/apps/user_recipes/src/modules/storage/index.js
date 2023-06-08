@@ -21,25 +21,29 @@ const storage = {
 		return _storage.hasOwnProperty(key) ? _storage[key] : def;
 	},
 	
+	flush: () => {
+		localStorage.removeItem(storage.appStorage);
+	},
+	
 	parseJSONRecursively : (json) => {
-	let obj;
-	
-	try {
-		obj = JSON.parse(json);
-	} catch (e) {
-		return json;
-	}
-	
-	if (typeof obj !== "object" || obj === null) {
+		let obj;
+		
+		try {
+			obj = JSON.parse(json);
+		} catch (e) {
+			return json;
+		}
+		
+		if (typeof obj !== "object" || obj === null) {
+			return obj;
+		}
+		
+		for (const key in obj) {
+			obj[key] = storage.parseJSONRecursively(obj[key]);
+		}
+		
 		return obj;
 	}
-	
-	for (const key in obj) {
-		obj[key] = storage.parseJSONRecursively(obj[key]);
-	}
-	
-	return obj;
-}
 }
 
 window.addEventListener('storage', function(event) {
