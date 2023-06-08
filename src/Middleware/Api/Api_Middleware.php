@@ -80,7 +80,7 @@ final class Api_Middleware implements Middleware_Interface {
             $response = new \WP_REST_Response($res[0], isset($res[1]) ? $res[1] : 200);
 
         }else{
-            $response = new \WP_REST_Response([], 404);
+            $response = new \WP_REST_Response([], 401);
         }
 
         if($headers){

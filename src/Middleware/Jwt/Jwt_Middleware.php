@@ -37,6 +37,7 @@ final class Jwt_Middleware implements Middleware_Interface {
 
     public function create(array $payload = []): string{
         $payload['exp'] = time() + (int)$this->expiration_time;
+        //$payload['exp'] = time() + (int)20; // debug 20s
         // create token
         return JWT::encode($payload, $this->secret_key, $this->algo);
     }

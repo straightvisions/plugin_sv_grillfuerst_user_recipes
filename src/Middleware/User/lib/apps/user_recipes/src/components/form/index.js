@@ -11,6 +11,7 @@ import { useParams } from "react-router-dom";
 import { AlertReviewed, AlertReviewPending, AlertPublished } from '../form_alerts';
 import {GlobalContext} from "../../modules/context";
 import storage from "../../modules/storage";
+import {fetchError} from "../../modules/fetch";
 
 function dateIsValid(date) {
 	return typeof date === 'object' && date !== null && typeof date.getTime === 'function' && !isNaN(date);
@@ -32,6 +33,7 @@ export default function Form(props) {
 				'Authorization': 'Bearer ' + storage.get('token'),
 			}
 		})
+			.then(response => !response.ok ? fetchError(response) : response)
 			.then(response => response.json())
 			.then(data => {
 				setFormState(data);
@@ -69,6 +71,7 @@ export default function Form(props) {
 			headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + storage.get('token')},
 			body: JSON.stringify(formStateCopy),
 		})
+			.then(response => !response.ok ? fetchError(response) : response)
 			.then(response => response.json())
 			.then(data => {
 				//@todo give a notice on success

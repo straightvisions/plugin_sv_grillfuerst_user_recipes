@@ -18,7 +18,7 @@ export default function Ingredients(props) {
 	
 	const {
 		servings,
-		ingredients
+		ingredients = [],
 	} = formState;
 	
 	const [showProductFinder, setShowProductFinder] = useState(false);
