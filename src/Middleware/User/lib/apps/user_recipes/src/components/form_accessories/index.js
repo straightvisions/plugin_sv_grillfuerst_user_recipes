@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import Spinner from '../spinner';
+import {IconTrash} from '../icons';
 import routes from "../../models/routes";
 import accessoryModel from "../../models/accessory";
 import storage from "../../modules/storage";
@@ -136,21 +137,21 @@ export default function Accessories(props) {
 						<tbody className="divide-y divide-gray-200 bg-white">
 						{accessories.length > 0 && accessories.map(accessory => (
 							<tr key={accessory.id}>
-								<td className="whitespace-nowrap py-4 pl-4 pr-3 font-bold text-gray-900 sm:pl-6">
+								<td className="md:whitespace-nowrap py-4 pl-4 pr-3 font-bold text-gray-900 sm:pl-6">
 									{accessory.label}
 								</td>
 								<td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right font-bold sm:pr-6">
 									<button
-										onClick={() => removeAccessory(accessory)}
+										onClick={() => setGlobalModalConfirm({
+											message: 'Möchtest du dieses Zubehör wirklich löschen?',
+											onConfirm: () => removeAccessory(accessory)
+										})}
 										type="button"
-										className="text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
-										<svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24"
-										     strokeWidth="1.5" stroke="currentColor" className="w-6 h-6">
-											<path strokeLinecap="round" strokeLinejoin="round"
-											      d="M6 18L18 6M6 6l12 12"/>
-										</svg>
+										className="opacity-20 hover:opacity-100 text-red-700 border border-red-700 hover:bg-red-700 hover:text-white focus:ring-4 focus:outline-none focus:ring-red-300 font-bold rounded-full p-2.5 text-center inline-flex items-center dark:border-red-500 dark:text-red-500 dark:hover:text-white dark:focus:ring-red-800">
+										<IconTrash width="24" height="24"/>
 										<span className="sr-only">{accessory.label} Entfernen</span>
 									</button>
+								
 								</td>
 							</tr>
 						))}

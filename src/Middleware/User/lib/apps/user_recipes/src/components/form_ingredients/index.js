@@ -390,14 +390,14 @@ export default function Ingredients(props) {
 				<div className="col-span-1 xl:col-span-3 mt-5 md:mt-0 overflow-x-auto">
 					<div className="flex flex-col rounded shadow">
 						{ /* header ---------------------------------------------------- */ }
-						<div className="flex flex-auto bg-gray-50 pt-4 pb-4 gap-4">
-							<span className="w-full lg:w-1/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block"></span>
-							<span className="w-full lg:w-3/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Zutat</span>
-							<span className="w-full lg:w-1/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Menge</span>
-							<span className="w-full lg:w-2/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Einheit</span>
-							<span className="w-full lg:w-3/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Anmerkung</span>
-							<span className="w-full lg:w-1/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block text-center">Produkt</span>
-							<span className="w-full lg:w-1/12 whitespace-nowrap overflow-hidden font-semibold hidden md:block text-center"></span>
+						<div className="flex flex-auto bg-gray-50 pt-4 pb-4">
+							<span className="w-full lg:w-1/12 px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block"></span>
+							<span className="w-full lg:w-[200px] px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Zutat</span>
+							<span className="w-full lg:w-[85px] px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Menge</span>
+							<span className="w-full lg:w-2/12 px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Einheit</span>
+							<span className="w-full lg:w-3/12 px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Anmerkung</span>
+							<span className="w-full lg:w-1/12 px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block text-center">Produkt</span>
+							<span className="w-full lg:w-1/12 px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block text-center"></span>
 						</div>
 						
 						{ /* body ---------------------------------------------------- */ }
