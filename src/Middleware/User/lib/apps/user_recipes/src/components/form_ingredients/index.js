@@ -499,7 +499,6 @@ export default function Ingredients(props) {
 									
 									</div>
 									<div className={classnames[6]}>
-										
 										<button
 											onClick={() => setGlobalModalConfirm({
 												message: 'Möchtest du die Zutat wirklich löschen?',
@@ -511,14 +510,10 @@ export default function Ingredients(props) {
 											<IconTrash width="24" height="24" />
 											<span className="sr-only">{ingredient.label} Entfernen</span>
 										</button>
-										
-										
-										
 									</div>
 								</div>
 							)})}
 						</div>
-						
 						{ /* footer ---------------------------------------------------- */ }
 					</div>
 				</div>

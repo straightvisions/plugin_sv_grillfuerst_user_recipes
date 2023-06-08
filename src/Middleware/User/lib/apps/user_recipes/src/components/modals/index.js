@@ -1,16 +1,16 @@
 import React, { useContext } from 'react';
 import {GlobalContext} from "../../modules/context";
 
-export function ModalConfirm({ show = false, message, onConfirm = null, onCancel = null }) {
+export function ModalConfirm() {
 	const { globalModalConfirm, setGlobalModalConfirm } = useContext(GlobalContext);
-
+	
 	const handleConfirm = () => {
-		if (globalModalConfirm.onConfirm) onConfirm();
+		if (globalModalConfirm.onConfirm) globalModalConfirm.onConfirm();
 		setGlobalModalConfirm({show:false});
 	};
 	
 	const handleCancel = () => {
-		if (globalModalConfirm.onCancel) onCancel();
+		if (globalModalConfirm.onCancel) globalModalConfirm.onCancel();
 		setGlobalModalConfirm({show:false});
 	};
 	
@@ -19,7 +19,7 @@ export function ModalConfirm({ show = false, message, onConfirm = null, onCancel
 			{globalModalConfirm.show && (
 				<div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-[99999]">
 					<div className="bg-white rounded-lg p-4">
-						<p>{message}</p>
+						<p>{globalModalConfirm.message}</p>
 						<div className="flex justify-end mt-4">
 							<button onClick={handleConfirm} type="button"
 							        className="px-4 py-2 bg-red-700 text-white rounded-lg">

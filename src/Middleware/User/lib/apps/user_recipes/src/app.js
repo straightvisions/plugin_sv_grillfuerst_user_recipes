@@ -89,12 +89,7 @@ const App = () => {
 					}
 					
 					{globalModalConfirm.show &&
-						<ModalConfirm
-							show={globalModalConfirm.show}
-							message={globalModalConfirm.message}
-							onConfirm={globalModalConfirm.onConfirm}
-							onCancel={globalModalConfirm.onCancel}
-						/>
+						<ModalConfirm />
 					}
 					
 					<div className="mx-auto max-w-7xl">

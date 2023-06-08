@@ -1,6 +1,9 @@
 import React, { useEffect, useState } from "react";
 import Step from "../step";
 import stepModel from "../../models/step";
+import Dropdown from "../dropdown";
+import ingredientUnitValues from "../../models/ingredient/units";
+import {IconTrash} from "../icons";
 
 export default function Steps(props) {
 	const {
@@ -82,27 +85,18 @@ export default function Steps(props) {
 					</div>
 				</div>
 				<div className="mt-5 col-span-1 xl:col-span-3 md:mt-0 overflow-x-auto">
-					<table className="w-full divide-y divide-gray-300">
-						<thead className="bg-gray-50 font-semibold text-left text-gray-900">
-						<tr>
-							<th scope="col"
-								className="px-4 py-3.5 sm:px-6">
-								Schritt
-							</th>
-							<th scope="col"
-								className="min-w-[300px] px-4 py-3.5 sm:px-6">
-								Bild
-							</th>
-							<th scope="col" className="min-w-[300px] px-4 py-3.5 sm:px-6">
-								Beschreibung
-							</th>
-							<th scope="col" className="px-4 py-3.5 sm:px-6">
-								<span className="hidden sr-only">Löschen</span>
-							</th>
-						</tr>
-						</thead>
-						<tbody className="divide-y divide-gray-200 bg-white" id="gf_recipe_steps">
-						{orderedSteps.map((item, i) => (
+					{ /* header ---------------------------------------------------- */ }
+					<div className="flex flex-auto bg-gray-50 pt-4 pb-4">
+						<span className="w-full lg:w-1/12 px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Schritt</span>
+						<span className="w-full lg:w-4/12 px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Bild</span>
+						<span className="w-full lg:w-6/12 px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block">Beschreibung</span>
+						<span className="w-full lg:w-1/12 px-2 whitespace-nowrap overflow-hidden font-semibold hidden md:block"></span>
+					</div>
+					
+					{ /* body ---------------------------------------------------- */ }
+					<div className="flex flex-col flex-auto pt-4 pb-4 gap-4 overflow-hidden">
+						{orderedSteps.map((item, i) => {
+							return (
 								<Step
 									key={i}
 									onChange={(i, _item) => setStep(i, _item)}
@@ -114,9 +108,9 @@ export default function Steps(props) {
 									uuid={formState.uuid}
 									formState={formState}
 								/>
-						))}
-						</tbody>
-					</table>
+							)})}
+					</div>
+					{ /* footer ---------------------------------------------------- */ }
 				</div>
 			</div>
 		</div>

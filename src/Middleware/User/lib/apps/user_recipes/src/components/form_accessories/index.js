@@ -1,10 +1,11 @@
-import React, { useEffect, useState } from "react";
+import React, {useContext, useEffect, useState} from "react";
 import Spinner from '../spinner';
 import {IconTrash} from '../icons';
 import routes from "../../models/routes";
 import accessoryModel from "../../models/accessory";
 import storage from "../../modules/storage";
 import ProductFinder from "../product_finder";
+import {GlobalContext} from "../../modules/context";
 
 export default function Accessories(props) {
 	const {
@@ -19,6 +20,7 @@ export default function Accessories(props) {
 	const [loading, setLoadingState] = useState(true);
 	const [accessoriesDB, setAccessoriesDB] = useState([]); // data from db
 	const [showProductFinder, setShowProductFinder] = useState(false);
+	const { globalModalConfirm, setGlobalModalConfirm } = useContext(GlobalContext);
 	const cacheName = "accessories-cache";
 
 	useEffect( () => {
@@ -151,7 +153,6 @@ export default function Accessories(props) {
 										<IconTrash width="24" height="24"/>
 										<span className="sr-only">{accessory.label} Entfernen</span>
 									</button>
-								
 								</td>
 							</tr>
 						))}
