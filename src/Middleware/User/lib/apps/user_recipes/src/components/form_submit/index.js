@@ -54,8 +54,7 @@ export default function Submit(props) {
 								</div>
 								<div className="ml-3">
 									<label htmlFor="legals" className="font-bold cursor-pointer">
-										Rechteabtretung<p className="text-gray-500 font-normal">Du bestätigst, alle Rechte an dem Rezept und den
-											Bildern zu besitzen und trittst diese an uns ab.</p>
+										Rechteabtretung<p className="text-gray-500 font-normal">Ich akzeptiere die <a className="underline" href="https://www.grillfuerst.de/magazin/wp-content/uploads/2023/06/grillfuerst_rezeptwelt-atb.pdf" target="_blank">Teilnahmebedingungen</a> der Grillfürst GmbH.</p>
 									</label>
 									
 								</div>
