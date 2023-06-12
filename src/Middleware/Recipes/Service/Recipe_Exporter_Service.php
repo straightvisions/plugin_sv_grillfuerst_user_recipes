@@ -41,6 +41,7 @@ final class Recipe_Exporter_Service {
             ->createLogger();
         $this->Api_Middleware = $Api_Middleware;
         $this->settings = $container->get('settings');
+
     }
 
     // controller fn -----------------------------------------------
@@ -197,6 +198,7 @@ final class Recipe_Exporter_Service {
             'featured_media'  => $this->is_ok($feat_image_res) ? $feat_image_res['body']['id'] : 0,
             'cp_menutype'     => $item->get('menu_type'),
             'cp_kitchenstyle' => $item->get('kitchen_style'),
+            'cp_source'       => [(int)$this->get_community_taxonomy_id()],
             'acf'             => [
                 'preparation_time' => $item->get('preparation_time'),
                 'cooking_time'     => $item->get('cooking_time'),
@@ -243,6 +245,11 @@ final class Recipe_Exporter_Service {
         $this->errors($res['errors']);
 
         return $res;
+    }
+
+    //@todo refactor this function
+    public function get_community_taxonomy_id(){
+        return defined('GF_USER_RECIPES_TAXONOMY_ID') ? GF_USER_RECIPES_TAXONOMY_ID : 0;
     }
 
     private function map_media_to_post($post): array {

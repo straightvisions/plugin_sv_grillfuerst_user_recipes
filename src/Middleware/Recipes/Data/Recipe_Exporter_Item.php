@@ -26,7 +26,7 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
         $list = $this->ingredients;
         $output = [];
         foreach($list as $k => $d){
-            $product = $d->products_id ? $this->get_product($d->products_id) : null;
+            $product = isset($d->products_id) ? $this->get_product($d->products_id) : null;
             $image = $this->get_product_thumb($product);
 
             $output[] =  [
@@ -113,7 +113,7 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
         $servings = $this->servings;
         $factor = $servings / 4;
         $amount4p = isset($ingredient->amount4p) ? $ingredient->amount4p : $ingredient->amount * $factor;
-        return $ingredient->sacalable ? $amount4p : $ingredient->amount;
+        return $ingredient->scalable ? $amount4p : $ingredient->amount;
     }
 
 }
