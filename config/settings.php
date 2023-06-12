@@ -56,6 +56,14 @@ $settings['logger'] = [
 ];
 
 $settings['mailer'] = [
+    'mode' => GF_USER_RECIPES_MAIL_MODE,
+    'smtp' => [
+        'type'=> '',
+        'host'=> GF_USER_RECIPES_MAIL_SMTP_HOST,
+        'port'=> GF_USER_RECIPES_MAIL_SMTP_PORT,
+        'username'=> GF_USER_RECIPES_MAIL_SMTP_USERNAME,
+        'password'=> GF_USER_RECIPES_MAIL_SMTP_PASSWORD,
+    ],
     'from' => 'noreply@grillfuerst.de'
 ];
 

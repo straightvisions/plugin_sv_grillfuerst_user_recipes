@@ -123,7 +123,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         if($this->settings['debug'] === true || $this->settings['env'] === 'development'){
             $this->Api_Middleware->add([
                 'route' => '/test/email', // wordpress specific
-                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_email_service'], 'permission_callback' => '__return_true']
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_send_email_service'], 'permission_callback' => '__return_true']
             ]);
 
             $this->Api_Middleware->add([

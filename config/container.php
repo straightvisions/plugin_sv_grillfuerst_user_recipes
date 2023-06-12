@@ -43,15 +43,13 @@ return [
         $settings = $container->get('settings');
 
         if (isset($settings['mailer'])) {
-            $smtp = $settings['mailer']['smtp'] ?? false;
-
-            $dsn = $smtp ? sprintf(
+            $dsn = $settings['mailer']['mode'] === 'smtp' ? sprintf(
                 '%s://%s:%s@%s:%s',
-                $smtp['type'],
-                $smtp['username'],
-                $smtp['password'],
-                $smtp['host'],
-                $smtp['port']
+                $settings['mailer']['smtp']['type'],
+                $settings['mailer']['smtp']['username'],
+                $settings['mailer']['smtp']['password'],
+                $settings['mailer']['smtp']['host'],
+                $settings['mailer']['smtp']['port']
             ) : 'sendmail://default';
         } else {
             $dsn = 'null://null';

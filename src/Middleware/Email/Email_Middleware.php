@@ -5,6 +5,7 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Email;
 use Psr\Container\ContainerInterface;
 use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
 use RuntimeException;
+use Symfony\Component\Mailer\Mailer;
 use Symfony\Component\Mailer\MailerInterface;
 use Symfony\Component\Mime\Address;
 use Symfony\Component\Mime\Email;
@@ -46,15 +47,64 @@ class Email_Middleware {
                 ->subject($data['subject'])
                 ->html($this->render($data));
 
-            $this->mailer->send($email);
+            if ($this->settings['mode'] === 'smtp') {
+                $this->sendMail($email); //if this is not working with smtp - use this: $this->sendMailSMTP($email);
+            } elseif ($this->settings['mode'] === 'wordpress') {
+                $this->sendMailWordPress($email, $data);
+            } else {
+                $this->sendMail($email);
+            }
+
             $this->logger->info('Email sent successfully', $data);
         } catch (Throwable $exception) {
             $this->logger->error($exception->getMessage(), $data);
-            //throw new RuntimeException('Failed to send email');
             $errors[] = 'Email konnte nicht gesendet werden';
         }
 
         return $errors;
+    }
+
+    private function sendMail(Email $email): void {
+        $this->mailer->send($email);
+    }
+
+    private function sendMailSMTP(Email $email): void {
+        // SMTP configuration
+        $smtpHost = $this->settings['smtp']['host'];
+        $smtpPort = $this->settings['smtp']['port'];
+        $smtpUsername = $this->settings['smtp']['username'];
+        $smtpPassword = $this->settings['smtp']['password'];
+
+        $transport = new \Symfony\Component\Mailer\Transport\Smtp\SmtpTransport($smtpHost, $smtpPort);
+        $transport->setUsername($smtpUsername);
+        $transport->setPassword($smtpPassword);
+
+        // Create the Mailer using the SMTP transport
+        $mailer = new Mailer($transport);
+
+        // Send the email using the configured Mailer
+        $mailer->send($email);
+    }
+
+    private function sendMailWordPress(Email $email, array $data): void {
+        $to = $data['to'];
+        $subject = $data['subject'];
+        $message = $data['content'];
+
+        $headers = array(
+            'Content-Type: text/html; charset=UTF-8',
+        );
+
+        $result = \wp_mail($to, $subject, $message, $headers);
+
+        if ($result) {
+            // Email sent successfully
+            $this->logger->info('Email sent successfully', $data);
+        } else {
+            // Failed to send email
+            $this->logger->error('Failed to send email', $data);
+            $errors[] = 'Email konnte nicht gesendet werden';
+        }
     }
 
     private function render(array $params): string {
