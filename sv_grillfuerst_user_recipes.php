@@ -22,24 +22,67 @@ register_activation_hook( __FILE__, 'sv_grillfuerst_user_recipes_plugin_activati
 function sv_grillfuerst_user_recipes_plugin_activation() {
     global $wpdb;
     $table_name = 'svgfur_recipes_products';
-    // Check if the table exists
-    if ($wpdb->get_var('SHOW TABLES LIKE \'' . $table_name . '\'') != $table_name) {
-        // Table does not exist, create it
-        $sql = 'CREATE TABLE ' . $table_name . ' (
-        products_id mediumint(9) NOT NULL,
-        model varchar(255) NOT NULL,
-        ean varchar(255) NOT NULL,
-        name varchar(255) NOT NULL, 
-        brand varchar(255) NOT NULL,
-        description_short text NOT NULL,
-        images json NOT NULL DEFAULT \'[]\',
-        link varchar(255) NOT NULL,
-        PRIMARY KEY (products_id)) ' . $wpdb->get_charset_collate() . ';
-        ALTER TABLE ' . $table_name . ' ADD INDEX (ean, name, brand);
-        ';
 
-        require_once( ABSPATH . 'wp-admin/includes/upgrade.php' );
-        dbDelta($sql);
+    // Check if the table exists
+    if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
+        // Table does not exist, create it
+        $sql = "
+        CREATE TABLE {$table_name} (
+            products_id mediumint(9) NOT NULL,
+            model varchar(255) NOT NULL,
+            ean varchar(255) NOT NULL,
+            name varchar(255) NOT NULL, 
+            brand varchar(255) NOT NULL,
+            description_short text NOT NULL,
+            images json NOT NULL DEFAULT '[]',
+            link varchar(255) NOT NULL,
+            is_food int(1) NOT NULL DEFAULT 0,
+            PRIMARY KEY (products_id)
+        ) {$wpdb->get_charset_collate()};
+        ";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        $wpdb->query($sql);
+    }
+
+    $table_name = 'svgfur_recipes_recipes';
+    if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
+        // Table does not exist, create it
+        $sql = "
+        CREATE TABLE {$table_name} (
+            id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
+            uuid int(11) UNSIGNED NOT NULL,
+            user_id bigint(20) UNSIGNED NOT NULL,
+            user_meta longtext NOT NULL DEFAULT '{}',
+            title varchar(256) NOT NULL,
+            state enum('draft','review_pending','reviewed','published') NOT NULL DEFAULT 'draft',
+            link text NOT NULL,
+            voucher varchar(256) NOT NULL,
+            excerpt text NOT NULL,
+            servings int(5) NOT NULL DEFAULT 4,
+            featured_image longtext NOT NULL DEFAULT '{}',
+            menu_type longtext NOT NULL DEFAULT '[]',
+            kitchen_style longtext NOT NULL DEFAULT '[]',
+            difficulty varchar(20) NOT NULL DEFAULT 'easy',
+            preparation_time int(5) NOT NULL DEFAULT 0,
+            cooking_time int(5) NOT NULL DEFAULT 0,
+            waiting_time int(5) NOT NULL DEFAULT 0,
+            ingredients longtext NOT NULL DEFAULT '[]',
+            ingredients_custom_wish text NOT NULL,
+            accessories longtext NOT NULL DEFAULT '[]',
+            steps longtext NOT NULL DEFAULT '[]',
+            newsletter tinyint(1) NOT NULL DEFAULT 0,
+            feedback longtext NOT NULL DEFAULT '[]',
+            legal_rights tinyint(1) NOT NULL DEFAULT 0,
+            created timestamp NOT NULL DEFAULT current_timestamp(),
+            edited timestamp NOT NULL DEFAULT '0000-00-00 00:00:00' ON UPDATE current_timestamp(),
+            PRIMARY KEY (id),
+            UNIQUE KEY uuid (uuid)
+        ) {$wpdb->get_charset_collate()};
+        ";
+
+        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+        $wpdb->query($sql);
     }
 
 }
