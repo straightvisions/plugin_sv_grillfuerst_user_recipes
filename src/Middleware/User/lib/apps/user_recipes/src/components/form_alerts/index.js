@@ -23,7 +23,7 @@ export function AlertReviewed(props) {
 		<div className=" space-y-4 bg-blue-100 border-t border-b border-blue-500 text-blue-700 px-4 py-3" role="alert">
 			<p className="font-bold">Anpassungen notwendig</p>
 			<p className="text-grey"><i>Bitte führe die folgenden Änderungen durch und reiche dein Rezept erneut ein:</i></p>
-			<p className="" dangerouslySetInnerHTML={{__html: latestFeedback.text}} />
+			<p className="" dangerouslySetInnerHTML={{__html: latestFeedback ? latestFeedback.text : ''}} />
 		</div>
 	);
 }

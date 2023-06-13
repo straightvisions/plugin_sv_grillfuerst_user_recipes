@@ -65,10 +65,10 @@ export default function Login(props) {
 	return (
 		<div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
 			<div className="sm:mx-auto sm:w-full sm:max-w-[750px]">
-				<h2 className="mt-6 text-center">Willkommen bei den Grillfürst Community-Rezepten.</h2>
-				<p className="mt-2 text-center">Hier möchten wir euch einen Platz bieten eure besten und leckersten Grillrezepte mit der ganzen Welt zu teilen und in unserem Magazin zu veröffentlichen.</p>
-				<p className="mt-2 text-center">Alle Rezepte, die unsere Kriterien erfüllen (verständlich geschrieben, schön bebildert, nachgrillbar, als Rezept erkennbar und nicht in irgend einer Art diskriminierend) werden als Community Rezept veröffentlich und sogar von uns belohnt!</p>
-				<p className="mt-2 text-center">Ihr erhaltet – nach Prüfung und Freischaltung – einen Gutscheincode für unseren Online-Shop und zwar für jedes Rezept. </p>
+				<h2 className="mt-6">Willkommen bei den Grillfürst Community-Rezepten.</h2>
+				<p className="mt-2">Hier möchten wir euch einen Platz bieten eure besten und leckersten Grillrezepte mit der ganzen Welt zu teilen und in unserem Magazin zu veröffentlichen.</p>
+				<p className="mt-2">Alle Rezepte, die unsere Kriterien erfüllen (verständlich geschrieben, schön bebildert, nachgrillbar, als Rezept erkennbar und nicht in irgend einer Art diskriminierend) werden als Community Rezept veröffentlich und sogar von uns belohnt!</p>
+				<p className="mt-2">Ihr erhaltet – nach Prüfung und Freischaltung – einen Gutscheincode für unseren Online-Shop und zwar für jedes Rezept. </p>
 			</div>
 			
 			<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
