@@ -17,7 +17,7 @@ export default function Register(props){
 			'customers_street_address': '',
 			'customers_postcode': '',
 			'customers_city': '',
-			'customers_country_code': '',
+			'customers_country_code': 'DE',
 			'customers_phone': '',
 			'borlabs_grid_phone_fallback': ''
 		},
@@ -86,7 +86,7 @@ export default function Register(props){
 	
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		
+
 		// is already sending or pw is not valid yet?
 		if(isSending || password.message !== '') return;
 		setIsSending(true);
