@@ -37,6 +37,7 @@ class Email_Middleware {
 
     public function send(array $data): array {
         $errors = [];
+
         try {
             $from = new Address(isset($data['from']) ? $data['from'] : $this->settings['from']);
             $to   = new Address($data['to']);
@@ -87,15 +88,24 @@ class Email_Middleware {
     }
 
     private function sendMailWordPress(Email $email, array $data): void {
-        $to = $data['to'];
-        $subject = $data['subject'];
-        $message = $data['content'];
+        $recipients = array_merge(
+            $email->getTo(),
+            $email->getCc(),
+            $email->getBcc()
+        );
+
+        $to = array_map(function ($recipient) {
+            return $recipient->getAddress();
+        }, $recipients);
+
+        $subject = $email->getSubject();
+        $message = $this->render($data);
 
         $headers = array(
             'Content-Type: text/html; charset=UTF-8',
         );
 
-        $result = \wp_mail($to, $subject, $message, $headers);
+        $result = \wp_mail($to, $subject,  $message, $headers);
 
         if ($result) {
             // Email sent successfully

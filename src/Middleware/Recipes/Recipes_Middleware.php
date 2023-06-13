@@ -132,6 +132,11 @@ final class Recipes_Middleware implements Middleware_Interface {
             ]);
 
             $this->Api_Middleware->add([
+                'route' => '/test/email/feedback', // wordpress specific
+                'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_send_email_recipe_feedback'], 'permission_callback' => '__return_true']
+            ]);
+
+            $this->Api_Middleware->add([
                 'route' => '/test/voucher', // wordpress specific
                 'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_create_voucher'], 'permission_callback' => '__return_true']
             ]);
@@ -224,7 +229,7 @@ final class Recipes_Middleware implements Middleware_Interface {
 
         $email = [
             'to'           => $user['email'],
-            'subject'      => 'Neues Feedback erhalten',
+            'subject'      => 'Ihr Handeln ist gefragt!',
             'name'         => $user['salutation'] . ' ' . $user['lastname'],
             'recipe_name'  => $recipe->title,
             'recipe_url'     => $url
@@ -380,11 +385,11 @@ final class Recipes_Middleware implements Middleware_Interface {
         if ($voucher !== '') {
             $email = [
                 'to'           => $user['email'],
-                'subject'      => 'Ihr Rezept wurde freigeschaltet',
+                'subject'      => 'Ihr Rezept wurde freigeschaltet!',
                 'name'         => $user['salutation'] . ' ' . $user['lastname'],
                 'recipe_name'  => $recipe->title,
                 'voucher_code' => $voucher,
-                'shop_url'     => 'https://grillfuerst.de', //@todo move this to settings
+                'shop_url'     => 'https://grillfuerst.de', //@todo move this to settings / constants
             ];
 
             $this->Recipe_Updater_Service->update(['voucher' => $voucher], $uuid);
@@ -415,7 +420,38 @@ final class Recipes_Middleware implements Middleware_Interface {
             $uuid = $urlParams['recipe'];
 
             if($this->settings['debug'] || $this->settings['env'] === 'development') {
-                return $this->handle_after_recipe_published($uuid);
+                return [$this->handle_after_recipe_published($uuid), 200];
+            }else{
+                return [[],404];
+            }
+        });
+
+    }
+
+    public function test_send_email_recipe_feedback($request) {
+        return $this->Api_Middleware->response_public($request, function ($Request) {
+            $urlParams  = $Request->getParams();
+            $uuid = $urlParams['recipe'];
+            $results = $this->Recipe_Finder_Service->get($uuid);
+            $recipe  = $results->items[0];
+            $user_id = $recipe->get('user_id');
+            $info = $this->User_Info_Service->get($user_id, true);
+            $user = $info['body']['data'];
+            $url = rtrim(GF_USER_RECIPES_APP_ROOT, '/') . '/edit/'.$uuid;
+            $errors = [];
+
+            $email = [
+                'to'           => $user['email'],
+                'subject'      => 'Ihr Handeln ist gefragt!',
+                'name'         => $user['salutation'] . ' ' . $user['lastname'],
+                'recipe_name'  => $recipe->title,
+                'recipe_url'     => $url
+            ];
+
+            $errors = array_merge($errors, $this->send_email_recipe_feedback($email));
+
+            if($this->settings['debug'] || $this->settings['env'] === 'development') {
+                return [$errors, 200];
             }else{
                 return [[],404];
             }
@@ -454,6 +490,7 @@ final class Recipes_Middleware implements Middleware_Interface {
                 $info = $this->User_Info_Service->get($id, true);
                 $user = $info['body']['data'];
                 var_dump($user);
+                return [[], 200];
             }else{
                 return [[],404];
             }
