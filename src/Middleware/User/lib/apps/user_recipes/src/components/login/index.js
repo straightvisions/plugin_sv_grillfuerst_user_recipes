@@ -46,6 +46,7 @@ export default function Login(props) {
 				const {data, token} = res;
 				if (data.status === 'success') {
 					storage.set('userId', data.customerId);
+					// user meta
 					storage.set('token', token);
 					window.location.href = data.url + '&ref=' + encodeURIComponent(routes.config.appURL);
 				} else {

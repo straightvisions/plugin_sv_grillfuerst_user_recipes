@@ -6,7 +6,6 @@ import user from './modules/user';
 import Spinner from './components/spinner';
 import Login from './components/login';
 import Register from './components/register';
-import Reset from './components/reset';
 import {ModalConfirm} from './components/modals';
 import { Routes, Route } from "react-router-dom";
 import routes from './models/routes';

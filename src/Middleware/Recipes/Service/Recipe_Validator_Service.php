@@ -19,8 +19,6 @@ final class Recipe_Validator_Service {
     }
 
     public function validate_update(int $recipe_id, array $data): void {
-
-
         if (!$this->repository->exists_id($recipe_id)) {
             $errors = ['recipe_id'=>'Recipe not found: '.$recipe_id];
 
@@ -154,6 +152,7 @@ final class Recipe_Validator_Service {
                 'state' => $constraint->optional([]),
                 'uuid' => $constraint->optional([]),
                 'user_id' => $constraint->optional([]),
+                'user_meta' => $constraint->optional([]),
                 'link' => $constraint->optional([]),
                 'voucher' => $constraint->optional([]),
             ]

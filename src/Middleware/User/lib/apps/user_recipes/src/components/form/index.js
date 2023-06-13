@@ -12,6 +12,7 @@ import { AlertReviewed, AlertReviewPending, AlertPublished } from '../form_alert
 import {GlobalContext} from "../../modules/context";
 import storage from "../../modules/storage";
 import {fetchError} from "../../modules/fetch";
+import user from '../../modules/user';
 
 function dateIsValid(date) {
 	return typeof date === 'object' && date !== null && typeof date.getTime === 'function' && !isNaN(date);
@@ -19,13 +20,10 @@ function dateIsValid(date) {
 
 export default function Form(props) {
 	const { globalMessage, setGlobalMessage } = useContext(GlobalContext);
-	
-	const {user} = props;
 	const params = useParams();
 	const [formState, setFormState] = useState({});
 	const [loading, setLoadingState] = useState(true);
 	const [saving, setSavingState] = useState(false);
-	
 	// load data from db and check if newer than storage
 	useEffect(() => {
 		fetch(routes.getRecipeByUuid + params.uuid,{

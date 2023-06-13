@@ -10,8 +10,10 @@ const user = {
 	get: () => {
 		return {
 			'id': storage.get('userId', 0),
+			// this shouldn't be stored in the local storage.
 			'firstname': storage.get('firstname', 'unknown'),
 			'lastname': storage.get('lastname', 'unknown'),
+			'username': storage.get('username', 'unknown'),
 			'avatar': storage.get('avatar','')
 		}
 	},

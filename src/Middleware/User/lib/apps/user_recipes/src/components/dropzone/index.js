@@ -5,7 +5,7 @@ export default function Dropzone(props) {
 	const {
 		label = '',
 		subLabel = '',
-		hint = '',
+		hint = 'JPG/PNG - max. 5MB - min. 300x300px',
 		multiple = false,
 		accept = 'image/*',
 		onChange = (files) => {},

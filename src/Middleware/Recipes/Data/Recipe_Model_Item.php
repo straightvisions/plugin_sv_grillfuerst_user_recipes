@@ -2,12 +2,11 @@
 
 namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data;
 
-use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Image_Model_Item;
-
 class Recipe_Model_Item {
     public ?int $id = 0;
     public ?int $uuid = 0;
     public ?int $user_id = 0;
+    public object|string $user_meta;
     public ?string $title = '';
     public ?string $link = '';
     public string $voucher = '';
@@ -32,6 +31,7 @@ class Recipe_Model_Item {
     public function __construct(){
         // object types
         $this->featured_image = new Image_Model_Item();
+        $this->user_meta = new User_Model_Item();
     }
 
     // from database to response

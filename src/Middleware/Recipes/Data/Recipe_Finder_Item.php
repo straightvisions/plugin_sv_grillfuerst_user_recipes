@@ -1,7 +1,6 @@
 <?php
 
 namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data;
-use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Model_Item;
 
 class Recipe_Finder_Item extends Recipe_Model_Item{
     public ?string $created = '1970-01-01 00:00:00';
@@ -13,6 +12,7 @@ class Recipe_Finder_Item extends Recipe_Model_Item{
         parent::__construct();
         // object types
         $this->featured_image = new Image_Model_Item();
+        $this->user_meta = new User_Model_item();
         unset($this->id);
     }
 

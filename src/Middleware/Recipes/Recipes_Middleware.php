@@ -200,6 +200,16 @@ final class Recipes_Middleware implements Middleware_Interface {
                 $uuid = $Request->getAttribute('uuid');
                 $data = $Request->getJSONParams();
 
+                // inject user meta
+                if(isset($data['state']) && $data['state'] === 'review_pending'){
+                    $res = $this->User_Info_Service->get($data['user_id']);
+
+                    if($res['body']['status'] === 'success'){
+                        $data['user_meta'] = (object) $res['body']['data'];
+                    }
+
+                }
+
                 if (is_array($data) && empty($data) === false) {
                     $this->Recipe_Updater_Service->update($data, $uuid);
                 }
