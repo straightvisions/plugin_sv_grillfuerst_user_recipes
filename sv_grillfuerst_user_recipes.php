@@ -118,13 +118,11 @@ function custom_rewrite_rules() {
 
     add_rewrite_rule(
         '^community-rezepte/admin/edit/([0-9]+)/?$',
-        'index.php?pagename=admin',
+        'index.php?pagename=community-rezepte/admin',
         'top'
     );
 }
 add_action('init', 'custom_rewrite_rules');
-
-
 
 // namespace class autoloading
 spl_autoload_register(function ($class) {
