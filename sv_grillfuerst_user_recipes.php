@@ -1,6 +1,6 @@
 <?php
 /*
-Version: 1.0.00
+Version: 2.0.00
 Plugin Name: SV Grillfuerst User Recipes
 Text Domain: sv_grillfuerst_user_recipes
 Description: Custom Plugin
