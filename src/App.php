@@ -18,7 +18,7 @@ final class App {
         Admin_Middleware $Admin_Middleware,
         Recipes_Middleware $Recipes_Middleware,
         Media_Middleware $Media_Middleware,
-        Products_Middleware $Products_Middlewaree,
+        Products_Middleware $Products_Middleware,
     ) {}
 }
 
