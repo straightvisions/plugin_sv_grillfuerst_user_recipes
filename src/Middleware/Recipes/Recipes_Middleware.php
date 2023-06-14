@@ -476,7 +476,7 @@ final class Recipes_Middleware implements Middleware_Interface {
             $params = [
                 'to'      => $urlParams['email'] ?? 'dennis-heiden@straightvisions.com',
                 'subject' => 'Test Email Service',
-                'content' => 'Hellow World',
+                'content' => 'Hello World',
                 'template' => 'default'
             ];
 
