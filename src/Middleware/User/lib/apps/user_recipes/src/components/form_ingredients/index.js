@@ -45,7 +45,7 @@ export default function Ingredients(props) {
 		// ingredients
 		caches.open(cacheName).then((cache) => {
 			cache.match(routes.getIngredients).then((response) => {
-				if (response) {
+				if (response && ingredientsDB.length > 0) {
 					// If the response is in the cache, return it
 					return response.json().then((data) => {
 						setIngredientsDB(data.items);
@@ -74,7 +74,7 @@ export default function Ingredients(props) {
 		// products
 		caches.open(cacheName).then((cache) => {
 			cache.match(routes.getIngredientsProducts).then((response) => {
-				if (response) {
+				if (response && products.length > 0) {
 					// If the response is in the cache, return it
 					return response.json().then((data) => {
 						const filteredItems = data.items;

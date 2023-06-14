@@ -26,7 +26,7 @@ export default function Accessories(props) {
 	useEffect( () => {
 		caches.open(cacheName).then((cache) => {
 			cache.match(routes.getAccessories).then((response) => {
-				if (response) {
+				if (response && accessoriesDB.length > 0) {
 					// If the response is in the cache, return it
 					return response.json().then((data) => {
 						const filteredItems = filterAccessories(data.items);
