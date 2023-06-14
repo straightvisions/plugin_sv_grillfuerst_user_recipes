@@ -29,7 +29,7 @@ final class Admin_Middleware implements Middleware_Interface {
         // routes
         $this->Api_Middleware->add([
             'route' => '/admin/info',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_admin_info']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_admin_info'], 'permission_callback' => '__return_true']
         ]);
 
     }

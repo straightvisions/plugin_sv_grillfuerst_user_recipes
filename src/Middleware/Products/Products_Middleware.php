@@ -35,22 +35,22 @@ final class Products_Middleware implements Middleware_Interface {
         // get product by id
         $this->Api_Middleware->add([
             'route' => '/products/(?P<id>\d+)',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_product']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_product'], 'permission_callback' => '__return_true']
         ]);
 
         $this->Api_Middleware->add([
             'route' => '/products/sync',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_sync_products']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_sync_products'], 'permission_callback' => '__return_true']
         ]);
 
         $this->Api_Middleware->add([
             'route' => '/products/accessories',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_accessories']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_accessories'], 'permission_callback' => '__return_true']
         ]);
 
         $this->Api_Middleware->add([
             'route' => '/products/ingredients',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_ingredients']]
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_ingredients'], 'permission_callback' => '__return_true']
         ]);
 
     }
@@ -76,7 +76,6 @@ final class Products_Middleware implements Middleware_Interface {
     //@todo secure this route with a token
     public function rest_sync_products($request){
         return $this->Api_Middleware->response_public($request, function ($Request) {
-
             $pageNum = 1;
             $lastPage = false;
             $items = [];
