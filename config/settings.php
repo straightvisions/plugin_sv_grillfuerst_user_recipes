@@ -33,7 +33,7 @@ $settings['wordpress_export_auth'] = GF_USER_RECIPES_WORDPRESS_EXPORT_AUTH; // f
 $settings['auth_header'] = [];
 $settings['auth_header'][] = $settings['basic_auth_header'] ? 'Basic ' . $settings['basic_auth_header'] : '';
 $settings['auth_header'][] = $settings['bearer_auth_header'] ? 'Bearer ' . $settings['bearer_auth_header'] : '';
-$settings['auth_header'] = implode(',', $settings['auth_header']);
+$settings['auth_header'] = implode(',', array_filter($settings['auth_header']));
 // URLS
 $settings['wordpress_domain'] = GF_USER_RECIPES_BASE_URL;
 $settings['login_server_url'] = GF_USER_RECIPES_LOGIN_SERVER_URL;

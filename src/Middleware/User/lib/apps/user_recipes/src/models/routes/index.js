@@ -1,6 +1,6 @@
 // host domain and url
 const domain = process.env.REACT_APP_DOMAIN ? process.env.REACT_APP_DOMAIN : window.location.hostname;
-const domainURL = process.env.REACT_APP_DOMAIN_URL ? process.env.REACT_APP_DOMAIN_URL : window.location.origin;
+const domainURL = process.env.REACT_APP_DOMAIN_URL ? process.env.REACT_APP_DOMAIN_URL : window.location.origin + '/magazin';
 const appURL = process.env.REACT_APP_APP_URL ? process.env.REACT_APP_APP_URL : domainURL + '/community-rezepte/';
 const apiURL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL + '/wp-json/sv-grillfuerst-user-recipes/v1' : domainURL + '/wp-json/sv-grillfuerst-user-recipes/v1';
 

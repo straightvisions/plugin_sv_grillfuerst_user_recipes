@@ -4,7 +4,7 @@ import Overlay from "../overlay";
 
 export default function Reset(props){
 	
-	const routeLogin = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-user-recipes/v1/users/reset';
+	const routeLogin = 'https://www.grillfuerst.de/magazin/wp-json/sv-grillfuerst-user-recipes/v1/users/reset';
 	const [credentials, setCredentials] = useState({
 		username: ''
 	});

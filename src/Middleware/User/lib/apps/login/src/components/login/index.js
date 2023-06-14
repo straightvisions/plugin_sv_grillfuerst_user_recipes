@@ -6,7 +6,7 @@ import storage from '../storage';
 
 export default function Login(props){
 	// @todo move this to config:
-	const routeLogin = 'https://relaunch-magazin.grillfuerst.de/wp-json/sv-grillfuerst-user-recipes/v1/users/login';
+	const routeLogin = 'https://www.grillfuerst.de/magazin/wp-json/sv-grillfuerst-user-recipes/v1/users/login';
 	const [credentials, setCredentials] = useState({
 		username: '',
 		password: ''
