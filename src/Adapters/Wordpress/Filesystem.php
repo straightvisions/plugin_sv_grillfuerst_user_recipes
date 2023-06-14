@@ -34,19 +34,30 @@ final class Filesystem {
     }
 
     public function add(array $file, string $folder): array {
-        // validate file first
-        if($this->validate($file) === false) $this->_throw([], 422);
-        // get file array
+        // Validate file first
+        if ($this->validate($file) === false) {
+            $this->_throw([], 422);
+        }
+
+        // Get file array
         $file_array = $this->prepare($file, $folder);
-        // get absolute destination path
+
+        // Get absolute destination path
         $path = $this->get_path($file_array['path']);
-        // create destination folder(s) if not exist
-        if($this->dir_exists($path) === false) wp_mkdir_p($path);
-        // move file to destination
-        move_uploaded_file($file['tmp_name'], $path . $file_array['filename']);
+
+        // Create destination folder if not exist
+
+        if(is_dir($path)){
+            // Move file to destination
+            move_uploaded_file($file['tmp_name'], $path . $file_array['filename']);
+        }else{
+            wp_mkdir_p($path);
+            return $this->add($file, $folder);
+        }
 
         return $file_array;
     }
+
 
     public function rename(string $oldPath, string $newPath){
         return !file_exists($this->get_path($newPath)) ? rename($this->get_path($oldPath), $this->get_path($newPath)) : false;
