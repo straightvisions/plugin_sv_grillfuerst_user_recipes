@@ -17,8 +17,8 @@ final class Asset {
         // save origin
         $this->assets[$handle] = $src;
         // wordpress specific
-        wp_register_script( $handle, $src, [], filemtime( $path ), true);
-        wp_enqueue_script( $handle, $src);
+        wp_enqueue_script( $handle, $src, [], filemtime( $path ), true);
+
         if($localize){
             foreach($localize as $key => $script){
                 wp_localize_script($handle, $handle.'_'.$key, $script);
