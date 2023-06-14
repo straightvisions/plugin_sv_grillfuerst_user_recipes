@@ -390,7 +390,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         // get the data
         $info = $this->User_Info_Service->get($user_id, true);
         $user = $info['body']['data'];
-        $voucher = $this->Recipe_Voucher_Service->create();
+        $voucher = empty($recipe->voucher) ? $this->Recipe_Voucher_Service->create() : $recipe->voucher;
 
         if ($voucher !== '') {
             $email = [
