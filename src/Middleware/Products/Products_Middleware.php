@@ -59,6 +59,7 @@ final class Products_Middleware implements Middleware_Interface {
     public function rest_get_product($request) {}
 
     public function rest_get_accessories($request){
+        //@todo make this non public
         return $this->Api_Middleware->response_public($request, function ($Request) {
             $results = $this->Product_Finder_Service->get_list(['filter'=>['is_food'=>0]]); //@todo replace filter when available
             return [$results, 200];
@@ -66,6 +67,7 @@ final class Products_Middleware implements Middleware_Interface {
     }
 
     public function rest_get_ingredients($request){
+        //@todo make this non public
         return $this->Api_Middleware->response_public($request, function ($Request) {
             $results = $this->Product_Finder_Service->get_list(['filter'=>['is_food'=>1]]); //@todo replace filter when available
             return [$results, 200];
@@ -76,16 +78,21 @@ final class Products_Middleware implements Middleware_Interface {
     //@todo secure this route with a token
     public function rest_sync_products($request){
         return $this->Api_Middleware->response_public($request, function ($Request) {
+            $urlParams  = $Request->getParams(); // later to get a token
             $pageNum = 1;
             $lastPage = false;
             $items = [];
 
-            while($items !== false){ // blocking
-                $items = $this->get_remote_products($pageNum);
-                if($items === false) break;
+            if($this->settings['debug'] || $this->settings['env'] === 'development') {
+                while ($items !== false) { // blocking
+                    $items = $this->get_remote_products($pageNum);
+                    if ($items === false) {
+                        break;
+                    }
 
-                $this->Product_Import_Service->import($items);
-                $pageNum++;
+                    $this->Product_Import_Service->import($items);
+                    $pageNum++;
+                }
             }
 
             return [['importedPages'=>$pageNum-1],200];
