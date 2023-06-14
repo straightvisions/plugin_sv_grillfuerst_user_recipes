@@ -112,7 +112,8 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
         // fallback for old recipes
         $servings = $this->servings;
         $factor = $servings / 4;
-        $amount4p = isset($ingredient->amount4p) ? $ingredient->amount4p : $ingredient->amount * $factor;
+        $amount4p = isset($ingredient->amount4p) && !empty($ingredient->amount4p) ? $ingredient->amount4p : $ingredient->amount * $factor;
+
         return $ingredient->scalable ? $amount4p : $ingredient->amount;
     }
 
