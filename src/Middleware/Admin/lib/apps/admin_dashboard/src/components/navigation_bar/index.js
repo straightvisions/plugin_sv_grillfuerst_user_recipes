@@ -16,7 +16,7 @@ const user = {
 const navigation = [
 	//hotfix
 	//{ name: 'Dashboard', href: '/', current: true },
-	{ name: 'Dashboard', href: window.location.hostname === 'localhost' ? '/' : '/community-rezepte/admin', current: true },
+	{ name: 'Dashboard', href: window.location.hostname === 'localhost' ? '/' : '/magazin/community-rezepte/admin', current: true },
 ]
 
 const userNavigation = [
