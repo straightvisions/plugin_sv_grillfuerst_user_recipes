@@ -110,7 +110,7 @@ export default function Login(props) {
 						
 						<div>
 							<label htmlFor="password" className="block font-bold text-gray-700">
-								Password
+								Passwort
 							</label>
 							<div className="mt-1">
 								<input

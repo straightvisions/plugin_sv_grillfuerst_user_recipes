@@ -229,7 +229,7 @@ export default function Register(props){
 						
 						<div className="sm:col-span-1">
 							<label htmlFor="zip" className="block font-bold text-gray-700">
-								Postleiztzahl
+								Postleitzahl
 							</label>
 							<div className="mt-1">
 								<input
