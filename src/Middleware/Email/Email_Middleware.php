@@ -103,6 +103,7 @@ class Email_Middleware {
 
         $headers = array(
             'Content-Type: text/html; charset=UTF-8',
+            'From: rezepte@grillfuerst.de'
         );
 
         $result = \wp_mail($to, $subject,  $message, $headers);
