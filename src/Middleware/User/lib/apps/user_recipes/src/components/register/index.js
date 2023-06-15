@@ -164,7 +164,7 @@ export default function Register(props){
 								<select
 									id="salutation"
 									name="salutation"
-									defaultValue="Frau"
+									value={credentials.default_address.customers_gender}
 									required
 									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 									onChange={(e) => handleAddress('customers_gender', e.target.value)}
