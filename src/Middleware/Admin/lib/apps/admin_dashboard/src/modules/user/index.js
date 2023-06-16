@@ -20,7 +20,8 @@ const user = {
 		
 		caches.open(cacheName).then((cache) => {
 			cache.match(routes.getAdminInfo).then((response) => {
-				if (response && Date.now() - new Date(response.headers.get("date")).getTime() < maxAge) {
+				//@todo check why the check hasOwnProperty is needed - somehow the response has no then method
+				if (response.hasOwnProperty('then') && response && Date.now() - new Date(response.headers.get("date")).getTime() < maxAge) {
 					// If the response is in the cache and not older than 24 hours, return it
 					return response.then(response => headers.parseResponse(response)).then(res => {
 						
