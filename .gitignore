@@ -1,6 +1,5 @@
 # Ignore development-specific files
-**.env.development
-**.env.staging
+**.env.*
 **/dist/index.html
 # Ignore node_modules directory
 node_modules/
