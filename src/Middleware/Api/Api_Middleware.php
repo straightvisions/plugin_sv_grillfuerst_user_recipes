@@ -77,10 +77,10 @@ final class Api_Middleware implements Middleware_Interface {
         $JWT = $this->Jwt_Middleware;
         $response = null;
 
-        // validate api key
-        if($this->validate_api_key($Request) === false){
+        // validate api key // disabled for the moment, maybe we need it later
+        /*if($this->validate_api_key($Request) === false){
             $response = new \WP_REST_Response(['status'=>'error', 'message'=>'X-API-KEY invalid'], 200);
-        }
+        }*/
 
         // validate access token
         $validateRequest    = $JWT->validateRequest($Request);
