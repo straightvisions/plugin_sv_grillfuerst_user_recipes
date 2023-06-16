@@ -1,23 +1,21 @@
-const root = 'https://www.grillfuerst.de/magazin/wp-json/sv-grillfuerst-user-recipes/v1';
-//@todo replace this with config url
-const rootStatic = 'https://www.grillfuerst.de/magazin/community-rezepte';
+const API_ROOT = process.env.API_ROOT_V1_URL;
 
 export default {
-	"login": rootStatic + '/login',
-	"isLoggedIn": root + '/admin/is_logged_in',
-	"getAdminInfo": root + '/admin/info',
-	"getUserInfoById": root + '/users/{id}/info',
-	"getRecipes": root + '/recipes', // GET
-	"getRecipesByUser": root + '/recipes/user/', // GET + {user_id}
-	"getRecipeByUuid": root + '/recipes/', // GET + {recipe_id}
-	"updateRecipe": root + '/recipes/', // PUT + {recipe_id}
-	"exportRecipe": root + '/recipes/{id}/export', // PUT + {recipe_id}
-	"getIngredients": root + '/recipes/ingredients', // GET
-	"getMenuTypes": root + '/recipes/menutypes', // GET
-	"getKitchenStyles": root + '/recipes/kitchenstyles', // GET
-	"getAccessories": root + '/products/accessories', // GET
-	"getIngredientsProducts": root + '/products/ingredients', // GET
-	"uploadMedia": root + '/media/upload', // POST
-	"updateMedia": root + '/media/update', // PUT
-
+	"root": process.env.APP_ROOT_URL,
+	"login": process.env.APP_DOMAIN_URL + '/wp-admin',
+	"isLoggedIn": API_ROOT + '/admin/is_logged_in',
+	"getAdminInfo": API_ROOT + '/admin/info',
+	"getUserInfoById": API_ROOT + '/users/{id}/info',
+	"getRecipes": API_ROOT + '/recipes', // GET
+	"getRecipesByUser": API_ROOT + '/recipes/user/', // GET + {user_id}
+	"getRecipeByUuid": API_ROOT + '/recipes/', // GET + {recipe_id}
+	"updateRecipe": API_ROOT + '/recipes/', // PUT + {recipe_id}
+	"exportRecipe": API_ROOT + '/recipes/{id}/export', // PUT + {recipe_id}
+	"getIngredients": API_ROOT + '/recipes/ingredients', // GET
+	"getMenuTypes": API_ROOT + '/recipes/menutypes', // GET
+	"getKitchenStyles": API_ROOT + '/recipes/kitchenstyles', // GET
+	"getAccessories": API_ROOT + '/products/accessories', // GET
+	"getIngredientsProducts": API_ROOT + '/products/ingredients', // GET
+	"uploadMedia": API_ROOT + '/media/upload', // POST
+	"updateMedia": API_ROOT + '/media/update', // PUT
 }

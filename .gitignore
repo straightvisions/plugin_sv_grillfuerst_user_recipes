@@ -1,5 +1,6 @@
-/src/Middleware/User/lib/apps/user_recipes/node_modules/
-/src/Middleware/Admin/lib/apps/admin_dashboard/node_modules/
-/src/Middleware/User/lib/apps/login/node_modules/
-*.env
-/src/Middleware/User/lib/apps/user_recipes/.env.production
+# Ignore development-specific files
+**.env.development
+**/dist/index.html
+# Ignore node_modules directory
+node_modules/
+**node_modules/
