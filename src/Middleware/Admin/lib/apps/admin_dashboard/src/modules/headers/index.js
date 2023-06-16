@@ -1,5 +1,4 @@
-import storage from './../storage';
-const token = sv_grillfuerst_admin_dashboard_app_token;
+const token = process.env.API_USER_TOKEN ?? sv_grillfuerst_admin_dashboard_app_token;
 const headers = {
 	get: (_headers = []) => {
 		let auth = token ? 'Bearer ' + token : '';
