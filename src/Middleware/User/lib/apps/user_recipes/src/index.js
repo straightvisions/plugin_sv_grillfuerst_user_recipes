@@ -1,6 +1,7 @@
 import React from "react";
 import { createRoot } from 'react-dom/client';
 import {BrowserRouter as Router} from "react-router-dom";
+import routes from "./models/routes";
 import App from "./app.js";
 import tailwindCSS from '!!raw-loader!!!postcss-loader!./tailwind.css';
 import styleCSS from '!!raw-loader!!!postcss-loader!./style.css';
@@ -18,4 +19,4 @@ bodyNode.appendChild(renderIn);
 shadow.appendChild(bodyNode);
 
 const root = createRoot(renderIn);
-root.render(<Router basename={svgf_root_path}><App /></Router>);
+root.render(<Router basename={routes.config.appPath}><App /></Router>);

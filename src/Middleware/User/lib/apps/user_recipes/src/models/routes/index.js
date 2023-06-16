@@ -1,14 +1,17 @@
-// host domain and url
-const domain = process.env.REACT_APP_DOMAIN ? process.env.REACT_APP_DOMAIN : window.location.hostname;
-const domainURL = process.env.REACT_APP_DOMAIN_URL ? process.env.REACT_APP_DOMAIN_URL : window.location.origin + '/magazin';
-const appURL = process.env.REACT_APP_APP_URL ? process.env.REACT_APP_APP_URL : domainURL + '/community-rezepte/';
-const apiURL = process.env.REACT_APP_API_URL ? process.env.REACT_APP_API_URL + '/wp-json/sv-grillfuerst-user-recipes/v1' : domainURL + '/wp-json/sv-grillfuerst-user-recipes/v1';
+const subFolder = window.location.hostname === 'www.grillfuerst.de' ? '/magazin' : '';
+
+const domain = process.env.HOST_DOMAIN ? process.env.HOST_DOMAIN : window.location.hostname + subFolder;
+const domainURL = process.env.HOST_DOMAIN_URL ? process.env.HOST_DOMAIN_URL : window.location.origin + subFolder;
+const appURL = process.env.APP_ROOT_URL ? process.env.APP_ROOT_URL : domainURL + '/community-rezepte';
+const appPath = process.env.APP_ROOT_PATH ? process.env.APP_ROOT_PATH : subFolder + '/community-rezepte';
+const apiURL = process.env.API_ROOT_V1_URL ? process.env.API_ROOT_V1_URL : domainURL + '/wp-json/sv-grillfuerst-user-recipes/v1';
 
 export default {
 	config:{
 		domain,
 		domainURL,
 		appURL,
+		appPath,
 		apiURL,
 	},
 	// check current url without params
