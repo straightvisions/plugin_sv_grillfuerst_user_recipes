@@ -74,7 +74,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         // GET ALL RECIPES
         $this->Api_Middleware->add([
             'route' => '/recipes',
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_recipes'], 'permission_callback' => '__return_true']
+            'args'  => ['methods' => 'GET, OPTIONS', 'callback' => [$this, 'rest_get_recipes'], 'permission_callback' => '__return_true']
         ]);
 
         // GET / UPDATE A SPECIFIC RECIPE

@@ -14,15 +14,6 @@ styleNode.innerHTML = `${tailwindCSS}${styleCSS}`;
 bodyNode.appendChild(styleNode);
 bodyNode.appendChild(renderIn);
 shadow.appendChild(bodyNode);
-
 const root = createRoot(renderIn);
-root.render(<Router basename={svgf_root_path}><App /></Router>);
 
-/*
-	for localhost:
-	1. login into /wp-admin
-	2. navigate to /community-rezepte/admin
-	3. search for sv_grillfuerst_admin_dashboard_app_token in the source code
-	4. copy the FULL token to index.html (sv_grillfuerst_admin_dashboard_app_token)
- */
-
+root.render(<Router basename={process.env.APP_ROOT_PATH}><App /></Router>);

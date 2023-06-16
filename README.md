@@ -26,6 +26,38 @@ Controller(Action) <-> Service <-> Repository <-> Data
 
 Shareable class interfaces.
 
+# APP DEV ENV
+In the corresponding app folder, create a .env.development file with the following content:
+
+```APP_DOMAIN=localhost:3050
+APP_DOMAIN_URL=http://localhost:3050
+APP_ROOT_URL=http://localhost:3050
+API_ROOT_V1_URL=https://DEV_SERVER_DOMAIN/wp-json/sv-grillfuerst-user-recipes/v1
+API_KEY=
+```
+Add your API_KEY to the .env.development file. You can set an API_KEY in your server config file (wp-config.php for WordPress).
+
+# htaccess
+development
+```SetEnvIf Request_URI ^/wp-json/sv-grillfuerst-user-recipes/* noauth
+SetEnvIf Request_URI ^/wp-content/uploads/sv-grillfuerst-user-recipes/recipes/* noauth
+SetEnvIf Request_URI ^/wp-json/* noauth
+Order Deny,Allow
+Deny from all
+Allow from env=noauth
+Allow from env=REDIRECT_noauth
+Satisfy any
+<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Headers "X-API-KEY"
+</IfModule>
+```
+
+production
+```<IfModule mod_headers.c>
+    Header set Access-Control-Allow-Headers "X-API-KEY"
+</IfModule>
+```
+
 # Hints
 
 - Exclude the root /vendor folder in the root directory from remote uploads! (dev vendors)

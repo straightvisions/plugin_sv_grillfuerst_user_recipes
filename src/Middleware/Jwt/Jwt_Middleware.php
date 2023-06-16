@@ -36,7 +36,7 @@ final class Jwt_Middleware implements Middleware_Interface {
     }
 
     public function create(array $payload = []): string{
-        $payload['exp'] = time() + (int)$this->expiration_time;
+        $payload['exp'] = isset($payload['exp']) ? time() + (int)$payload['exp'] : time() + (int)$this->expiration_time;
         //$payload['exp'] = time() + (int)20; // debug 20s
         // create token
         return JWT::encode($payload, $this->secret_key, $this->algo);
@@ -81,7 +81,7 @@ final class Jwt_Middleware implements Middleware_Interface {
         }
 
         // overload for admins
-        if( $token['role'] === 'admin' && ( $role === 'user' || $role === 'customer') ){
+        if( isset($token['role']) && $token['role'] === 'admin' && ( $role === 'user' || $role === 'customer') ){
             $output = true;
         }
 

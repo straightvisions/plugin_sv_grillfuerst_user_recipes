@@ -6,6 +6,7 @@ const headers = {
 		let headers = {
 			'Content-Type': 'application/json',
 			'Authorization': auth,
+			'X-API-KEY': process.env.API_KEY ?? '',
 		};
 		
 		_headers.map((item, index) => headers[index] = item);
