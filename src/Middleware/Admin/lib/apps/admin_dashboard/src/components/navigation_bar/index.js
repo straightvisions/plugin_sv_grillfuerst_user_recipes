@@ -1,10 +1,7 @@
 import React, { Fragment } from "react";
-import {Link, useNavigate} from "react-router-dom";
-import { PlusIcon, ArrowRightIcon } from '@heroicons/react/20/solid'
 import { Disclosure, Menu, Transition } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import routes from '../../models/routes';
-import {  useLocation } from 'react-router-dom';
+import { IconLogo } from '../icons'
 
 const user = {
 	name: 'Tom Cook',
@@ -37,11 +34,7 @@ export default function NavigationBar(props) {
 						<div className="flex h-16 justify-between">
 							<div className="flex">
 								<div className="flex flex-shrink-0 items-center">
-									<img
-										className="block h-8 w-auto"
-										src="https://www.grillfuerst.de/magazin/wp-content/uploads/2022/09/Logo.svg"
-										alt="Grillfürst"
-									/>
+									<IconLogo />
 								</div>
 								<div className="hidden sm:-my-px sm:ml-6 sm:flex sm:space-x-8">
 									{navigation.map((item) => (
