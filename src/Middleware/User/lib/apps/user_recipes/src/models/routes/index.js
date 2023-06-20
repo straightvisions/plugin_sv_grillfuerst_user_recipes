@@ -21,6 +21,9 @@ export default {
 	getUrl: (path) => appURL.replace(/\/$/, '') + path,
 	// api urls
 	"login": apiURL + '/users/login',
+	"register": apiURL + '/users/register',
+	"reset": apiURL + '/users/reset',
+	"logout": 'https://www.grillfuerst.de/customer/logoff',
 	"isLoggedIn": apiURL + '/users/is_logged_in',
 	"getUserInfo": apiURL + '/users/info',
 	"getUserInfoById": apiURL + '/users/{id}/info',

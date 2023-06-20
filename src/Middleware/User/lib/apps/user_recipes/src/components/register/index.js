@@ -1,13 +1,10 @@
 import React, {useState, useEffect, useReducer} from 'react';
-import Logo from '../logo';
+import routes from '../../models/routes';
 import Overlay from '../overlay';
 import { useNavigate } from 'react-router-dom';
 
 export default function Register(props){
-	
-	// @todo move this to config:
-	const routeLogin = 'https://www.grillfuerst.de/magazin/wp-json/sv-grillfuerst-user-recipes/v1/users/register';
-	
+
 	const [credentials, setCredentials] = useState({
 		'default_address': {
 			'address_class': 'default',
@@ -91,7 +88,7 @@ export default function Register(props){
 		if(isSending || password.message !== '') return;
 		setIsSending(true);
 		
-		fetch(routeLogin, {
+		fetch(routes.register, {
 			method: 'POST',
 			cache: 'no-cache',
 			// no auth header - this is a public call

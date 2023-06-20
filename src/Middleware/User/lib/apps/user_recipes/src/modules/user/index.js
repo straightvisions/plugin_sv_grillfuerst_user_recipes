@@ -67,7 +67,7 @@ const user = {
 	logout: () => {
 		user.flush();
 		// experimental
-		fetch('https://www.grillfuerst.de/customer/logoff', {
+		fetch(routes.logout, {
 			headers: headers.get(),
 			method: 'GET',
 		});

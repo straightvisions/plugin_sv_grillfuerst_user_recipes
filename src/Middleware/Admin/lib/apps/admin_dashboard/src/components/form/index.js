@@ -1,10 +1,7 @@
 import React, {useEffect, useState} from "react";
 import Common from '../common';
-import Ingredients from '../ingredients';
-import Steps from '../steps';
 import Submit from '../submit';
 import Spinner from '../spinner';
-import RecipeModel from '../../models/recipe';
 import LocalStorage from "../local_storage";
 import routes from "../../models/routes";
 

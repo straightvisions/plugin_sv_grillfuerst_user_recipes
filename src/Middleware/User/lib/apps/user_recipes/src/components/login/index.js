@@ -1,5 +1,4 @@
 import React, {useState} from 'react';
-import Logo from '../logo';
 import Overlay from '../overlay';
 import storage from '../../modules/storage';
 import routes from '../../models/routes';

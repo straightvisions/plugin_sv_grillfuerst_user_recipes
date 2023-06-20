@@ -1,10 +1,10 @@
 import React, {useState} from 'react';
 import Logo from '../logo';
-import Overlay from "../overlay";
+import Overlay from '../overlay';
+import routes from '../../models/routes';
 
 export default function Reset(props){
-	
-	const routeLogin = 'https://www.grillfuerst.de/magazin/wp-json/sv-grillfuerst-user-recipes/v1/users/reset';
+
 	const [credentials, setCredentials] = useState({
 		username: ''
 	});
@@ -23,7 +23,7 @@ export default function Reset(props){
 		if(isSending) return;
 		setIsSending(true);
 		
-		fetch(routeLogin, {
+		fetch(routes.reset, {
 			method: 'PUT',
 			cache: 'no-cache',
 			// no auth header - this is a public call
