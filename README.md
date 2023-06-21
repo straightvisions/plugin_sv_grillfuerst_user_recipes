@@ -65,3 +65,5 @@ production
 - ```composer i``` in root to install phpunit test
 - ```composer --ignore-plattform-req=php update``` to prevent PHP 8 warnings
 
+# ERROR FAQS
+- admin app recipes list empty / app not loading / CORS 401 -> check your .env.development file - update the token (you can get a new token if you login to wp-admin and navigate to community-rezepte/admin. search for "token" in the site code)
