@@ -24,14 +24,22 @@ final class Recipe_Voucher_Service {
             ->createLogger();
     }
 
-    public function create(): string {
+    public function create($recipe = null): string {
         $url = $this->settings['voucher_create_server_url'];
         $client = $this->Api_Middleware->http();
+        $userId = '';
+        $link = '';
+
+        if($recipe){
+            $userId = $recipe->user_id;
+            $link = $recipe->link;
+        }
 
         $response = $client->request('POST',
             $url,
             [
                 'content-type' => 'application/json',
+                'json' => ['userId'=> $userId, 'link' => $link],
                 'headers' => ['Authorization' => $this->settings['auth_header']],
                 'debug'=>false
             ]);

@@ -390,7 +390,12 @@ final class Recipes_Middleware implements Middleware_Interface {
         // get the data
         $info = $this->User_Info_Service->get($user_id, true);
         $user = $info['body']['data'];
-        $voucher = empty($recipe->voucher) ? $this->Recipe_Voucher_Service->create() : $recipe->voucher;
+        if($this->settings['debug'] === true){
+            $voucher = $this->Recipe_Voucher_Service->create($recipe);
+            $errors[] = ['Debug mode: Voucher created: '.$voucher];
+        }else{
+            $voucher = empty($recipe->voucher) ? $this->Recipe_Voucher_Service->create() : $recipe->voucher;
+        }
 
         if ($voucher !== '') {
             $email = [
@@ -501,6 +506,24 @@ final class Recipes_Middleware implements Middleware_Interface {
                 $user = $info['body']['data'];
                 var_dump($user);
                 return [[], 200];
+            }else{
+                return [[],404];
+            }
+        });
+
+    }
+
+    public function test_create_voucher($request){
+        return $this->Api_Middleware->response_public($request, function ($Request) {
+            if($this->settings['debug'] || $this->settings['env'] === 'development') {
+                $urlParams  = $Request->getParams();
+                $uuid = $urlParams['uuid'] ? $urlParams['uuid'] : 0;
+
+                if($uuid === 0){
+                    return [['status'=>'error','message'=>'Please add recipe uuid as parameter!'],400];
+                }
+
+                return [$this->handle_after_recipe_published($uuid), 200];
             }else{
                 return [[],404];
             }
