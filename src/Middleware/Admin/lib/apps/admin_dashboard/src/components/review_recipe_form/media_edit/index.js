@@ -9,6 +9,8 @@ export default function MediaEdit(props) {
 	
 	const [saving, setSaving] = useState(false);
 	const [media, setMedia] = useState({ ...mediaModel, ...mediaFile });
+	const [copiedURL, setCopiedURL] = useState(false);
+	const [dimensions, setDimensions] = useState({ width: 0, height: 0 });
 	
 	const handleSave = () => {
 		if (saving) return;
@@ -36,6 +38,11 @@ export default function MediaEdit(props) {
 		onClose();
 	}
 	
+	const handleImageLoad = (event) => {
+		const { naturalWidth, naturalHeight } = event.target;
+		setDimensions({ width: naturalWidth, height: naturalHeight });
+	};
+	
 	const getMediaHtml = () => {
 		
 		if(!media.type){
@@ -53,7 +60,7 @@ export default function MediaEdit(props) {
 		}
 		
 		if (media.type === "image") {
-			return <img src={media.url} alt={media.title} />;
+			return <img src={media.url} alt={media.title} onLoad={(e)=>handleImageLoad(e)}/>;
 		} else if (media.type === "video") {
 			return <video src={media.url} controls />;
 		} else if (media.type === "audio") {
@@ -77,7 +84,7 @@ export default function MediaEdit(props) {
 	return (
 		<div className="fixed inset-0 flex items-center justify-center z-50 bg-black bg-opacity-50 p-5">
 			<div className="bg-white p-4 rounded-md shadow-lg w-full max-w-[1400px]">
-				<h2 className="border-b-2 border-gray-100 mb-2 pb-2">Bild bearbeiten</h2>
+				<h2 className="border-b-2 border-gray-100 mb-2 pb-2">Bild bearbeiten | {dimensions.width}x{dimensions.height}px</h2>
 				<div className="flex justify-between gap-10 bg-grey-100 p-4 rounded">
 					<div className="w-full max-w-[1000px] max-h-[100%]">
 						{getMediaHtml()}
@@ -88,7 +95,15 @@ export default function MediaEdit(props) {
 							<p className="text-gray-500">{subLabel}</p>
 						</div>
 						<div className="mb-4">
-							<label className="block text-sm font-medium text-gray-700">Title</label>
+							<label className="block text-sm font-medium text-gray-700">Alt-Text</label>
+							<textarea
+								value={media.alt_text}
+								onChange={(e) => setMedia({ ...media, alt_text: e.target.value })}
+								className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							></textarea>
+						</div>
+						<div className="mb-4">
+							<label className="block text-sm font-medium text-gray-700">Titel</label>
 							<input
 								type="text"
 								value={media.title}
@@ -96,6 +111,25 @@ export default function MediaEdit(props) {
 								className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							/>
 						</div>
+						
+						<div className="mb-4">
+							<label className="block text-sm font-medium text-gray-700">Beschriftung (Caption)</label>
+							<textarea
+								value={media.caption}
+								onChange={(e) => setMedia({ ...media, caption: e.target.value })}
+								className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							></textarea>
+						</div>
+						
+						<div className="mb-4">
+							<label className="block text-sm font-medium text-gray-700">Beschreibung</label>
+							<textarea
+								value={media.description}
+								onChange={(e) => setMedia({ ...media, description: e.target.value })}
+								className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
+							></textarea>
+						</div>
+						
 						<div className="mb-4">
 							<label className="block text-sm font-medium text-gray-700">Filename</label>
 							<input
@@ -105,14 +139,37 @@ export default function MediaEdit(props) {
 								className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
 							/>
 						</div>
-						<div>
-							<label className="block text-sm font-medium text-gray-700">Description</label>
-							<textarea
-								value={media.description}
-								onChange={(e) => setMedia({ ...media, description: e.target.value })}
+						
+						<div className="mb-4">
+							<label className="block text-sm font-medium text-gray-700">Datei-URL</label>
+							<input
+								type="text"
+								value={media.url ? media.url : 'error'}
+								onChange={(e) => e.preventDefault()}
 								className="mt-1 block w-full border-gray-300 rounded-md shadow-sm focus:ring-indigo-500 focus:border-indigo-500 sm:text-sm"
-							></textarea>
+								disabled={true}
+							/>
+							<button
+								type="button"
+								className="bg-grey-500 hover:bg-blue-700 text-white py-2 px-4 rounded mt-2 text-[11px]"
+								onClick={()=>{
+									navigator.clipboard.writeText(media.url)
+										.then(() => {
+											setCopiedURL(true);
+											setTimeout(() => {
+												setCopiedURL(false);
+											}, 1500); // Reset the copied state after 1.5 seconds
+										})
+										.catch((error) => {
+											console.error('Failed to copy text:', error);
+										});
+								}}
+							>
+								{copiedURL ? 'Kopiert!' : 'URL kopieren'}
+							</button>
 						</div>
+						
+						
 						
 					</div>
 				</div>
@@ -132,7 +189,7 @@ export default function MediaEdit(props) {
 		            className="bg-gray-300 hover:bg-gray-400 text-gray-800 px-4 py-2 rounded-md"
 		            disabled={saving}
 		          >
-		            Abbrechen
+		            Schließen
 		          </button>
 		        </div>
 		      </div>

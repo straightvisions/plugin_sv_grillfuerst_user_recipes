@@ -17,6 +17,7 @@ final class Recipe_Exporter_Service {
     private Recipe_Validator_Service $Recipe_Validator;
     private LoggerInterface $logger;
     private $uploadedMediaIDs = array();
+    private $uploadedMediaMeta = array();
     private $response = ['message' => '', 'status' => 400];
     private $Recipe_Finder_Service;
     private Api_Middleware $Api_Middleware;
@@ -152,6 +153,7 @@ final class Recipe_Exporter_Service {
                 $image->url = $res['body']['source_url'];
                 // add to array of uploaded media
                 $this->uploadedMediaIDs[] = $image->id;
+                $this->uploadedMediaMeta[] = $image;
             }else{
                 $res['errors'][] = sprintf('Error uploading image: %s', $image->url);
             }
@@ -265,10 +267,14 @@ final class Recipe_Exporter_Service {
             $res['errors'][] = 'Error mapping media to post - no post id';
         }else{
             // Map
-            foreach ($this->uploadedMediaIDs as $ID) {
+            foreach ($this->uploadedMediaMeta as $image) {
                 // REST Media Array
                 $payload = [
                     'post' => $post->id,
+                    'alt_text' => $image->alt_text,
+                    'title' => $image->title,
+                    'caption' => $image->caption,
+                    'description' => $image->description,
                 ];
 
                 // Make the request
@@ -276,7 +282,7 @@ final class Recipe_Exporter_Service {
 
                 $response = $client->request(
                     'POST',
-                    $this->settings['wordpress_export_media_url'] . '/' . $ID,
+                    $this->settings['wordpress_export_media_url'] . '/' . $image->id,
                     [
                         'content-type' => 'application/json',
                         'json'         => $payload, // don't encode manually, client does it for us

@@ -9,6 +9,8 @@ final class Media_Item {
     public ?string $filename = null;
     public string $title = '';
     public string $description = '';
+    public string $alt_text = '';
+    public string $caption = '';
 
     public function clean_up(){
         $this->id = null;
@@ -17,6 +19,8 @@ final class Media_Item {
         $this->filename = null;
         $this->title = '';
         $this->description = '';
+        $this->alt_text = '';
+        $this->caption = '';
     }
 
     public function __serialize(){
@@ -27,6 +31,8 @@ final class Media_Item {
             'filename' => $this->filename,
             'title' => $this->title,
             'description' => $this->description,
+            'alt_text' => $this->alt_text,
+            'caption' => $this->caption,
         ];
     }
 }
