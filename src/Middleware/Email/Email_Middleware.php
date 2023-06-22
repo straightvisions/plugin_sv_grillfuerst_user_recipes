@@ -101,9 +101,15 @@ class Email_Middleware {
         $subject = $email->getSubject();
         $message = $this->render($data);
 
+        $from = $this->settings['from'];
+
+        if(isset($this->settings['from_name']) && !empty($this->settings['from_name'])){
+            $from = $this->settings['from_name'].' <'.$from.'>';
+        }
+
         $headers = array(
             'Content-Type: text/html; charset=UTF-8',
-            'From: rezepte@grillfuerst.de'
+            'From: '.$from
         );
 
         $result = \wp_mail($to, $subject,  $message, $headers);

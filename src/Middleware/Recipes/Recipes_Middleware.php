@@ -330,7 +330,7 @@ final class Recipes_Middleware implements Middleware_Interface {
 
                 $errors = array_merge(
                     $errors,
-                    $this->handle_after_recipe_published($uuid)
+                    $this->handle_after_recipe_published($uuid, $post->ID)
                 ); // should be its own service
             }
 
@@ -394,7 +394,7 @@ final class Recipes_Middleware implements Middleware_Interface {
             $voucher = $this->Recipe_Voucher_Service->create($recipe);
             $errors[] = ['Debug mode: Voucher created: '.$voucher];
         }else{
-            $voucher = empty($recipe->voucher) ? $this->Recipe_Voucher_Service->create() : $recipe->voucher;
+            $voucher = empty($recipe->voucher) ? $this->Recipe_Voucher_Service->create($recipe) : $recipe->voucher;
         }
 
         if ($voucher !== '') {
@@ -523,7 +523,7 @@ final class Recipes_Middleware implements Middleware_Interface {
                     return [['status'=>'error','message'=>'Please add recipe uuid as parameter!'],400];
                 }
 
-                return [$this->handle_after_recipe_published($uuid), 200];
+                return [$this->handle_after_recipe_published($uuid, 248499), 200];
             }else{
                 return [[],404];
             }

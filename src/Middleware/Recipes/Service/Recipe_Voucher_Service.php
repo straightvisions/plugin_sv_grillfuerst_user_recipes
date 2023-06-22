@@ -27,19 +27,22 @@ final class Recipe_Voucher_Service {
     public function create($recipe = null): string {
         $url = $this->settings['voucher_create_server_url'];
         $client = $this->Api_Middleware->http();
-        $userId = '';
-        $link = '';
+        $payload = ['userId' => 0, 'link' => '', 'recipeUUID' => ''];
 
         if($recipe){
-            $userId = $recipe->user_id;
-            $link = $recipe->link;
+            $payload = [
+              'userId' => $recipe->user_id,
+              'link' => $recipe->link,
+              'recipeUUID' => $recipe->uuid,
+            ];
+
         }
 
         $response = $client->request('POST',
             $url,
             [
                 'content-type' => 'application/json',
-                'json' => ['userId'=> $userId, 'link' => $link],
+                'json' => $payload,
                 'headers' => ['Authorization' => $this->settings['auth_header']],
                 'debug'=>false
             ]);

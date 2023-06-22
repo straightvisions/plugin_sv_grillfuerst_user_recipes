@@ -66,6 +66,7 @@ $settings['mailer'] = [
         'password'=> defined('GF_USER_RECIPES_MAIL_SMTP_PASSWORD') ? GF_USER_RECIPES_MAIL_SMTP_PASSWORD : null,
     ],
     'from' => defined('GF_USER_RECIPES_MAIL_FROM') ? GF_USER_RECIPES_MAIL_FROM : 'rezepte@grillfuerst.de',
+    'from_name' => defined('GF_USER_RECIPES_MAIL_FROM_NAME') ? GF_USER_RECIPES_MAIL_FROM_NAME : 'Grillfürst Community Rezepte',
 ];
 
 return $settings;
