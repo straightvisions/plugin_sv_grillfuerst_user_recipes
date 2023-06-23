@@ -330,7 +330,7 @@ final class Recipes_Middleware implements Middleware_Interface {
 
                 $errors = array_merge(
                     $errors,
-                    $this->handle_after_recipe_published($uuid, $post->ID)
+                    $this->handle_after_recipe_published($uuid)
                 ); // should be its own service
             }
 
