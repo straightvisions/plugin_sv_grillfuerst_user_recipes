@@ -62,122 +62,126 @@ export default function Login(props) {
 	}
 	
 	return (
-		<div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
-			{/*
+		
+		<>
 			<div className="sm:mx-auto sm:w-full sm:max-w-[750px]">
-				<h2 className="mt-6">Willkommen bei den Grillfürst Community-Rezepten.</h2>
+				<h2 className="mt-6">Willkommen bei den Grillfürst Community-Rezepten</h2>
 				<p className="mt-2">Hier möchten wir euch einen Platz bieten eure besten und leckersten Grillrezepte mit der ganzen Welt zu teilen und in unserem Magazin zu veröffentlichen.</p>
-				<p className="mt-2">Alle Rezepte, die unsere Kriterien erfüllen (verständlich geschrieben, schön bebildert, nachgrillbar, als Rezept erkennbar und nicht in irgend einer Art diskriminierend) werden als Community Rezept veröffentlich und sogar von uns belohnt!</p>
-				<p className="mt-2">Ihr erhaltet – nach Prüfung und Freischaltung – einen Gutscheincode für unseren Online-Shop und zwar für jedes Rezept. </p>
+				<p className="mt-2">Alle Rezepte, die unsere Kriterien erfüllen (verständlich geschrieben, schön bebildert, nachgrillbar, als Rezept erkennbar und nicht in irgend einer Art diskriminierend) werden als Community Rezept veröffentlicht und sogar von uns belohnt!</p>
+				<p className="mt-2">Ihr erhaltet – nach Prüfung und Freischaltung – einen Gutscheincode für unseren Online-Shop und zwar für jedes Rezept.</p>
 			</div>
-			*/}
-			<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
-				<div className="bg-white py-8 px-4 shadow-2xl sm:rounded-lg sm:px-10 relative">
-					{isSending &&
-						<Overlay/>
-					}
-					<form className="space-y-6" onSubmit={handleSubmit}>
-						{message !== '' &&
-							<div role="alert">
-								<div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
-									Login fehlgeschlagen
-								</div>
-								<div
-									className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700"
-									dangerouslySetInnerHTML={{__html: message}}
-								>
-								</div>
-							</div>
+			
+			<div className="flex min-h-full flex-col justify-center py-12 sm:px-6 lg:px-8">
+				
+				
+				<div className="mt-8 sm:mx-auto sm:w-full sm:max-w-md">
+					<div className="bg-white py-8 px-4 shadow-2xl sm:rounded-lg sm:px-10 relative">
+						{isSending &&
+							<Overlay/>
 						}
-						<div>
-							<label htmlFor="email" className="block font-bold text-gray-700">
-								Email
-							</label>
-							<div className="mt-1">
-								<input
-									id="email"
-									name="email"
-									type="email"
-									autoComplete="email"
-									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
-									onChange={handleEmail}
+						<form className="space-y-6" onSubmit={handleSubmit}>
+							{message !== '' &&
+								<div role="alert">
+									<div className="bg-red-500 text-white font-bold rounded-t px-4 py-2">
+										Login fehlgeschlagen
+									</div>
+									<div
+										className="border border-t-0 border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700"
+										dangerouslySetInnerHTML={{__html: message}}
+									>
+									</div>
+								</div>
+							}
+							<div>
+								<label htmlFor="email" className="block font-bold text-gray-700">
+									Email
+								</label>
+								<div className="mt-1">
+									<input
+										id="email"
+										name="email"
+										type="email"
+										autoComplete="email"
+										required
+										className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
+										onChange={handleEmail}
+										disabled={isSending}
+									/>
+								</div>
+							</div>
+							
+							<div>
+								<label htmlFor="password" className="block font-bold text-gray-700">
+									Passwort
+								</label>
+								<div className="mt-1">
+									<input
+										id="password"
+										name="password"
+										type="password"
+										autoComplete="current-password"
+										required
+										className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
+										onChange={handlePassword}
+										disabled={isSending}
+									/>
+								</div>
+							</div>
+							
+							{/*
+							<div className="flex items-center justify-between">
+								<div className="">
+									<a href={routes.getUrl('/reset')} className="font-bold text-orange-500 hover:text-orange-500">
+										Passwort vergessen?
+									</a>
+								</div>
+							</div>
+							*/}
+							<div className="flex items-center justify-between">
+								<div className="">
+									<a target="_blank" href="https://www.grillfuerst.de/customer/password_reset" className="font-bold text-orange-500 hover:text-orange-500">
+										Passwort vergessen?
+									</a>
+								</div>
+							</div>
+							<div>
+								<button
 									disabled={isSending}
-								/>
+									type="submit"
+									className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 font-bold text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+								>
+									Anmelden
+								</button>
 							</div>
-						</div>
+						</form>
 						
-						<div>
-							<label htmlFor="password" className="block font-bold text-gray-700">
-								Passwort
-							</label>
-							<div className="mt-1">
-								<input
-									id="password"
-									name="password"
-									type="password"
-									autoComplete="current-password"
-									required
-									className="block w-full appearance-none rounded-md border border-gray-300 px-3 py-2 placeholder-gray-400 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
-									onChange={handlePassword}
-									disabled={isSending}
-								/>
-							</div>
-						</div>
-						
-						{/*
-						<div className="flex items-center justify-between">
-							<div className="">
-								<a href={routes.getUrl('/reset')} className="font-bold text-orange-500 hover:text-orange-500">
-									Passwort vergessen?
-								</a>
-							</div>
-						</div>
-						*/}
-						<div className="flex items-center justify-between">
-							<div className="">
-								<a target="_blank" href="https://www.grillfuerst.de/customer/password_reset" className="font-bold text-orange-500 hover:text-orange-500">
-									Passwort vergessen?
-								</a>
-							</div>
-						</div>
-						<div>
-							<button
-								disabled={isSending}
-								type="submit"
-								className="flex w-full justify-center rounded-md border border-transparent bg-orange-600 py-2 px-4 font-bold text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-							>
-								Anmelden
-							</button>
-						</div>
-					</form>
-					
-					<div className="mt-6">
-						<div className="relative">
-							<div className="absolute inset-0 flex items-center">
-								<div className="w-full border-t border-gray-300"/>
-							</div>
-							<div className="relative flex justify-center">
-								<span className="bg-white px-2 text-gray-500">Oder</span>
-							</div>
-						</div>
 						<div className="mt-6">
-							<input
-								id="email-second"
-								name="email-second"
-								type="email"
-								className="hidden"
-							/>
-							<a
-								className="flex w-full justify-center rounded-md border border-transparent bg-black py-2 px-4 font-bold text-white shadow-sm hover:bg-grey3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
-								href={routes.getUrl('/register')}
-							>
-								Neuen Account erstellen
-							</a>
+							<div className="relative">
+								<div className="absolute inset-0 flex items-center">
+									<div className="w-full border-t border-gray-300"/>
+								</div>
+								<div className="relative flex justify-center">
+									<span className="bg-white px-2 text-gray-500">Oder</span>
+								</div>
+							</div>
+							<div className="mt-6">
+								<input
+									id="email-second"
+									name="email-second"
+									type="email"
+									className="hidden"
+								/>
+								<a
+									className="flex w-full justify-center rounded-md border border-transparent bg-black py-2 px-4 font-bold text-white shadow-sm hover:bg-grey3 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
+									href={routes.getUrl('/register')}
+								>
+									Neuen Account erstellen
+								</a>
+							</div>
 						</div>
 					</div>
 				</div>
 			</div>
-		</div>
+		</>
 	);
 };
