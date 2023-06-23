@@ -441,7 +441,7 @@ export default function Ingredients(props) {
 											: <input
 												placeholder="Zutat"
 												type="text"
-												className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
+												className="block w-full rounded-md border-gray-300 shadow-sm focus:border-orange-500 focus:ring-orange-500 "
 												value={ingredient.label}
 												onChange={e => { ingredient.label = e.target.value; setIngredient(ingredient); }}
 											/>
