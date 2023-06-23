@@ -208,6 +208,15 @@ final class Recipes_Middleware implements Middleware_Interface {
                         $data['user_meta'] = (object) $res['body']['data'];
                     }
 
+                    // reviewer system mail
+                    // reviewer email
+                    $email = [
+                        'to'           => $this->settings['debug'] ? 'dennis-heiden@straightvisions.com' : 'rezepte@grillfuerst.de',
+                        'subject'      => 'System - Rezept eingereicht',
+                        'content'      => $data['title'],
+                    ];
+
+                    $this->send_email($email);
                 }
 
                 if (is_array($data) && empty($data) === false) {
@@ -246,6 +255,15 @@ final class Recipes_Middleware implements Middleware_Interface {
         ];
 
         $errors = array_merge($errors, $this->send_email_recipe_feedback($email));
+
+        // reviewer email
+        $email = [
+            'to'           => $this->settings['debug'] ? 'dennis-heiden@straightvisions.com' : 'rezepte@grillfuerst.de',
+            'subject'      => 'System - Rezept Feedback gegeben',
+            'content'      => $recipe->title,
+        ];
+
+        $this->send_email($email);
 
         return $this->rest_update_recipe($request);
     }
@@ -425,6 +443,11 @@ final class Recipes_Middleware implements Middleware_Interface {
 
     private function send_email_recipe_feedback(array $params): array {
         $params['template'] = 'feedback';
+        return $this->Email_Middleware->send($params);
+    }
+
+    private function send_email(array $params): array {
+        $params['template'] = 'default';
         return $this->Email_Middleware->send($params);
     }
 
