@@ -12,7 +12,6 @@ const User = user.get();
 import {fetchError} from '../../modules/fetch';
 import {GlobalContext} from '../../modules/context';
 
-
 const states = {
 	draft: {
 		label: 'Entwurf',
@@ -142,7 +141,7 @@ export default function Recipes(props) {
 				</div>
 			</div>,
 			<>
-				{recipe.voucher !== '' &&
+				{recipe.voucher !== '' ?
 					<button
 						onClick={e=>handleCopyCode(e, recipe.voucher)}
 						title="Code kopieren"
@@ -150,7 +149,7 @@ export default function Recipes(props) {
 						className="btn secondary">
 						<DocumentDuplicateIcon className="stroke-white w-[16px] hidden lg:block"/>
 						<span className="ml-1 text-[11px] xl:text-[1rem]">{recipe.voucher}</span>
-					</button>
+					</button> : 'noch nicht ausgestellt'
 				}
 			</>
 		]};
