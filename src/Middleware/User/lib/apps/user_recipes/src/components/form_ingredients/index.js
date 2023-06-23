@@ -345,46 +345,48 @@ export default function Ingredients(props) {
 	});
 	
 	// conditional rendering for TermSearch
-	const TermSearchComp = loading ? <Spinner /> : <TermSearch label="Zutat auswählen" placeholder="hier tippen" items={ingredientsDB} onChange={addIngredient} />;
+	const TermSearchComp = loading ? <Spinner /> : <TermSearch label="Zutat hinzufügen" placeholder="hier tippen" items={ingredientsDB} onChange={addIngredient} />;
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
 			{showProductFinder && <ProductFinder id="IngredientsProductFinder" description="Hier kannst du Grillfürst Shop-Produkte als Zutat verlinken." items={products} itemsSelected={productSelected} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
 			<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
-				<div className="col-span-1">
-					<h3 className="text-lg font-bold leading-6 text-gray-900">Zutaten</h3>
-					<p className="mt-1 text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden. Wir empfehlen das Rezept für 4 Personen anzulegen und entsprechend die Zutatenmengen anzupassen. Du kannst hier auch die passenden Gewürze, Marinaden oder Rubs direkt aus unserem Shop wählen.</p>
-					<div className="my-4">
-						{TermSearchComp}
-					</div>
-					
-					<div className="my-4">
-						<label htmlFor="recipe_servings" className="mr-4 font-bold text-gray-700">
-							Rezept für
-						</label>
-						<select
-							value={servings}
-							onChange={e => setFormState({"servings": parseInt(e.target.value)})}
-							className="w-52 max-w-full whitespace-nowrap mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
-						>
-							{[1,2,4,6,8,10,12,14,16,18,20].map(i => (
-								<option value={i} key={i}>{i} { i > 1 ? "Portionen" : "Portion"}</option>
-							))}
-						</select>
-					</div>
-					
-					<div className="text-[12px] text-gray-500 mt-2">
-						<p onClick={()=>setShowCustomIngredientButton(!showCustomIngredientButton)} className="select-none inline cursor-pointer border-b border-dashed border-gray-500 hover:text-gray-700 hover:border-gray-700">
-							Deine Zutat ist nicht im Katalog? Hier hinzufügen!
-						</p>
-						{showCustomIngredientButton &&
-							<button
-								onClick={()=>addCustomIngredient()}
-								type="button"
-								className="bg-white border border-grey-500 text-grey-500 px-2 py-1 mt-2 rounded hover:text-white hover:bg-orange-600"
+				<div className="col-span-1 relative">
+					<div className="sticky top-4">
+						<h3 className="text-lg font-bold leading-6 text-gray-900">Zutaten</h3>
+						<p className="mt-1 text-gray-500">Gib alle Zutaten ein, die für das Rezept benötigt werden. Wir empfehlen das Rezept für 4 Personen anzulegen und entsprechend die Zutatenmengen anzupassen. Du kannst hier auch die passenden Gewürze, Marinaden oder Rubs direkt aus unserem Shop wählen.</p>
+						<div className="my-4">
+							{TermSearchComp}
+						</div>
+						
+						<div className="my-4">
+							<label htmlFor="recipe_servings" className="mr-4 font-bold text-gray-700">
+								Rezept für
+							</label>
+							<select
+								value={servings}
+								onChange={e => setFormState({"servings": parseInt(e.target.value)})}
+								className="w-52 max-w-full whitespace-nowrap mt-1 rounded-md border border-gray-300 bg-white py-2 px-3 shadow-sm focus:border-orange-500 focus:outline-none focus:ring-orange-500 "
 							>
-								Eigene Zutat hinzufügen
-							</button>
-						}
+								{[1,2,4,6,8,10,12,14,16,18,20].map(i => (
+									<option value={i} key={i}>{i} { i > 1 ? "Portionen" : "Portion"}</option>
+								))}
+							</select>
+						</div>
+						
+						<div className="text-[12px] text-gray-500 mt-2">
+							<p onClick={()=>setShowCustomIngredientButton(!showCustomIngredientButton)} className="select-none inline cursor-pointer border-b border-dashed border-gray-500 hover:text-gray-700 hover:border-gray-700">
+								Deine Zutat ist nicht im Katalog? Hier hinzufügen!
+							</p>
+							{showCustomIngredientButton &&
+								<button
+									onClick={()=>addCustomIngredient()}
+									type="button"
+									className="bg-white border border-grey-500 text-grey-500 px-2 py-1 mt-2 rounded hover:text-white hover:bg-orange-600"
+								>
+									Eigene Zutat hinzufügen
+								</button>
+							}
+						</div>
 					</div>
 				</div>
 				<div className="flex col-span-1 xl:col-span-3 mt-5 md:mt-0 overflow-x-auto">
@@ -512,7 +514,7 @@ export default function Ingredients(props) {
 										</button>
 									</div>
 								</div>
-							)}) : <>{TermSearchComp}</>}
+							)}) : <></>}
 						</div>
 						{ /* footer ---------------------------------------------------- */ }
 					</div>
