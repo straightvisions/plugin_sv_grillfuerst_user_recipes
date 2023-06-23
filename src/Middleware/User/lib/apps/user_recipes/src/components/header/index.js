@@ -95,7 +95,7 @@ export default function Header(props) {
 					className="btn secondary"
 					onClick={handleLogout}
 				>
-					Logout1
+					Logout
 				</button>
 			</div>
 		</>
