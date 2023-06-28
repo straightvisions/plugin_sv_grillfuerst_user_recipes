@@ -38,31 +38,18 @@ export default function Ingredients(props) {
 			return item;
 		});
 		setFormState({ingredients: sort(_ingredients)});
-		// ingredients
-		caches.open(cacheName).then((cache) => {
-			cache.match(routes.getIngredients).then((response) => {
-				if (response) {
-					// If the response is in the cache, return it
-					return response.json().then((data) => {
-						setIngredientsDB(data.items);
-						setLoadingState(false);
-					});
-				} else {
-					// If the response is not in the cache, fetch it and add it to the cache
-					return fetch(routes.getIngredients, {
-						headers: headers.get(),
-					})
-						.then((response) => {
-							cache.put(routes.getIngredients, response.clone());
-							return response.json();
-						})
-						.then((data) => {
-							setIngredientsDB(data.items);
-							setLoadingState(false);
-						});
-				}
+			// ingredients
+		fetch(routes.getIngredients, {
+			headers: headers.get(),
+		})
+			.then((response) => {
+				
+				return response.json();
+			})
+			.then((data) => {
+				setIngredientsDB(data.items);
+				setLoadingState(false);
 			});
-		});
 		
 		// products
 		caches.open(cacheName).then((cache) => {

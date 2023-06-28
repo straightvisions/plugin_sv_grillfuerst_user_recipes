@@ -65,7 +65,6 @@ export default function Form(props) {
 			.then(response => response.json())
 			.then(data => {
 				setSavingState(false);
-				console.log(data);
 			});
 	};
 	

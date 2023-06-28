@@ -3,8 +3,8 @@ import headers from './../headers';
 import routes from '../../models/routes';
 
 const user = {
-	initialised: false,
-	isLoggedIn: false,
+	initialised: true,
+	isLoggedIn: true,
 	get: () => {
 		return {
 			'id': storage.get('userId', 0),
@@ -15,57 +15,30 @@ const user = {
 	},
 	
 	init: () => {
-		const cacheName = "admin-info-cache";
-		const maxAge = 60 * 60 * 1000; // 1 hour in milliseconds
-		
-		caches.open(cacheName).then((cache) => {
-			cache.match(routes.getAdminInfo).then((response) => {
-				//@todo check why the check hasOwnProperty is needed - somehow the response has no then method
-				if (response && Date.now() - new Date(response.headers.get("date")).getTime() < maxAge) {
-					// If the response is in the cache and not older than 24 hours, return it
-					return response.then(response => headers.parseResponse(response)).then(res => {
-						
-						const { payload } = res;
-						if (payload.isLoggedIn) {
-							for (const [key, value] of Object.entries(payload.data)) {
-								storage.set(key, value);
-							}
-						} else {
-							window.location.href = routes.login;
-						}
-						
-						user.initialised = true;
-						user.isLoggedIn = payload.isLoggedIn;
-					});
+		return fetch(routes.getAdminInfo, {
+			headers: headers.get(),
+			cache: 'force-cache'
+		})
+			.then((response) => {
+				return headers.parseResponse(response);
+			})
+			.then(res => {
+				const { payload } = res;
+				if (payload.isLoggedIn) {
+					for (const [key, value] of Object.entries(payload.data)) {
+						storage.set(key, value);
+					}
 				} else {
-					// If the response is not in the cache or older than 24 hours, fetch it and add it to the cache
-					return fetch(routes.getAdminInfo, {
-						headers: headers.get(),
-					})
-						.then((response) => {
-							cache.put(routes.getAdminInfo, response.clone());
-							return headers.parseResponse(response);
-						})
-						.then(res => {
-							const { payload } = res;
-							if (payload.isLoggedIn) {
-								for (const [key, value] of Object.entries(payload.data)) {
-									storage.set(key, value);
-								}
-							} else {
-								//window.location.href = routes.login;
-							}
-							
-							user.initialised = true;
-							user.isLoggedIn = payload.isLoggedIn;
-						})
-						.catch((error) => {
-							// Handle the error if the response status is invalid
-							console.error(error);
-						});
+					//window.location.href = routes.login;
 				}
+				
+				user.initialised = true;
+				user.isLoggedIn = payload.isLoggedIn;
+			})
+			.catch((error) => {
+				// Handle the error if the response status is invalid
+				console.error(error);
 			});
-		});
 	}
 }
 

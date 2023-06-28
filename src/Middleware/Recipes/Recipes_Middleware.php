@@ -374,11 +374,11 @@ final class Recipes_Middleware implements Middleware_Interface {
     }
 
     public function rest_get_ingredients($request) {
-        return $this->Api_Middleware->response($request, function ($Request) {
+        return $this->Api_Middleware->response_public($request, function ($Request) {
             $results = $this->Recipe_Ingredients_Finder_Service->get_list();
 
             return [$results, 200];
-        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
+        }, ['customer', 'view']);
     }
 
     public function rest_get_menu_types($request) {

@@ -11,15 +11,18 @@ import {
 } from "react-router-dom";
 
 const App = () => {
-	const [userInited, setUserInited] = useState(false);
+	const [userInited, setUserInited] = useState(true);
 	
 	useEffect(()=>{
+		/* // disabled for now
 		const initUser = async()=> {
 			await user.init();
 			setUserInited(true);
 		}
 		
 		initUser();
+		*/
+	
 	}, []);
 	
 	if(userInited === false){
@@ -36,7 +39,7 @@ const App = () => {
 						/>
 						<Route
 							path="/"
-							element={<Recipes user={user}/>}
+							element={<Recipes />}
 						/>
 					</Routes>
 				</div>
