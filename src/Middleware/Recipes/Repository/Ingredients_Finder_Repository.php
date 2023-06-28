@@ -25,7 +25,7 @@ final class Ingredients_Finder_Repository {
         }
 
         return $items;
-
+        /*
         $query = $this->Query_Factory->newSelect('svgfur_ingredients');
 
         $query->select(
@@ -35,5 +35,6 @@ final class Ingredients_Finder_Repository {
         );
 
         return $query->execute()->fetchAll('assoc') ?: [];
+        */
     }
 }
