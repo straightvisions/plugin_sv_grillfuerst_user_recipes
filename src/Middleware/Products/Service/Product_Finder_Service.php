@@ -5,12 +5,19 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\Products\Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Products\Data\Product_Finder_Item;
 use SV_Grillfuerst_User_Recipes\Middleware\Products\Data\Product_Finder_Result;
 use SV_Grillfuerst_User_Recipes\Middleware\Products\Repository\Product_Repository;
+use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
 
 final class Product_Finder_Service {
     private Product_Repository $repository;
 
-    public function __construct(Product_Repository $repository) {
+    public function __construct(
+        Product_Repository $repository,
+        Logger_Factory $Logger_Factory
+    ) {
         $this->repository = $repository;
+        $this->logger = $Logger_Factory
+            ->addFileHandler('product_finder.log')
+            ->createLogger();
     }
 
     public function get_list(array $params = []): Product_Finder_Result {
@@ -20,7 +27,12 @@ final class Product_Finder_Service {
     }
 
     public function get(int $products_id): Product_Finder_Result {
-        $rows = [$this->repository->get_by_id($products_id)];
+        $product = $this->repository->get_by_id($products_id);
+        $rows = !empty($product) ? [$product] : [];
+
+        if(empty($product)){
+            $this->logger->info(sprintf('Product not found: %s', $products_id));
+        }
 
         return $this->create_result($rows);
     }

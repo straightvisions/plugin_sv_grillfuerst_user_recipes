@@ -46,11 +46,7 @@ final class Product_Repository {
 
         $row = $query->execute()->fetch('assoc');
 
-        if (!$row) {
-            throw new DomainException(sprintf('Product not found: %s', $product_id));
-        }
-
-        return $row;
+        return $row ? $row : [];
     }
 
     public function update(int $product_id, array $product): void {
