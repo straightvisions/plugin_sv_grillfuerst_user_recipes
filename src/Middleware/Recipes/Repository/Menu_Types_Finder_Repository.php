@@ -16,8 +16,11 @@ final class Menu_Types_Finder_Repository {
 
     public function get($id = null): array {
         // @todo replace this with a custom query
-        $items = (array) \get_categories('taxonomy=cp_menutype&post_type=grillrezepte');
-
+        $items = \get_categories(array(
+            'taxonomy' => 'cp_menutype',
+            'post_type' => 'grillrezepte',
+            'hide_empty' => false,
+        ));
         // clone wp term_id to id field for better frontend support
         foreach($items as &$item){
             $item->id = $item->term_id;

@@ -16,8 +16,11 @@ final class Ingredients_Finder_Repository {
 
     public function get($id = null): array {
         // @todo replace this with a custom query
-        // or with curl https://www.grillfuerst.de/magazin/wp-json/wp/v2/cp_ingredient
-        $items = (array) \get_categories('taxonomy=cp_ingredient&post_type=grillrezepte');
+        $items = \get_categories(array(
+            'taxonomy' => 'cp_ingredient',
+            'post_type' => 'grillrezepte',
+            'hide_empty' => false,
+        ));
 
         // clone wp term_id to id field for better frontend support
         foreach($items as &$item){
