@@ -6,7 +6,7 @@ import user from './modules/user';
 import Spinner from './components/spinner';
 import Login from './components/login';
 import Register from './components/register';
-import {ModalConfirm} from './components/modals';
+import {ModalConfirm, Modal} from './components/modals';
 import { Routes, Route } from "react-router-dom";
 import routes from './models/routes';
 import SlideInPanel from "./components/slide_in_panel";
@@ -25,6 +25,11 @@ const App = () => {
 	});
 	
 	const [globalModalConfirm, setGlobalModalConfirm] = useReducer((state, newState) =>
+		// reset modal completely to prevent side effects
+		newState.hasOwnProperty('show') && newState.show === false ? {message:'', onConfirm:null, onCancel:null, show:false} : {...state, ...{show:true}, ...newState}, {message:'', onConfirm:null, onCancel:null, show:false}
+	);
+	
+	const [globalModal, setGlobalModal] = useReducer((state, newState) =>
 		// reset modal completely to prevent side effects
 		newState.hasOwnProperty('show') && newState.show === false ? {message:'', onConfirm:null, onCancel:null, show:false} : {...state, ...{show:true}, ...newState}, {message:'', onConfirm:null, onCancel:null, show:false}
 	);
@@ -76,7 +81,7 @@ const App = () => {
 	if(user.isLoggedIn === true) {
 		return (
 			<>
-				<GlobalContext.Provider value={{globalMessage, setGlobalMessage, globalModalConfirm, setGlobalModalConfirm}}>
+				<GlobalContext.Provider value={{globalMessage, setGlobalMessage, globalModalConfirm, setGlobalModalConfirm, globalModal, setGlobalModal}}>
 					{globalMessage.visible &&
 						<SlideInPanel
 							message={globalMessage.message}
@@ -89,6 +94,10 @@ const App = () => {
 					
 					{globalModalConfirm.show &&
 						<ModalConfirm />
+					}
+					
+					{globalModal.show &&
+						<Modal />
 					}
 					
 					<div className="mx-auto max-w-7xl">

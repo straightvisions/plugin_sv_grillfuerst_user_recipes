@@ -1,4 +1,4 @@
-import React, {useEffect, useState, useContext} from "react";
+import React, {useEffect, useState, useContext} from 'react';
 import { useInterval } from 'usehooks-ts'
 import Common from '../form_common';
 import Ingredients from '../form_ingredients';
@@ -6,24 +6,25 @@ import Accessories from '../form_accessories';
 import Steps from '../form_steps';
 import Submit from '../form_submit';
 import Spinner from '../spinner';
-import routes from "../../models/routes";
-import { useParams } from "react-router-dom";
+import routes from '../../models/routes';
+import { useParams } from 'react-router-dom';
 import { AlertReviewed, AlertReviewPending, AlertPublished } from '../form_alerts';
-import {GlobalContext} from "../../modules/context";
-import storage from "../../modules/storage";
-import {fetchError} from "../../modules/fetch";
-import user from '../../modules/user';
+import {GlobalContext} from '../../modules/context';
+import storage from '../../modules/storage';
+import {fetchError} from '../../modules/fetch';
+import Validator from './validator';
 
 function dateIsValid(date) {
 	return typeof date === 'object' && date !== null && typeof date.getTime === 'function' && !isNaN(date);
 }
 
 export default function Form(props) {
-	const { globalMessage, setGlobalMessage } = useContext(GlobalContext);
+	const { globalModal, setGlobalModal } = useContext(GlobalContext);
 	const params = useParams();
 	const [formState, setFormState] = useState({});
 	const [loading, setLoadingState] = useState(true);
 	const [saving, setSavingState] = useState(false);
+	const [valid, setValid] = useState(false);
 	// load data from db and check if newer than storage
 	useEffect(() => {
 		fetch(routes.getRecipeByUuid + params.uuid,{
@@ -84,7 +85,13 @@ export default function Form(props) {
 	
 	const handleSubmit = (e) => {
 		e.preventDefault();
-		_setFormState({state: 'review_pending'});
+		const errors = Validator.validate(formState);
+		if(errors.length <= 0){
+			_setFormState({state: 'review_pending'});
+		}else{
+			setGlobalModal({type: 'error', message: errors});
+		}
+		
 	}
 	
 	// auto save
