@@ -19,8 +19,9 @@ export function Modal() {
 		return (
 			<>
 				{globalModal.show && (
-					<div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-[99999]">
+					<div className="fixed inset-0 flex items-center justify-center bg-gray-500 bg-opacity-50 z-[99999] p-4">
 						<div className="bg-white rounded-lg p-4">
+							{globalModal.title && <h3 className="mb-4">{globalModal.title}</h3>}
 							<p dangerouslySetInnerHTML={{__html: Array.isArray(globalModal.message) ? globalModal.message.join('') : globalModal.message }}></p>
 							<div className="flex justify-end mt-4">
 								<button onClick={handleConfirm} type="button"

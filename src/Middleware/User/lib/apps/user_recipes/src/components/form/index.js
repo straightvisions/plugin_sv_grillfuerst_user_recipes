@@ -89,7 +89,7 @@ export default function Form(props) {
 		if(errors.length <= 0){
 			_setFormState({state: 'review_pending'});
 		}else{
-			setGlobalModal({type: 'error', message: errors});
+			setGlobalModal({title: 'Um Ihr Rezept prüfen zu können, benötigen wir noch diese wichtigen Angaben:', type: 'error', message: errors});
 		}
 		
 	}
@@ -131,7 +131,7 @@ export default function Form(props) {
 	return (
 		<>
 			{getAlerts()}
-			<form className="space-y-6 relative" onSubmit={(e)=>handleSubmit(e)}>
+			<form className="space-y-6 relative" onSubmit={(e)=>handleSubmit(e)} noValidate>
 				{(formState.state === 'review_pending' || formState.state === 'published') && (
 					<div className="z-10 absolute top-0 left-0 h-full w-full bg-gray-500 opacity-20 flex items-start justify-end">
 						<p className="text-red-900 font-bold p-2">Die Bearbeitung ist derzeit gesperrt.</p>
