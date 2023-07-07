@@ -189,7 +189,7 @@ export default function Common(props) {
 								onChange={(e)=>setFormState({excerpt: e.target.value})}
 								required
 							/>
-							<p className="mt-2 text-gray-400">Mindestens 2 Sätze was das besondere an dem Rezpt ist.</p>
+							<p className="mt-2 text-gray-400">Mindestens 2 Sätze was das Besondere an dem Rezept ist.</p>
 						</div>
 						
 						<div className="h-200 rounded-md overflow-hidden">
