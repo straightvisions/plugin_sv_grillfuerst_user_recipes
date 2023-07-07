@@ -173,6 +173,7 @@ export default function Common(props) {
 								onChange={(e)=>setFormState({title: e.target.value})}
 								required
 							/>
+							<p className="mt-2 text-gray-400">Aussagekräftig und mindestens 10 Buchstaben.</p>
 						</div>
 						
 						<div>
@@ -188,12 +189,13 @@ export default function Common(props) {
 								onChange={(e)=>setFormState({excerpt: e.target.value})}
 								required
 							/>
-							<p className="mt-2 text-gray-400">Eine knackige Zusammenfassung oder Einführung in dein Rezept.</p>
+							<p className="mt-2 text-gray-400">Mindestens 2 Sätze was das besondere an dem Rezpt ist.</p>
 						</div>
 						
 						<div className="h-200 rounded-md overflow-hidden">
 							<label className="block font-bold">Hauptbild</label>
 							<Image onChange={handleImageUpload} onDelete={handleImageDelete} image={featured_image} uuid={formState.uuid} />
+							<p className="mt-2 text-gray-400">Ein Bild von deinem fertigen Gericht (Querformat).</p>
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">

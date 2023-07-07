@@ -73,7 +73,7 @@ export default function Steps(props) {
 			<div className="grid grid-cols-1 xl:grid-cols-4 gap-6">
 				<div className="col-span-1">
 					<h3 className="text-lg font-bold leading-6 text-gray-900">Schritte</h3>
-					<p className="mt-1 text-gray-500">Hier kannst du alle Zubereitungsschritte eingeben. Achte dabei bitte auf die korrekte Reihenfolge und passende Bilder.</p>
+					<p className="mt-1 text-gray-500">Mindestens zwei Schritte (Vorbereitung und Zubereitung) – mehr sind natürlich immer besser. Achte dabei bitte auf die korrekte Reihenfolge und passende Bilder.</p>
 					<div className="col-span-6 sm:col-span-4 my-4">
 						<button
 							onClick={addStep}
