@@ -24,13 +24,7 @@ export default class Validator{
 	}
 	
 	static excerpt(s){
-		// Remove line breaks and trim whitespace
-		s = s.trim().replace(/\s+/g, ' ');
-		// Split the text into sentences using regular expressions
-		const sentences = s.split(/(?<=[.!?])\s+/);
-		// Count the number of sentences
-		const sentenceCount = sentences.length;
-		return sentenceCount >= 2 && s.length >= 300;
+		return s.length >= 300;
 	}
 	
 	static featuredImage(i){
