@@ -1,7 +1,8 @@
 import React, {useEffect, useState} from 'react';
 import { LockOpenIcon } from '@heroicons/react/24/solid';
 import Spinner from '../spinner';
-import Modal from "../modal";
+import Modal from '../modal';
+import user from '../../modules/user';
 
 export default function ReviewToolbar(props) {
 	const {
@@ -9,10 +10,12 @@ export default function ReviewToolbar(props) {
 		onSubmit = () => {},
 		onPublish = () => {},
 		onRefresh = () => {},
+		onDelete = () => {},
 		saving = false,
 		submitting = false,
 		publishing = false,
 		refreshing = false,
+		deleting = false,
 		disabled = false,
 		customer = {},
 		setAttributes,
@@ -29,7 +32,7 @@ export default function ReviewToolbar(props) {
 	const [confirmReleaseOpen, setConfirmReleaseOpen] = useState(false);
 
 	const state = props.data.state;
-	const _disabled = disabled || saving || submitting || publishing || refreshing || state === 'published' || state === 'draft';
+	const _disabled = disabled || saving || submitting || publishing || refreshing || deleting || state === 'published' || state === 'draft';
 
 	return (
 		<div className="flex flex-row items-center items-stretch mb-2 gap-2">
@@ -81,6 +84,14 @@ export default function ReviewToolbar(props) {
 					<><span>|</span><a href={link} target="_blank">Zum Rezept</a></>
 				}
 			</div>
+			{ user.hasRole('admin') &&
+				<div className="mr-0 ml-auto flex gap-2 justify-end">
+					<button title="Daten vom Serer neu laden." disabled={_disabled && !forcedEditing} onClick={onDelete} type="button" className="flex items-center gap-2 px-2 py-1 bg-white border rounded text-sm border-gray-200 bg-red-600 text-white">
+						{ deleting ? <Spinner width="4" height="4" /> : 'Löschen' }
+					</button>
+				</div>
+			
+			}
 			{/*
 			<div className="mr-0 ml-auto flex gap-2 justify-end">
 				<button title="Daten vom Serer neu laden." disabled={_disabled && !forcedEditing} onClick={onRefresh} type="button" className="flex items-center gap-2 px-2 py-1 bg-white border rounded text-sm border-gray-200 bg-red-600 text-white">

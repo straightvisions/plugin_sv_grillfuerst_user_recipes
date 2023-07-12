@@ -34,6 +34,7 @@ final class Recipe_Finder_Service {
         return $this->create_result($rows);
     }
 
+    //@todo check if this function is needed + naming convention
     public function getRaw(int $recipe_id): Recipe_Exporter_Item {
         $row = $this->repository->getRaw($recipe_id);
         $item = $this->Recipe_Exporter_Item;

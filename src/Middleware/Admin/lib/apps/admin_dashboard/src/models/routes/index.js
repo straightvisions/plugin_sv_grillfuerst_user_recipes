@@ -23,6 +23,7 @@ export default {
 	"getRecipesByUser": apiURL + '/recipes/user/', // GET + {user_id}
 	"getRecipeByUuid": apiURL + '/recipes/', // GET + {recipe_id}
 	"updateRecipe": apiURL + '/recipes/', // PUT + {recipe_id}
+	"deleteRecipe": apiURL + '/recipes/', // DELETE + {recipe_id}
 	"exportRecipe": apiURL + '/recipes/{id}/export', // PUT + {recipe_id}
 	"getIngredients": apiURL + '/recipes/ingredients', // GET
 	"getMenuTypes": apiURL + '/recipes/menutypes', // GET

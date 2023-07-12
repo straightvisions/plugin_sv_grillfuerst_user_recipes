@@ -70,6 +70,7 @@ final class Admin_Middleware implements Middleware_Interface {
               'nickname' => $this->array_to_string($user_meta['nickname']),
               'gender' => '',
               'avatar' => \get_avatar_url( $user_id ),
+              'roles' => $this->get_user_roles($user_id),
             ];
 
             // add salutation
@@ -86,6 +87,14 @@ final class Admin_Middleware implements Middleware_Interface {
             ],200];
 
         },['admin','view']);
+    }
+
+    private function get_user_roles(int $user_id): array{
+        $roles = ['editor'];
+
+        if(\user_can($user_id , 'manage_options')){$roles[] = 'admin';}
+
+        return $roles;
     }
 
     private function array_to_string($array){

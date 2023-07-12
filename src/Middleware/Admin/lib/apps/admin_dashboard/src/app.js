@@ -14,15 +14,13 @@ const App = () => {
 	const [userInited, setUserInited] = useState(true);
 	
 	useEffect(()=>{
-		/* // disabled for now
+		// disabled for now
 		const initUser = async()=> {
 			await user.init();
 			setUserInited(true);
 		}
 		
 		initUser();
-		*/
-	
 	}, []);
 	
 	if(userInited === false){
@@ -30,7 +28,7 @@ const App = () => {
 	}else {
 		return (
 			<div className="min-h-full bg-gray-100">
-				<NavigationBar user={user}/>
+				<NavigationBar />
 				<div className="p-10">
 					<Routes>
 						<Route

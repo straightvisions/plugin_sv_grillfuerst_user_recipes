@@ -21,6 +21,7 @@ export default function Review() {
 		saving: false, // Flag indicating if the recipe is being saved
 		submitting: false, // Flag indicating if the recipe is being submitted
 		publishing: false, // Flag indicating if the recipe is being published
+		deleting: false, // Flag indicating if the recipe is being deleted
 		disabled: false,
 	};
 	
@@ -127,6 +128,39 @@ export default function Review() {
 			//@todo give a notice on error
 			console.log(error);
 			setAttributes({saving: false});
+		});
+	}
+	
+	const onDelete = () => {
+		if(!window.confirm("Wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!")){
+			return;
+		}
+
+		if(attributes.deleting) return;
+		setForcedEditing(false);
+		setAttributes({deleting: true});
+		
+		
+		fetch(routes.deleteRecipe + params.uuid, {
+			method: 'DELETE',
+			cache: 'no-cache',
+			headers:headers.get()
+		})
+			.then(response => response.json())
+			.then(data => {
+				if(data.success === true){
+					alert(data.message);
+					window.location.href = routes.config.appURL;
+				}else{
+					alert(data.message);
+					setAttributes({deleting: false});
+				}
+				
+			}).catch(function(error) {
+			// do error handling
+			//@todo give a notice on error
+			console.log(error);
+			setAttributes({deleting: false});
 		});
 	}
 	
@@ -249,7 +283,7 @@ export default function Review() {
 					name="modalMessage"
 					/>
 			}
-			<ReviewToolbar {...attributes} setAttributes={setAttributes} forcedEditing={forcedEditing} setForcedEditing={setForcedEditing} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)}/>
+			<ReviewToolbar {...attributes} setAttributes={setAttributes} forcedEditing={forcedEditing} setForcedEditing={setForcedEditing} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)} onDelete={onDelete}/>
 			<div className="flex gap-5 w-full max-w-full">
 				<div className="flex-grow">
 					<ReviewRecipeForm {...attributes} setAttributes={setAttributes} />

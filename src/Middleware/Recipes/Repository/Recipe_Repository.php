@@ -9,6 +9,7 @@ use DomainException;
 
 final class Recipe_Repository {
     private Query_Factory $Query_Factory;
+    private $table = 'svgfur_recipes';
 
     /*
      * it is expected that all data input is validated beforehand
@@ -22,14 +23,14 @@ final class Recipe_Repository {
     public function insert(array $recipe): int {
         $Recipe_Item = new Recipe_Insert_Item();
 
-        return (int)$this->Query_Factory->newInsert('svgfur_recipes', $this->to_row($recipe, $Recipe_Item))
+        return (int)$this->Query_Factory->newInsert($this->table, $this->to_row($recipe, $Recipe_Item))
                                        ->execute()
                                        ->lastInsertId();
     }
 
 
     public function get_by_id(int $recipe_id): array {
-        $query = $this->Query_Factory->newSelect('svgfur_recipes');
+        $query = $this->Query_Factory->newSelect($this->table);
         $query->select(
             [
                 '*',
@@ -40,11 +41,7 @@ final class Recipe_Repository {
 
         $row = $query->execute()->fetch('assoc');
 
-        if (!$row) {
-            throw new DomainException(sprintf('Recipe not found: %s', $recipe_id));
-        }
-
-        return $row;
+        return $row ? $row : [];
     }
 
     public function update(int $recipe_id, array $recipe): void {
@@ -52,29 +49,32 @@ final class Recipe_Repository {
 
         $row = $this->to_row($recipe, $Recipe_Item);
 
-        $this->Query_Factory->newUpdate('svgfur_recipes', $row)
+        $this->Query_Factory->newUpdate($this->table, $row)
                            ->where(['uuid' => $recipe_id])
                            ->execute();
     }
 
     public function exists_id(int $recipe_id): bool {
-        $query = $this->Query_Factory->newSelect('svgfur_recipes');
+        $query = $this->Query_Factory->newSelect($this->table);
         $query->select('uuid')->where(['uuid' => $recipe_id]);
 
         return (bool)$query->execute()->fetch('assoc');
     }
 
     public function exists_uuid(int $uuid): bool {
-        $query = $this->Query_Factory->newSelect('svgfur_recipes');
+        $query = $this->Query_Factory->newSelect($this->table);
         $query->select('uuid')->where(['uuid' => $uuid]);
 
         return (bool)$query->execute()->fetch('assoc');
     }
 
-    public function delete_by_id(int $recipe_id): void {
-        $this->Query_Factory->newDelete('svgfur_recipes')
-                           ->where(['uuid' => $recipe_id])
+    public function delete(int $uuid): bool {
+        //@todo update ORM to return useful insights if operation was successful
+        $query = $this->Query_Factory->newDelete($this->table)
+                           ->where(['uuid' => $uuid])
                            ->execute();
+
+        return empty($this->get_by_id($uuid)); // if empty, the row was deleted
     }
 
     private function to_row(array $recipe, $Recipe_Item): array {

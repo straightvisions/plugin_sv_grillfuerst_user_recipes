@@ -20,7 +20,7 @@ final class Recipe_Creator_Service {
         $this->Repository       = $Repository;
         $this->Validator        = $Validator;
         $this->Logger           = $Logger_Factory
-            ->addFileHandler('user_creator.log')
+            ->addFileHandler('recipe_creator.log')
             ->createLogger();
     }
 

@@ -9,6 +9,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Email\Email_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Jwt\Jwt_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Creator_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Deleter_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Exporter_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Finder_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Ingredients_Finder_Service;
@@ -23,6 +24,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     private $Adapter;
     private Recipe_Finder_Service $Recipe_Finder_Service;
     private Recipe_Creator_Service $Recipe_Creator_Service;
+    private Recipe_Deleter_Service $Recipe_Deleter_Service;
     private Recipe_Updater_Service $Recipe_Updater_Service;
     private Recipe_Exporter_Service $Recipe_Exporter_Service;
     private Recipe_Voucher_Service $Recipe_Voucher_Service;
@@ -38,6 +40,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         Adapter $Adapter,
         Recipe_Finder_Service $Recipe_Finder_Service,
         Recipe_Creator_Service $Recipe_Creator_Service,
+        Recipe_Deleter_Service $Recipe_Deleter_Service,
         Recipe_Updater_Service $Recipe_Updater_Service,
         Recipe_Ingredients_Finder_Service $Recipe_Ingredients_Finder_Service,
         Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service,
@@ -54,6 +57,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         $this->Adapter                              = $Adapter;
         $this->Recipe_Finder_Service                = $Recipe_Finder_Service;
         $this->Recipe_Creator_Service               = $Recipe_Creator_Service;
+        $this->Recipe_Deleter_Service               = $Recipe_Deleter_Service;
         $this->Recipe_Updater_Service               = $Recipe_Updater_Service;
         $this->Recipe_Kitchen_Styles_Finder_Service = $Recipe_Kitchen_Styles_Finder_Service;
         $this->Recipe_Menu_Types_Finder_Service     = $Recipe_Menu_Types_Finder_Service;
@@ -65,22 +69,16 @@ final class Recipes_Middleware implements Middleware_Interface {
         $this->User_Info_Service                    = $User_Info_Service;
         $this->settings                             = $container->get('settings');
 
-        // https://github.com/straightvisions/plugin_sv_appointment/blob/master/lib/modules/api.php
-        // @todo add permissions
-        // https://developer.wordpress.org/rest-api/extending-the-rest-api/routes-and-endpoints/#permissions-callback
-        //
-        //
-
         // GET ALL RECIPES
         $this->Api_Middleware->add([
             'route' => '/recipes',
             'args'  => ['methods' => 'GET, OPTIONS', 'callback' => [$this, 'rest_get_recipes'], 'permission_callback' => '__return_true']
         ]);
 
-        // GET / UPDATE A SPECIFIC RECIPE
+        // GET / UPDATE / DELETE A SPECIFIC RECIPE
         $this->Api_Middleware->add([
             'route' => '/recipes/(?P<uuid>\d+)', // wordpress specific
-            'args'  => ['methods' => 'GET, PUT', 'callback' => [$this, 'route_recipes_uuid'], 'permission_callback' => '__return_true']
+            'args'  => ['methods' => 'GET, PUT, DELETE', 'callback' => [$this, 'route_recipes_uuid'], 'permission_callback' => '__return_true']
         ]);
 
         $this->Api_Middleware->add([
@@ -267,8 +265,32 @@ final class Recipes_Middleware implements Middleware_Interface {
 
         return $this->rest_update_recipe($request);
     }
-    // GETTER ----------------------------------------------------------------------------
 
+    public function rest_delete_recipe($request){
+        return $this->Api_Middleware->response($request, function ($Request) {
+                $uuid = $Request->getAttribute('uuid');
+                $results = ['success' => true, 'message' => 'Rezept wurde gelöscht.'];
+                $recipe = $this->Recipe_Finder_Service->get($uuid)->items[0];
+
+                if( !$this->Recipe_Deleter_Service->delete($uuid) ){
+                    // error handling here
+                    $results['message'] = 'Rezept konnte nicht gelöscht werden.';
+                    $results['success'] = false;
+                }
+
+                return [$results, 200];
+            },
+            [
+                'admin',
+                'edit',
+                fn($Request) => $this->Jwt_Middleware->isRole('admin') || (int)$Request->getAttribute(
+                        'user_id'
+                    ) === (int)$this->Jwt_Middleware->getValue('userId')
+            ]
+        );
+    }
+
+    // GETTER ----------------------------------------------------------------------------
     public function rest_get_recipes_by_user_id($request) {
         return $this->Api_Middleware->response(
             $request,
@@ -297,6 +319,8 @@ final class Recipes_Middleware implements Middleware_Interface {
                 return $this->rest_update_recipe($request);
             case 'GET' :
                 return $this->rest_get_recipes_by_uuid($request);
+            case 'DELETE' :
+                return $this->rest_delete_recipe($request);
         }
 
         return [];

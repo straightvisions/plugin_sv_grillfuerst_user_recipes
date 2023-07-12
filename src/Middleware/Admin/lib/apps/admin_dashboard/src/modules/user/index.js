@@ -10,8 +10,14 @@ const user = {
 			'id': storage.get('userId', 0),
 			'firstname': storage.get('firstname', 'unknown'),
 			'lastname': storage.get('lastname', 'unknown'),
-			'avatar': storage.get('avatar','')
+			'nickname': storage.get('nickname', 'unknown'),
+			'avatar': storage.get('avatar',''),
+			'roles': storage.get('roles', ['editor']),
 		}
+	},
+	
+	hasRole: (role) => {
+		return user.get().roles.includes(role);
 	},
 	
 	init: () => {
