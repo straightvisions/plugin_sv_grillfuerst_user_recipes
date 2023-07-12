@@ -163,6 +163,7 @@ export default function Common(props) {
 							<label htmlFor="recipe_title" className="block font-bold mb-1">
 								Name des Rezepts
 							</label>
+							<p className="mb-2 text-gray-400 font-bold">Mindestens 20 Zeichen und einem aussagekräftigen, beschreibenden Namen des Rezeptes.</p>
 							<input
 								type="text"
 								name="title"
@@ -173,13 +174,14 @@ export default function Common(props) {
 								onChange={(e)=>setFormState({title: e.target.value})}
 								required
 							/>
-							<p className="mt-2 text-gray-400">Aussagekräftig und mindestens 10 Buchstaben.</p>
+							
 						</div>
 						
 						<div>
 							<label htmlFor="recipe_excerpt" className="block font-bold mb-1">
 								Kurzbeschreibung des Rezepts
 							</label>
+							<p className="mb-2 text-gray-400 font-bold">Beschreibe mit mindestens 300 Zeichen (ca. 60 Wörtern) das Rezept mit einer guten Zusammenfassung, Besonderheiten, Geschmack, Besonderheiten in der Zubereitung.</p>
 							<textarea
 								id="recipe_excerpt"
 								rows={3}
@@ -189,7 +191,6 @@ export default function Common(props) {
 								onChange={(e)=>setFormState({excerpt: e.target.value})}
 								required
 							/>
-							<p className="mt-2 text-gray-400">Mindestens 2 Sätze was das Besondere an dem Rezept ist.</p>
 						</div>
 						
 						<div className="h-200 rounded-md overflow-hidden">

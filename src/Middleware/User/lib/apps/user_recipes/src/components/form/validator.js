@@ -5,8 +5,8 @@ export default class Validator{
 	static validate(state){
 		const errors = [];
 		
-		!this.title(state.title) ? errors.push('<p>Der <strong>Rezeptname</strong> muss mindestens 10 Zeichen lang sein.</p>') : '';
-		!this.excerpt(state.excerpt) ? errors.push('<p>Die <strong>Kurzbeschreibung</strong> muss mindestens 2 Sätze enthalten und mehr als 10 Zeichen.</p>') : '';
+		!this.title(state.title) ? errors.push('<p><strong>Name des Rezeptes</strong> - Mindestens 20 Zeichen und einem aussagekräftigen, beschreibenden Namen des Rezeptes.</p>') : '';
+		!this.excerpt(state.excerpt) ? errors.push('<p><strong>Kurzbeschreibung des Rezepts</strong> - Beschreibe mit mindestens 300 Zeichen (ca. 60 Wörtern) das Rezept mit einer guten Zusammenfassung, Besonderheiten, Geschmack, Besonderheiten in der Zubereitung.</p>') : '';
 		!this.featuredImage(state.featured_image) ? errors.push('<p>Bitte lade ein <strong>Hauptbild</strong> hoch.</p>') : '';
 		!this.genericArray(state.menu_type) ? errors.push('<p>Bitte wähle die <strong>die Art des Gerichts</strong>.</p>') : '';
 		!this.genericArray(state.kitchen_style) ? errors.push('<p>Bitte wähle die <strong>Grillkategorie</strong>.</p>') : '';
@@ -20,7 +20,7 @@ export default class Validator{
 	}
 	
 	static title(s){
-		return s.length >= 10;
+		return s.length >= 20;
 	}
 	
 	static excerpt(s){
@@ -30,7 +30,7 @@ export default class Validator{
 		const sentences = s.split(/(?<=[.!?])\s+/);
 		// Count the number of sentences
 		const sentenceCount = sentences.length;
-		return sentenceCount >= 2 && s.length >= 10;
+		return sentenceCount >= 2 && s.length >= 300;
 	}
 	
 	static featuredImage(i){
