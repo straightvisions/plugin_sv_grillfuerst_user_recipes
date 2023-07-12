@@ -58,14 +58,16 @@ final class Admin_Middleware implements Middleware_Interface {
 
     // route handlers
     public function rest_admin_info($request) {
+        //@todo add adapter for wp functions
         return $this->Api_Middleware->response($request, function($Request){
-            $user_id = $this->Jwt_Middleware->get('userId');
-
+            $data = $this->Jwt_Middleware->get();
+            $user_id = isset($data['userId']) ? $data['userId'] : 0;
             $user_meta = \get_user_meta( $user_id );
 
             $data = [
-              'firstname' => $user_meta['first_name'],
-              'lastname' => $user_meta['last_name'],
+              'firstname' => $this->array_to_string($user_meta['first_name']),
+              'lastname' => $this->array_to_string($user_meta['last_name']),
+              'nickname' => $this->array_to_string($user_meta['nickname']),
               'gender' => '',
               'avatar' => \get_avatar_url( $user_id ),
             ];
@@ -79,11 +81,16 @@ final class Admin_Middleware implements Middleware_Interface {
 
             return [[
                 'status' => 'success',
-                'isLoggedIn' => true,
+                'isLoggedIn' => true, // @todo check if user is logged in wp by id
                 'data' => $data,
             ],200];
 
         },['admin','view']);
+    }
+
+    private function array_to_string($array){
+        $array = is_object($array) ? (array)$array : $array;
+        return is_array($array) ? implode(' ', $array) : $array;
     }
 
 }
