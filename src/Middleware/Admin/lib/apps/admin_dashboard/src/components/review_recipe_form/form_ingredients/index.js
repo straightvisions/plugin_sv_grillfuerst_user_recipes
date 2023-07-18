@@ -3,6 +3,7 @@ import Spinner from '../../spinner';
 import TermSearch from "../combobox/term_search.js";
 import Dropdown from "../dropdown";
 import ProductFinder from "../product_finder";
+import IngredientReplacer from "./replacer";
 import routes from "../../../models/routes";
 import ingredientUnitValues from "../../../models/ingredient/units";
 import ingredientModel from "../../../models/ingredient";
@@ -20,6 +21,9 @@ export default function Ingredients(props) {
 	} = formState;
 	
 	const [showProductFinder, setShowProductFinder] = useState(false);
+	const [showIngredientReplacer, setShowIngredientReplacer] = useState(false);
+	const [ingredientReplacerItem, setIngredientReplacerItem] = useState(null);
+	const [showIngredientCreator, setShowIngredientCreator] = useState(false);
 	const [productSelected, setProductSelected] = useState(0);
 	const [productParent, setProductParent] = useState({});
 	const [products, setProducts] = useState([]);
@@ -89,8 +93,9 @@ export default function Ingredients(props) {
 	}
 	
 	// needs custom function to apply data to the right array item
-	const setIngredient = (item) => {
-		const _ingredients = ingredients.map(ingredient => { return ingredient.id === item.id ? item : ingredient; });
+	const setIngredient = (item, oldId = false) => {
+		const _ingredients = oldId === false ? ingredients.map(ingredient => { return ingredient.id === item.id ? item : ingredient; })
+		: ingredients.map(ingredient => { return ingredient.id === oldId ? item : ingredient; });
 	
 		setFormState({ingredients: sort(_ingredients)});
 	}
@@ -103,8 +108,20 @@ export default function Ingredients(props) {
 		setFormState({ingredients: sort(ingredients)});
 	}
 	
+	const getRandomId = () => {
+		const min = 10000000;
+		const max = 99999999;
+		let customNumber;
+		
+		do {
+			customNumber = Math.floor(Math.random() * (max - min + 1)) + min;
+		} while (ingredients.find((ingredient) => ingredient.id === customNumber));
+		
+		return customNumber;
+	}
+	
 	const addCustomIngredient = () =>{
-		const ingredient = { ...ingredientModel, ...{id: 0, label: '', order: ingredients.length + 1, custom: true} };
+		const ingredient = { ...ingredientModel, ...{id: getRandomId(), label: '', order: ingredients.length + 1, custom: true} };
 		
 		ingredients.push(ingredient);
 		
@@ -255,11 +272,17 @@ export default function Ingredients(props) {
 		}
 	}
 	
+	function handleIngredientReplacer(index, ingredient){
+		setIngredientReplacerItem({index: index, ingredient: ingredient});
+		setShowIngredientReplacer(true);
+	}
+	
 	// conditional rendering for TermSearch
 	const TermSearchComp = loading ? <Spinner /> : <TermSearch label={"Neue Zutat hinzufügen"} items={ingredientsDB} onChange={addIngredient} />;
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6 mt-5">
 			{showProductFinder && <ProductFinder id="IngredientsProductFinder" description="Hier kannst du Grillfürst Shop-Produkte als Zutat verlinken." items={products} itemsSelected={productSelected} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
+			{showIngredientReplacer && <IngredientReplacer id="IngredientReplacer" target={ingredientReplacerItem} items={ingredientsDB} onSelect={setIngredient} setShow={setShowIngredientReplacer}/>}
 			<div className="md:grid md:grid-cols-5 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Zutaten</h3>
@@ -349,13 +372,33 @@ export default function Ingredients(props) {
 								<td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
 									{ingredient.custom === false ?
 										ingredient.label
-									: <input
+									: <><input
 											placeholder="Zutat"
 											type="text"
 											className="min-w-max block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 											value={ingredient.label}
 											onChange={e => { ingredient.label = e.target.value; setIngredient(ingredient); }}
 										/>
+											<div className="flex gap-2 mt-2 text-xs">
+												{loading ? <Spinner/> : <>
+													<button
+														onClick={() => handleIngredientReplacer(index, ingredient)}
+														type="button"
+														className="bg-white text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+													>
+														Ersetzen
+													</button>
+													<button
+														onClick={() => handleIngredientsCreator(index, ingredient)}
+														type="button"
+														className="bg-white text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
+													>
+														Neu+
+													</button>
+												</>
+												}
+											</div>
+										</>
 									}
 								</td>
 								<td className="w-1/5 whitespace-nowrap px-3 py-4 text-sm text-gray-500">
@@ -367,7 +410,6 @@ export default function Ingredients(props) {
 										placeholder="1"
 										className="block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm"
 									/>
-								
 								</td>
 								<td className="w-1/5 whitespace-nowrap px-3 py-4 text-sm text-gray-500">
 									<input
