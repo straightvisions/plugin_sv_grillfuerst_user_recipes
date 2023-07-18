@@ -4,6 +4,7 @@ import TermSearch from "../combobox/term_search.js";
 import Dropdown from "../dropdown";
 import ProductFinder from "../product_finder";
 import IngredientReplacer from "./replacer";
+import IngredientCreator from "./creator";
 import routes from "../../../models/routes";
 import ingredientUnitValues from "../../../models/ingredient/units";
 import ingredientModel from "../../../models/ingredient";
@@ -24,6 +25,7 @@ export default function Ingredients(props) {
 	const [showIngredientReplacer, setShowIngredientReplacer] = useState(false);
 	const [ingredientReplacerItem, setIngredientReplacerItem] = useState(null);
 	const [showIngredientCreator, setShowIngredientCreator] = useState(false);
+	const [ingredientCreatorItem, setIngredientCreatorItem] = useState(false);
 	const [productSelected, setProductSelected] = useState(0);
 	const [productParent, setProductParent] = useState({});
 	const [products, setProducts] = useState([]);
@@ -277,12 +279,18 @@ export default function Ingredients(props) {
 		setShowIngredientReplacer(true);
 	}
 	
+	function handleIngredientCreator(index, ingredient){
+		setIngredientCreatorItem({index: index, ingredient: ingredient});
+		setShowIngredientCreator(true);
+	}
+	
 	// conditional rendering for TermSearch
 	const TermSearchComp = loading ? <Spinner /> : <TermSearch label={"Neue Zutat hinzufügen"} items={ingredientsDB} onChange={addIngredient} />;
 	return (
 		<div className="bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6 mt-5">
 			{showProductFinder && <ProductFinder id="IngredientsProductFinder" description="Hier kannst du Grillfürst Shop-Produkte als Zutat verlinken." items={products} itemsSelected={productSelected} onSelect={handleFinderSelect} setShow={setShowProductFinder}/>}
 			{showIngredientReplacer && <IngredientReplacer id="IngredientReplacer" target={ingredientReplacerItem} items={ingredientsDB} onSelect={setIngredient} setShow={setShowIngredientReplacer}/>}
+			{showIngredientCreator && <IngredientCreator id="IngredientCreator" target={ingredientCreatorItem} onAdd={setIngredient} setShow={setShowIngredientCreator}/>}
 			<div className="md:grid md:grid-cols-5 md:gap-6">
 				<div className="md:col-span-1">
 					<h3 className="text-lg font-medium leading-6 text-gray-900">Zutaten</h3>
@@ -389,7 +397,7 @@ export default function Ingredients(props) {
 														Ersetzen
 													</button>
 													<button
-														onClick={() => handleIngredientsCreator(index, ingredient)}
+														onClick={() => handleIngredientCreator(index, ingredient)}
 														type="button"
 														className="bg-white text-grey-500 px-2 py-1 rounded hover:text-white hover:bg-orange-600"
 													>

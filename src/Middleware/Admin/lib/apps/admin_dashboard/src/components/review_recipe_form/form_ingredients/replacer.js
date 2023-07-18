@@ -34,8 +34,6 @@ function IngredientReplacer(props) {
 			custom: false
 		};
 		
-		console.log(newIngredient);
-		
 		// Add the new ingredient to the parent component's state
 		onSelect(newIngredient, target.ingredient.id);
 		setShow(false);

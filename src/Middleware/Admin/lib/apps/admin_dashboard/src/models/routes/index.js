@@ -2,6 +2,7 @@ const subFolder = window.location.hostname === 'www.grillfuerst.de' ? '/magazin'
 
 const domain = process.env.HOST_DOMAIN ? process.env.HOST_DOMAIN : window.location.hostname + subFolder;
 const domainURL = process.env.HOST_DOMAIN_URL ? process.env.HOST_DOMAIN_URL : window.location.origin + subFolder;
+const wpDomainUrl = process.env.HOST_WP_DOMAIN_URL ? process.env.HOST_WP_DOMAIN_URL : window.location.origin + subFolder;
 const appURL = process.env.APP_ROOT_URL ? process.env.APP_ROOT_URL : domainURL + '/community-rezepte/admin';
 const appPath = process.env.APP_ROOT_PATH ? process.env.APP_ROOT_PATH : subFolder + '/community-rezepte/admin';
 const apiURL = process.env.API_ROOT_V1_URL ? process.env.API_ROOT_V1_URL : domainURL + '/wp-json/sv-grillfuerst-user-recipes/v1';
@@ -30,6 +31,7 @@ export default {
 	"getKitchenStyles": apiURL + '/recipes/kitchenstyles', // GET
 	"getAccessories": apiURL + '/products/accessories', // GET
 	"getIngredientsProducts": apiURL + '/products/ingredients', // GET
+	"createIngredient": wpDomainUrl + '/wp-json/sv-grillfuerst-custom/v1/ingredients', // WP, POST
 	"uploadMedia": apiURL + '/media/upload', // POST
 	"updateMedia": apiURL + '/media/update', // PUT
 }
