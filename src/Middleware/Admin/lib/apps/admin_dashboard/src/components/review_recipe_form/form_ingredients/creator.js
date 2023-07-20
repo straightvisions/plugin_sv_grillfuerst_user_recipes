@@ -8,6 +8,7 @@ function IngredientCreator(props) {
 	const {
 		target,
 		onAdd = ()=>{},
+		onUpdate = ()=>{},
 		setShow = ()=>{},
 	} = props;
 	
@@ -22,8 +23,10 @@ function IngredientCreator(props) {
 	
 	const handleAdd = (item) => {
 		// Add the new ingredient to the parent component's state
-		const ingredient = { ...ingredientModel, ...{id: item.id, label: item.name, order: target.ingredient.order} };
+		const ingredient = { ...ingredientModel, ...target.ingredient, ...{id: item.id, label: item.name, order: target.ingredient.order, custom: false} };
+		// it's not the real ingredient item, it's the taxonomy without meta data
 		onAdd(ingredient, target.ingredient.id);
+	
 		setShow(false);
 	}
 	
