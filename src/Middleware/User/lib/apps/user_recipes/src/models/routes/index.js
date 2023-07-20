@@ -16,6 +16,7 @@ export default {
 	},
 	// check current url without params
 	isAppRoot: () => appURL.replace(/\/$/, '') === window.location.origin + window.location.pathname.replace(/\/$/, ''),
+	isLogin: () => appURL.replace(/\/$/, '') + '/login' === window.location.origin + window.location.pathname.replace(/\/$/, ''),
 	isRegister: () => appURL.replace(/\/$/, '') + '/register' === window.location.origin + window.location.pathname.replace(/\/$/, ''),
 	isReset: () => appURL.replace(/\/$/, '') + '/reset' === window.location.origin + window.location.pathname.replace(/\/$/, ''),
 	getUrl: (path) => appURL.replace(/\/$/, '') + path,

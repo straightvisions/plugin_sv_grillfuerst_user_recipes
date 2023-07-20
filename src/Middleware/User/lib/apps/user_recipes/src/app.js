@@ -49,8 +49,8 @@ const App = () => {
 	}
 	
 	// not logged-in state and not in root
-	if(user.isLoggedIn === false && !routes.isAppRoot() && !routes.isRegister() && !routes.isReset()){
-		window.location.href = routes.config.appURL;
+	if(user.isLoggedIn === false && !routes.isLogin() && !routes.isRegister() && !routes.isReset()){
+		window.location.href = routes.config.appURL+'/login';
 		return (<Spinner />);
 	}
 	
@@ -69,7 +69,7 @@ const App = () => {
 					element={<Reset />}
 				/>*/}
 					<Route
-						path="/"
+						path="/login"
 						element={<Login />}
 					/>
 				</Routes>

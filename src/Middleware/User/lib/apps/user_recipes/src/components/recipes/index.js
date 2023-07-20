@@ -122,7 +122,10 @@ export default function Recipes(props) {
 	//@todo migrate list items to List + ChildItems instead of writing everything into an array
 	const listItems = recipes.map((recipe, index) => {
 		return {
-			onClick: () => navigate('/edit/' + recipe.uuid),
+			onClick: () => {
+				navigate('/edit/' + recipe.uuid);
+				window.postMessage({ type: 'NAVIGATION', payload: window.location.pathname }, '*');
+			},
 			columns: [
 			<span className="inline-flex rounded-full px-2 text-sm font-semibold leading-5 text-gray-900">{recipe.uuid}</span>,
 			<span className={"inline-flex rounded-full px-2 text-sm font-semibold leading-5 text-gray-900 " + states[recipe.state].color}>{states[recipe.state].label}</span>,

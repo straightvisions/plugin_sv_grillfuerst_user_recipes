@@ -25,7 +25,9 @@ function FormButton(props){
 		})
 			.then(response => response.json())
 			.then(data => {
-				navigate('/edit/' + data.uuid)
+				const path = '/edit/' + data.uuid;
+				navigate(path);
+				window.postMessage({ type: 'NAVIGATION', payload: window.location.pathname }, '*');
 			}).finally(() => {
 				setLoading(false);
 			});
@@ -34,14 +36,18 @@ function FormButton(props){
 	
 	if(location.pathname.includes('/edit/')) {
 		return (
-			<Link
+			<button
 				className="btn primary"
 				role="button"
-				to="/"
+				onClick={(e) => {
+					const path = '/';
+					navigate(path);
+					window.postMessage({ type: 'NAVIGATION', payload: window.location.pathname }, '*');
+				}}
 			>
 				<ArrowLeftIcon className="-ml-1 h-5 w-5" aria-hidden="true"/>
 				<span>Übersicht</span>
-			</Link>
+			</button>
 		);
 	}
 	
@@ -71,7 +77,7 @@ export default function Header(props) {
 	
 	return (
 		<>
-			{ user.isLoggedIn && currentPath === routes.config.appPath &&
+			{ /* user.isLoggedIn && currentPath === routes.config.appPath &&
 				<div className="mb-12">
 					<h1 className="mb-4">Herzlich Willkommen bei den Grillfürst Community-Rezepten</h1>
 					<div className="flex flex-wrap lg:flex-nowrap mb-4 gap-12 justify-between items-center bg-grey-50 rounded shadow">
@@ -88,7 +94,7 @@ export default function Header(props) {
 					</div>
 				</div>
 				
-			}
+			*/}
 			<div className="flex items-center mb-4 gap-2 justify-between">
 				<FormButton {...props} />
 				<button

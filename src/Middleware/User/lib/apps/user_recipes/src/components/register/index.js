@@ -132,7 +132,11 @@ export default function Register(props){
 							
 							<button
 								type="button"
-								onClick={()=> navigate('/')}
+								onClick={()=> {
+									const path = '/';
+									navigate(path);
+									window.postMessage({ type: 'NAVIGATION', payload: window.location.pathname }, '*');
+								}}
 								className="flex w-full justify-center rounded-md border border-transparent bg-orange-500 py-2 px-4 font-bold text-white shadow-sm hover:bg-orange-700 focus:outline-none focus:ring-2 focus:ring-orange-500 focus:ring-offset-2"
 							>
 								Weiter zum Login

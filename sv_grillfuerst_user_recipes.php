@@ -117,6 +117,12 @@ function custom_rewrite_rules() {
     );
 
     add_rewrite_rule(
+        '^community-rezepte/login?$',
+        'index.php?pagename=community-rezepte',
+        'top'
+    );
+
+    add_rewrite_rule(
         '^community-rezepte/admin/edit/([0-9]+)/?$',
         'index.php?pagename=community-rezepte/admin',
         'top'
