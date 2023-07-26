@@ -27,7 +27,9 @@ export default function Form(props) {
 	const [valid, setValid] = useState(false);
 	// load data from db and check if newer than storage
 	useEffect(() => {
-		fetch(routes.getRecipeByUuid + params.uuid,{
+		let timeoutId = null;
+		
+		const fetchPromise = fetch(routes.getRecipeByUuid + params.uuid, {
 			headers: {
 				'Authorization': 'Bearer ' + storage.get('token'),
 			}
@@ -36,9 +38,25 @@ export default function Form(props) {
 			.then(response => response.json())
 			.then(data => {
 				setFormState(data);
-			}).finally(() => {
-			setLoadingState(false);
-		});
+			})
+			.catch(error => {
+				// Handle fetch errors here
+				console.error('Error fetching data:', error);
+			})
+			.finally(() => {
+				clearTimeout(timeoutId); // Clear the timeout if the fetch completes or fails
+				setLoadingState(false);
+			});
+		
+		// Set a timeout to reload the page after 15 seconds
+		timeoutId = setTimeout(() => {
+			window.location.reload();
+		}, 15 * 1000); // 15 seconds timeout
+		
+		return () => {
+			// Clean up the timeout if the component unmounts before the fetch completes
+			clearTimeout(timeoutId);
+		};
 	}, []);
 	
 	useEffect(()=>{
