@@ -7,6 +7,7 @@ import routes from '../../models/routes';
 import ingredientUnitValues from '../../models/ingredient/units';
 import ingredientModel from '../../models/ingredient';
 import storage from '../../modules/storage';
+import cache from '../../modules/cache';
 import {IconTrash} from '../icons';
 import {GlobalContext} from "../../modules/context";
 
@@ -31,10 +32,11 @@ export default function Ingredients(props) {
 	
 	// database stuff
 	const [ingredientsDB, setIngredientsDB] = useState([]); // data from db
-	const cacheName = "ingredients-cache";
+	const cacheName = "ingredientsCache";
 
 	// ingredients list from db for TermSearch
 	useEffect( () => {
+		setLoadingState(true);
 		// migrate ingredients
 		const _ingredients = ingredients.map((item, i) => {
 			item = { ...ingredientModel, ...item };
@@ -43,63 +45,89 @@ export default function Ingredients(props) {
 		});
 		setFormState({ingredients: sort(_ingredients)});
 		// ingredients
-		caches.open(cacheName).then((cache) => {
-			cache.match(routes.getIngredients).then((response) => {
-				if (response && ingredientsDB.length > 0) {
-					// If the response is in the cache, return it
-					return response.json().then((data) => {
+		// Check the cache for the response
+		let request = new Request(routes.getIngredients);
+		cache.getCache('ingredientsCache', request).then((cachedResponse) => {
+			if (cachedResponse) {
+				// If the response is in the cache, return it
+				cachedResponse.json().then((data) => {
+					setIngredientsDB(data.items);
+					setLoadingState(false);
+				});
+			} else {
+				// If the response is not in the cache, fetch it and add it to the cache
+				fetch(routes.getIngredients, {
+					headers: {
+						Authorization: "Bearer " + storage.get("token"),
+					},
+				})
+					.then((response) => {
+						if (response.ok) {
+							// Clone the response before using it
+							const clonedResponse = response.clone();
+							
+							// Add the response to the cache
+							cache.setCache('ingredientsCache', request, clonedResponse);
+							
+							return response.json();
+						} else {
+							throw new Error('Network response was not ok.');
+						}
+					})
+					.then((data) => {
 						setIngredientsDB(data.items);
+					})
+					.catch((error) => {
+						console.error('Error fetching data:', error);
+					})
+					.finally(() => {
 						setLoadingState(false);
 					});
-				} else {
-					// If the response is not in the cache, fetch it and add it to the cache
-					return fetch(routes.getIngredients, {
-						headers: {
-							Authorization: "Bearer " + storage.get("token"),
-						},
-					})
-						.then((response) => {
-							cache.put(routes.getIngredients, response.clone());
-							return response.json();
-						})
-						.then((data) => {
-							setIngredientsDB(data.items);
-						}).finally(() => {
-							setLoadingState(false);
-						});
-				}
-			});
+			}
 		});
 		
 		// products
-		caches.open(cacheName).then((cache) => {
-			cache.match(routes.getIngredientsProducts).then((response) => {
-				if (response && products.length > 0) {
-					// If the response is in the cache, return it
-					return response.json().then((data) => {
+		// Check the cache for the response
+		request = new Request(routes.getIngredientsProducts);
+		cache.getCache('ingredientsProductCache', request).then((cachedResponse) => {
+			if (cachedResponse) {
+				// If the response is in the cache, return it
+				cachedResponse.json().then((data) => {
+					const filteredItems = data.items;
+					setProducts(filteredItems);
+					setLoadingState(false);
+				});
+			} else {
+				// If the response is not in the cache, fetch it and add it to the cache
+				fetch(routes.getIngredientsProducts, {
+					headers: {
+						Authorization: "Bearer " + storage.get("token"),
+					},
+				})
+					.then((response) => {
+						if (response.ok) {
+							// Clone the response before using it
+							const clonedResponse = response.clone();
+							
+							// Add the response to the cache
+							cache.setCache('ingredientsProductCache', request, clonedResponse);
+							
+							return response.json();
+						} else {
+							throw new Error('Network response was not ok.');
+						}
+					})
+					.then((data) => {
 						const filteredItems = data.items;
 						setProducts(filteredItems);
+					})
+					.catch((error) => {
+						console.error('Error fetching products data:', error);
+					})
+					.finally(() => {
 						setLoadingState(false);
 					});
-				} else {
-					// If the response is not in the cache, fetch it and add it to the cache
-					return fetch(routes.getIngredientsProducts, {
-						headers: {
-							Authorization: "Bearer " + storage.get("token"),
-						},
-					})
-						.then((response) => {
-							cache.put(routes.getIngredientsProducts, response.clone());
-							return response.json();
-						})
-						.then((data) => {
-							const filteredItems = data.items;
-							setProducts(filteredItems);
-						}).finally(() => {
-							setLoadingState(false);
-						});
-				}
-			});
+			}
 		});
 	}, []);
 	

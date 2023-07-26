@@ -1,4 +1,5 @@
 import storage from './../storage';
+import cache from './../cache';
 import headers from './../headers';
 import routes from '../../models/routes';
 
@@ -55,13 +56,7 @@ const user = {
 		user.initialised = false;
 		user.isLoggedIn = false;
 		storage.flush();
-		/*
-		storage.set('token', '');
-		storage.set('userId', 0);
-		storage.set('firstname', '');
-		storage.set('lastname', '');
-		storage.set('avatar','');
-		 */
+		cache.flushCache();
 	},
 	
 	logout: () => {
