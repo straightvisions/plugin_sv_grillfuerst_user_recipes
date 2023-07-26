@@ -1,4 +1,5 @@
 import React, {useState, useEffect, useReducer} from "react";
+import { useNavigate, useLocation } from 'react-router-dom';
 import Header from './components/header';
 import Recipes from './components/recipes';
 import Form from './components/form';
@@ -13,6 +14,7 @@ import SlideInPanel from "./components/slide_in_panel";
 import { GlobalContext } from './modules/context';
 
 const App = () => {
+	const navigate = useNavigate();
 	// initiate user first - this also checks if user is loggedIn
 	// if not, we redirect to the given login url
 	const [userInited, setUserInited] = useState(user.initialised);
@@ -50,7 +52,9 @@ const App = () => {
 	
 	// not logged-in state and not in root
 	if(user.isLoggedIn === false && !routes.isLogin() && !routes.isRegister() && !routes.isReset()){
-		window.location.href = routes.config.appURL+'/login';
+		const path = '/login';
+		navigate(path);
+		window.postMessage({ type: 'NAVIGATION', payload: window.location.pathname }, '*');
 		return (<Spinner />);
 	}
 	

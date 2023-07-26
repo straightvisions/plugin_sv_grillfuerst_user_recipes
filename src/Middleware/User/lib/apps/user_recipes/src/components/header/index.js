@@ -1,11 +1,10 @@
 import React, {useState} from 'react';
-import { Link, useNavigate, useLocation } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { PlusIcon, ArrowLeftIcon } from '@heroicons/react/20/solid';
 import routes from '../../models/routes';
 import user from '../../modules/user';
 import headers from '../../modules/headers';
 import Spinner from '../spinner';
-import VideoPlayer from '../video';
 const User = user.get();
 
 function FormButton(props){
