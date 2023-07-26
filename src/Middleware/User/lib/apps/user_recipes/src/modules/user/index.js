@@ -22,14 +22,15 @@ const user = {
 	init: () => {
 		const _user = user.get();
 		
-		if(_user.id === 0){
-			return fetch(routes.getUserInfo, {
+		if (_user.id === 0) {
+			let timeoutId = null;
+			
+			const fetchPromise = fetch(routes.getUserInfo, {
 				headers: headers.get(),
 			})
-				.then((response) => {
-					return headers.parseResponse(response);
-				})
-				.then(res => {
+				.then((response) => headers.parseResponse(response))
+				.then((res) => {
+					clearTimeout(timeoutId); // Clear the timeout if the fetch completes successfully
 					const { payload } = res;
 					
 					if (payload.isLoggedIn) {
@@ -40,12 +41,21 @@ const user = {
 					
 					user.initialised = true;
 					user.isLoggedIn = payload.isLoggedIn;
-				}).catch((error) => {
+				})
+				.catch((error) => {
+					clearTimeout(timeoutId); // Clear the timeout if the fetch fails
 					storage.set('id', 0);
 					user.initialised = true;
 					user.isLoggedIn = false;
 				});
-		}else{
+			
+			// Set a timeout to reload the page after 15 seconds
+			timeoutId = setTimeout(() => {
+				window.location.reload();
+			}, 15*1000); // 15 seconds timeout
+			
+			return fetchPromise;
+		} else {
 			user.initialised = true;
 			user.isLoggedIn = true;
 			return true;
