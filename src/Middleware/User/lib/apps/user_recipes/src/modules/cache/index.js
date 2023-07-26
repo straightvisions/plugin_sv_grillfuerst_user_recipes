@@ -8,14 +8,12 @@ const cache = {
 	
 	// Save a fetch response in the cache
 	async setCache(cacheName, request, response) {
-		console.log(this.getCacheName(cacheName));
 		const cache = await caches.open(this.getCacheName(cacheName));
 		await cache.put(request, response.clone());
 	},
 	
 	// Get a fetch response from the cache
 	async getCache(cacheName, request) {
-		console.log(this.getCacheName(cacheName));
 		const cache = await caches.open(this.getCacheName(cacheName));
 		return await cache.match(request);
 	},
