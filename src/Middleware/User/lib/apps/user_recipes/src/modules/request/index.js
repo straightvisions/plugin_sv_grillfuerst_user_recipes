@@ -4,9 +4,18 @@ import storage from "../storage";
 const request = {
 	get: async (url, options = {}) => {
 		const { cacheName, ...fetchOptions } = options;
-		const headers = {Authorization: "Bearer " + storage.get("token")}
-		const request = new Request(url, {...headers, ...fetchOptions});
+		// default headers
+		const headers = {
+			Authorization: "Bearer " + storage.get("token")
+		};
+		// merge headers
+		fetchOptions.headers = fetchOptions.headers ? {
+			...headers,
+			...fetchOptions.headers
+		} : headers;
 		
+		const request = new Request(url, fetchOptions);
+	
 		// Check the cache for the response
 		if (cacheName) {
 			const cachedResponse = await cache.getCache(cacheName, request);
@@ -18,7 +27,8 @@ const request = {
 		
 		// Fetch the data
 		try {
-			const response = await fetch(url, fetchOptions);
+			console.log('fetch');
+			const response = await fetch(url, request);
 			
 			if (response.ok) {
 			
@@ -26,7 +36,7 @@ const request = {
 				if (cacheName) {
 					cache.setCache(cacheName, request, response.clone());
 				}
-				console.log('fetch');
+				
 				return await response.json();
 			} else {
 				throw new Error('Network response was not ok.');

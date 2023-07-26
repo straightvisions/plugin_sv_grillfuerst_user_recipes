@@ -13,6 +13,7 @@ import {
 import routes from '../../models/routes';
 import Spinner from '../spinner';
 import storage from '../../modules/storage';
+import request from '../../modules/request';
 
 const difficultyValues = [
 	{
@@ -69,22 +70,13 @@ export default function Common(props) {
 	
 	// async call
 	useEffect( () => {
-		fetch(routes.getMenuTypes,{
-			headers: {
-				'Authorization': 'Bearer ' + storage.get('token'),
-			},
-		})
-			.then(response => response.json())
-			.then(data => {
-				// reduced given object items
-				const _options = data.items.map(i => { return { label: i.name, value: i.term_id }; }); // all items
-				const _selection = _options.filter(i => menuTypes.includes(i.value)); // filtered items
-				
-				setMenuTypeOptions(_options);
-				setMenuTypeOptionsSelected(_selection);
-			}).finally(() => {
-			setLoadingMenuTypesState(false);
-		});
+		request.get(routes.getMenuTypes, { cacheName:'menuTypesCache' }).then((data) => {
+			const options = data.items.map(i => ({ label: i.name, value: i.term_id }));
+			const selection = options.filter(i => menuTypes.includes(i.value));
+			
+			setMenuTypeOptions(options);
+			setMenuTypeOptionsSelected(selection);
+		}).finally(() => setLoadingMenuTypesState(false));
 	}, []); // if deps are an empty array -> effect runs only once
 	// MENU TYPES -----------------------------------------------------------------------------------------------------
 	// MENU TYPES -----------------------------------------------------------------------------------------------------
@@ -112,22 +104,15 @@ export default function Common(props) {
 	
 	// async call
 	useEffect( () => {
-		fetch(routes.getKitchenStyles,{
-			headers: {
-				'Authorization': 'Bearer ' + storage.get('token'),
-			},
-		})
-			.then(response => response.json())
-			.then(data => {
-				// reduced given object items
-				const _options = data.items.map(i => { return { label: i.name, value: i.term_id }; }); // all items
-				const _selection = _options.filter(i => kitchenStyles.includes(i.value)); // filtered items
-				
-				setKitchenStyleOptions(_options);
-				setKitchenStyleOptionsSelected(_selection);
-			}).finally(() => {
-			setLoadingKitchenStylesState(false);
-		});
+		request.get(routes.getKitchenStyles, { cacheName:'kitchenStylesCache' }).then((data) => {
+			// reduced given object items
+			const _options = data.items.map(i => { return { label: i.name, value: i.term_id }; }); // all items
+			const _selection = _options.filter(i => kitchenStyles.includes(i.value)); // filtered items
+			
+			setKitchenStyleOptions(_options);
+			setKitchenStyleOptionsSelected(_selection);
+		}).finally(() => setLoadingKitchenStylesState(false));
+		
 	}, []); // if deps are an empty array -> effect runs only once
 	
 	// KITCHEN STYLES -------------------------------------------------------------------------------------------------

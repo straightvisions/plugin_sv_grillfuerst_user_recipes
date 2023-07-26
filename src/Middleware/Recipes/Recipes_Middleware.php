@@ -410,7 +410,7 @@ final class Recipes_Middleware implements Middleware_Interface {
             $results = $this->Recipe_Menu_Types_Finder_Service->get_list();
 
             return [$results, 200];
-        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
+        }, ['customer', 'view']/*, ['Cache-Control' => 'max-age=3600']*/);
     }
 
     public function rest_get_kitchen_styles($request) {
@@ -418,7 +418,7 @@ final class Recipes_Middleware implements Middleware_Interface {
             $results = $this->Recipe_Kitchen_Styles_Finder_Service->get_list();
 
             return [$results, 200];
-        }, ['customer', 'view'], ['Cache-Control' => 'max-age=3600']);
+        }, ['customer', 'view']/*, ['Cache-Control' => 'max-age=3600']*/);
     }
 
     // handler ----------------------------------------------------------------------------
