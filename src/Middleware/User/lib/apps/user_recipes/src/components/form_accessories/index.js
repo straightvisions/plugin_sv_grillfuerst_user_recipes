@@ -3,7 +3,7 @@ import Spinner from '../spinner';
 import {IconTrash} from '../icons';
 import routes from "../../models/routes";
 import accessoryModel from "../../models/accessory";
-import storage from "../../modules/storage";
+import request from "../../modules/request";
 import ProductFinder from "../product_finder";
 import {GlobalContext} from "../../modules/context";
 
@@ -21,52 +21,26 @@ export default function Accessories(props) {
 	const [accessoriesDB, setAccessoriesDB] = useState([]); // data from db
 	const [showProductFinder, setShowProductFinder] = useState(false);
 	const { globalModalConfirm, setGlobalModalConfirm } = useContext(GlobalContext);
-	const cacheName = "accessories-cache";
 
 	useEffect( () => {
-		caches.open(cacheName).then((cache) => {
-			cache.match(routes.getAccessories).then((response) => {
-				if (response && accessoriesDB.length > 0) {
-					// If the response is in the cache, return it
-					return response.json().then((data) => {
-						const filteredItems = filterAccessories(data.items);
-						setAccessoriesDB(filteredItems);
-						setLoadingState(false);
-					});
-				} else {
-					// If the response is not in the cache, fetch it and add it to the cache
-					return fetch(routes.getAccessories, {
-						headers: {
-							Authorization: "Bearer " + storage.get("token"),
-						},
-					})
-						.then((response) => {
-							cache.put(routes.getAccessories, response.clone());
-							return response.json();
-						})
-						.then((data) => {
-							const filteredItems = filterAccessories(data.items);
-							setAccessoriesDB(filteredItems);
-						}).finally(() => {
-							setLoadingState(false);
-						});
-				}
-			});
-		});
+		request.get(routes.getAccessories, { cacheName:'accessoriesCache' })
+			.then((data) => setAccessoriesDB(filterAccessories(data.items)))
+			.finally(() => setLoadingState(false));
 		
-		function filterAccessories(items) {
+		const filterAccessories = (items) => {
 			// remove "ersatzteile"
 			return items.filter((item) => {
 				let check = true;
-				// word in name
-				if (item.name.toLowerCase().indexOf("ersatz") !== -1) {
+				// Word in name
+				if (item.name.toLowerCase().includes("ersatz")) {
 					check = false;
 				}
-				// word in thumb url
+				// Word in thumb url
 				if (check && item.images.length > 0) {
 					for (let i = 0; i < item.images.length; i++) {
-						if (item.images[i].toLowerCase().indexOf("ersatz") !== -1) {
+						if (item.images[i].toLowerCase().includes("ersatz")) {
 							check = false;
+							break;
 						}
 					}
 				}
