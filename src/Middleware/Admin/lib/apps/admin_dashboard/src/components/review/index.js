@@ -105,31 +105,35 @@ export default function Review() {
 	
 	// add refresh stuff here
 	const onSave = () => {
-		if(attributes.saving) return;
+		if (attributes.saving) return;
 		setForcedEditing(false);
-		setAttributes({saving: true});
+		setAttributes({ saving: true });
 		
 		let data = {
 			...attributes.data,
-			...{}
+			// ...
 		};
 		
-		fetch(routes.updateRecipe + params.uuid, {
+		return fetch(routes.updateRecipe + params.uuid, {
 			method: 'PUT',
 			cache: 'no-cache',
-			headers:headers.get(),
+			headers: headers.get(),
 			body: JSON.stringify(data),
 		})
 			.then(response => response.json())
 			.then(data => {
-				setAttributes({saving: false});
-			}).catch(function(error) {
-			// do error handling
-			//@todo give a notice on error
-			console.log(error);
-			setAttributes({saving: false});
-		});
-	}
+				setAttributes({ saving: false });
+				return data;
+			})
+			.catch(function (error) {
+				// do error handling
+				// @todo give a notice on error
+				console.log(error);
+				setAttributes({ saving: false });
+				// Throw the error again if needed
+				throw error;
+			});
+	};
 	
 	const onDelete = () => {
 		if(!window.confirm("Wirklich löschen? Diese Aktion kann nicht rückgängig gemacht werden!")){
@@ -193,7 +197,7 @@ export default function Review() {
 		});
 	}
 	
-	const onPublish = () => {
+	const onPublish = async () => {
 		if (attributes.publishing) return;
 		
 		// check if recipe is valid
@@ -203,11 +207,23 @@ export default function Review() {
 			return;
 		}
 		
-		setForcedEditing(false);
-		setAttributes({publishing: true});
+		// pre-publish save
+		try {
+			const result = await onSave();
+			// Handle the result here
+		} catch (error) {
+			setMessage('<strong>Fehler beim Speichern: {error}</strong>');
+			setMessageOpen(true);
+			return;
+			// Handle the error here
+		}
+		// publish
 		const route = routes.exportRecipe.replace('{id}', params.uuid);
 		
-		fetch(route, {
+		setForcedEditing(false);
+		setAttributes({publishing: true});
+		
+		return fetch(route, {
 			method: 'PUT',
 			cache: 'no-cache',
 			headers: headers.get()
