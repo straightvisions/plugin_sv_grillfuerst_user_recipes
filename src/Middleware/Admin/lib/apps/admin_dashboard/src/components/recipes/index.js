@@ -26,7 +26,7 @@ const states = {
 		color: 'bg-green-100'
 	}
 }
-
+//@todo refactor filter system to be less complex and more flexible
 export default function Recipes(props) {
 	const [recipes, setRecipes] = useState([]);
 	const [pagination, setPagination] = useState({rows: 0, pages: 0, page: 1});
@@ -47,6 +47,17 @@ export default function Recipes(props) {
 	
 	const recipesCount = recipes ? recipes.length : 0;
 	
+	//@todo refactor filter system to be less complex and more flexible
+	useEffect(() => {
+		setFilter((prevFilter) => prevFilter.map((item) => {
+				if (item.key === 'page') {
+					return {...item, value: page};
+				}
+				return item;
+			})
+		);
+	}, [page]);
+	
 	useEffect(() => {
 		let route = routes.getRecipes;
 		setLoadingState(true);
@@ -63,7 +74,7 @@ export default function Recipes(props) {
 				return [param.key, param.value];
 			}
 		})).toString();
-		
+	
 		fetch(route, {
 			headers: headers.get()
 		})
@@ -73,7 +84,7 @@ export default function Recipes(props) {
 				setPagination({rows: data.totalRows, pages: data.totalPages, page: data.page});
 				setLoadingState(false);
 			});
-	}, [page, filter])
+	}, [filter])
 	
 	if (loading) {
 		return (
