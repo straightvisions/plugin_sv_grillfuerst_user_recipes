@@ -13,6 +13,14 @@ import routes from './models/routes';
 import SlideInPanel from "./components/slide_in_panel";
 import { GlobalContext } from './modules/context';
 
+
+// @todo remove this later when caching is stable
+const urlSearchParams = new URLSearchParams(location.search);
+const logoutParam = urlSearchParams.get('logout');
+
+// add check if url has param ?logout=true then force logout
+if(logoutParam === 'true') user.logout();
+
 const App = () => {
 	const navigate = useNavigate();
 	// initiate user first - this also checks if user is loggedIn
@@ -37,7 +45,7 @@ const App = () => {
 	);
 	
 	useEffect(()=>{
-		const initUser = async()=> {
+		const initUser = async () => {
 			await user.init();
 			setUserInited(true);
 		}

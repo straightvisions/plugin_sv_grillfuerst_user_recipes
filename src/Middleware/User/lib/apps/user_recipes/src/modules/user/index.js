@@ -77,6 +77,11 @@ const user = {
 			method: 'GET',
 		});
 		
+		// Get the current URL without query parameters
+		const urlWithoutParams = window.location.origin + window.location.pathname;
+		// Update the URL without query parameters
+		window.history.replaceState({}, document.title, urlWithoutParams);
+		
 		window.location.reload();
 	}
 }

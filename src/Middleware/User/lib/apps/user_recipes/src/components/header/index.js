@@ -69,7 +69,7 @@ function FormButton(props){
 export default function Header(props) {
 	const location = useLocation();
 	const currentPath = (routes.config.appPath + location.pathname).replace('//', '/').replace(/\/$/, '');
-	
+
 	const handleLogout = () => {
 		user.logout();
 	}
