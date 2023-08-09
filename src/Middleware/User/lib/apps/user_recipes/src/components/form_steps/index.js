@@ -99,7 +99,7 @@ export default function Steps(props) {
 							return (
 								<Step
 									key={i}
-									onChange={(i, _item) => setStep(i, _item)}
+									onChange={(updatedItem) => setStep(i, updatedItem)}
 									onChangeOrderUp={() => handleChangeOrderUp(i, item)}
 									onChangeOrderDown={() => handleChangeOrderDown(i, item)}
 									onDelete={() => removeStep(i)}

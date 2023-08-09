@@ -5,7 +5,7 @@ export default function Image(props) {
 	const {
 		onChange = (e) => console.log(e),
 		onDelete = (e) => console.log(e),
-		image = {},
+		image = null,
 		uuid = 0,
 	} = props;
 	

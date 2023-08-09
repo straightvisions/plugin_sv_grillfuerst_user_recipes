@@ -12,6 +12,7 @@ import { AlertReviewed, AlertReviewPending, AlertPublished } from '../form_alert
 import {GlobalContext} from '../../modules/context';
 import storage from '../../modules/storage';
 import {fetchError} from '../../modules/fetch';
+import {RecipeMigrator} from '../../modules/migrate';
 import Validator from './validator';
 
 function dateIsValid(date) {
@@ -37,7 +38,7 @@ export default function Form(props) {
 			.then(response => !response.ok ? fetchError(response) : response)
 			.then(response => response.json())
 			.then(data => {
-				setFormState(data);
+				setFormState(RecipeMigrator(data));
 			})
 			.catch(error => {
 				// Handle fetch errors here

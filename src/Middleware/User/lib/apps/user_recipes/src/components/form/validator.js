@@ -55,14 +55,19 @@ export default class Validator{
 	}
 	
 	static steps(arr){
-		let check = true;
-		
+		// check step length
+		if(arr.length < 2) return false;
+	
+		// check if min. 2 steps have images
+		let imagesNum = 0;
 		arr.forEach((item) => {
-			item.description.length < 10 ? check = false : '';
-			item.images.length <= 0 ? check = false : '';
+			// if any step has no description, return false
+			if(item.description.length < 10) return false;
+			// count images for final check
+			if(item.images.length > 0) imagesNum++;
 		});
 		
-		return arr.length >= 2 && check;
+		return imagesNum >= 2;
 	}
 	
 	static genericCheckbox(bool){

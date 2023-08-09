@@ -17,13 +17,6 @@ export default function Step(props){
 	
 	const { globalModalConfirm, setGlobalModalConfirm } = useContext(GlobalContext);
 	
-	/* legacy item fix */
-	if(item.hasOwnProperty('images') === false){
-		item.images = [];
-		delete item.image;
-		onChange(item);
-	}
-	
 	const handleImageUpload = (files) => {
 		if(formState.state === 'review_pending' || formState.state === 'published') return;
 		item.images = files;
@@ -32,11 +25,8 @@ export default function Step(props){
 	
 	const handleImageDelete = (image) => {
 		if(formState.state === 'review_pending' || formState.state === 'published') return;
-		item.images = item.images.map(img => {
-			if(image.url !== img.url){
-				return img;
-			}
-		});
+		item.images = item.images.filter(img => img.url !== image.url);
+
 		onChange(item);
 	}
 	
@@ -70,7 +60,7 @@ export default function Step(props){
 			</div>
 			<div className={columnsClassnames[1]}>
 				<span className="lg:hidden">Bild</span>
-				<Image onChange={handleImageUpload} onDelete={handleImageDelete} image={item.images[0]} uuid={uuid} />
+				<Image onChange={handleImageUpload} onDelete={handleImageDelete} image={item.images.length > 0 ? item.images[0] : null} uuid={uuid} />
 			</div>
 			<div className={columnsClassnames[2]}>
 				<span className="lg:hidden">Beschreibung</span>
