@@ -67,7 +67,7 @@ export default class Validator{
 			if(item.images.length > 0) imagesNum++;
 		});
 		
-		return imagesNum >= 2;
+		return imagesNum === arr.length;
 	}
 	
 	static genericCheckbox(bool){
