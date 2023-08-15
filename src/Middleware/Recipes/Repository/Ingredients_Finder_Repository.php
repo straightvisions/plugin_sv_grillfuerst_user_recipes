@@ -22,6 +22,13 @@ final class Ingredients_Finder_Repository {
             'hide_empty' => false,
         ));
 
+        if (!empty($items) && !is_wp_error($items)) {
+            foreach ($items as $item) {
+                $string = get_field('name_multiple', $item);
+                $item->name_multiple = $string ?? ''; // Replace 'your_acf_field_name' with the actual field name
+            }
+        }
+
         // clone wp term_id to id field for better frontend support
         foreach($items as &$item){
             $item->id = $item->term_id;

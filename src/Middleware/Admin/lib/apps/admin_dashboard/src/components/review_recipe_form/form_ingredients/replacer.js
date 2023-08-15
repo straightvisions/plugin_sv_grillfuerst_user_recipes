@@ -18,7 +18,7 @@ function IngredientReplacer(props) {
 	const handleSearch = (searchTerm) => {
 		// Filter the items based on the searchTerm
 		const results = items.filter((ingredient) =>
-			ingredient.name.toLowerCase().includes(searchTerm.toLowerCase())
+			ingredient.name.toLowerCase().includes(searchTerm.toLowerCase()) || ingredient.name_multiple.toLowerCase().includes(searchTerm.toLowerCase())
 		);
 		setSearchQuery(searchTerm);
 		setSearchResults(results);
