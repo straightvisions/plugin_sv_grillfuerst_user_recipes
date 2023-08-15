@@ -13,7 +13,7 @@ export default class Validator{
 		!this.genericInteger(state.preparation_time) ? errors.push('<p>Bitte gib die <strong>Vorbereitungszeit in Min.</strong> an.</p>') : '';
 		!this.genericInteger(state.cooking_time) ? errors.push('<p>Bitte gib die <strong>Kochzeit in Min.</strong> an.</p>') : '';
 		!this.ingredients(state.ingredients) ? errors.push('<p>Bitte füge min. zwei <strong>Zutaten</strong> mit Mengenangaben hinzu.</p>') : '';
-		!this.steps(state.steps) ? errors.push('<p>Bitte füge min. zwei <strong>Schritte</strong> mit Foto und Beschreibung (Mindestlänge 10 Zeichen) hinzu.</p>') : '';
+		!this.steps(state.steps) ? errors.push('<p>Bitte füge min. zwei <strong>Schritte</strong> mit Foto und Beschreibung (Mindestlänge 10 Zeichen) hinzu. Jeder Schritt muss ein Bild beinhalten.</p>') : '';
 		!this.genericCheckbox(state.legal_rights) ? errors.push('<p>Bitte akzeptiere die <strong>Teilnahmebedingungen</strong> der Grillfürst GmbH.</p>') : '';
 		
 		return errors;
