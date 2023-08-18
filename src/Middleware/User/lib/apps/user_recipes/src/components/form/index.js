@@ -65,7 +65,7 @@ export default function Form(props) {
 			handleSave();
 		}
 	},[formState]);
-
+	
 	// update storage on formState change
 	// somehow useEffect doesn't work here
 	const _setFormState = (state) => {
@@ -83,7 +83,10 @@ export default function Form(props) {
 		if(formStateCopy.state !== 'review_pending'){
 			delete formStateCopy.state;
 		}
-		fetch(routes.updateRecipe +  params.uuid, {
+		
+		const route = formState.state === 'review_pending' ? routes.submitRecipe : routes.updateRecipe;
+		
+		fetch(route +  params.uuid, {
 			method: 'PUT',
 			cache: 'no-cache',
 			headers: {'Content-Type': 'application/json', 'Authorization': 'Bearer ' + storage.get('token')},

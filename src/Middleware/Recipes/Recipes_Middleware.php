@@ -82,6 +82,11 @@ final class Recipes_Middleware implements Middleware_Interface {
         ]);
 
         $this->Api_Middleware->add([
+            'route' => '/recipes/submit/(?P<uuid>\d+)', // wordpress specific
+            'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_submit_recipe_uuid'], 'permission_callback' => '__return_true']
+        ]);
+
+        $this->Api_Middleware->add([
             'route' => '/recipes/(?P<uuid>\d+)/feedback', // wordpress specific
             'args'  => ['methods' => 'PUT', 'callback' => [$this, 'rest_update_recipe_feedback'], 'permission_callback' => '__return_true']
         ]);
@@ -198,12 +203,36 @@ final class Recipes_Middleware implements Middleware_Interface {
                 $uuid = $Request->getAttribute('uuid');
                 $data = $Request->getJSONParams();
 
+                if (is_array($data) && empty($data) === false) {
+                    $this->Recipe_Updater_Service->update($data, $uuid);
+                }
+
+                return [[], 200];
+            },
+            [
+                'customer',
+                'edit',
+                fn($Request) => $this->Jwt_Middleware->isRole('admin') || (int)$Request->getAttribute(
+                        'user_id'
+                    ) === (int)$this->Jwt_Middleware->getValue('userId')
+            ]
+        );
+    }
+
+    public function rest_submit_recipe_uuid($request){
+        return $this->Api_Middleware->response(
+            $request,
+            function ($Request) {
+                $res = ['status'=>'success'];
+                $uuid = $Request->getAttribute('uuid');
+                $data = $Request->getJSONParams();
+
                 // inject user meta
                 if(isset($data['state']) && $data['state'] === 'review_pending'){
-                    $res = $this->User_Info_Service->get($data['user_id']);
+                    $ures = $this->User_Info_Service->get($data['user_id']);
 
-                    if($res['body']['status'] === 'success'){
-                        $data['user_meta'] = (object) $res['body']['data'];
+                    if($ures['body']['status'] === 'success'){
+                        $data['user_meta'] = (object) $ures['body']['data'];
                     }
 
                     // reviewer system mail
@@ -215,18 +244,21 @@ final class Recipes_Middleware implements Middleware_Interface {
                     ];
 
                     $this->send_email($email);
+
+                    if (is_array($data) && empty($data) === false) {
+                        $data = $this->Recipe_Updater_Service->comparate($data);
+                        $this->Recipe_Updater_Service->update($data, $uuid);
+                    }
+                }else{
+                    $res = ['status'=>'error','message'=>'Invalid state'];
                 }
 
-                if (is_array($data) && empty($data) === false) {
-                    $this->Recipe_Updater_Service->update($data, $uuid);
-                }
-
-                return [[], 200];
+                return [$res, 200];
             },
             [
                 'customer',
                 'edit',
-                fn($Request) => $this->Jwt_Middleware->isRole('admin') || (int)$Request->getAttribute(
+                fn($Request) => (int)$Request->getAttribute(
                         'user_id'
                     ) === (int)$this->Jwt_Middleware->getValue('userId')
             ]

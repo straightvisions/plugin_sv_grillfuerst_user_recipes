@@ -33,6 +33,7 @@ export default {
 	"getRecipeByUuid": apiURL + '/recipes/', // GET + {recipe_id}
 	"createRecipe": apiURL + '/recipes/user/', // POST + {user_id}
 	"updateRecipe": apiURL + '/recipes/', // PUT + {recipe_id}
+	"submitRecipe": apiURL + '/recipes/submit/', // PUT + {recipe_id}
 	"getIngredients": apiURL + '/recipes/ingredients', // GET
 	"getMenuTypes": apiURL + '/recipes/menutypes', // GET
 	"getKitchenStyles": apiURL + '/recipes/kitchenstyles', // GET
