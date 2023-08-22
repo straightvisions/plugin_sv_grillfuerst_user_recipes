@@ -64,19 +64,15 @@ final class Recipe_Exporter_Service {
             }
 
             // export data
-            $res_post = $this->export_data($item);
+            $post = $this->export_data($item);
 
             // assign data to post if no errors
-            if(empty($res_post['errors'])){
-                $post = $res_post['body'];
-                // link images to post
-                $this->Media_Export_Service->link($post->id, $this->uploadedMediaIDs);
-            }
+            if($post) $this->Media_Export_Service->link($post->ID, $this->uploadedMediaIDs);
 
             // Logging
             if ($this->errors()) {
                 $this->logger->info(sprintf('Recipe exported successfully: %s', $uuid));
-                $this->response = ['message' => sprintf('Recipe exported successfully: %s', $uuid), 'postId' => $post->id, 'status' => 200];
+                $this->response = ['message' => sprintf('Recipe exported successfully: %s', $uuid), 'postId' => $post->ID, 'status' => 200];
             }
         }
 
@@ -111,10 +107,12 @@ final class Recipe_Exporter_Service {
         return $this->Recipe_Finder_Service->getRaw($uuid, true);
     }
 
-    private function export_data(Recipe_Exporter_Item $item){
+    // @todo abstract this function with a new POST or DATA adapter
+    private function export_data(Recipe_Exporter_Item $item) : mixed{
+        $errors = [];
         // REST Post Array
         $feat_image = $item->get('featured_image');
-        $feat_image_res = $this->Media_Export_Service->export_file($feat_image); // id|false
+        $feat_image_id = $this->Media_Export_Service->export_file($feat_image); // id|false
 
         $user = $this->User_Info_Service->get_raw($item->get('user_id'), true);
 
@@ -126,61 +124,58 @@ final class Recipe_Exporter_Service {
             'voucher'=>$item->get('voucher'),
         ];
 
-        $payload = [
-            'title'           => $item->get('title'),
-            'status'          => 'publish',
-            'content'         => '<!-- wp:acf/sv-grillfuerst-custom-recipe-steps {"name":"acf/sv-grillfuerst-custom-recipe-steps","mode":"preview"} /-->',
-            'excerpt'         => $item->get('excerpt'),
-            'featured_media'  => $feat_image_res ?? 0,
+        $data = [
+            'post_title'   => $item->get('title'),
+            'post_status'  => 'publish',
+            'post_content' => '<!-- wp:acf/sv-grillfuerst-custom-recipe-steps {"name":"acf/sv-grillfuerst-custom-recipe-steps","mode":"preview"} /-->',
+            'post_excerpt' => $item->get('excerpt'),
+            'post_type'    => 'grillrezepte',
+            'meta_input'   => [] // non custom metas
+        ];
+
+        $metas = [ // Meta fields
             'cp_menutype'     => $item->get('menu_type'),
             'cp_kitchenstyle' => $item->get('kitchen_style'),
-            'cp_source'       => [(int)$this->get_community_taxonomy_id()],
-            'acf'             => [
-                'preparation_time' => $item->get('preparation_time'),
-                'cooking_time'     => $item->get('cooking_time'),
-                'waiting_time'     => $item->get('waiting_time'),
-                'difficulty'       => $item->get('difficulty'),
-                'ingredients'      => $item->get('ingredients'),
-                'accessories'      => $item->get('accessories'),
-                'steps'            => $item->get('steps'),
-                'gf_community_recipe_is' => '1',
-                'gf_community_recipe'   => [
-                    'uuid'    => $item->get('uuid'),
-                    'user_id' => $author['user_id'],
-                    'firstname' => $author['firstname'],
-                    'lastname' => $author['lastname'],
-                    'username' => $author['username'],
-                    'voucher' => $author['voucher'],
-                ]
+           // 'cp_source'       => [(int)$this->get_community_taxonomy_id()],
+            'preparation_time' => $item->get('preparation_time'),
+            'cooking_time'     => $item->get('cooking_time'),
+            'waiting_time'     => $item->get('waiting_time'),
+            'difficulty'       => $item->get('difficulty'),
+            'ingredients'      => $item->get('ingredients'),
+            'accessories'      => $item->get('accessories'),
+            'steps'            => $item->get('steps'),
+            'gf_community_recipe_is' => '1',
+            'gf_community_recipe'   => [
+                'uuid'    => $item->get('uuid'),
+                'user_id' => $author['user_id'],
+                'firstname' => $author['firstname'],
+                'lastname' => $author['lastname'],
+                'username' => $author['username'],
+                'voucher' => $author['voucher'],
             ]
         ];
 
-        $client = $this->Api_Middleware->http();
+        $post_id = \wp_insert_post($data);
+        $post = \get_post($post_id);
+        
+        if($post){
+            // add feat image
+            if($feat_image_id) \set_post_thumbnail( $post_id, $feat_image_id);
 
-        $response = $client->request(
-            'POST',
-            $this->settings['wordpress_export_url'],
-            [
-                'content-type' => 'application/json',
-                'json'         => $payload, // don't encode manually, client does it for us
-                'headers'      => ['Authorization' => $this->settings['wordpress_export_auth']],
-                'debug'        => false
-            ]
-        );
+            // add metas
+            foreach($metas as $key => $val){
+                \update_field($key, $val, $post_id);
+            }
 
-        $res = [
-            'body'=> (object) json_decode($response->getBody(), true),
-            'status'=>$response->getStatusCode(),
-            'errors'=> []
-        ];
-
-        if(!isset($res['body']->id)){
-            $res['errors'][] = 'Error exporting recipe - no post id';
+            // add taxonomy
+            \wp_set_object_terms($post_id, [$this->get_community_taxonomy_id()], 'cp_source');
+        }else{
+            $errors[] = 'Error exporting recipe - no post id';
         }
 
-        $this->errors($res['errors']);
+        $this->errors($errors);
 
-        return $res;
+        return empty($errors) ? $post : null;
     }
 
     //@todo refactor this function

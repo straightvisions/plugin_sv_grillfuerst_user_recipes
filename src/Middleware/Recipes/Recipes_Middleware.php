@@ -391,16 +391,16 @@ final class Recipes_Middleware implements Middleware_Interface {
 
             if ($results['status'] === 200 || $results['status'] === 201) {
                 $post = $results['post'];
-
+                $link = $post->guid;
                 // change state to published + add link to post
                 $this->Recipe_Updater_Service->update(
                     [
                     'state' => 'published',
-                    'link' => $post->link,
+                    'link' => $link,
                     ], $uuid);
 
                 //@todo buggy
-                $results['link'] = $post->link;
+                $results['link'] = $link;
 
                 $errors = array_merge(
                     $errors,
