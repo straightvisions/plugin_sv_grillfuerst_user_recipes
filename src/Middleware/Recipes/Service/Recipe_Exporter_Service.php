@@ -58,7 +58,7 @@ final class Recipe_Exporter_Service {
         if($this->check_config()){
             $item = $this->get_data($uuid);
 
-            // export images
+            // export images + replace the image objects with ids for the export function later
             foreach ($item->steps as $key => &$step) {
                 $step->images = $this->Media_Export_Service->export_files($step->images); // list of ids
             }
@@ -134,9 +134,9 @@ final class Recipe_Exporter_Service {
         ];
 
         $metas = [ // Meta fields
-            'cp_menutype'     => $item->get('menu_type'),
-            'cp_kitchenstyle' => $item->get('kitchen_style'),
-           // 'cp_source'       => [(int)$this->get_community_taxonomy_id()],
+            //'cp_menutype'     => $item->get('menu_type'),
+            //'cp_kitchenstyle' => $item->get('kitchen_style'),
+            //'cp_source'       => [(int)$this->get_community_taxonomy_id()],
             'preparation_time' => $item->get('preparation_time'),
             'cooking_time'     => $item->get('cooking_time'),
             'waiting_time'     => $item->get('waiting_time'),
@@ -167,7 +167,9 @@ final class Recipe_Exporter_Service {
                 \update_field($key, $val, $post_id);
             }
 
-            // add taxonomy
+            // add taxonomies
+            \wp_set_object_terms($post_id, $item->get('menu_type'), 'cp_menutype');
+            \wp_set_object_terms($post_id, $item->get('kitchen_style'), 'cp_kitchenstyle');
             \wp_set_object_terms($post_id, [$this->get_community_taxonomy_id()], 'cp_source');
         }else{
             $errors[] = 'Error exporting recipe - no post id';
