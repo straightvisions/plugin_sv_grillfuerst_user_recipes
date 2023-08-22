@@ -8,6 +8,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Repository\Recipe_Repository;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Exporter_Item;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Info_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Media\Service\Media_Export_Service;
 use Psr\Container\ContainerInterface;
 
 //@todo this heavily relies on wordpress, so we need to refactor this to be more generic and add an adapter layer to it
@@ -21,6 +22,7 @@ final class Recipe_Exporter_Service {
     private $response = ['message' => '', 'status' => 400];
     private $Recipe_Finder_Service;
     private Api_Middleware $Api_Middleware;
+    private Media_Export_Service $Media_Export_Service;
     private $settings;
     private $_errors = [];
 
@@ -31,16 +33,18 @@ final class Recipe_Exporter_Service {
         Logger_Factory $Logger_Factory,
         Api_Middleware $Api_Middleware,
         User_Info_Service $User_Info_Service,
+        Media_Export_Service $Media_Export_service,
         ContainerInterface $container
     ) {
         $this->repository            = $repository;
         $this->Recipe_Validator      = $Recipe_Validator;
         $this->Recipe_Finder_Service = $Recipe_Finder_Service;
-        $this->User_Info_Service = $User_Info_Service;
+        $this->User_Info_Service     = $User_Info_Service;
         $this->logger                = $Logger_Factory
             ->addFileHandler('user_updater.log')
             ->createLogger();
         $this->Api_Middleware = $Api_Middleware;
+        $this->Media_Export_Service = $Media_Export_service;
         $this->settings = $container->get('settings');
 
     }
@@ -49,20 +53,26 @@ final class Recipe_Exporter_Service {
     // controller fn -----------------------------------------------
     // controller fn -----------------------------------------------
     public function export(int $uuid): array {
+        $post = null;
+
         if($this->check_config()){
             $item = $this->get_data($uuid);
 
             // export images
             foreach ($item->steps as $key => &$step) {
-                $step->images = $this->export_images($step->images);
+                $step->images = $this->Media_Export_Service->export_files($step->images); // list of ids
             }
 
             // export data
             $res_post = $this->export_data($item);
 
-            $post = $res_post['errors'] ? null : $res_post['body'];
-            // link images to post
-            $this->map_media_to_post($post);
+            // assign data to post if no errors
+            if(empty($res_post['errors'])){
+                $post = $res_post['body'];
+                // link images to post
+                $this->Media_Export_Service->link($post->id, $this->uploadedMediaIDs);
+            }
+
             // Logging
             if ($this->errors()) {
                 $this->logger->info(sprintf('Recipe exported successfully: %s', $uuid));
@@ -101,86 +111,10 @@ final class Recipe_Exporter_Service {
         return $this->Recipe_Finder_Service->getRaw($uuid, true);
     }
 
-    private function export_images(array $images): array {
-        // remove empty images
-        $_images = [];
-
-            foreach ($images as $key => $image) {
-                $res = $this->export_media($image);
-                if($this->is_ok($res)){
-                    $_images[] = $image;
-                }
-            }
-
-        return $_images;
-    }
-
-    private function export_media($image){
-        $res = [
-            'body'=> '',
-            'status'=> 400, //@todo check if any better code available
-            'errors'=> [] // implement errors here
-        ];
-
-        if(empty($image->url)) {
-            $res['errors'][] = sprintf('Error uploading image - no image url: %s', $image->id ?? 0);
-        }else{
-
-            $client = $this->Api_Middleware->http();
-            $file = file_get_contents($image->url);
-
-            $response = $client->request(
-                'POST',
-                $this->settings['wordpress_export_media_url'],
-                [
-                    'multipart' => [
-                        [
-                            'name' => 'file',
-                            'contents' => $file,
-                            'filename' => basename($image->url)
-                        ]
-                    ],
-                    'headers'      => ['Authorization' => $this->settings['wordpress_export_auth']],
-                    'debug'        => false
-                ]
-            );
-
-            $res['body'] = json_decode($response->getBody(), true);
-            $res['status'] = $response->getStatusCode();
-
-            if($this->is_ok($res)){
-                $image->id = $res['body']['id'];
-                $image->url = $res['body']['source_url'];
-                // add to array of uploaded media
-                $this->uploadedMediaIDs[] = $image->id;
-                $this->uploadedMediaMeta[] = $image;
-            }else{
-                $res['errors'][] = sprintf('Error uploading image: %s', $image->url);
-            }
-        }
-
-        $this->errors($res['errors']);
-
-        return $res;
-    }
-
     private function export_data(Recipe_Exporter_Item $item){
         // REST Post Array
         $feat_image = $item->get('featured_image');
-        $feat_image_res = $this->export_media($feat_image);
-        /*
-         // debug
-        echo "item";
-        var_dump($item);
-        echo "-------------------- data -...........";
-        var_dump(['preparation_time' => $item->get('preparation_time'),
-          'cooking_time'     => $item->get('cooking_time'),
-          'waiting_time'     => $item->get('waiting_time'),
-          'difficulty'       => $item->get('difficulty'),
-          'ingredients'      => $item->get('ingredients'),
-          'accessories'      => $item->get('accessories'),
-          'steps'            => $item->get('steps'),]);
-        die;*/
+        $feat_image_res = $this->Media_Export_Service->export_file($feat_image); // id|false
 
         $user = $this->User_Info_Service->get_raw($item->get('user_id'), true);
 
@@ -197,7 +131,7 @@ final class Recipe_Exporter_Service {
             'status'          => 'publish',
             'content'         => '<!-- wp:acf/sv-grillfuerst-custom-recipe-steps {"name":"acf/sv-grillfuerst-custom-recipe-steps","mode":"preview"} /-->',
             'excerpt'         => $item->get('excerpt'),
-            'featured_media'  => $this->is_ok($feat_image_res) ? $feat_image_res['body']['id'] : 0,
+            'featured_media'  => $feat_image_res ?? 0,
             'cp_menutype'     => $item->get('menu_type'),
             'cp_kitchenstyle' => $item->get('kitchen_style'),
             'cp_source'       => [(int)$this->get_community_taxonomy_id()],
@@ -252,62 +186,6 @@ final class Recipe_Exporter_Service {
     //@todo refactor this function
     public function get_community_taxonomy_id(){
         return defined('GF_USER_RECIPES_TAXONOMY_ID') ? GF_USER_RECIPES_TAXONOMY_ID : 0;
-    }
-
-    private function map_media_to_post($post): array {
-        $res = [
-            'body'=> '',
-            'status'=> 200,
-            'errors'=> [] // implement errors here
-        ];
-
-        // Broken post
-        if (!$post || !isset($post->id) || !$post->id) {
-            $res['status'] = 400;
-            $res['errors'][] = 'Error mapping media to post - no post id';
-        }else{
-            // Map
-            foreach ($this->uploadedMediaMeta as $image) {
-                // REST Media Array
-                $payload = [
-                    'post' => $post->id,
-                    'alt_text' => $image->alt_text,
-                    'title' => $image->title,
-                    'caption' => $image->caption,
-                    'description' => $image->description,
-                ];
-
-                // Make the request
-                $client = $this->Api_Middleware->http();
-
-                $response = $client->request(
-                    'POST',
-                    $this->settings['wordpress_export_media_url'] . '/' . $image->id,
-                    [
-                        'content-type' => 'application/json',
-                        'json'         => $payload, // don't encode manually, client does it for us
-                        'headers'      => ['Authorization' => $this->settings['wordpress_export_auth']],
-                        'debug'        => false
-                    ]
-                );
-
-                // Handle the response
-                $loop_res = [
-                    'body'=> json_decode($response->getBody(), true),
-                    'status'=> $response->getStatusCode(),
-                    //'errors'=> []
-                ];
-
-                // Handle errors (if any)
-                if (!$this->is_ok($loop_res)) {
-                    $res['errors'][] = sprintf('Error linking media to post: %s', $loop_res['body']['message']);
-                }
-            }
-        }
-
-        $this->errors($res['errors']);
-
-        return $res;
     }
 
     private function errors(array $err = []): array{

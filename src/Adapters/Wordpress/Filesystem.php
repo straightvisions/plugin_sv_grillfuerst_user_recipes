@@ -58,7 +58,6 @@ final class Filesystem {
         return $file_array;
     }
 
-
     public function rename(string $oldPath, string $newPath){
         return !file_exists($this->get_path($newPath)) ? rename($this->get_path($oldPath), $this->get_path($newPath)) : false;
     }
@@ -110,7 +109,7 @@ final class Filesystem {
 
     }
 
-    private function get_path(string $appendix = ''){
+    public function get_path(string $appendix = ''){
         $path = trailingslashit($this->root) . $appendix;
         return is_dir($path) ? trailingslashit($path) : $path; // !is_dir = file, don't add slash
     }

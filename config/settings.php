@@ -11,6 +11,7 @@ $settings = [
         'Request' => 'Wordpress_Adapter',
         'Asset' => 'Wordpress_Adapter',
         'Filesystem' => 'Wordpress_Adapter',
+        'Media' => 'Wordpress_Adapter',
     ],
 ];
 

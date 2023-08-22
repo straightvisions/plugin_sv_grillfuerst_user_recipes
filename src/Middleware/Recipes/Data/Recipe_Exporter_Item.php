@@ -82,14 +82,10 @@ class Recipe_Exporter_Item extends Recipe_Model_Item{
         $list = $this->steps;
         $output = [];
         foreach($list as $k => $d){
-            $image_ids = array_map(function($image) {
-                return $image->id;
-            }, $d->images);
-
             $output[] =  [
                 'acf_fc_layout' => 'step',
                 'description' => $d->description,
-                'gallery' => $image_ids,
+                'gallery' => $d->images,
             ];
         }
 
