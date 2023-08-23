@@ -55,16 +55,18 @@ export default function MediaEdit(props) {
 				case 'wav': media.type = 'audio'; break;
 				case 'pdf': media.type = 'pdf'; break;
 				default:
-					return  media.type = 'image'; break; // Or return a default HTML element if needed
+					return  media.type = 'image'; // Or return a default HTML element if needed
 			}
 		}
 		
+		const classNames = "max-w-[100%] max-h-[100%] object-contain";
+		
 		if (media.type === "image") {
-			return <img src={media.url} alt={media.title} onLoad={(e)=>handleImageLoad(e)}/>;
+			return <img className={classNames} src={media.url} alt={media.title} onLoad={(e)=>handleImageLoad(e)}/>;
 		} else if (media.type === "video") {
-			return <video src={media.url} controls />;
+			return <video className={classNames} src={media.url} controls />;
 		} else if (media.type === "audio") {
-			return <audio src={media.url} controls />;
+			return <audio className={classNames} src={media.url} controls />;
 		} else if (media.type === "pdf") {
 			return (
 				<object
@@ -72,6 +74,7 @@ export default function MediaEdit(props) {
 					type="application/pdf"
 					width="100%"
 					height="500px"
+					className={classNames}
 				>
 					<p>Unable to display PDF. Please download it.</p>
 				</object>
@@ -86,7 +89,7 @@ export default function MediaEdit(props) {
 			<div className="bg-white p-4 rounded-md shadow-lg w-full max-w-[1400px]">
 				<h2 className="border-b-2 border-gray-100 mb-2 pb-2">Bild bearbeiten | {dimensions.width}x{dimensions.height}px</h2>
 				<div className="flex justify-between gap-10 bg-grey-100 p-4 rounded">
-					<div className="w-full max-w-[1000px] max-h-[100%]">
+					<div className="w-full max-w-[1000px] max-h-[calc(100vh-200px)]">
 						{getMediaHtml()}
 					</div>
 					<div className="w-full max-w-[400px]">

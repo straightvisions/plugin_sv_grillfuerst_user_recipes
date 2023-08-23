@@ -7,6 +7,7 @@ export default function Image(props) {
 		onChange = (e) => {},
 		onUpload = (e) => {},
 		onDelete = (e) => {},
+		className = '',
 		image = {},
 		uuid = 0,
 	} = props;
@@ -20,7 +21,7 @@ export default function Image(props) {
 	if (image && image.hasOwnProperty('url') && image.url) {
 		return (
 			<div
-				className="h-full w-full relative group overflow-hidden flex justify-center rounded-md bg-gray-100"
+				className={'h-full w-full relative group overflow-hidden flex justify-center rounded-md bg-gray-100 ' + className}
 			>
 				{ edit &&
 					<MediaEdit mediaFile={image} onClose={()=>setEdit(false)} onChange={onChange} setEdit={setEdit} route={routeEdit}/>
@@ -67,7 +68,7 @@ export default function Image(props) {
 					</div>
 				
 				</div>
-				<img className="object-cover w-full flex justify-center" alt="" src={image.url}/>
+				<img className="object-cover max-h-[75vh] w-[auto] flex justify-center" alt="" src={image.url}/>
 			</div>
 		
 		);

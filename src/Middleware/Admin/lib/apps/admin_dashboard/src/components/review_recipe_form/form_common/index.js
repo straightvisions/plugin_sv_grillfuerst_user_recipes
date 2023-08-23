@@ -186,7 +186,7 @@ export default function Common(props) {
 						
 						<div className="h-200 rounded-md overflow-hidden">
 							<label className="block text-sm font-medium text-gray-700">Hauptbild</label>
-							<Image onChange={handleImageChange} onUpload={handleImageUpload} onDelete={handleImageDelete} image={featured_image} uuid={formState.uuid} />
+							<Image className="min-h-[200px] max-h-[50vh]" onChange={handleImageChange} onUpload={handleImageUpload} onDelete={handleImageDelete} image={featured_image} uuid={formState.uuid} />
 						</div>
 						
 						<div className="md:grid md:grid-cols-3 md:gap-6">
