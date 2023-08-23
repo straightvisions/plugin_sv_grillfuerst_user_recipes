@@ -3,6 +3,7 @@
 namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes;
 
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 use SV_Grillfuerst_User_Recipes\Interfaces\Middleware_Interface;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
@@ -18,6 +19,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Menu_Types_Fin
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Updater_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Voucher_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Info_Service;
+use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
 
 final class Recipes_Middleware implements Middleware_Interface {
     private Api_Middleware $Api_Middleware;
@@ -33,6 +35,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     private Jwt_Middleware $Jwt_Middleware;
     private Email_Middleware $Email_Middleware;
     private User_Info_Service $User_Info_Service;
+    private LoggerInterface $Logger;
     private $settings;
 
     public function __construct(
@@ -50,6 +53,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         Jwt_Middleware $Jwt_Middleware,
         Email_Middleware $Email_Middleware,
         User_Info_Service $User_Info_Service,
+        Logger_Factory $Logger_Factory,
         ContainerInterface $container
 
     ) {
@@ -67,6 +71,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         $this->Jwt_Middleware                       = $Jwt_Middleware;
         $this->Email_Middleware                     = $Email_Middleware;
         $this->User_Info_Service                    = $User_Info_Service;
+        $this->Logger                               = $Logger_Factory->addFileHandler('recipe_middleware.log')->createLogger();
         $this->settings                             = $container->get('settings');
 
         // GET ALL RECIPES
@@ -233,6 +238,8 @@ final class Recipes_Middleware implements Middleware_Interface {
 
                     if($ures['body']['status'] === 'success'){
                         $data['user_meta'] = (object) $ures['body']['data'];
+                    }else{
+                        $this->Logger->info(sprintf('Unable to load user data: %s / User-ID: %s', $uuid, $data['user_id']));
                     }
 
                     // reviewer system mail
