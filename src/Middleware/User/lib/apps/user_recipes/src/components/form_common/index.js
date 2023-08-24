@@ -146,7 +146,7 @@ export default function Common(props) {
 					<div className="col-span-1 xl:col-span-3 mt-5 space-y-6 md:mt-0">
 						<div className="col-span-3 sm:col-span-2">
 							<label htmlFor="recipe_title" className="block font-bold mb-1">
-								Name des Rezepts
+								Name des Grillrezepts
 							</label>
 							<p className="mb-2 text-gray-400 font-bold">Mindestens 20 Zeichen und einem aussagekräftigen, beschreibenden Namen des Rezeptes.</p>
 							<input
@@ -164,9 +164,9 @@ export default function Common(props) {
 						
 						<div>
 							<label htmlFor="recipe_excerpt" className="block font-bold mb-1">
-								Kurzbeschreibung des Rezepts
+								Beschreibung des Grillrezepts
 							</label>
-							<p className="mb-2 text-gray-400 font-bold">Beschreibe mit mindestens 300 Zeichen (ca. 60 Wörtern) das Rezept mit einer guten Zusammenfassung, Besonderheiten, Geschmack, Besonderheiten in der Zubereitung.</p>
+							<p className="mb-2 text-gray-400 font-bold">Beschreibe mit mindestens 400 Zeichen (ca. 80 Wörtern) das Rezept mit einer guten Zusammenfassung, Besonderheiten, Geschmack, Besonderheiten in der Zubereitung.</p>
 							<textarea
 								id="recipe_excerpt"
 								rows={3}

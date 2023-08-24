@@ -6,7 +6,7 @@ export default class Validator{
 		const errors = [];
 		
 		!this.title(state.title) ? errors.push('<p><strong>Name des Rezeptes</strong> - Mindestens 20 Zeichen und einem aussagekräftigen, beschreibenden Namen des Rezeptes.</p>') : '';
-		!this.excerpt(state.excerpt) ? errors.push('<p><strong>Kurzbeschreibung des Rezepts</strong> - Beschreibe mit mindestens 300 Zeichen (ca. 60 Wörtern) das Rezept mit einer guten Zusammenfassung, Besonderheiten, Geschmack, Besonderheiten in der Zubereitung.</p>') : '';
+		!this.excerpt(state.excerpt) ? errors.push('<p><strong>Kurzbeschreibung des Rezepts</strong> - Beschreibe mit mindestens 400 Zeichen (ca. 80 Wörtern) das Rezept mit einer guten Zusammenfassung, Besonderheiten, Geschmack, Besonderheiten in der Zubereitung.</p>') : '';
 		!this.featuredImage(state.featured_image) ? errors.push('<p>Bitte lade ein <strong>Hauptbild</strong> hoch.</p>') : '';
 		!this.genericArray(state.menu_type) ? errors.push('<p>Bitte wähle die <strong>die Art des Gerichts</strong>.</p>') : '';
 		!this.genericArray(state.kitchen_style) ? errors.push('<p>Bitte wähle die <strong>Grillkategorie</strong>.</p>') : '';
@@ -24,7 +24,7 @@ export default class Validator{
 	}
 	
 	static excerpt(s){
-		return s.length >= 300;
+		return s.length >= 400;
 	}
 	
 	static featuredImage(i){
