@@ -5,6 +5,7 @@ namespace SV_Grillfuerst_User_Recipes\Middleware\User\Service;
 use Psr\Container\ContainerInterface;
 use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Jwt\Jwt_Middleware;
+use SV_Grillfuerst_User_Recipes\Middleware\User\Data\User_Read_Item;
 
 
 final class User_Info_Service {
@@ -81,6 +82,35 @@ final class User_Info_Service {
     public function get_raw(int $user_id, bool $trusted = false){
         $response = $this->get($user_id, $trusted);
         return $response['status'] === 200 || $response['status'] === 201 ? $response['body']['data'] : null;
+    }
+
+    public function validate_user_meta($d, $id){
+        // check if set
+        if(!isset($d['user_meta'])) return $this->get_raw($id, true) ?? [];
+        // check if string
+        if(is_string($d['user_meta'])) return $this->get_from_string($d['user_meta'], $id) ?? [];
+
+        return $this->assign_data($d['user_meta']);
+    }
+
+    private function get_from_string(string $d, int $id = 0){
+        $json = json_decode($d, true);
+        if (!$json) {
+            return $this->get_raw($id, true) ?? [];
+        }
+
+        return $json;
+    }
+
+    private function assign_data(array $d){
+        $model = new User_Read_Item();
+        foreach($model as $key => $value){
+            if(isset($d[$key])){
+                $model->$key = $d[$key];
+            }
+        }
+
+        return (array)$model;
     }
 
 }

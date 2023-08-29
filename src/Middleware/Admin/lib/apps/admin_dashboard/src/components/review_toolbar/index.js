@@ -25,6 +25,7 @@ export default function ReviewToolbar(props) {
 	
 	const {
 		uuid = '',
+		user_id = '',
 		voucher = '',
 		link = '',
 	} = props.data
@@ -76,7 +77,9 @@ export default function ReviewToolbar(props) {
 				{ state === 'published' && <span className="text-red-400"><strong>Veröffentlicht</strong></span> }
 				{ state === 'draft' && <span className="text-red-400"><strong>ENTWURF</strong></span> }
 				<span>|</span>
-				<span>Autor: {customer.salutation} {customer.firstname} {customer.lastname}</span>
+				<span>Autor:
+					{customer ? <>{customer.salutation} {customer.firstname} {customer.lastname} <i className="text-small">{user_id}</i></> : 'Unbekannt'}
+				</span>
 				{voucher &&
 					<><span>|</span><span>Gutschein: {voucher}</span></>
 				}

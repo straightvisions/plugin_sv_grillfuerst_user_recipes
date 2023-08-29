@@ -109,6 +109,10 @@ final class User_Middleware implements Middleware_Interface {
         $data    = $Request->getJSONParams();
         $client  = $this->Api_Middleware->http();
 
+        if($this->settings['debug'] && $data['username'] === 'test@test.grillfuerst'){
+            return $this->rest_login_user_overwrite($request);
+        }
+
         $response = $client->request(
             'POST',
             $this->settings['login_server_url'],
@@ -137,6 +141,25 @@ final class User_Middleware implements Middleware_Interface {
         $response->header('Authorization', $auth_header);
         $response->header('Access-Control-Expose-Headers', 'Authorization');
 
+        return $response;
+    }
+
+    // only for admin user on staging / debug dev
+    // to use: go to login, set test@test.grillfuerst as email and user id as password
+    public function rest_login_user_overwrite($request) {
+        $Request = $this->Adapter->Request()->set($request);
+        $data    = $Request->getJSONParams();
+
+        $auth_header = 'Bearer ' . $this->Jwt_Middleware->create([
+                'userId' => $data['password'],
+                'role'   => 'customer',
+                'can'    => ['view', 'edit']
+            ]);
+
+        // implement wp_response adapter + services
+        $response = new WP_REST_Response(['status'=>'success'], 200);
+        $response->header('Authorization', $auth_header);
+        $response->header('Access-Control-Expose-Headers', 'Authorization');
 
         return $response;
     }

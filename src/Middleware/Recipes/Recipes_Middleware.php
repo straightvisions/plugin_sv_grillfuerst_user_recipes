@@ -155,7 +155,7 @@ final class Recipes_Middleware implements Middleware_Interface {
             ]);
 
             $this->Api_Middleware->add([
-                'route' => '/test/user/info', // wordpress specific
+                'route' => '/test/user/(?P<id>\d+)', // wordpress specific
                 'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_get_user_info'], 'permission_callback' => '__return_true']
             ]);
         }
@@ -209,6 +209,8 @@ final class Recipes_Middleware implements Middleware_Interface {
                 $data = $Request->getJSONParams();
 
                 if (is_array($data) && empty($data) === false) {
+                    // user_meta failsafe
+                    $data['user_meta'] = $this->User_Info_Service->validate_user_meta($data['user_meta'], $data['user_id']);
                     $this->Recipe_Updater_Service->update($data, $uuid);
                 }
 
@@ -586,12 +588,11 @@ final class Recipes_Middleware implements Middleware_Interface {
     public function test_get_user_info($request) {
         return $this->Api_Middleware->response_public($request, function ($Request) {
             if($this->settings['debug'] || $this->settings['env'] === 'development') {
-                $urlParams  = $Request->getParams();
-                $id = $urlParams['id'] ? $urlParams['id'] : 30;
+                $id = $Request->getAttribute('id') ?? 30;
                 $info = $this->User_Info_Service->get($id, true);
-                $user = $info['body']['data'];
-                var_dump($user);
-                return [[], 200];
+                $user = $info['body']['data'] ?? [];
+
+                return [$user, 200];
             }else{
                 return [[],404];
             }
