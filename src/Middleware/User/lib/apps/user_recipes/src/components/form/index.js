@@ -13,12 +13,14 @@ import {GlobalContext} from '../../modules/context';
 import storage from '../../modules/storage';
 import {fetchError} from '../../modules/fetch';
 import {RecipeMigrator} from '../../modules/migrate';
+import {appMeta} from '../../modules/app_meta';
 import Validator from './validator';
 
 function dateIsValid(date) {
 	return typeof date === 'object' && date !== null && typeof date.getTime === 'function' && !isNaN(date);
 }
 
+// @todo remove business logic from component
 export default function Form(props) {
 	const { globalModal, setGlobalModal } = useContext(GlobalContext);
 	const params = useParams();
@@ -83,6 +85,9 @@ export default function Form(props) {
 		if(formStateCopy.state !== 'review_pending'){
 			delete formStateCopy.state;
 		}
+		
+		// add recipe meta
+		formStateCopy.app_meta = appMeta;
 		
 		const route = formState.state === 'review_pending' ? routes.submitRecipe : routes.updateRecipe;
 		

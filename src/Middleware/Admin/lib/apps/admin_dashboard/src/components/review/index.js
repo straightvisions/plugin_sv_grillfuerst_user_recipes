@@ -10,6 +10,7 @@ import ReviewRecipeForm from "../review_recipe_form";
 import ActivityMap from "../activity_map";
 import Modal from "../modal";
 
+//@todo remove business logic from component
 export default function Review() {
 	const params = useParams();
 	
@@ -251,7 +252,7 @@ export default function Review() {
 			setMessageOpen(true);
 		});
 	}
-	
+	console.log(attributes);
 	const hasCustomIngredients = () => {
 		let hasCustomIngredients = false;
 		attributes.data.ingredients.forEach((ingredient) => {
@@ -312,6 +313,13 @@ export default function Review() {
 				<h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">Feedback Historie</h3>
 				<ActivityMap items={attributes.data.feedback} />
 			</div>
+			{attributes.data.app_meta &&
+				<div className="mt-5 bg-white px-4 py-5 shadow sm:rounded-lg sm:p-6">
+					<h3 className="text-lg font-medium leading-6 text-gray-900 mb-2">Client Data</h3>
+					<p>App-Version: {attributes.data.app_meta.appVersion ?? 'unbekannt'}</p>
+					<p>Browser: {attributes.data.app_meta.browser ?? 'unbekannt'}</p>
+				</div>
+			}
 		</div>
 	);
 }

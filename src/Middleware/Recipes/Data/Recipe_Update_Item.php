@@ -2,10 +2,10 @@
 
 namespace SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data;
 
-use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Data\Recipe_Model_Item;
-
 class Recipe_Update_Item extends Recipe_Model_Item {
     public ?int $user_id = 0;
+    public object|string $user_meta;
+    public object|string $app_meta;
     public ?string $state = 'draft';
     public ?string $link = '';
     public string $voucher = '';
@@ -29,6 +29,8 @@ class Recipe_Update_Item extends Recipe_Model_Item {
         parent::__construct();
         // object types
         $this->featured_image = new Image_Model_Item();
+        $this->user_meta = new User_Model_Item();
+        $this->app_meta = new \stdClass();
         unset($this->id);
         unset($this->uuid);
     }

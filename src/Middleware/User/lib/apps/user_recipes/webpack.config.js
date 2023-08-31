@@ -1,6 +1,7 @@
 const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const Dotenv = require('dotenv-webpack');
+const webpack = require('webpack');
 
 module.exports = (env, argv) => {
 
@@ -17,6 +18,10 @@ module.exports = (env, argv) => {
 			new Dotenv({path: path.resolve(__dirname, `./.env.${argv.mode}`)}),
 			new HtmlWebpackPlugin({
 				template: './src/index.html', // to import index.html file inside index.js
+			}),
+			new webpack.DefinePlugin({
+				// Pass the version from package.json to the app
+				'process.env.REACT_APP_VERSION': JSON.stringify(require('./package.json').version),
 			}),
 		],
 		devServer: {

@@ -7,6 +7,7 @@ class Recipe_Model_Item {
     public ?int $uuid = 0;
     public ?int $user_id = 0;
     public object|string $user_meta;
+    public object|string $app_meta;
     public ?string $title = '';
     public ?string $link = '';
     public string $voucher = '';

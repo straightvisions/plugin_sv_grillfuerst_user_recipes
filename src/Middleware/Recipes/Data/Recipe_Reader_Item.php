@@ -15,5 +15,6 @@ class Recipe_Reader_Item extends Recipe_Model_Item{
         // object types
         $this->featured_image = new Image_Model_Item();
         $this->user_meta = new User_Model_Item();
+        $this->app_meta = new \stdClass();
     }
 }
