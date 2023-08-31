@@ -7,7 +7,9 @@ final class Media {
     
         if ($file && $file['type'] !== 'directory') {
             $uploadDir = wp_upload_dir();
-            $filePath = $uploadDir['path'] . '/' . $file['name'];
+            // prevent overwrites
+            $newFilename = wp_unique_filename($uploadDir['path'], $file['name']);
+            $filePath = $uploadDir['path'] . '/' . $newFilename;
 
             // Move the file from the temporary location to the uploads directory
             if (copy($file['tmp_name'], $filePath)) {
