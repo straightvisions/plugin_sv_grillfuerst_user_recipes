@@ -252,7 +252,7 @@ export default function Review() {
 			setMessageOpen(true);
 		});
 	}
-	console.log(attributes);
+	
 	const hasCustomIngredients = () => {
 		let hasCustomIngredients = false;
 		attributes.data.ingredients.forEach((ingredient) => {
