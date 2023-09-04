@@ -58,6 +58,14 @@ final class Recipe_Exporter_Service {
         if($this->check_config()){
             $item = $this->get_data($uuid);
 
+            if(!$this->validate($item)){
+                return ['message' => 'Unable to export recipe:',
+                        'post' => null,
+                        'status' => 400,
+                        'errors' => $this->errors()
+                ];
+            }
+
             // export images + replace the image objects with ids for the export function later
             foreach ($item->steps as $key => &$step) {
                 $step->images = $this->Media_Export_Service->export_files($step->images); // list of ids
@@ -195,6 +203,21 @@ final class Recipe_Exporter_Service {
 
     private function is_ok($res): bool{
         return $res['status'] >= 200 && $res['status'] <= 299;
+    }
+
+    // should be part of validator service
+    private function validate($r){
+        $check = true;
+
+        // check ingredients
+        foreach($r->ingredients as $i){
+            if(empty($i->label) || empty($i->amount) || empty($i->unit) || $i->custom === true){
+                $check = false;
+                $this->errors(['Invalid ingredient']);
+            }
+        }
+
+        return $check;
     }
 
 }

@@ -396,9 +396,7 @@ final class Recipes_Middleware implements Middleware_Interface {
                 $results = $this->Recipe_Exporter_Service->export($uuid);
             }
 
-            $errors  = $results['errors'];
-
-            if ($results['status'] === 200 || $results['status'] === 201) {
+            if (empty($results['errors'])) {
                 $post = $results['post'];
                 $link = $post->guid;
                 // change state to published + add link to post
@@ -411,13 +409,11 @@ final class Recipes_Middleware implements Middleware_Interface {
                 //@todo buggy
                 $results['link'] = $link;
 
-                $errors = array_merge(
-                    $errors,
+                $results['errors'] = array_merge(
+                    $results['errors'],
                     $this->handle_after_recipe_published($uuid)
                 ); // should be its own service
             }
-
-            $results['errors'] = $errors;
 
             return [$results, $results['status']];
         }, ['admin', 'export']);
