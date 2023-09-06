@@ -4,18 +4,18 @@ namespace SV_Grillfuerst_User_Recipes\Adapters\Wordpress;
 final class Media {
 
     public function add($file, $meta = []): int {
-    
-        if ($file && $file['type'] !== 'directory') {
+
+        if ($file && is_array($file) && $file['type'] !== 'directory') {
             $uploadDir = wp_upload_dir();
             // prevent overwrites
-            $newFilename = wp_unique_filename($uploadDir['path'], $file['name']);
+            $newFilename = $this->get_unique_filename($file);
             $filePath = $uploadDir['path'] . '/' . $newFilename;
 
             // Move the file from the temporary location to the uploads directory
-            if (copy($file['tmp_name'], $filePath)) {
+            if ($newFilename && copy($file['tmp_name'], $filePath)) {
                 // Prepare image data for WordPress Media Library
                 $attachment = array(
-                    'post_title' => $file['name'],
+                    'post_title' => $newFilename,
                     'post_content' => '',
                     'post_status' => 'inherit',
                     'post_mime_type' => mime_content_type($filePath),
@@ -56,6 +56,21 @@ final class Media {
             'post' => $postId,
         ]); // int|WP_Error
         return is_numeric($result) ? $result : false;
+    }
+
+    private function get_unique_filename(array $file, int $rounds = 1): string{
+        $uploadDir = wp_upload_dir();
+        $filename = wp_unique_filename($uploadDir['path'], $file['name']);
+        $filePath = $uploadDir['path'] . '/' . $filename;
+
+        // safety 1
+        if(file_exists($filePath)) $filename .= '_' . time();
+        // safety 2
+        $filePath = $uploadDir['path'] . '/' . $filename;
+        if(file_exists($filePath)) return $this->get_unique_filename($file, $rounds + 1);
+
+        // loop safety, break after 10 tries
+        return $rounds >= 10 ? false : $filename;
     }
 
 }
