@@ -9,6 +9,7 @@ final class Wordpress_Adapter{
     public Asset $Asset;
     public Filesystem $Filesystem;
     public Media $Media;
+    public Cache $Cache;
 
     // add new adapters here + config/settings
     public function __construct(
@@ -17,7 +18,8 @@ final class Wordpress_Adapter{
         Action $action,
         Asset $asset,
         Filesystem $filesystem,
-        Media $media
+        Media $media,
+        Cache $cache
     ){
         $this->Request = $request;
         $this->Shortcode = $shortcode;
@@ -25,5 +27,7 @@ final class Wordpress_Adapter{
         $this->Asset = $asset;
         $this->Filesystem = $filesystem;
         $this->Media = $media;
+        $this->Cache = $cache;
+
     }
 }

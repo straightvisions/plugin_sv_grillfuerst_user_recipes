@@ -9,6 +9,8 @@ use SV_Grillfuerst_User_Recipes\Middleware\Jwt\Jwt_Middleware;
 use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 
 use function add_action;
+use function add_filter;
+
 
 final class Api_Middleware implements Middleware_Interface {
     private Api_Route_Service $Api_Route_Service;
@@ -20,14 +22,13 @@ final class Api_Middleware implements Middleware_Interface {
         Adapter $Adapter,
         Jwt_Middleware $Jwt_Middleware
     ) {
-
-        add_action('rest_api_init', [$this, 'init']); //@todo move this to an adapter
-        $this->Api_Route_Service = new Api_Route_Service();
+        $this->Api_Route_Service = new Api_Route_Service($Adapter);
         $this->Api_Http_Service = new Api_Http_Service();
         $this->Adapter = $Adapter;
         $this->Jwt_Middleware = $Jwt_Middleware;
 
-        \add_filter( 'rest_authentication_errors', [$this, 'allow_custom_routes']);
+	    add_action('rest_api_init', [$this, 'init']); //@todo move this to an adapter
+        add_filter( 'rest_authentication_errors', [$this, 'allow_custom_routes']);
     }
 
     public function allow_custom_routes($result){

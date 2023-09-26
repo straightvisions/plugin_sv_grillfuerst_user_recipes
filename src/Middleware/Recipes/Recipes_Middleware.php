@@ -105,19 +105,22 @@ final class Recipes_Middleware implements Middleware_Interface {
         // Ingredients
         $this->Api_Middleware->add([
             'route' => '/recipes/ingredients', // wordpress specific
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_ingredients'], 'permission_callback' => '__return_true']
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_ingredients'], 'permission_callback' => '__return_true'],
+            'cache' => true,
         ]);
 
         // Menu Types
         $this->Api_Middleware->add([
             'route' => '/recipes/menutypes', // wordpress specific
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_menu_types'], 'permission_callback' => '__return_true']
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_menu_types'], 'permission_callback' => '__return_true'],
+	        'cache' => true,
         ]);
 
         // Kitchen Styles
         $this->Api_Middleware->add([
             'route' => '/recipes/kitchenstyles', // wordpress specific
-            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_kitchen_styles'], 'permission_callback' => '__return_true']
+            'args'  => ['methods' => 'GET', 'callback' => [$this, 'rest_get_kitchen_styles'], 'permission_callback' => '__return_true'],
+            'cache' => true,
         ]);
 
         // Export

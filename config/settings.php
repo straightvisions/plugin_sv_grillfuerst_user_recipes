@@ -1,17 +1,18 @@
 <?php
 $settings = [
-    'env' => defined('GF_USER_RECIPES_ENV') ? GF_USER_RECIPES_ENV : 'production',
-    'debug' => defined('GF_USER_RECIPES_DEBUG') ? GF_USER_RECIPES_DEBUG : false,
-    'api_keys' => defined('GF_USER_RECIPES_API_KEYS') ? GF_USER_RECIPES_API_KEYS : [],
-    'api_key_generation' => defined('GF_USER_RECIPES_ALLOW_API_KEY_GENERATION') ? GF_USER_RECIPES_ALLOW_API_KEY_GENERATION : false,
-    'adapters' => [
+    'env'                   => defined('GF_USER_RECIPES_ENV') ? GF_USER_RECIPES_ENV : 'production',
+    'debug'                 => defined('GF_USER_RECIPES_DEBUG') ? GF_USER_RECIPES_DEBUG : false,
+    'api_keys'              => defined('GF_USER_RECIPES_API_KEYS') ? GF_USER_RECIPES_API_KEYS : [],
+    'api_key_generation'    => defined('GF_USER_RECIPES_ALLOW_API_KEY_GENERATION') ? GF_USER_RECIPES_ALLOW_API_KEY_GENERATION : false,
+    'adapters'              => [
         // Wordpress CMS specific adapters
-        'Action' => 'Wordpress_Adapter',
-        'Shortcode' => 'Wordpress_Adapter',
-        'Request' => 'Wordpress_Adapter',
-        'Asset' => 'Wordpress_Adapter',
-        'Filesystem' => 'Wordpress_Adapter',
-        'Media' => 'Wordpress_Adapter',
+        'Action'        => 'Wordpress_Adapter',
+        'Shortcode'     => 'Wordpress_Adapter',
+        'Request'       => 'Wordpress_Adapter',
+        'Asset'         => 'Wordpress_Adapter',
+        'Filesystem'    => 'Wordpress_Adapter',
+        'Media'         => 'Wordpress_Adapter',
+        'Cache'         => 'Wordpress_Adapter',
     ],
 ];
 
