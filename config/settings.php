@@ -37,6 +37,12 @@ $settings['auth_header'] = [];
 $settings['auth_header'][] = $settings['basic_auth_header'] ? 'Basic ' . $settings['basic_auth_header'] : '';
 $settings['auth_header'][] = $settings['bearer_auth_header'] ? 'Bearer ' . $settings['bearer_auth_header'] : '';
 $settings['auth_header'] = implode(',', array_filter($settings['auth_header']));
+
+// 2nd Generation AUTH
+$settings['auth'] = [
+	'secret' => defined('GF_USER_RECIPES_AUTH_SECRET') ? GF_USER_RECIPES_AUTH_SECRET : 'default_409669604239F08371231959e62CfB2b', // default is NOT secure, but better than nothing
+];
+
 // URLS
 $settings['wordpress_domain'] = defined('GF_USER_RECIPES_APP_BASIC_AUTH') ? GF_USER_RECIPES_BASE_URL : '';
 $settings['login_server_url'] = defined('GF_USER_RECIPES_LOGIN_SERVER_URL') ? GF_USER_RECIPES_LOGIN_SERVER_URL : '';
