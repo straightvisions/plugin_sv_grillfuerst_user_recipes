@@ -70,13 +70,18 @@ const user = {
 	},
 	
 	logout: () => {
-		user.flush();
 		// experimental
+		fetch(routes.logout_remote, {
+			headers: headers.get(),
+			method: 'GET',
+		});
+		
 		fetch(routes.logout, {
 			headers: headers.get(),
 			method: 'GET',
 		});
 		
+		user.flush();
 		// Get the current URL without query parameters
 		const urlWithoutParams = window.location.origin + window.location.pathname;
 		// Update the URL without query parameters

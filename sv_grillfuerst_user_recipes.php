@@ -45,10 +45,10 @@ function sv_grillfuerst_user_recipes_plugin_activation() {
         $wpdb->query($sql);
     }
 
-    $table_name = 'svgfur_recipes_recipes';
+    $table_name = 'svgfur_recipes';
     if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
-        // Table does not exist, create it
-        $sql = "
+	    // Table does not exist, create it
+	    $sql = "
         CREATE TABLE {$table_name} (
             id bigint(20) UNSIGNED NOT NULL AUTO_INCREMENT,
             uuid int(11) UNSIGNED NOT NULL,
@@ -81,10 +81,24 @@ function sv_grillfuerst_user_recipes_plugin_activation() {
             UNIQUE KEY uuid (uuid)
         ) {$wpdb->get_charset_collate()};
         ";
-
-        require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
-        $wpdb->query($sql);
     }
+
+    $table_name = 'svgfur_recipes_tokens';
+    // Check if the table exists
+    if ($wpdb->get_var("SHOW TABLES LIKE '{$table_name}'") != $table_name) {
+	    // Table does not exist, create it
+	    $sql = "
+        CREATE TABLE {$table_name} (
+            user_id INT AUTO_INCREMENT PRIMARY KEY,
+		    token VARCHAR(255) NOT NULL UNIQUE,
+		    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+		    expires_at TIMESTAMP NOT NULL
+        ) {$wpdb->get_charset_collate()};
+        ";
+    }
+
+    require_once(ABSPATH . 'wp-admin/includes/upgrade.php');
+    $wpdb->query($sql);
 
 }
 

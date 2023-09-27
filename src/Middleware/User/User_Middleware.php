@@ -198,33 +198,11 @@ final class User_Middleware implements Middleware_Interface {
         return $response;
     }
 
-    //@todo add Api Response wrapper
-    public function rest_logout() {
-        $data = $this->Jwt_Middleware->get();
-        $id   = isset($data['userId']) ? $data['userId'] : 0;
-        $this->Jwt_Middleware->destroy();
-        $client = $this->Api_Middleware->http();
-
-        //@todo not implemented yet
-        $code = 200;
-        $body = ['status' => 'success'];
-        /*
-        $response = $client->request('POST',
-            $this->settings['logout_server_url'] ,
-            [
-                'content-type' => 'application/json',
-                'json' => ['customerId'=>$id],
-                'headers' => ['Authorization' => $this->settings['auth_header']],
-                'debug'=>false
-            ]);
-
-        $body = json_decode($response->getBody(), true);
-        $code = $response->getStatusCode();
-    */
-        // implement wp_response adapter + services
-        $response = new WP_REST_Response($body, $code); // @todo remove this when adapter is available
-
-        return $response;
+    public function rest_logout($request) {
+	    return $this->Api_Middleware->response($request, function($Request){
+			$this->Jwt_Middleware->destroy();
+			return [];
+	    },['customer','edit']);
     }
 
     //@todo add Api Response wrapper
@@ -334,7 +312,7 @@ final class User_Middleware implements Middleware_Interface {
             }, ['admin', 'edit']);
     }
 
-    public function rest_user_Test($request) {
+    public function rest_user_test($request) {
         return $this->Api_Middleware->response(
             $request,
             function ($Request) {
