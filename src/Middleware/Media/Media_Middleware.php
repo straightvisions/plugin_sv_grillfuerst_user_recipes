@@ -56,13 +56,14 @@ final class Media_Middleware implements Middleware_Interface {
             function ($Request) {
                 $uuid = (int) $Request->getAttribute('uuid');
 
-                $data = $Request->getUploadedFiles();
+                $data = $this->filter_upload_files($Request->getUploadedFiles());
                 $items = [];
 
                 if(empty($data) === false){
                     $items = $this->Media_Upload_Service->add_multiple($data, 'recipes/'.$uuid);
                 }
 
+				// @todo add a deeper level of status handling like error on not allowed files
                return [$items, 201];
         }, ['customer', 'edit']);
     }
@@ -82,7 +83,8 @@ final class Media_Middleware implements Middleware_Interface {
         );
     }
 
-    private function getMediaType($string) {
+	// @todo refactor to a single point of truth ------------------------------------------
+    private function get_media_type($string) {
         $mediaTypes = [
             'png' => 'image',
             'jpg' => 'image',
@@ -98,11 +100,44 @@ final class Media_Middleware implements Middleware_Interface {
         return $mediaTypes[strtolower($extension)] ?? 'Other';
     }
 
-    // dedicated data updater
+	private function is_media_type_allowed($file): bool {
+		$allowed_types = [
+			'image/jpeg',
+			'image/jpg',
+			'image/png',
+		];
+
+		$mimeType = mime_content_type($file['tmp_name']);
+		return in_array($mimeType, $allowed_types);
+	}
+
+	private function validate_upload_media(array $file): bool {
+		return
+			// check if file is valid --------------------------
+			$file['error'] === 0
+			&& $this->is_media_type_allowed($file) === true
+			// -------------------------------------------------
+			? true : false;
+	}
+
+	private function filter_upload_files($data): array {
+		$data = is_array($data) ? $data : [];
+
+		foreach($data as $key => $file){
+			if($this->validate_upload_media($file) === false){
+				unset($data[$key]);
+			}
+		}
+
+		return array_values($data);
+	}
+	// / @todo refactor to a single point of truth ------------------------------------------
+
+	// dedicated data updater
     private function update_recipe($item, $uuid){
         $finderResults = $this->Recipe_Finder_Service->get($uuid); // returns object with items array
         $recipe = reset($finderResults->items); // reset returns false if empty
-        $type = $this->getMediaType($item->filename);
+        $type = $this->get_media_type($item->filename);
 
         if($recipe){
             switch($type){
@@ -135,5 +170,4 @@ final class Media_Middleware implements Middleware_Interface {
 
         return $recipe;
     }
-
 }
