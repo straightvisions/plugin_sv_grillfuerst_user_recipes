@@ -1,6 +1,6 @@
 <?php
 /*
-Version: 2.0.07
+Version: 2.0.08
 Plugin Name: SV Grillfuerst User Recipes
 Text Domain: sv_grillfuerst_user_recipes
 Description: Custom Plugin
@@ -54,6 +54,7 @@ function sv_grillfuerst_user_recipes_plugin_activation() {
             uuid int(11) UNSIGNED NOT NULL,
             user_id bigint(20) UNSIGNED NOT NULL,
             user_meta longtext NOT NULL DEFAULT '{}',
+            app_meta longtext NOT NULL DEFAULT '{}',
             title varchar(256) NOT NULL,
             state enum('draft','review_pending','reviewed','published') NOT NULL DEFAULT 'draft',
             link text NOT NULL,
