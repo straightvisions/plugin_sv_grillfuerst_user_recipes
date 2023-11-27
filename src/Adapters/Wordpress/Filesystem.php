@@ -81,6 +81,7 @@ final class Filesystem {
     }
 
     public function prepare_filename(string $filename, string $folder){
+		$filename = sanitize_file_name($filename);
         if (file_exists($this->get_path($folder) . '/' . $filename)) {
             $extension = pathinfo($filename, PATHINFO_EXTENSION);
             $filenameWithoutExtension = pathinfo($filename, PATHINFO_FILENAME);

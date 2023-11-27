@@ -255,11 +255,10 @@ final class Recipes_Middleware implements Middleware_Interface {
                         'content'      => $data['title'],
                     ];
 
-                    $this->send_email($email);
-
                     if (is_array($data) && empty($data) === false) {
                         $data = $this->Recipe_Updater_Service->comparate($data);
                         $this->Recipe_Updater_Service->update($data, $uuid);
+	                    $this->send_email($email);
                     }
                 }else{
                     $res = ['status'=>'error','message'=>'Invalid state'];
@@ -281,7 +280,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         $Request = $this->Adapter->Request()->set($request);
         $uuid    = $Request->getAttribute('uuid');
         $results = $this->Recipe_Finder_Service->get($uuid);
-        $recipe  = $results->items[0];
+        $recipe  = $results->items[0]; // @todo error handling
         $user_id = $recipe->get('user_id');
         $info = $this->User_Info_Service->get($user_id, true);
         $user = $info['body']['data'];

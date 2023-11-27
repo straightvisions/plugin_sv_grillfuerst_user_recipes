@@ -55,12 +55,11 @@ final class Media_Middleware implements Middleware_Interface {
             $request,
             function ($Request) {
                 $uuid = (int) $Request->getAttribute('uuid');
-
-                $data = $this->filter_upload_files($Request->getUploadedFiles());
+                $files = $this->filter_upload_files($Request->getUploadedFiles());
                 $items = [];
 
-                if(empty($data) === false){
-                    $items = $this->Media_Upload_Service->add_multiple($data, 'recipes/'.$uuid);
+                if(empty($files) === false){
+                    $items = $this->Media_Upload_Service->add_multiple($files, 'recipes/'.$uuid);
                 }
 
 				// @todo add a deeper level of status handling like error on not allowed files
