@@ -23,14 +23,12 @@ final class Media_Update_Service {
             $newFilename = basename($item['newFilename'], '.' . $extension);
             $newFilename .= '.' . $extension;
 
-            $newFilename = $this->Adapter->Filesystem()->prepare_filename($newFilename, $folder);
-
-            $oldPath = $item['path'] . '/' . $filename;
-            $newPath = $folder . '/' . $newFilename; // using folder here prevents malicious path injection
-
             $_item = $item;
             $_item['filename'] = $newFilename;
             $_item = array_merge($_item, $this->Adapter->Filesystem()->prepare($_item, $folder, true));
+
+	        $oldPath = $_item['path'] . '/' . $filename;
+	        $newPath = $folder . '/' . $_item['filename']; // using folder here prevents malicious path injection
 
             if( $this->Adapter->Filesystem()->rename($oldPath, $newPath) ){
                 $item = $_item;

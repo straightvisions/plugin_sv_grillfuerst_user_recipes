@@ -81,16 +81,21 @@ final class Filesystem {
     }
 
     public function prepare_filename(string $filename, string $folder){
+		//var_dump($filename);
 		$filename = sanitize_file_name($filename);
+	    //var_dump($filename);
+		//var_dump(file_exists($this->get_path($folder) . '/' . $filename));
         if (file_exists($this->get_path($folder) . '/' . $filename)) {
             $extension = pathinfo($filename, PATHINFO_EXTENSION);
             $filenameWithoutExtension = pathinfo($filename, PATHINFO_FILENAME);
             $counter = 1;
-            $newFilename = $filenameWithoutExtension . '(' . $counter . ')' . '.' . $extension;
-
+            $newFilename = $filenameWithoutExtension . $counter  . '.' . $extension;
+	        //var_dump("---------------");
+	        //var_dump($newFilename);
             while (file_exists($this->get_path($folder) . '/' . $newFilename)) {
                 $counter++;
-                $newFilename = $filenameWithoutExtension . '(' . $counter . ')' . '.' . $extension;
+                $newFilename = $filenameWithoutExtension . $counter . '.' . $extension;
+	            //var_dump($newFilename);
             }
 
             $filename = $newFilename;

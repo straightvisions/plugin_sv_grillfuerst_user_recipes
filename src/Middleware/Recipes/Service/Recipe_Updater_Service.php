@@ -78,7 +78,7 @@ final class Recipe_Updater_Service {
 	// set title if available for featured image filename + title / alt text
 	private function comparateFeaturedImage(array $item, array $featuredImage): array{
 		$title = empty($item['title']) ? 'unknown' : $item['title'];
-		$featuredImage['title'] = empty($featuredImage['title']) ? $title : $featuredImage['title'];
+		$featuredImage['title'] = $title;
 		$featuredImage['alt_text'] = empty($featuredImage['alt_text']) ? $title : $featuredImage['alt_text'];
 		$featuredImage['newFilename'] = $title;
 
@@ -98,8 +98,10 @@ final class Recipe_Updater_Service {
 	private function comparateStepImages(array $item, array $images, int $order): array{
 		$title = empty($item['title']) ? 'unknown' : $item['title'];
 		foreach($images as &$img){
-			$img['title'] = empty($img['title']) ? $title : $img['title'];
-			$img['title'] = empty($img['title']) ? 'Schritt 1' : $img['title'] . ' - Schritt ' . $order;
+			$img['title'] = $title;
+			if(strpos('Schritt', $img['title']) === false){
+				$img['title'] = empty($img['title']) ? 'Schritt 1' : $img['title'] . ' - Schritt ' . $order;
+			}
 			$img['alt_text'] = empty($img['alt_text']) ? $img['title'] : $img['alt_text'];
 			$img['newFilename'] = $img['title'];
 			$img = (array) $this->Media_Update_Service->update($img, $img['path']);
