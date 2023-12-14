@@ -61,7 +61,7 @@ const App = () => {
 	// not logged-in state and not in root
 	if(user.isLoggedIn === false && !routes.isLogin() && !routes.isRegister() && !routes.isReset()){
 		const path = '/login';
-		navigate(path);
+		//navigate(path);
 		window.postMessage({ type: 'NAVIGATION', payload: window.location.pathname }, '*');
 		return (<Spinner />);
 	}
