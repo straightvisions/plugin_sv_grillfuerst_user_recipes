@@ -114,28 +114,29 @@ function sv_grillfuerst_user_recipes_rewrite_permalink_rules() {
 // routing
 function custom_rewrite_rules() {
     add_rewrite_rule(
-        '^community-rezepte/edit/([0-9]+)/?$',
+        '^community-rezepte/dashboard/edit/([0-9]+)/?$',
         'index.php?pagename=community-rezepte',
         'top'
     );
 
     add_rewrite_rule(
-        '^community-rezepte/register?$',
+        '^community-rezepte/login/register?$',
         'index.php?pagename=community-rezepte',
         'top'
     );
 
     add_rewrite_rule(
-        '^community-rezepte/reset?$',
+        '^community-rezepte/login/reset?$',
         'index.php?pagename=community-rezepte',
         'top'
     );
 
+	/*
     add_rewrite_rule(
         '^community-rezepte/login?$',
         'index.php?pagename=community-rezepte',
         'top'
-    );
+    );*/
 
     add_rewrite_rule(
         '^community-rezepte/admin/edit/([0-9]+)/?$',
