@@ -61,7 +61,8 @@ const App = () => {
 	// not logged-in state and not in root
 	if(user.isLoggedIn === false && !routes.isLogin() && !routes.isRegister() && !routes.isReset()){
 		const path = '/login';
-		//navigate(path);
+		//navigate(path); // correct way for standalone app
+		window.location.href = window.location.pathname + 'login'; // correct way for wordpress
 		window.postMessage({ type: 'NAVIGATION', payload: window.location.pathname }, '*');
 		return (<Spinner />);
 	}
@@ -75,11 +76,6 @@ const App = () => {
 						path="/register"
 						element={<Register />}
 					/>
-					{/* TODO: implement when shop server is ready
-				<Route
-					path="/reset"
-					element={<Reset />}
-				/>*/}
 					<Route
 						path="/login"
 						element={<Login />}
@@ -87,6 +83,11 @@ const App = () => {
 				</Routes>
 			</div>
 		);
+	}
+	
+	if(user.isLoggedIn === true && (routes.isLogin() || routes.isRegister() || routes.isReset())) {
+		window.location.href = routes.config.appURL;
+		return (<Spinner />);
 	}
 	
 	// logged-in state
