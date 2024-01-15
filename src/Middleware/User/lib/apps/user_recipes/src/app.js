@@ -6,6 +6,7 @@ import Form from './components/form';
 import user from './modules/user';
 import Spinner from './components/spinner';
 import Login from './components/login';
+import LoginPlaceholder from './components/login/placeholder';
 import Register from './components/register';
 import {ModalConfirm, Modal} from './components/modals';
 import { Routes, Route } from "react-router-dom";
@@ -20,6 +21,10 @@ const logoutParam = urlSearchParams.get('logout');
 
 // add check if url has param ?logout=true then force logout
 if(logoutParam === 'true') user.logout();
+
+const getRedirectURL = (path) => {
+	return window.location.pathname.replace(/\/+$/, '') + '/' + path;
+}
 
 const App = () => {
 	const navigate = useNavigate();
@@ -55,16 +60,16 @@ const App = () => {
 	
 	// loading state
 	if(userInited === false){
-		return (<Spinner />);
+		return (<LoginPlaceholder />);
 	}
 	
 	// not logged-in state and not in root
 	if(user.isLoggedIn === false && !routes.isLogin() && !routes.isRegister() && !routes.isReset()){
 		const path = '/login';
 		//navigate(path); // correct way for standalone app
-		window.location.href = window.location.pathname + 'login'; // correct way for wordpress
+		window.location.href = getRedirectURL('login'); // correct way for wordpress
 		window.postMessage({ type: 'NAVIGATION', payload: window.location.pathname }, '*');
-		return (<Spinner />);
+		return (<LoginPlaceholder />);
 	}
 	
 	// not logged-in state
@@ -87,7 +92,7 @@ const App = () => {
 	
 	if(user.isLoggedIn === true && (routes.isLogin() || routes.isRegister() || routes.isReset())) {
 		window.location.href = routes.config.appURL;
-		return (<Spinner />);
+		return (<LoginPlaceholder />);
 	}
 	
 	// logged-in state
