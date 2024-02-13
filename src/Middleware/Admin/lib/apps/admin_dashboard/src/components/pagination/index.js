@@ -82,7 +82,6 @@ export default function Pagination(props) {
 							<ChevronLeftIcon className="h-5 w-5" aria-hidden="true" />
 						</a>
 						{pageLinks()}
-						{/* Current: "z-10 bg-indigo-50 border-indigo-500 text-indigo-600", Default: "bg-white border-gray-300 text-gray-500 hover:bg-gray-50" */}
 						<a
 							onClick={handleNext}
 							className="cursor-pointer relative inline-flex items-center rounded-r-md border border-gray-300 bg-white px-2 py-2 text-sm font-medium text-gray-500 hover:bg-gray-50 focus:z-20"
