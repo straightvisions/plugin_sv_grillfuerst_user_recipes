@@ -13,6 +13,7 @@ import { Routes, Route } from "react-router-dom";
 import routes from './models/routes';
 import SlideInPanel from "./components/slide_in_panel";
 import { GlobalContext } from './modules/context';
+import {appMeta} from './modules/app_meta';
 
 
 // @todo remove this later when caching is stable
@@ -54,6 +55,9 @@ const App = () => {
 			await user.init();
 			setUserInited(true);
 		}
+		
+		// don't remove this console.log
+		console.log('Community App v' + appMeta.appVersion);
 		
 		initUser();
 	}, []);
