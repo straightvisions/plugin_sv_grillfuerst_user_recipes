@@ -32,7 +32,7 @@ trait StaticConfigTrait
     /**
      * Configuration sets.
      *
-     * @var array<string|int, mixed>
+     * @var array<string|int, array<string, mixed>>
      */
     protected static array $_config = [];
 
@@ -68,19 +68,19 @@ trait StaticConfigTrait
      * ```
      *
      * @param array<string, mixed>|string $key The name of the configuration, or an array of multiple configs.
-     * @param object|array<string, mixed>|null $config An array of name => configuration data for adapter.
+     * @param mixed $config Configuration value. Generally an array of name => configuration data for adapter.
      * @throws \BadMethodCallException When trying to modify an existing config.
      * @throws \LogicException When trying to store an invalid structured config array.
      * @return void
      */
-    public static function setConfig(array|string $key, object|array|null $config = null): void
+    public static function setConfig(array|string $key, mixed $config = null): void
     {
         if ($config === null) {
             if (!is_array($key)) {
                 throw new LogicException('If config is null, key must be an array.');
             }
             foreach ($key as $name => $settings) {
-                static::setConfig($name, $settings);
+                static::setConfig((string)$name, $settings);
             }
 
             return;
@@ -97,7 +97,7 @@ trait StaticConfigTrait
             $config = ['className' => $config];
         }
 
-        if (isset($config['url'])) {
+        if (is_array($config) && isset($config['url'])) {
             $parsed = static::parseDsn($config['url']);
             unset($config['url']);
             $config = $parsed + $config;
@@ -157,6 +157,7 @@ trait StaticConfigTrait
         if (!isset(static::$_config[$config])) {
             return false;
         }
+        /** @phpstan-ignore-next-line */
         if (isset(static::$_registry)) {
             static::$_registry->unload($config);
         }
@@ -213,7 +214,7 @@ trait StaticConfigTrait
      */
     public static function parseDsn(string $dsn): array
     {
-        if (empty($dsn)) {
+        if (!$dsn) {
             return [];
         }
 
@@ -256,6 +257,9 @@ REGEXP;
         }
 
         $exists = [];
+        /**
+         * @var string|int $k
+         */
         foreach ($parsed as $k => $v) {
             if (is_int($k)) {
                 unset($parsed[$k]);
@@ -276,6 +280,9 @@ REGEXP;
 
         parse_str($query, $queryArgs);
 
+        /**
+         * @var string $key
+         */
         foreach ($queryArgs as $key => $value) {
             if ($value === 'true') {
                 $queryArgs[$key] = true;
@@ -286,15 +293,17 @@ REGEXP;
             }
         }
 
+        /** @var array<string, mixed> $parsed */
         $parsed = $queryArgs + $parsed;
 
         if (empty($parsed['className'])) {
             $classMap = static::getDsnClassMap();
 
-            $parsed['className'] = $parsed['scheme'];
-            if (isset($classMap[$parsed['scheme']])) {
-                /** @psalm-suppress PossiblyNullArrayOffset */
-                $parsed['className'] = $classMap[$parsed['scheme']];
+            /** @var string $scheme */
+            $scheme = $parsed['scheme'];
+            $parsed['className'] = $scheme;
+            if (isset($classMap[$scheme])) {
+                $parsed['className'] = $classMap[$scheme];
             }
         }
 

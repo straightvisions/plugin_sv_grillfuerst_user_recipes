@@ -39,6 +39,7 @@ class InsertQuery extends Query
      * @var array<string, mixed>
      */
     protected array $_parts = [
+        'comment' => null,
         'with' => [],
         'insert' => [],
         'modifier' => [],
@@ -59,7 +60,7 @@ class InsertQuery extends Query
      */
     public function insert(array $columns, array $types = [])
     {
-        if (empty($columns)) {
+        if (!$columns) {
             throw new InvalidArgumentException('At least 1 column is required to perform an insert.');
         }
         $this->_dirty();
@@ -67,7 +68,9 @@ class InsertQuery extends Query
         if (!$this->_parts['values']) {
             $this->_parts['values'] = new ValuesExpression($columns, $this->getTypeMap()->setTypes($types));
         } else {
-            $this->_parts['values']->setColumns($columns);
+            /** @var \Cake\Database\Expression\ValuesExpression $valuesExpr */
+            $valuesExpr = $this->_parts['values'];
+            $valuesExpr->setColumns($columns);
         }
 
         return $this;
@@ -114,7 +117,9 @@ class InsertQuery extends Query
             return $this;
         }
 
-        $this->_parts['values']->add($data);
+        /** @var \Cake\Database\Expression\ValuesExpression $valuesExpr */
+        $valuesExpr = $this->_parts['values'];
+        $valuesExpr->add($data);
 
         return $this;
     }

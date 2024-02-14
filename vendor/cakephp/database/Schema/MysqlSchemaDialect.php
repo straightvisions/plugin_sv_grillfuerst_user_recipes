@@ -100,8 +100,8 @@ class MysqlSchemaDialect extends SchemaDialect
     protected function _convertColumn(string $column): array
     {
         preg_match('/([a-z]+)(?:\(([0-9,]+)\))?\s*([a-z]+)?/i', $column, $matches);
-        if (empty($matches)) {
-            throw new DatabaseException(sprintf('Unable to parse column type from "%s"', $column));
+        if (!$matches) {
+            throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
         }
 
         $col = strtolower($matches[1]);
@@ -257,7 +257,7 @@ class MysqlSchemaDialect extends SchemaDialect
         }
 
         // MySQL multi column indexes come back as multiple rows.
-        if (!empty($existing)) {
+        if ($existing) {
             $columns = array_merge($existing['columns'], $columns);
             $length = array_merge($existing['length'], $length);
         }

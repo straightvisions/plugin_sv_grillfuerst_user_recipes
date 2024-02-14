@@ -140,12 +140,24 @@ class ValueBinder
     public function attachTo(StatementInterface $statement): void
     {
         $bindings = $this->bindings();
-        if (empty($bindings)) {
+        if (!$bindings) {
             return;
         }
 
         foreach ($bindings as $b) {
             $statement->bindValue($b['placeholder'], $b['value'], $b['type']);
         }
+    }
+
+    /**
+     * Get verbose debugging data.
+     *
+     * @return array
+     */
+    public function __debugInfo(): array
+    {
+        return [
+            'bindings' => $this->bindings(),
+        ];
     }
 }

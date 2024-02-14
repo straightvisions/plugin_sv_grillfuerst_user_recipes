@@ -120,7 +120,7 @@ class LoggedQuery implements JsonSerializable, Stringable
             $keys[] = is_string($key) ? "/:$key\b/" : '/[?]/';
         }
 
-        return preg_replace($keys, $params, $this->query, $limit);
+        return (string)preg_replace($keys, $params, $this->query, $limit);
     }
 
     /**
@@ -131,6 +131,7 @@ class LoggedQuery implements JsonSerializable, Stringable
     public function getContext(): array
     {
         return [
+            'query' => $this->query,
             'numRows' => $this->numRows,
             'took' => $this->took,
             'role' => $this->driver ? $this->driver->getRole() : '',
@@ -183,7 +184,7 @@ class LoggedQuery implements JsonSerializable, Stringable
     public function __toString(): string
     {
         $sql = $this->query;
-        if (!empty($this->params)) {
+        if ($this->params) {
             $sql = $this->interpolate();
         }
 

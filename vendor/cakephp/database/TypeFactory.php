@@ -75,7 +75,7 @@ class TypeFactory
             return static::$_builtTypes[$name];
         }
         if (!isset(static::$_types[$name])) {
-            throw new InvalidArgumentException(sprintf('Unknown type "%s"', $name));
+            throw new InvalidArgumentException(sprintf('Unknown type `%s`', $name));
         }
 
         return static::$_builtTypes[$name] = new static::$_types[$name]($name);
@@ -88,12 +88,11 @@ class TypeFactory
      */
     public static function buildAll(): array
     {
-        $result = [];
         foreach (static::$_types as $name => $type) {
-            $result[$name] = static::$_builtTypes[$name] ?? static::build($name);
+            static::$_builtTypes[$name] ??= static::build($name);
         }
 
-        return $result;
+        return static::$_builtTypes;
     }
 
     /**
@@ -106,7 +105,6 @@ class TypeFactory
     public static function set(string $name, TypeInterface $instance): void
     {
         static::$_builtTypes[$name] = $instance;
-        static::$_types[$name] = $instance::class;
     }
 
     /**
@@ -126,7 +124,7 @@ class TypeFactory
     /**
      * Set type to classname mapping.
      *
-     * @param array<string> $map List of types to be mapped.
+     * @param array<string, string> $map List of types to be mapped.
      * @return void
      * @psalm-param array<string, class-string<\Cake\Database\TypeInterface>> $map
      */

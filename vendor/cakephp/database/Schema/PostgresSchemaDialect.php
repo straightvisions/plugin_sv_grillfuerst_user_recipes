@@ -101,8 +101,8 @@ class PostgresSchemaDialect extends SchemaDialect
     protected function _convertColumn(string $column): array
     {
         preg_match('/([a-z\s]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
-        if (empty($matches)) {
-            throw new DatabaseException(sprintf('Unable to parse column type from "%s"', $column));
+        if (!$matches) {
+            throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
         }
 
         $col = strtolower($matches[1]);
@@ -652,6 +652,10 @@ class PostgresSchemaDialect extends SchemaDialect
         $content = array_merge($columns, $constraints);
         $content = implode(",\n", array_filter($content));
         $tableName = $this->_driver->quoteIdentifier($schema->name());
+        $dbSchema = $this->_driver->schema();
+        if ($dbSchema != 'public') {
+            $tableName = $this->_driver->quoteIdentifier($dbSchema) . '.' . $tableName;
+        }
         $temporary = $schema->isTemporary() ? ' TEMPORARY ' : ' ';
         $out = [];
         $out[] = sprintf("CREATE%sTABLE %s (\n%s\n)", $temporary, $tableName, $content);

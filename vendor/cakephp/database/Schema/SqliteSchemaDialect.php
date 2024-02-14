@@ -26,14 +26,6 @@ use Cake\Database\Exception\DatabaseException;
 class SqliteSchemaDialect extends SchemaDialect
 {
     /**
-     * Array containing the foreign keys constraints names
-     * Necessary for composite foreign keys to be handled
-     *
-     * @var array<string, mixed>
-     */
-    protected array $_constraintsIdMap = [];
-
-    /**
      * Whether there is any table in this connection to SQLite containing sequences.
      *
      * @var bool
@@ -57,8 +49,8 @@ class SqliteSchemaDialect extends SchemaDialect
         }
 
         preg_match('/(unsigned)?\s*([a-z]+)(?:\(([0-9,]+)\))?/i', $column, $matches);
-        if (empty($matches)) {
-            throw new DatabaseException(sprintf('Unable to parse column type from "%s"', $column));
+        if (!$matches) {
+            throw new DatabaseException(sprintf('Unable to parse column type from `%s`', $column));
         }
 
         $unsigned = false;
@@ -118,7 +110,10 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_BOOLEAN, 'length' => null];
         }
 
-        if ($col === 'char' && $length === 36) {
+        if (($col === 'binary' && $length === 16) || strtolower($column) === 'uuid_blob') {
+            return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
+        }
+        if (($col === 'char' && $length === 36) || $col === 'uuid') {
             return ['type' => TableSchemaInterface::TYPE_UUID, 'length' => null];
         }
         if ($col === 'char') {
@@ -128,9 +123,6 @@ class SqliteSchemaDialect extends SchemaDialect
             return ['type' => TableSchemaInterface::TYPE_STRING, 'length' => $length];
         }
 
-        if ($col === 'binary' && $length === 16) {
-            return ['type' => TableSchemaInterface::TYPE_BINARY_UUID, 'length' => null];
-        }
         if (in_array($col, ['blob', 'clob', 'binary', 'varbinary'])) {
             return ['type' => TableSchemaInterface::TYPE_BINARY, 'length' => $length];
         }
@@ -189,8 +181,14 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function describeColumnSql(string $tableName, array $config): array
     {
+        $pragma = 'table_xinfo';
+        if (version_compare($this->_driver->version(), '3.26.0', '<')) {
+            $pragma = 'table_info';
+        }
+
         $sql = sprintf(
-            'PRAGMA table_info(%s)',
+            'PRAGMA %s(%s)',
+            $pragma,
             $this->_driver->quoteIdentifier($tableName)
         );
 
@@ -269,6 +267,60 @@ class SqliteSchemaDialect extends SchemaDialect
     }
 
     /**
+     * Generates a regular expression to match identifiers that may or
+     * may not be quoted with any of the supported quotes.
+     *
+     * @param string $identifier The identifier to match.
+     * @return string
+     */
+    protected function possiblyQuotedIdentifierRegex(string $identifier): string
+    {
+        $identifiers = [];
+        $identifier = preg_quote($identifier, '/');
+
+        $hasTick = str_contains($identifier, '`');
+        $hasDoubleQuote = str_contains($identifier, '"');
+        $hasSingleQuote = str_contains($identifier, "'");
+
+        $identifiers[] = '\[' . $identifier . '\]';
+        $identifiers[] = '`' . ($hasTick ? str_replace('`', '``', $identifier) : $identifier) . '`';
+        $identifiers[] = '"' . ($hasDoubleQuote ? str_replace('"', '""', $identifier) : $identifier) . '"';
+        $identifiers[] = "'" . ($hasSingleQuote ? str_replace("'", "''", $identifier) : $identifier) . "'";
+
+        if (!$hasTick && !$hasDoubleQuote && !$hasSingleQuote) {
+            $identifiers[] = $identifier;
+        }
+
+        return implode('|', $identifiers);
+    }
+
+    /**
+     * Removes possible escape characters and surrounding quotes from
+     * identifiers.
+     *
+     * @param string $value The identifier to normalize.
+     * @return string
+     */
+    protected function normalizePossiblyQuotedIdentifier(string $value): string
+    {
+        $value = trim($value);
+
+        if (str_starts_with($value, '[') && str_ends_with($value, ']')) {
+            return mb_substr($value, 1, -1);
+        }
+
+        foreach (['`', "'", '"'] as $quote) {
+            if (str_starts_with($value, $quote) && str_ends_with($value, $quote)) {
+                $value = str_replace($quote . $quote, $quote, $value);
+
+                return mb_substr($value, 1, -1);
+            }
+        }
+
+        return $value;
+    }
+
+    /**
      * {@inheritDoc}
      *
      * Since SQLite does not have a way to get metadata about all indexes at once,
@@ -283,6 +335,11 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function convertIndexDescription(TableSchema $schema, array $row): void
     {
+        // Skip auto-indexes created for non-ROWID primary keys.
+        if ($row['origin'] === 'pk') {
+            return;
+        }
+
         $sql = sprintf(
             'PRAGMA index_info(%s)',
             $this->_driver->quoteIdentifier($row['name'])
@@ -294,6 +351,36 @@ class SqliteSchemaDialect extends SchemaDialect
             $columns[] = $column['name'];
         }
         if ($row['unique']) {
+            if ($row['origin'] === 'u') {
+                // Try to obtain the actual constraint name for indexes that are
+                // created automatically for unique constraints.
+
+                $sql = sprintf(
+                    'SELECT sql FROM sqlite_master WHERE type = "table" AND tbl_name = %s',
+                    $this->_driver->quoteIdentifier($schema->name())
+                );
+                $statement = $this->_driver->prepare($sql);
+                $statement->execute();
+
+                $tableRow = $statement->fetchAssoc();
+                $tableSql = $tableRow['sql'] ??= null;
+
+                if ($tableSql) {
+                    $columnsPattern = implode(
+                        '\s*,\s*',
+                        array_map(
+                            fn ($column) => '(?:' . $this->possiblyQuotedIdentifierRegex($column) . ')',
+                            $columns
+                        )
+                    );
+
+                    $regex = "/CONSTRAINT\s*(['\"`\[ ].+?['\"`\] ])\s*UNIQUE\s*\(\s*(?:{$columnsPattern})\s*\)/i";
+                    if (preg_match($regex, $tableSql, $matches)) {
+                        $row['name'] = $this->normalizePossiblyQuotedIdentifier($matches[1]);
+                    }
+                }
+            }
+
             $schema->addConstraint($row['name'], [
                 'type' => TableSchema::CONSTRAINT_UNIQUE,
                 'columns' => $columns,
@@ -311,7 +398,10 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function describeForeignKeySql(string $tableName, array $config): array
     {
-        $sql = sprintf('PRAGMA foreign_key_list(%s)', $this->_driver->quoteIdentifier($tableName));
+        $sql = sprintf(
+            'SELECT id FROM pragma_foreign_key_list(%s) GROUP BY id',
+            $this->_driver->quoteIdentifier($tableName)
+        );
 
         return [$sql, []];
     }
@@ -321,23 +411,35 @@ class SqliteSchemaDialect extends SchemaDialect
      */
     public function convertForeignKeyDescription(TableSchema $schema, array $row): void
     {
-        $name = $row['from'] . '_fk';
+        $sql = sprintf(
+            'SELECT * FROM pragma_foreign_key_list(%s) WHERE id = %d ORDER BY seq',
+            $this->_driver->quoteIdentifier($schema->name()),
+            $row['id']
+        );
+        $statement = $this->_driver->prepare($sql);
+        $statement->execute();
 
-        $update = $row['on_update'] ?? '';
-        $delete = $row['on_delete'] ?? '';
         $data = [
             'type' => TableSchema::CONSTRAINT_FOREIGN,
-            'columns' => [$row['from']],
-            'references' => [$row['table'], $row['to']],
-            'update' => $this->_convertOnClause($update),
-            'delete' => $this->_convertOnClause($delete),
+            'columns' => [],
+            'references' => [],
         ];
 
-        if (isset($this->_constraintsIdMap[$schema->name()][$row['id']])) {
-            $name = $this->_constraintsIdMap[$schema->name()][$row['id']];
-        } else {
-            $this->_constraintsIdMap[$schema->name()][$row['id']] = $name;
+        $foreignKey = null;
+        foreach ($statement->fetchAll('assoc') as $foreignKey) {
+            $data['columns'][] = $foreignKey['from'];
+            $data['references'][] = $foreignKey['to'];
         }
+
+        if (count($data['references']) === 1) {
+            $data['references'] = [$foreignKey['table'], $data['references'][0]];
+        } else {
+            $data['references'] = [$foreignKey['table'], $data['references']];
+        }
+        $data['update'] = $this->_convertOnClause($foreignKey['on_update'] ?? '');
+        $data['delete'] = $this->_convertOnClause($foreignKey['on_delete'] ?? '');
+
+        $name = implode('_', $data['columns']) . '_' . $row['id'] . '_fk';
 
         $schema->addConstraint($name, $data);
     }
@@ -504,11 +606,15 @@ class SqliteSchemaDialect extends SchemaDialect
     public function constraintSql(TableSchema $schema, string $name): string
     {
         $data = $schema->getConstraint($name);
-        assert($data !== null);
+        assert($data !== null, 'Data does not exist');
+
+        $column = $schema->getColumn($data['columns'][0]);
+        assert($column !== null, 'Data does not exist');
+
         if (
             $data['type'] === TableSchema::CONSTRAINT_PRIMARY &&
             count($data['columns']) === 1 &&
-            $schema->getColumn($data['columns'][0])['type'] === TableSchemaInterface::TYPE_INTEGER
+            $column['type'] === TableSchemaInterface::TYPE_INTEGER
         ) {
             return '';
         }

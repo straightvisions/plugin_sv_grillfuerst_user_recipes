@@ -20,8 +20,6 @@ use Cake\Chronos\ChronosDate;
 use Cake\Database\Driver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\I18n\Date;
-use DateTime as NativeDateTime;
-use DateTimeImmutable;
 use DateTimeInterface;
 use Exception;
 use InvalidArgumentException;
@@ -32,13 +30,11 @@ use InvalidArgumentException;
 class DateType extends BaseType implements BatchCastingInterface
 {
     /**
-     * @inheritDoc
+     * @var string
      */
     protected string $_format = 'Y-m-d';
 
     /**
-     * {@inheritDoc}
-     *
      * @var array<string>
      */
     protected array $_marshalFormats = [
@@ -55,7 +51,7 @@ class DateType extends BaseType implements BatchCastingInterface
     /**
      * The locale-aware format `marshal()` uses when `_useLocaleParser` is true.
      *
-     * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
+     * See `Cake\I18n\Date::parseDate()` for accepted formats.
      *
      * @var string|int|null
      */
@@ -64,7 +60,7 @@ class DateType extends BaseType implements BatchCastingInterface
     /**
      * The classname to use when creating objects.
      *
-     * @var class-string<\Cake\I18n\Date>|class-string<\DateTimeImmutable>
+     * @var class-string<\Cake\Chronos\ChronosDate>
      */
     protected string $_className;
 
@@ -75,7 +71,7 @@ class DateType extends BaseType implements BatchCastingInterface
     {
         parent::__construct($name);
 
-        $this->_className = class_exists(Date::class) ? Date::class : DateTimeImmutable::class;
+        $this->_className = class_exists(Date::class) ? Date::class : ChronosDate::class;
     }
 
     /**
@@ -95,6 +91,8 @@ class DateType extends BaseType implements BatchCastingInterface
             $value = new $class('@' . $value);
         }
 
+        assert(is_object($value) && method_exists($value, 'format'));
+
         return $value->format($this->_format);
     }
 
@@ -103,9 +101,9 @@ class DateType extends BaseType implements BatchCastingInterface
      *
      * @param mixed $value Value to be converted to PHP equivalent
      * @param \Cake\Database\Driver $driver Object from which database preferences and configuration will be extracted
-     * @return \Cake\I18n\Date|\DateTimeImmutable|null
+     * @return \Cake\Chronos\ChronosDate|null
      */
-    public function toPHP(mixed $value, Driver $driver): Date|DateTimeImmutable|null
+    public function toPHP(mixed $value, Driver $driver): ?ChronosDate
     {
         if ($value === null) {
             return null;
@@ -114,15 +112,10 @@ class DateType extends BaseType implements BatchCastingInterface
         $class = $this->_className;
         if (is_int($value)) {
             $instance = new $class('@' . $value);
+        } elseif (str_starts_with($value, '0000-00-00')) {
+            return null;
         } else {
-            if (str_starts_with($value, '0000-00-00')) {
-                return null;
-            }
             $instance = new $class($value);
-        }
-
-        if ($instance instanceof DateTimeImmutable) {
-            $instance = $instance->setTime(0, 0, 0);
         }
 
         return $instance;
@@ -139,14 +132,13 @@ class DateType extends BaseType implements BatchCastingInterface
             }
 
             $value = $values[$field];
-            if (str_starts_with($value, '0000-00-00')) {
-                $values[$field] = null;
-                continue;
-            }
 
             $class = $this->_className;
             if (is_int($value)) {
                 $instance = new $class('@' . $value);
+            } elseif (str_starts_with($value, '0000-00-00')) {
+                $values[$field] = null;
+                continue;
             } else {
                 $instance = new $class($value);
             }
@@ -161,20 +153,17 @@ class DateType extends BaseType implements BatchCastingInterface
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Cake\Chronos\ChronosDate|\DateTimeInterface|null
+     * @return \Cake\Chronos\ChronosDate|null
      */
-    public function marshal(mixed $value): ChronosDate|DateTimeInterface|null
+    public function marshal(mixed $value): ?ChronosDate
     {
-        if ($value instanceof DateTimeInterface || $value instanceof ChronosDate) {
-            if ($value instanceof NativeDateTime) {
-                $value = clone $value;
-            }
-
-            if (!$value instanceof ChronosDate) {
-                $value = $value->setTime(0, 0, 0);
-            }
-
+        if ($value instanceof $this->_className) {
             return $value;
+        }
+
+        /** @phpstan-ignore-next-line */
+        if ($value instanceof DateTimeInterface || $value instanceof ChronosDate) {
+            return new $this->_className($value->format($this->_format));
         }
 
         $class = $this->_className;
@@ -203,13 +192,8 @@ class DateType extends BaseType implements BatchCastingInterface
         }
 
         $format = sprintf('%d-%02d-%02d', $value['year'], $value['month'], $value['day']);
-        $dateTime = new $class($format);
 
-        if ($dateTime instanceof DateTimeImmutable) {
-            $dateTime = $dateTime->setTime(0, 0, 0);
-        }
-
-        return $dateTime;
+        return new $class($format);
     }
 
     /**
@@ -239,13 +223,13 @@ class DateType extends BaseType implements BatchCastingInterface
     /**
      * Sets the locale-aware format used by `marshal()` when parsing strings.
      *
-     * See `Cake\I18n\Time::parseDateTime()` for accepted formats.
+     * See `Cake\I18n\Date::parseDate()` for accepted formats.
      *
-     * @param array|string $format The locale-aware format
-     * @see \Cake\I18n\Time::parseDateTime()
+     * @param string|int $format The locale-aware format
+     * @see \Cake\I18n\Date::parseDate()
      * @return $this
      */
-    public function setLocaleFormat(array|string $format)
+    public function setLocaleFormat(string|int $format)
     {
         $this->_localeMarshalFormat = $format;
 
@@ -255,7 +239,7 @@ class DateType extends BaseType implements BatchCastingInterface
     /**
      * Get the classname used for building objects.
      *
-     * @return class-string<\Cake\I18n\Date>|class-string<\DateTimeImmutable>
+     * @return class-string<\Cake\Chronos\ChronosDate>
      */
     public function getDateClassName(): string
     {
@@ -263,11 +247,12 @@ class DateType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * @inheritDoc
+     * @param string $value
+     * @return \Cake\I18n\Date|null
      */
     protected function _parseLocaleValue(string $value): ?Date
     {
-        /** @psalm-var class-string<\Cake\I18n\Date> $class */
+        /** @var class-string<\Cake\I18n\Date> $class */
         $class = $this->_className;
 
         return $class::parseDate($value, $this->_localeMarshalFormat);
@@ -278,21 +263,15 @@ class DateType extends BaseType implements BatchCastingInterface
      * formats in `_marshalFormats`.
      *
      * @param string $value The value to parse and convert to an object.
-     * @return \Cake\I18n\Date|\DateTimeImmutable|null
+     * @return \Cake\Chronos\ChronosDate|null
      */
-    protected function _parseValue(string $value): Date|DateTimeImmutable|null
+    protected function _parseValue(string $value): ?ChronosDate
     {
         $class = $this->_className;
         foreach ($this->_marshalFormats as $format) {
             try {
-                $dateTime = $class::createFromFormat($format, $value);
-                // Check for false in case DateTimeImmutable is used
-                if ($dateTime !== false) {
-                    return $dateTime;
-                }
+                return $class::createFromFormat($format, $value);
             } catch (InvalidArgumentException) {
-                // Chronos wraps DateTime::createFromFormat and throws
-                // exception if parse fails.
                 continue;
             }
         }

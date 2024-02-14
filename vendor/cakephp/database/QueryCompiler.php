@@ -43,6 +43,7 @@ class QueryCompiler
         'limit' => ' LIMIT %s',
         'offset' => ' OFFSET %s',
         'epilog' => ' %s',
+        'comment' => '/* %s */ ',
     ];
 
     /**
@@ -51,7 +52,7 @@ class QueryCompiler
      * @var array<string>
      */
     protected array $_selectParts = [
-        'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
+        'comment', 'with', 'select', 'from', 'join', 'where', 'group', 'having', 'window', 'order',
         'limit', 'offset', 'union', 'epilog',
     ];
 
@@ -60,21 +61,21 @@ class QueryCompiler
      *
      * @var array<string>
      */
-    protected array $_updateParts = ['with', 'update', 'set', 'where', 'epilog'];
+    protected array $_updateParts = ['comment', 'with', 'update', 'set', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating a DELETE statement
      *
      * @var array<string>
      */
-    protected array $_deleteParts = ['with', 'delete', 'modifier', 'from', 'where', 'epilog'];
+    protected array $_deleteParts = ['comment', 'with', 'delete', 'modifier', 'from', 'where', 'epilog'];
 
     /**
      * The list of query clauses to traverse for generating an INSERT statement
      *
      * @var array<string>
      */
-    protected array $_insertParts = ['with', 'insert', 'values', 'epilog'];
+    protected array $_insertParts = ['comment', 'with', 'insert', 'values', 'epilog'];
 
     /**
      * Indicate whether this query dialect supports ordered unions.
@@ -308,7 +309,11 @@ class QueryCompiler
     {
         $windows = [];
         foreach ($parts as $window) {
-            $windows[] = $window['name']->sql($binder) . ' AS (' . $window['window']->sql($binder) . ')';
+            /** @var \Cake\Database\Expression\IdentifierExpression $expr */
+            $expr = $window['name'];
+            /** @var \Cake\Database\Expression\IdentifierExpression $windowExpr */
+            $windowExpr = $window['window'];
+            $windows[] = $expr->sql($binder) . ' AS (' . $windowExpr->sql($binder) . ')';
         }
 
         return ' WINDOW ' . implode(', ', $windows);
@@ -351,7 +356,9 @@ class QueryCompiler
     protected function _buildUnionPart(array $parts, Query $query, ValueBinder $binder): string
     {
         $parts = array_map(function ($p) use ($binder) {
-            $p['query'] = $p['query']->sql($binder);
+            /** @var \Cake\Database\Expression\IdentifierExpression $expr */
+            $expr = $p['query'];
+            $p['query'] = $expr->sql($binder);
             $p['query'] = $p['query'][0] === '(' ? trim($p['query'], '()') : $p['query'];
             $prefix = $p['all'] ? 'ALL ' : '';
             if ($this->_orderedUnion) {

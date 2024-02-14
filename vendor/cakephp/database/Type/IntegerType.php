@@ -38,7 +38,8 @@ class IntegerType extends BaseType implements BatchCastingInterface
     {
         if (!is_numeric($value) && !is_bool($value)) {
             throw new InvalidArgumentException(sprintf(
-                'Cannot convert value of type `%s` to integer',
+                'Cannot convert value `%s` of type `%s` to int',
+                print_r($value, true),
                 get_debug_type($value)
             ));
         }
@@ -97,11 +98,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Get the correct PDO binding type for integer data.
-     *
-     * @param mixed $value The value being bound.
-     * @param \Cake\Database\Driver $driver The driver.
-     * @return int
+     * @inheritDoc
      */
     public function toStatement(mixed $value, Driver $driver): int
     {
@@ -109,7 +106,7 @@ class IntegerType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Marshals request data into PHP floats.
+     * Marshals request data into PHP integers.
      *
      * @param mixed $value The value to convert.
      * @return int|null Converted value.

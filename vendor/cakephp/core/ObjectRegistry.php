@@ -129,12 +129,12 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     protected function _checkDuplicate(string $name, array $config): void
     {
         $existing = $this->_loaded[$name];
-        $msg = sprintf('The "%s" alias has already been loaded.', $name);
+        $msg = sprintf('The `%s` alias has already been loaded.', $name);
         $hasConfig = method_exists($existing, 'getConfig');
         if (!$hasConfig) {
             throw new CakeException($msg);
         }
-        if (empty($config)) {
+        if (!$config) {
             return;
         }
         $existingConfig = $existing->getConfig();
@@ -317,7 +317,6 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     public function reset()
     {
         foreach (array_keys($this->_loaded) as $name) {
-            /** @psalm-suppress RedundantCast Required because PHP converts numeric indexes to int */
             $this->unload((string)$name);
         }
 

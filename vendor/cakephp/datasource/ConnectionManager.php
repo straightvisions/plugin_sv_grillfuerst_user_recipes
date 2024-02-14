@@ -64,9 +64,9 @@ class ConnectionManager
     /**
      * The ConnectionRegistry used by the manager.
      *
-     * @var \Cake\Datasource\ConnectionRegistry|null
+     * @var \Cake\Datasource\ConnectionRegistry
      */
-    protected static ?ConnectionRegistry $_registry = null;
+    protected static ConnectionRegistry $_registry;
 
     /**
      * Configure a new connection object.
@@ -110,19 +110,19 @@ class ConnectionManager
      *
      * Note that query-string arguments are also parsed and set as values in the returned configuration.
      *
-     * @param string $config The DSN string to convert to a configuration array
+     * @param string $dsn The DSN string to convert to a configuration array
      * @return array<string, mixed> The configuration array to be stored after parsing the DSN
      */
-    public static function parseDsn(string $config): array
+    public static function parseDsn(string $dsn): array
     {
-        $config = static::_parseDsn($config);
+        $config = static::_parseDsn($dsn);
 
         if (isset($config['path']) && empty($config['database'])) {
             $config['database'] = substr($config['path'], 1);
         }
 
         if (empty($config['driver'])) {
-            $config['driver'] = $config['className'];
+            $config['driver'] = $config['className'] ?? null;
             $config['className'] = Connection::class;
         }
 

@@ -55,7 +55,7 @@ class Filesystem
      */
     public function find(string $path, Closure|string|null $filter = null, ?int $flags = null): Iterator
     {
-        $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
+        $flags ??= FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
         /** @psalm-suppress ArgumentTypeCoercion */
@@ -80,7 +80,7 @@ class Filesystem
      */
     public function findRecursive(string $path, Closure|string|null $filter = null, ?int $flags = null): Iterator
     {
-        $flags = $flags ?? FilesystemIterator::KEY_AS_PATHNAME
+        $flags ??= FilesystemIterator::KEY_AS_PATHNAME
             | FilesystemIterator::CURRENT_AS_FILEINFO
             | FilesystemIterator::SKIP_DOTS;
         /** @psalm-suppress ArgumentTypeCoercion */
@@ -178,7 +178,7 @@ class Filesystem
         // phpcs:ignore
         if (@mkdir($dir, $mode, true) === false) {
             umask($old);
-            throw new CakeException(sprintf('Failed to create directory "%s"', $dir));
+            throw new CakeException(sprintf('Failed to create directory `%s`', $dir));
         }
 
         umask($old);
@@ -198,10 +198,10 @@ class Filesystem
         }
 
         if (!is_dir($path)) {
-            throw new CakeException(sprintf('"%s" is not a directory', $path));
+            throw new CakeException(sprintf('`%s` is not a directory', $path));
         }
 
-        /** @var \RecursiveDirectoryIterator $iterator Replace type for psalm */
+        /** @var \RecursiveDirectoryIterator<\SplFileInfo> $iterator Replace type for psalm */
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
             RecursiveIteratorIterator::CHILD_FIRST
@@ -246,6 +246,7 @@ class Filesystem
             $this->mkdir($destination);
         }
 
+        /** @var \FilesystemIterator<\SplFileInfo> $iterator */
         $iterator = new FilesystemIterator($source);
 
         $result = true;

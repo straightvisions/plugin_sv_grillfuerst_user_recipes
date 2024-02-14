@@ -82,7 +82,7 @@ trait ContainerStubTrait
         if ($this->_appClass) {
             $appClass = $this->_appClass;
         } else {
-            /** @psalm-var class-string<\Cake\Http\BaseApplication> */
+            /** @var class-string<\Cake\Http\BaseApplication> $appClass */
             $appClass = Configure::read('App.namespace') . '\Application';
         }
         if (!class_exists($appClass)) {
@@ -91,7 +91,7 @@ trait ContainerStubTrait
         $appArgs = $this->_appArgs ?: [CONFIG];
 
         $app = new $appClass(...$appArgs);
-        if (!empty($this->containerServices) && method_exists($app, 'getEventManager')) {
+        if ($this->containerServices && method_exists($app, 'getEventManager')) {
             $app->getEventManager()->on('Application.buildContainer', [$this, 'modifyContainer']);
         }
 
@@ -138,12 +138,12 @@ trait ContainerStubTrait
      *
      * @param \Cake\Event\EventInterface $event The event
      * @param \Cake\Core\ContainerInterface $container The container to wrap.
-     * @return \Cake\Core\ContainerInterface|null
+     * @return void
      */
-    public function modifyContainer(EventInterface $event, ContainerInterface $container): ?ContainerInterface
+    public function modifyContainer(EventInterface $event, ContainerInterface $container): void
     {
-        if (empty($this->containerServices)) {
-            return null;
+        if (!$this->containerServices) {
+            return;
         }
         foreach ($this->containerServices as $key => $factory) {
             if ($container->has($key)) {
@@ -157,7 +157,7 @@ trait ContainerStubTrait
             }
         }
 
-        return $container;
+        $event->setResult($container);
     }
 
     /**
@@ -174,3 +174,10 @@ trait ContainerStubTrait
         $this->containerServices = [];
     }
 }
+
+// phpcs:disable
+class_alias(
+    'Cake\Core\TestSuite\ContainerStubTrait',
+    'Cake\TestSuite\ContainerStubTrait'
+);
+// phpcs:enable

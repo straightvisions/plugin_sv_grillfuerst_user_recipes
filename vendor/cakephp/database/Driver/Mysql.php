@@ -111,7 +111,7 @@ class Mysql extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->pdo)) {
+        if ($this->pdo !== null) {
             return;
         }
         $config = $this->_config;
@@ -223,8 +223,6 @@ class Mysql extends Driver
                 $this->featureVersions[$this->serverType][$feature->value],
                 '>='
             ),
-
-            default => false,
         };
     }
 

@@ -164,7 +164,7 @@ class IdentifierQuoter
             }
 
             $result = $this->_basicQuoter($contents);
-            if (!empty($result)) {
+            if ($result) {
                 $query->{$part}($result, true);
             }
         }
@@ -218,7 +218,7 @@ class IdentifierQuoter
     /**
      * Quotes all identifiers in each of the clauses of a SELECT query
      *
-     * @param \Cake\Database\Query\SelectQuery $query The query to quote.
+     * @param \Cake\Database\Query\SelectQuery<mixed> $query The query to quote.
      * @return void
      */
     protected function _quoteSelect(SelectQuery $query): void

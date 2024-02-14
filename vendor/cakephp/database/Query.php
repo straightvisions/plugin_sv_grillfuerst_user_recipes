@@ -25,6 +25,7 @@ use Cake\Database\Expression\QueryExpression;
 use Closure;
 use InvalidArgumentException;
 use Stringable;
+use Throwable;
 
 /**
  * This class represents a Relational database SQL Query. A query can be of
@@ -98,6 +99,7 @@ abstract class Query implements ExpressionInterface, Stringable
      * @var array<string, mixed>
      */
     protected array $_parts = [
+        'comment' => null,
         'delete' => true,
         'update' => [],
         'set' => [],
@@ -743,7 +745,7 @@ abstract class Query implements ExpressionInterface, Stringable
         }
 
         /**
-         * @psalm-suppress InvalidArrayOffset
+         * @var string $alias
          */
         return [
             $alias => [
@@ -866,6 +868,19 @@ abstract class Query implements ExpressionInterface, Stringable
      *
      * If you use string conditions make sure that your values are correctly quoted.
      * The safest thing you can do is to never use string conditions.
+     *
+     * ### Using null-able values
+     *
+     * When using values that can be null you can use the 'IS' keyword to let the ORM generate the correct SQL based on the value's type
+     *
+     * ```
+     * $query->where([
+     *     'posted >=' => new DateTime('3 days ago'),
+     *     'category_id IS' => $category,
+     * ]);
+     * ```
+     *
+     * If $category is `null` - it will actually convert that into `category_id IS NULL` - if it's `4` it will convert it into `category_id = 4`
      *
      * @param \Cake\Database\ExpressionInterface|\Closure|array|string|null $conditions The conditions to filter on.
      * @param array<string, string> $types Associative array of type names used to bind values to query
@@ -1224,9 +1239,7 @@ abstract class Query implements ExpressionInterface, Stringable
             return $this;
         }
 
-        if (!$this->_parts['order']) {
-            $this->_parts['order'] = new OrderByExpression();
-        }
+        $this->_parts['order'] ??= new OrderByExpression();
         $this->_conjugate('order', $fields, '', []);
 
         return $this;
@@ -1277,10 +1290,11 @@ abstract class Query implements ExpressionInterface, Stringable
             $field = $field($this->newExpr(), $this);
         }
 
-        if (!$this->_parts['order']) {
-            $this->_parts['order'] = new OrderByExpression();
-        }
-        $this->_parts['order']->add(new OrderClauseExpression($field, 'ASC'));
+        $this->_parts['order'] ??= new OrderByExpression();
+
+        /** @var \Cake\Database\Expression\QueryExpression $queryExpr */
+        $queryExpr = $this->_parts['order'];
+        $queryExpr->add(new OrderClauseExpression($field, 'ASC'));
 
         return $this;
     }
@@ -1330,10 +1344,11 @@ abstract class Query implements ExpressionInterface, Stringable
             $field = $field($this->newExpr(), $this);
         }
 
-        if (!$this->_parts['order']) {
-            $this->_parts['order'] = new OrderByExpression();
-        }
-        $this->_parts['order']->add(new OrderClauseExpression($field, 'DESC'));
+        $this->_parts['order'] ??= new OrderByExpression();
+
+        /** @var \Cake\Database\Expression\QueryExpression $queryExpr */
+        $queryExpr = $this->_parts['order'];
+        $queryExpr->add(new OrderClauseExpression($field, 'DESC'));
 
         return $this;
     }
@@ -1450,6 +1465,27 @@ abstract class Query implements ExpressionInterface, Stringable
     {
         $this->_dirty();
         $this->_parts['epilog'] = $expression;
+
+        return $this;
+    }
+
+    /**
+     * A string or expression that will be appended to the generated query as a comment
+     *
+     * ### Examples:
+     * ```
+     * $query->select('id')->where(['author_id' => 1])->comment('Filter for admin user');
+     * ```
+     *
+     * Comment content is raw SQL and not suitable for use with user supplied data.
+     *
+     * @param string|null $expression The comment to be added
+     * @return $this
+     */
+    public function comment(?string $expression = null)
+    {
+        $this->_dirty();
+        $this->_parts['comment'] = $expression;
 
         return $this;
     }
@@ -1697,8 +1733,9 @@ abstract class Query implements ExpressionInterface, Stringable
         string $conjunction,
         array $types
     ): void {
+        /** @var \Cake\Database\Expression\QueryExpression $expression */
         $expression = $this->_parts[$part] ?: $this->newExpr();
-        if (empty($append)) {
+        if (!$append) {
             $this->_parts[$part] = $expression;
 
             return;
@@ -1747,7 +1784,7 @@ abstract class Query implements ExpressionInterface, Stringable
             $this->_valueBinder = clone $this->_valueBinder;
         }
         foreach ($this->_parts as $name => $part) {
-            if (empty($part)) {
+            if (!$part) {
                 continue;
             }
             if (is_array($part)) {
@@ -1760,7 +1797,6 @@ abstract class Query implements ExpressionInterface, Stringable
                             }
                         }
                     } elseif ($piece instanceof ExpressionInterface) {
-                        /** @psalm-suppress PossiblyUndefinedMethod */
                         $this->_parts[$name][$i] = clone $piece;
                     }
                 }
@@ -1801,6 +1837,9 @@ abstract class Query implements ExpressionInterface, Stringable
             );
             $sql = $this->sql();
             $params = $this->getValueBinder()->bindings();
+        } catch (Throwable $e) {
+            $sql = 'SQL could not be generated for this query as it is incomplete.';
+            $params = [];
         } finally {
             restore_error_handler();
 
@@ -1809,7 +1848,7 @@ abstract class Query implements ExpressionInterface, Stringable
                 'sql' => $sql,
                 'params' => $params,
                 'defaultTypes' => $this->getDefaultTypes(),
-                'executed' => $this->_statement ? true : false,
+                'executed' => (bool)$this->_statement,
             ];
         }
     }

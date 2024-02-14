@@ -303,7 +303,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         if ($row['is_primary_key']) {
             $name = $type = TableSchema::CONSTRAINT_PRIMARY;
         }
-        if ($row['is_unique_constraint'] && $type === TableSchema::INDEX_INDEX) {
+        if (($row['is_unique'] || $row['is_unique_constraint']) && $type === TableSchema::INDEX_INDEX) {
             $type = TableSchema::CONSTRAINT_UNIQUE;
         }
 
@@ -314,7 +314,7 @@ class SqlserverSchemaDialect extends SchemaDialect
         }
 
         $columns = [$row['column_name']];
-        if (!empty($existing)) {
+        if ($existing) {
             $columns = array_merge($existing['columns'], $columns);
         }
 

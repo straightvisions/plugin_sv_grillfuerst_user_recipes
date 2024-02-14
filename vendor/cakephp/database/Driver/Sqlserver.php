@@ -112,7 +112,7 @@ class Sqlserver extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->pdo)) {
+        if ($this->pdo !== null) {
             return;
         }
         $config = $this->_config;
@@ -205,7 +205,7 @@ class Sqlserver extends Driver
             }
         }
 
-        /** @psalm-suppress PossiblyInvalidArgument */
+        /** @var string $sql */
         $statement = $this->getPdo()->prepare(
             $sql,
             [
@@ -277,8 +277,6 @@ class Sqlserver extends Driver
             DriverFeatureEnum::WINDOW => true,
 
             DriverFeatureEnum::JSON => false,
-
-            default => false,
         };
     }
 
@@ -329,24 +327,25 @@ class Sqlserver extends Driver
      * Prior to SQLServer 2012 there was no equivalent to LIMIT OFFSET, so a subquery must
      * be used.
      *
-     * @param \Cake\Database\Query\SelectQuery $original The query to wrap in a subquery.
+     * @param \Cake\Database\Query\SelectQuery<mixed> $original The query to wrap in a subquery.
      * @param int|null $limit The number of rows to fetch.
      * @param int|null $offset The number of rows to offset.
-     * @return \Cake\Database\Query\SelectQuery Modified query object.
+     * @return \Cake\Database\Query\SelectQuery<mixed> Modified query object.
      */
     protected function _pagingSubquery(SelectQuery $original, ?int $limit, ?int $offset): SelectQuery
     {
         $field = '_cake_paging_._cake_page_rownum_';
 
-        if ($original->clause('order')) {
+        /** @var \Cake\Database\Expression\OrderByExpression $originalOrder */
+        $originalOrder = $original->clause('order');
+        if ($originalOrder) {
             // SQL server does not support column aliases in OVER clauses.  But
             // the only practical way to specify the use of calculated columns
             // is with their alias.  So substitute the select SQL in place of
             // any column aliases for those entries in the order clause.
             $select = $original->clause('select');
             $order = new OrderByExpression();
-            $original
-                ->clause('order')
+            $originalOrder
                 ->iterateParts(function ($direction, $orderBy) use ($select, $order) {
                     $key = $orderBy;
                     if (
@@ -414,7 +413,7 @@ class Sqlserver extends Driver
 
         $order = new OrderByExpression($distinct);
         $query
-            ->select(function ($q) use ($distinct, $order) {
+            ->select(function (Query $q) use ($distinct, $order) {
                 $over = $q->newExpr('ROW_NUMBER() OVER')
                     ->add('(PARTITION BY')
                     ->add($q->newExpr()->add($distinct)->setConjunction(','))

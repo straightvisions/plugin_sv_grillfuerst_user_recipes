@@ -111,7 +111,7 @@ class Sqlite extends Driver
      */
     public function connect(): void
     {
-        if (isset($this->pdo)) {
+        if ($this->pdo !== null) {
             return;
         }
         $config = $this->_config;
@@ -206,8 +206,6 @@ class Sqlite extends Driver
                 $this->featureVersions[$feature->value],
                 '>='
             ),
-
-            default => false,
         };
     }
 

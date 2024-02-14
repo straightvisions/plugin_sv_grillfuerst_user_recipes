@@ -72,7 +72,8 @@ class DecimalType extends BaseType implements BatchCastingInterface
         }
 
         throw new InvalidArgumentException(sprintf(
-            'Cannot convert value of type `%s` to a decimal',
+            'Cannot convert value `%s` of type `%s` to a decimal',
+            print_r($value, true),
             get_debug_type($value)
         ));
     }
@@ -110,11 +111,7 @@ class DecimalType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Get the correct PDO binding type for decimal data.
-     *
-     * @param mixed $value The value being bound.
-     * @param \Cake\Database\Driver $driver The driver.
-     * @return int
+     * @inheritDoc
      */
     public function toStatement(mixed $value, Driver $driver): int
     {

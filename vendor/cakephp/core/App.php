@@ -40,7 +40,7 @@ use Cake\Core\Exception\CakeException;
  * Plugins can be located with App as well. Using Plugin::path('DebugKit') for example, will
  * give you the full path to the DebugKit plugin.
  *
- * @link https://book.cakephp.org/4/en/core-libraries/app.html
+ * @link https://book.cakephp.org/5/en/core-libraries/app.html
  */
 class App
 {
@@ -107,13 +107,13 @@ class App
      *
      * ```
      * App::shortName(
-     *     'Cake\Controller\Component\RequestHanderComponent',
+     *     'Cake\Controller\Component\FlashComponent',
      *     'Controller/Component',
      *     'Component'
      * )
      * ```
      *
-     * Returns: RequestHander
+     * Returns: Flash
      *
      * @param string $class Class name
      * @param string $type Type of class
@@ -185,7 +185,7 @@ class App
      * @param string $type Type of path
      * @param string|null $plugin Plugin name
      * @return array<string>
-     * @link https://book.cakephp.org/4/en/core-libraries/app.html#finding-paths-to-namespaces
+     * @link https://book.cakephp.org/5/en/core-libraries/app.html#finding-paths-to-namespaces
      */
     public static function path(string $type, ?string $plugin = null): array
     {
@@ -193,15 +193,14 @@ class App
             return (array)Configure::read('App.paths.' . $type);
         }
 
-        if ($type === 'templates') {
-            return [Plugin::templatePath($plugin)];
-        }
-
-        if ($type === 'locales') {
-            return [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR];
-        }
-
-        throw new CakeException('Only path types `templates` and `locales` are supported for plugins.');
+        return match ($type) {
+            'templates' => [Plugin::templatePath($plugin)],
+            'locales' => [Plugin::path($plugin) . 'resources' . DIRECTORY_SEPARATOR . 'locales' . DIRECTORY_SEPARATOR],
+            default => throw new CakeException(sprintf(
+                'Invalid type `%s`. Only path types `templates` and `locales` are supported for plugins.',
+                $type
+            ))
+        };
     }
 
     /**

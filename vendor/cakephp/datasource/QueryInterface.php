@@ -77,7 +77,8 @@ interface QueryInterface
      * ResultSetDecorator is a traversable object that implements the methods found
      * on Cake\Collection\Collection.
      *
-     * @return \Cake\Datasource\ResultSetInterface
+     * @template T of mixed
+     * @return \Cake\Datasource\ResultSetInterface<T>
      */
     public function all(): ResultSetInterface;
 
@@ -135,10 +136,10 @@ interface QueryInterface
      * a single query.
      *
      * @param string $finder The finder method to use.
-     * @param array<string, mixed> $options The options for the finder.
+     * @param mixed ...$args Arguments that match up to finder-specific parameters
      * @return static Returns a modified query.
      */
-    public function find(string $finder, array $options = []): static;
+    public function find(string $finder, mixed ...$args): static;
 
     /**
      * Returns the first result out of executing this query, if the query has not been

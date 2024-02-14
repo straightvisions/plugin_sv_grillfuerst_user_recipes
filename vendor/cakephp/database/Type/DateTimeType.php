@@ -16,7 +16,7 @@ declare(strict_types=1);
  */
 namespace Cake\Database\Type;
 
-use Cake\Chronos\Chronos;
+use Cake\Chronos\ChronosDate;
 use Cake\Database\Driver;
 use Cake\Database\Exception\DatabaseException;
 use Cake\I18n\DateTime;
@@ -136,6 +136,14 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             $value = new $class('@' . $value);
         }
 
+        if ($value instanceof ChronosDate) {
+            return $value->format($this->_format);
+        }
+
+        if (!$value instanceof DateTimeInterface) {
+            return null;
+        }
+
         if (
             $this->dbTimezone !== null
             && $this->dbTimezone->getName() !== $value->getTimezone()->getName()
@@ -203,16 +211,16 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         $class = $this->_className;
         if (is_int($value)) {
             $instance = new $class('@' . $value);
+        } elseif (str_starts_with($value, '0000-00-00')) {
+            return null;
         } else {
-            if (str_starts_with($value, '0000-00-00')) {
-                return null;
-            }
             $instance = new $class($value, $this->dbTimezone);
         }
 
         if (
-            !$this->keepDatabaseTimezone &&
-            $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
+            !$this->keepDatabaseTimezone
+            && $instance->getTimezone()
+            && $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
         ) {
             $instance = $instance->setTimezone($this->defaultTimezone);
         }
@@ -252,21 +260,21 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             }
 
             $value = $values[$field];
-            if (str_starts_with($value, '0000-00-00')) {
-                $values[$field] = null;
-                continue;
-            }
 
             $class = $this->_className;
             if (is_int($value)) {
                 $instance = new $class('@' . $value);
+            } elseif (str_starts_with($value, '0000-00-00')) {
+                $values[$field] = null;
+                continue;
             } else {
                 $instance = new $class($value, $this->dbTimezone);
             }
 
             if (
-                !$this->keepDatabaseTimezone &&
-                $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
+                !$this->keepDatabaseTimezone
+                && $instance->getTimezone()
+                && $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
             ) {
                 $instance = $instance->setTimezone($this->defaultTimezone);
             }
@@ -281,16 +289,20 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      * Convert request data into a datetime object.
      *
      * @param mixed $value Request data
-     * @return \Cake\Chronos\Chronos|\DateTimeInterface|null
+     * @return \DateTimeInterface|null
      */
-    public function marshal(mixed $value): Chronos|DateTimeInterface|null
+    public function marshal(mixed $value): ?DateTimeInterface
     {
-        if ($value instanceof DateTimeInterface || $value instanceof Chronos) {
+        if ($value instanceof DateTimeInterface) {
             if ($value instanceof NativeDateTime) {
                 $value = clone $value;
             }
 
+            /** @var \Datetime|\DateTimeImmutable $value */
             return $value->setTimezone($this->defaultTimezone);
+        }
+        if ($value instanceof ChronosDate) {
+            return $value->toNative();
         }
 
         $class = $this->_className;
@@ -415,7 +427,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
      */
     protected function _parseLocaleValue(string $value): ?DateTime
     {
-        /** @psalm-var class-string<\Cake\I18n\DateTime> $class */
+        /** @var class-string<\Cake\I18n\DateTime> $class */
         $class = $this->_className;
 
         return $class::parseDateTime($value, $this->_localeMarshalFormat, $this->userTimezone);
@@ -439,7 +451,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
                     return $dateTime;
                 }
             } catch (InvalidArgumentException) {
-                // Chronos wraps DateTime::createFromFormat and throws
+                // Chronos wraps DateTimeImmutable::createFromFormat and throws
                 // exception if parse fails.
                 continue;
             }
@@ -449,13 +461,9 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     }
 
     /**
-     * Casts given value to Statement equivalent
-     *
-     * @param mixed $value value to be converted to PDO statement
-     * @param \Cake\Database\Driver $driver object from which database preferences and configuration will be extracted
-     * @return mixed
+     * @inheritDoc
      */
-    public function toStatement(mixed $value, Driver $driver): mixed
+    public function toStatement(mixed $value, Driver $driver): int
     {
         return PDO::PARAM_STR;
     }

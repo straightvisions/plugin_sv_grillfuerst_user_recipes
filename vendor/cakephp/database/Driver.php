@@ -276,7 +276,7 @@ abstract class Driver
     public function execute(string $sql, array $params = [], array $types = []): StatementInterface
     {
         $statement = $this->prepare($sql);
-        if (!empty($params)) {
+        if ($params) {
             $statement->bind($params, $types);
         }
         $this->executeStatement($statement);
@@ -522,8 +522,8 @@ abstract class Driver
     /**
      * Apply translation steps to select queries.
      *
-     * @param \Cake\Database\Query\SelectQuery $query The query to translate
-     * @return \Cake\Database\Query\SelectQuery The modified query
+     * @param \Cake\Database\Query\SelectQuery<mixed> $query The query to translate
+     * @return \Cake\Database\Query\SelectQuery<mixed> The modified query
      */
     protected function _selectQueryTranslator(SelectQuery $query): SelectQuery
     {
@@ -534,8 +534,8 @@ abstract class Driver
      * Returns the passed query after rewriting the DISTINCT clause, so that drivers
      * that do not support the "ON" part can provide the actual way it should be done
      *
-     * @param \Cake\Database\Query\SelectQuery $query The query to be transformed
-     * @return \Cake\Database\Query\SelectQuery
+     * @param \Cake\Database\Query\SelectQuery<mixed> $query The query to be transformed
+     * @return \Cake\Database\Query\SelectQuery<mixed>
      */
     protected function _transformDistinct(SelectQuery $query): SelectQuery
     {
@@ -753,7 +753,7 @@ abstract class Driver
      */
     public function lastInsertId(?string $table = null): string
     {
-        return $this->getPdo()->lastInsertId($table);
+        return (string)$this->getPdo()->lastInsertId($table);
     }
 
     /**
@@ -763,7 +763,7 @@ abstract class Driver
      */
     public function isConnected(): bool
     {
-        if (isset($this->pdo)) {
+        if ($this->pdo !== null) {
             try {
                 $connected = (bool)$this->pdo->query('SELECT 1');
             } catch (PDOException $e) {
@@ -840,7 +840,7 @@ abstract class Driver
     }
 
     /**
-     * @inheritDoc
+     * @return \Cake\Database\QueryCompiler
      */
     public function newCompiler(): QueryCompiler
     {
@@ -851,7 +851,7 @@ abstract class Driver
      * Constructs new TableSchema.
      *
      * @param string $table The table name.
-     * @param array $columns The list of columns for the schema.
+     * @param array<string, mixed> $columns The list of columns for the schema.
      * @return \Cake\Database\Schema\TableSchemaInterface
      */
     public function newTableSchema(string $table, array $columns = []): TableSchemaInterface
@@ -892,9 +892,7 @@ abstract class Driver
      */
     protected function createLogger(?string $className): LoggerInterface
     {
-        if ($className === null) {
-            $className = QueryLogger::class;
-        }
+        $className ??= QueryLogger::class;
 
         /** @var class-string<\Psr\Log\LoggerInterface>|null $className */
         $className = App::className($className, 'Cake/Log', 'Log');

@@ -29,7 +29,7 @@ use Cake\Utility\Hash;
  * as methods for loading additional configuration files or storing runtime configuration
  * for future use.
  *
- * @link https://book.cakephp.org/4/en/development/configuration.html
+ * @link https://book.cakephp.org/5/en/development/configuration.html
  */
 class Configure
 {
@@ -77,9 +77,9 @@ class Configure
      *
      * @param array<string, mixed>|string $config The key to write, can be a dot notation value.
      * Alternatively can be an array containing key(s) and value(s).
-     * @param mixed $value Value to set for var
+     * @param mixed $value Value to set for the given key.
      * @return void
-     * @link https://book.cakephp.org/4/en/development/configuration.html#writing-configuration-data
+     * @link https://book.cakephp.org/5/en/development/configuration.html#writing-configuration-data
      */
     public static function write(array|string $config, mixed $value = null): void
     {
@@ -87,8 +87,8 @@ class Configure
             $config = [$config => $value];
         }
 
-        foreach ($config as $name => $value) {
-            static::$_values = Hash::insert(static::$_values, $name, $value);
+        foreach ($config as $name => $valueToInsert) {
+            static::$_values = Hash::insert(static::$_values, $name, $valueToInsert);
         }
 
         if (isset($config['debug'])) {
@@ -120,7 +120,7 @@ class Configure
      * @param string|null $var Variable to obtain. Use '.' to access array elements.
      * @param mixed $default The return value when the configure does not exist
      * @return mixed Value stored in configure, or null.
-     * @link https://book.cakephp.org/4/en/development/configuration.html#reading-configuration-data
+     * @link https://book.cakephp.org/5/en/development/configuration.html#reading-configuration-data
      */
     public static function read(?string $var = null, mixed $default = null): mixed
     {
@@ -139,7 +139,7 @@ class Configure
      */
     public static function check(string $var): bool
     {
-        if (empty($var)) {
+        if (!$var) {
             return false;
         }
 
@@ -163,7 +163,7 @@ class Configure
      * @param string $var Variable to obtain. Use '.' to access array elements.
      * @return mixed Value stored in configure.
      * @throws \Cake\Core\Exception\CakeException if the requested configuration is not set.
-     * @link https://book.cakephp.org/4/en/development/configuration.html#reading-configuration-data
+     * @link https://book.cakephp.org/5/en/development/configuration.html#reading-configuration-data
      */
     public static function readOrFail(string $var): mixed
     {
@@ -185,7 +185,7 @@ class Configure
      *
      * @param string $var the var to be deleted
      * @return void
-     * @link https://book.cakephp.org/4/en/development/configuration.html#deleting-configuration-data
+     * @link https://book.cakephp.org/5/en/development/configuration.html#deleting-configuration-data
      */
     public static function delete(string $var): void
     {
@@ -328,7 +328,7 @@ class Configure
      * @param bool $merge if config files should be merged instead of simply overridden
      * @return bool True if load successful.
      * @throws \Cake\Core\Exception\CakeException if the $config engine is not found
-     * @link https://book.cakephp.org/4/en/development/configuration.html#reading-and-writing-configuration-files
+     * @link https://book.cakephp.org/5/en/development/configuration.html#reading-and-writing-configuration-files
      */
     public static function load(string $key, string $config = 'default', bool $merge = true): bool
     {
@@ -378,7 +378,7 @@ class Configure
      * @param string $key The identifier to create in the config adapter.
      *   This could be a filename or a cache key depending on the adapter being used.
      * @param string $config The name of the configured adapter to dump data with.
-     * @param array<string> $keys The name of the top-level keys you want to dump.
+     * @param list<string> $keys The name of the top-level keys you want to dump.
      *   This allows you save only some data stored in Configure.
      * @return bool Success
      * @throws \Cake\Core\Exception\CakeException if the adapter does not implement a `dump` method.
@@ -390,7 +390,7 @@ class Configure
             throw new CakeException(sprintf('There is no `%s` config engine.', $config));
         }
         $values = static::$_values;
-        if (!empty($keys)) {
+        if ($keys) {
             $values = array_intersect_key($values, array_flip($keys));
         }
 
@@ -433,7 +433,7 @@ class Configure
             return $version;
         }
 
-        $path = dirname(dirname(__DIR__)) . DIRECTORY_SEPARATOR . 'config/config.php';
+        $path = dirname(__DIR__, 2) . DIRECTORY_SEPARATOR . 'config/config.php';
         if (is_file($path)) {
             $config = require $path;
             static::write($config);

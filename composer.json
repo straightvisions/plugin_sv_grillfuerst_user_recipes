@@ -1,17 +1,17 @@
 {
     "require": {
         "php-di/php-di": "^6.4",
-        "psr/http-message": "^1.0",
+        "psr/http-message": "^1.1",
         "doctrine/annotations": "^1.13",
-        "cakephp/database": "^5 || 5.0.0.beta1",
-        "monolog/monolog": "^2.5",
-        "symfony/uid": "^6.1",
-        "symfony/validator": "^6.1",
+        "cakephp/database": "^5.0.5",
+        "monolog/monolog": "^2.9.2",
+        "symfony/uid": "^6.4.3",
+        "symfony/validator": "^6.4.3",
         "psr/log": "^3.0",
-        "firebase/php-jwt": "^6.4",
-        "guzzlehttp/guzzle": "^7.5",
-        "symfony/mailer": "^6.2",
-        "twig/twig": "^3.5"
+        "firebase/php-jwt": "^6.10.0",
+        "guzzlehttp/guzzle": "^7.8.1",
+        "symfony/mailer": "^6.4.3",
+        "twig/twig": "^3.8.0"
     },
     "minimum-stability": "beta"
 }

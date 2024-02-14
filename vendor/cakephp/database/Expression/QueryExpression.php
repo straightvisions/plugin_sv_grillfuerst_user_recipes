@@ -72,7 +72,7 @@ class QueryExpression implements ExpressionInterface, Countable
     ) {
         $this->setTypeMap($types);
         $this->setConjunction(strtoupper($conjunction));
-        if (!empty($conditions)) {
+        if ($conditions) {
             $this->add($conditions, $this->getTypeMap()->getTypes());
         }
     }
@@ -122,13 +122,7 @@ class QueryExpression implements ExpressionInterface, Countable
      */
     public function add(ExpressionInterface|array|string $conditions, array $types = [])
     {
-        if (is_string($conditions)) {
-            $this->_conditions[] = $conditions;
-
-            return $this;
-        }
-
-        if ($conditions instanceof ExpressionInterface) {
+        if (is_string($conditions) || $conditions instanceof ExpressionInterface) {
             $this->_conditions[] = $conditions;
 
             return $this;
@@ -680,7 +674,7 @@ class QueryExpression implements ExpressionInterface, Countable
      * @param string $condition The value from which the actual field and operator will
      * be extracted.
      * @param mixed $value The value to be bound to a placeholder for the field
-     * @return \Cake\Database\ExpressionInterface
+     * @return \Cake\Database\ExpressionInterface|string
      * @throws \InvalidArgumentException If operator is invalid or missing on NULL usage.
      */
     protected function _parseCondition(string $condition, mixed $value): ExpressionInterface|string

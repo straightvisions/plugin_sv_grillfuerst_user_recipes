@@ -23,7 +23,7 @@ use InvalidArgumentException;
  *
  * Provides the encrypt/decrypt logic for the CookieComponent.
  *
- * @link https://book.cakephp.org/4/en/controllers/components/cookie.html
+ * @link https://book.cakephp.org/5/en/controllers/components/cookie.html
  */
 trait CookieCryptTrait
 {
@@ -170,9 +170,7 @@ trait CookieCryptTrait
     {
         $first = substr($string, 0, 1);
         if ($first === '{' || $first === '[') {
-            $ret = json_decode($string, true);
-
-            return $ret ?? $string;
+            return json_decode($string, true) ?? $string;
         }
         $array = [];
         foreach (explode(',', $string) as $pair) {

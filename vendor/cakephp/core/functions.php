@@ -14,8 +14,9 @@ declare(strict_types=1);
  * @since         3.0.0
  * @license       https://opensource.org/licenses/mit-license.php MIT License
  */
+namespace Cake\Core;
 
-use Cake\Core\Configure;
+use Stringable;
 
 if (!defined('DS')) {
     /**
@@ -24,7 +25,7 @@ if (!defined('DS')) {
     define('DS', DIRECTORY_SEPARATOR);
 }
 
-if (!function_exists('h')) {
+if (!function_exists('Cake\Core\h')) {
     /**
      * Convenience method for htmlspecialchars.
      *
@@ -36,7 +37,7 @@ if (!function_exists('h')) {
      * @param string|null $charset Character set to use when escaping.
      *   Defaults to config value in `mb_internal_encoding()` or 'UTF-8'.
      * @return mixed Wrapped text.
-     * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#h
+     * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#h
      */
     function h(mixed $text, bool $double = true, ?string $charset = null): mixed
     {
@@ -66,10 +67,9 @@ if (!function_exists('h')) {
 
         return htmlspecialchars($text, ENT_QUOTES | ENT_SUBSTITUTE, $charset ?: $defaultCharset, $double);
     }
-
 }
 
-if (!function_exists('pluginSplit')) {
+if (!function_exists('Cake\Core\pluginSplit')) {
     /**
      * Splits a dot syntax plugin name into its plugin and class name.
      * If $name does not have a dot, then index 0 will be null.
@@ -83,7 +83,7 @@ if (!function_exists('pluginSplit')) {
      * @param bool $dotAppend Set to true if you want the plugin to have a '.' appended to it.
      * @param string|null $plugin Optional default plugin to use if no plugin is found. Defaults to null.
      * @return array Array with 2 indexes. 0 => plugin name, 1 => class name.
-     * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#pluginSplit
+     * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#pluginSplit
      * @psalm-return array{string|null, string}
      */
     function pluginSplit(string $name, bool $dotAppend = false, ?string $plugin = null): array
@@ -94,16 +94,15 @@ if (!function_exists('pluginSplit')) {
                 $parts[0] .= '.';
             }
 
-            /** @psalm-var array{string, string}*/
+            /** @psalm-var array{string, string} */
             return $parts;
         }
 
         return [$plugin, $name];
     }
-
 }
 
-if (!function_exists('namespaceSplit')) {
+if (!function_exists('Cake\Core\namespaceSplit')) {
     /**
      * Split the namespace from the classname.
      *
@@ -121,10 +120,9 @@ if (!function_exists('namespaceSplit')) {
 
         return [substr($class, 0, $pos), substr($class, $pos + 1)];
     }
-
 }
 
-if (!function_exists('pr')) {
+if (!function_exists('Cake\Core\pr')) {
     /**
      * print_r() convenience function.
      *
@@ -135,7 +133,7 @@ if (!function_exists('pr')) {
      *
      * @param mixed $var Variable to print out.
      * @return mixed the same $var that was passed to this function
-     * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#pr
+     * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#pr
      * @see debug()
      */
     function pr(mixed $var): mixed
@@ -149,10 +147,9 @@ if (!function_exists('pr')) {
 
         return $var;
     }
-
 }
 
-if (!function_exists('pj')) {
+if (!function_exists('Cake\Core\pj')) {
     /**
      * JSON pretty print convenience function.
      *
@@ -164,7 +161,7 @@ if (!function_exists('pj')) {
      * @param mixed $var Variable to print out.
      * @return mixed the same $var that was passed to this function
      * @see pr()
-     * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#pj
+     * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#pj
      */
     function pj(mixed $var): mixed
     {
@@ -173,14 +170,14 @@ if (!function_exists('pj')) {
         }
 
         $template = PHP_SAPI !== 'cli' && PHP_SAPI !== 'phpdbg' ? '<pre class="pj">%s</pre>' : "\n%s\n\n";
-        printf($template, trim(json_encode($var, JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES)));
+        $flags = JSON_PRETTY_PRINT | JSON_UNESCAPED_UNICODE | JSON_UNESCAPED_SLASHES;
+        printf($template, trim((string)json_encode($var, $flags)));
 
         return $var;
     }
-
 }
 
-if (!function_exists('env')) {
+if (!function_exists('Cake\Core\env')) {
     /**
      * Gets an environment variable from available sources, and provides emulation
      * for unsupported or inconsistent environment variables (i.e. DOCUMENT_ROOT on
@@ -190,7 +187,7 @@ if (!function_exists('env')) {
      * @param string $key Environment variable name.
      * @param string|bool|null $default Specify a default value in case the environment variable is not defined.
      * @return string|float|int|bool|null Environment variable setting.
-     * @link https://book.cakephp.org/4/en/core-libraries/global-constants-and-functions.html#env
+     * @link https://book.cakephp.org/5/en/core-libraries/global-constants-and-functions.html#env
      */
     function env(string $key, string|float|int|bool|null $default = null): string|float|int|bool|null
     {
@@ -241,10 +238,9 @@ if (!function_exists('env')) {
 
         return $default;
     }
-
 }
 
-if (!function_exists('triggerWarning')) {
+if (!function_exists('Cake\Core\triggerWarning')) {
     /**
      * Triggers an E_USER_WARNING.
      *
@@ -268,7 +264,7 @@ if (!function_exists('triggerWarning')) {
     }
 }
 
-if (!function_exists('deprecationWarning')) {
+if (!function_exists('Cake\Core\deprecationWarning')) {
     /**
      * Helper method for outputting deprecation warnings
      *
@@ -289,7 +285,12 @@ if (!function_exists('deprecationWarning')) {
             $frame = $trace[$stackFrame];
             $frame += ['file' => '[internal]', 'line' => '??'];
 
-            $relative = str_replace(DIRECTORY_SEPARATOR, '/', substr($frame['file'], strlen(ROOT) + 1));
+            // Assuming we're installed in vendor/cakephp/cakephp/src/Core/functions.php
+            $root = dirname(__DIR__, 5);
+            if (defined('ROOT')) {
+                $root = ROOT;
+            }
+            $relative = str_replace(DIRECTORY_SEPARATOR, '/', substr($frame['file'], strlen($root) + 1));
             $patterns = (array)Configure::read('Error.ignoredDeprecationPaths');
             foreach ($patterns as $pattern) {
                 $pattern = str_replace(DIRECTORY_SEPARATOR, '/', $pattern);

@@ -45,10 +45,17 @@ trait EntityTrait
     protected array $_original = [];
 
     /**
+     * Holds all fields that have been initially set on instantiation, or after marking as clean
+     *
+     * @var list<string>
+     */
+    protected array $_originalFields = [];
+
+    /**
      * List of field names that should **not** be included in JSON or Array
      * representations of this Entity.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_hidden = [];
 
@@ -57,7 +64,7 @@ trait EntityTrait
      * representations of this Entity. If a field is present in both _hidden and _virtual
      * the field will **not** be in the array/JSON versions of the entity.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_virtual = [];
 
@@ -65,7 +72,7 @@ trait EntityTrait
      * Holds a list of the fields that were modified or added after this object
      * was originally created.
      *
-     * @var array<bool>
+     * @var array<string, bool>
      */
     protected array $_dirty = [];
 
@@ -100,13 +107,14 @@ trait EntityTrait
     protected array $_invalid = [];
 
     /**
-     * Map of fields in this entity that can be safely assigned, each
+     * Map of fields in this entity that can be safely mass assigned, each
      * field name points to a boolean indicating its status. An empty array
-     * means no fields are accessible
+     * means no fields are accessible for mass assigment.
      *
      * The special field '\*' can also be mapped, meaning that any other field
      * not defined in the map will take its value. For example, `'*' => true`
-     * means that any field not defined in the map will be accessible by default
+     * means that any field not defined in the map will be accessible for mass
+     * assignment by default.
      *
      * @var array<string, bool>
      */
@@ -118,6 +126,13 @@ trait EntityTrait
      * @var string
      */
     protected string $_registryAlias = '';
+
+    /**
+     * Storing the current visitation status while recursing through entities getting errors.
+     *
+     * @var bool
+     */
+    protected bool $_hasBeenVisited = false;
 
     /**
      * Whether the presence of a field is checked when accessing a property.
@@ -219,12 +234,25 @@ trait EntityTrait
      * $entity->set('name', 'Andrew');
      * ```
      *
+     * You can use the `asOriginal` option to set the given field as original, if it wasn't
+     * present when the entity was instantiated.
+     *
+     * ```
+     * $entity = new Entity(['name' => 'andrew', 'id' => 1]);
+     *
+     * $entity->set('phone_number', '555-0134');
+     * print_r($entity->getOriginalFields()) // prints ['name', 'id']
+     *
+     * $entity->set('phone_number', '555-0134', ['asOriginal' => true]);
+     * print_r($entity->getOriginalFields()) // prints ['name', 'id', 'phone_number']
+     * ```
+     *
      * @param array<string, mixed>|string $field the name of field to set or a list of
      * fields with their respective values
      * @param mixed $value The value to set to the field or an array if the
      * first argument is also an array, in which case will be treated as $options
      * @param array<string, mixed> $options Options to be used for setting the field. Allowed option
-     * keys are `setter` and `guard`
+     * keys are `setter`, `guard` and `asOriginal`
      * @return $this
      * @throws \InvalidArgumentException
      */
@@ -241,7 +269,11 @@ trait EntityTrait
         if (!is_array($field)) {
             throw new InvalidArgumentException('Cannot set an empty field');
         }
-        $options += ['setter' => true, 'guard' => $guard];
+        $options += ['setter' => true, 'guard' => $guard, 'asOriginal' => false];
+
+        if ($options['asOriginal'] === true) {
+            $this->setOriginalField(array_keys($field));
+        }
 
         foreach ($field as $name => $value) {
             /** @psalm-suppress RedundantCastGivenDocblockType */
@@ -252,23 +284,22 @@ trait EntityTrait
 
             $this->setDirty($name, true);
 
+            if ($options['setter']) {
+                $setter = static::_accessor($name, 'set');
+                if ($setter) {
+                    $value = $this->{$setter}($value);
+                }
+            }
+
             if (
+                $this->isOriginalField($name) &&
                 !array_key_exists($name, $this->_original) &&
                 array_key_exists($name, $this->_fields) &&
-                $this->_fields[$name] !== $value
+                $value !== $this->_fields[$name]
             ) {
                 $this->_original[$name] = $this->_fields[$name];
             }
 
-            if (!$options['setter']) {
-                $this->_fields[$name] = $value;
-                continue;
-            }
-
-            $setter = static::_accessor($name, 'set');
-            if ($setter) {
-                $value = $this->{$setter}($value);
-            }
             $this->_fields[$name] = $value;
         }
 
@@ -325,19 +356,35 @@ trait EntityTrait
     }
 
     /**
+     * Returns whether a field has an original value
+     *
+     * @param string $field
+     * @return bool
+     */
+    public function hasOriginal(string $field): bool
+    {
+        return array_key_exists($field, $this->_original);
+    }
+
+    /**
      * Returns the value of an original field by name
      *
      * @param string $field the name of the field for which original value is retrieved.
+     * @param bool $allowFallback whether to allow falling back to the current field value if no original exists
      * @return mixed
      * @throws \InvalidArgumentException if an empty field name is passed.
      */
-    public function getOriginal(string $field): mixed
+    public function getOriginal(string $field, bool $allowFallback = true): mixed
     {
         if ($field === '') {
             throw new InvalidArgumentException('Cannot get an empty field');
         }
         if (array_key_exists($field, $this->_original)) {
             return $this->_original[$field];
+        }
+
+        if (!$allowFallback) {
+            throw new InvalidArgumentException(sprintf('Cannot retrieve original value for field `%s`', $field));
         }
 
         return $this->get($field);
@@ -353,7 +400,10 @@ trait EntityTrait
         $originals = $this->_original;
         $originalKeys = array_keys($originals);
         foreach ($this->_fields as $key => $value) {
-            if (!in_array($key, $originalKeys, true)) {
+            if (
+                !in_array($key, $originalKeys, true) &&
+                $this->isOriginalField($key)
+            ) {
                 $originals[$key] = $value;
             }
         }
@@ -421,10 +471,7 @@ trait EntityTrait
             (
                 is_array($value) &&
                 empty($value) ||
-                (
-                    is_string($value) &&
-                    $value === ''
-                )
+                $value === ''
             )
         ) {
             return true;
@@ -471,7 +518,7 @@ trait EntityTrait
     {
         $field = (array)$field;
         foreach ($field as $p) {
-            unset($this->_fields[$p], $this->_original[$p], $this->_dirty[$p]);
+            unset($this->_fields[$p], $this->_dirty[$p]);
         }
 
         return $this;
@@ -480,7 +527,7 @@ trait EntityTrait
     /**
      * Sets hidden fields.
      *
-     * @param array<string> $fields An array of fields to hide from array exports.
+     * @param list<string> $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -511,7 +558,7 @@ trait EntityTrait
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param array<string> $fields An array of fields to treat as virtual.
+     * @param list<string> $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -692,9 +739,9 @@ trait EntityTrait
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param array<string> $fields list of fields to be returned
+     * @param list<string> $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
-     * @return array
+     * @return array<string, mixed>
      */
     public function extract(array $fields, bool $onlyDirty = false): array
     {
@@ -710,19 +757,23 @@ trait EntityTrait
 
     /**
      * Returns an array with the requested original fields
-     * stored in this entity, indexed by field name.
+     * stored in this entity, indexed by field name, if they exist.
      *
      * Fields that are unchanged from their original value will be included in the
      * return of this method.
      *
-     * @param array<string> $fields List of fields to be returned
-     * @return array
+     * @param list<string> $fields List of fields to be returned
+     * @return array<string, mixed>
      */
     public function extractOriginal(array $fields): array
     {
         $result = [];
         foreach ($fields as $field) {
-            $result[$field] = $this->getOriginal($field);
+            if ($this->hasOriginal($field)) {
+                $result[$field] = $this->getOriginal($field);
+            } elseif ($this->isOriginalField($field)) {
+                $result[$field] = $this->get($field);
+            }
         }
 
         return $result;
@@ -730,18 +781,22 @@ trait EntityTrait
 
     /**
      * Returns an array with only the original fields
-     * stored in this entity, indexed by field name.
+     * stored in this entity, indexed by field name, if they exist.
      *
      * This method will only return fields that have been modified since
      * the entity was built. Unchanged fields will be omitted.
      *
-     * @param array<string> $fields List of fields to be returned
-     * @return array
+     * @param list<string> $fields List of fields to be returned
+     * @return array<string, mixed>
      */
     public function extractOriginalChanged(array $fields): array
     {
         $result = [];
         foreach ($fields as $field) {
+            if (!$this->hasOriginal($field)) {
+                continue;
+            }
+
             $original = $this->getOriginal($field);
             if ($original !== $this->get($field)) {
                 $result[$field] = $original;
@@ -749,6 +804,54 @@ trait EntityTrait
         }
 
         return $result;
+    }
+
+    /**
+     * Returns whether a field is an original one
+     *
+     * @return bool
+     */
+    public function isOriginalField(string $name): bool
+    {
+        return in_array($name, $this->_originalFields);
+    }
+
+    /**
+     * Returns an array of original fields.
+     * Original fields are those that the entity was initialized with.
+     *
+     * @return array<string>
+     */
+    public function getOriginalFields(): array
+    {
+        return $this->_originalFields;
+    }
+
+    /**
+     * Sets the given field or a list of fields to as original.
+     * Normally there is no need to call this method manually.
+     *
+     * @param array<string>|string $field the name of a field or a list of fields to set as original
+     * @param bool $merge
+     * @return $this
+     */
+    protected function setOriginalField(string|array $field, bool $merge = true)
+    {
+        if (!$merge) {
+            $this->_originalFields = (array)$field;
+
+            return $this;
+        }
+
+        $fields = (array)$field;
+        foreach ($fields as $field) {
+            $field = (string)$field;
+            if (!$this->isOriginalField($field)) {
+                $this->_originalFields[] = $field;
+            }
+        }
+
+        return $this;
     }
 
     /**
@@ -762,7 +865,9 @@ trait EntityTrait
     public function setDirty(string $field, bool $isDirty = true)
     {
         if ($isDirty === false) {
-            unset($this->_dirty[$field]);
+            $this->setOriginalField($field);
+
+            unset($this->_dirty[$field], $this->_original[$field]);
 
             return $this;
         }
@@ -811,6 +916,7 @@ trait EntityTrait
         $this->_errors = [];
         $this->_invalid = [];
         $this->_original = [];
+        $this->setOriginalField(array_keys($this->_fields), false);
     }
 
     /**
@@ -853,6 +959,11 @@ trait EntityTrait
      */
     public function hasErrors(bool $includeNested = true): bool
     {
+        if ($this->_hasBeenVisited) {
+            // While recursing through entities, each entity should only be visited once. See https://github.com/cakephp/cakephp/issues/17318
+            return false;
+        }
+
         if (Hash::filter($this->_errors)) {
             return true;
         }
@@ -861,10 +972,15 @@ trait EntityTrait
             return false;
         }
 
-        foreach ($this->_fields as $field) {
-            if ($this->_readHasErrors($field)) {
-                return true;
+        $this->_hasBeenVisited = true;
+        try {
+            foreach ($this->_fields as $field) {
+                if ($this->_readHasErrors($field)) {
+                    return true;
+                }
             }
+        } finally {
+            $this->_hasBeenVisited = false;
         }
 
         return false;
@@ -877,17 +993,29 @@ trait EntityTrait
      */
     public function getErrors(): array
     {
+        if ($this->_hasBeenVisited) {
+            // While recursing through entities, each entity should only be visited once. See https://github.com/cakephp/cakephp/issues/17318
+            return [];
+        }
+
         $diff = array_diff_key($this->_fields, $this->_errors);
 
-        return $this->_errors + (new Collection($diff))
-            ->filter(function ($value) {
-                return is_array($value) || $value instanceof EntityInterface;
-            })
-            ->map(function ($value) {
-                return $this->_readError($value);
-            })
-            ->filter()
-            ->toArray();
+        $this->_hasBeenVisited = true;
+        try {
+            $errors = $this->_errors + (new Collection($diff))
+                ->filter(function ($value) {
+                    return is_array($value) || $value instanceof EntityInterface;
+                })
+                ->map(function ($value) {
+                    return $this->_readError($value);
+                })
+                ->filter()
+                ->toArray();
+        } finally {
+            $this->_hasBeenVisited = false;
+        }
+
+        return $errors;
     }
 
     /**
@@ -898,12 +1026,7 @@ trait EntityTrait
      */
     public function getError(string $field): array
     {
-        $errors = $this->_errors[$field] ?? [];
-        if ($errors) {
-            return $errors;
-        }
-
-        return $this->_nestedErrors($field);
+        return $this->_errors[$field] ?? $this->_nestedErrors($field);
     }
 
     /**
@@ -1001,6 +1124,7 @@ trait EntityTrait
         $entity = $this;
         $len = count($path);
         while ($len) {
+            /** @var string $part */
             $part = array_shift($path);
             $len = count($path);
             $val = null;
@@ -1256,6 +1380,7 @@ trait EntityTrait
             '[accessible]' => $this->_accessible,
             '[dirty]' => $this->_dirty,
             '[original]' => $this->_original,
+            '[originalFields]' => $this->_originalFields,
             '[virtual]' => $this->_virtual,
             '[hasErrors]' => $this->hasErrors(),
             '[errors]' => $this->_errors,
