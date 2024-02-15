@@ -158,7 +158,7 @@ final class Request implements Request_Interface {
     }
 
     public function getParams(): array{
-        return $this->request->get_params();
+        return $params = $this->parseParams($this->request->get_params());
     }
 
     public function withParsedBody($data) {
@@ -184,5 +184,17 @@ final class Request implements Request_Interface {
         // not implemented
         return null;
     }
+
+	private function parseParams(array|null $params = []){
+		foreach ($params as $key => $value) {
+			$decodedValue = json_decode($value, true);
+			// Check if json_decode() was successful and the value is not null
+			if ($decodedValue !== null && json_last_error() === JSON_ERROR_NONE) {
+				$params[$key] = $decodedValue; // Replace the string with its decoded array
+			}
+		}
+
+		return $params;
+	}
 
 }

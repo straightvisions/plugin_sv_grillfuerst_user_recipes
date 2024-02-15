@@ -9,6 +9,7 @@ final class Recipe_Finder_Repository {
     private $totalRows = 0;
     private $totalPages = 1;
     private $currentPage = 1;
+	private $table_name = 'svgfur_recipes';
 
     /**
      * @param Query_Factory     $Query_Factory
@@ -17,58 +18,27 @@ final class Recipe_Finder_Repository {
         $this->Query_Factory = $Query_Factory;
     }
 
-    private function parseFilter($filter){
-        $filter = is_string($filter) ? json_decode($filter) : $filter;
+    private function parse_filter($filter){
         $parsed = [];
 
         foreach($filter as $key => $pair){
+			if(is_null($pair[0])) continue;
             $parsed[$pair[0]] = $pair[1];
         }
 
         return $parsed;
     }
 
-    public function get($id = null, array $params = []): array {
+    public function get(array|null $params = []): array {
+		// limitations
         $limit = $params['limit'] ? (int)$params['limit'] : false;
         $page = $params['page'] ? (int)$params['page'] : false;
         $order = $params['order'] ? explode(' ',$params['order']) : false;
+        $where = $this->build_where($params);
 
-        $filter = isset($params['filter']) ? $this->parseFilter($params['filter']) : [];
-        $query = isset($filter['query']) ? $filter['query'] : false;
-        $where = [];
-
-        // strip not allowed fields for where
-        $blacklist = ['page','order','uuid','id','user_id','query'];
-        foreach($blacklist as $key => $field){
-            if(isset($filter[$field])) unset($filter[$field]);
-        }
-
-        $query = $this->Query_Factory->newSelect('svgfur_recipes');
-
-        $query->select(
-            [
-                '*',
-            ]
-        );
-
-        // filter by recipe id
-        if($id){
-            $where[] = ['uuid' => (int)$id];
-        }
-
-        if(isset($filter['state']) && strtolower($filter['state']) === 'all'){
-            unset($filter['state']);
-        }
-
-        if($query && 1===2){
-            $where[] = ['OR' => [
-                'title'=>$query,
-                'uuid'=>$query,
-            ]];
-        }
-
-        $where = array_merge($filter, $where);
-        // ------------------------------------------
+		// create query
+        $query = $this->Query_Factory->newSelect($this->table_name);
+        $query->select(['*']);
         $query->where($where);
 
         if($order){
@@ -84,12 +54,65 @@ final class Recipe_Finder_Repository {
         if($limit) $query->limit($limit);
         if($page) $query->page($page);
 
-
         return $query->execute()->fetchAll('assoc') ?: [];
     }
 
+	private function build_where(array|null $params): array {
+		$where = [];
+
+		$filter = isset($params['filter']) ? $this->parse_filter($params['filter']) : [];
+
+		// decode filter to where array
+		if(empty($filter) === false){
+
+			// filter by uuid
+			if(isset($filter['uuid'])  && empty((int)$filter['uuid']) === false){
+				$where['uuid'] = (int)$filter['uuid'];
+				unset($filter['uuid']);
+			}
+
+			if(isset($filter['user_id']) && empty($filter['user_id']) === false){
+				$where['user_id'] = (int)$filter['user_id'];
+				unset($filter['user_id']);
+			}
+
+			if(isset($filter['state'])  && empty($filter['state']) === false){
+				$state = strtolower($filter['state']);
+				if($state !== 'all'){
+					$where['state'] = $state;
+				}
+
+				unset($filter['state']);
+			}
+
+			// check if more filter fields are present
+			// this will result in user_id AND uuid AND ( filter1 OR filter2)
+			if(empty($filter) === false){
+				$where['OR'] = [];
+			}
+
+			// replace this later
+			// text search field
+			if(isset($filter['query'])){
+				$query = explode(',', $filter['query']);
+
+				if(is_array($query)){
+					foreach($query as $key => $val){
+						if(empty($val)) continue;
+						$query[$key] = trim($val);
+						$where['OR'][] = ['title LIKE' => '%'.$query[$key].'%'];
+						$where['OR'][] = ['uuid' => (int) $query[$key]];
+					}
+
+				}
+			}
+		}
+
+		return $where;
+	}
+
     public function getRaw($id){
-        $query = $this->Query_Factory->newSelect('svgfur_recipes');
+        $query = $this->Query_Factory->newSelect($this->table_name);
 
         $query->select(
             [
@@ -103,44 +126,17 @@ final class Recipe_Finder_Repository {
         return $query->execute()->fetch('assoc') ?: [];
     }
 
+	// legacy function, keep for compatibility
     public function get_by_user_id($id, array $params = []): array {
-        $query = $this->Query_Factory->newSelect('svgfur_recipes');
-
-        $query->select(
-            [
-                '*',
-            ]
-        );
-
-        // filter by user id
-        $query->where(['user_id' => (int)$id]);
-
-        // counting before limit
-        $this->apply_counting($query, $params);
-
-        // pagination
-        if($params['limit']) $query->limit((int)$params['limit']);
-        if($params['page']) $query->page((int)$params['page']);
-
-        return $query->execute()->fetchAll('assoc') ?: [];
+		$params['filter']['user_id'] = $id;
+		return $this->get($params);
     }
 
+	// legacy function, keep for compatibility
     public function get_by_recipe_id_and_user_id($id1, $id2): array {
-        $query = $this->Query_Factory->newSelect('svgfur_recipes');
-
-        $query->select(
-            [
-                '*',
-            ]
-        );
-
-        // filter by recipe id + user id
-        $query->where(['uuid' => (int)$id1, 'user_id' => (int)$id2]);
-
-        // counting before limit
-        $this->apply_counting($query);
-
-        return $query->execute()->fetchAll('assoc') ?: [];
+	    $params['filter']['uuuid'] = $id1;
+	    $params['filter']['user_id'] = $id2;
+	    return $this->get($params);
     }
 
     private function apply_counting($query, array $params = []){

@@ -22,16 +22,13 @@ final class Recipe_Finder_Service {
         $this->Recipe_Exporter_Item = $Recipe_Exporter_Item;
     }
 
-    public function get_list(int $user_id = null, array $params = []): Recipe_Finder_Result {
-        $rows = $user_id ? $this->repository->get_by_user_id($user_id, $params) : $this->repository->get(null, $params);
+	public function get(array $params = []): Recipe_Finder_Result {
+		return $this->create_result($this->repository->get($params));
+	}
 
-        return $this->create_result($rows);
-    }
-
-    public function get(int $recipe_id, int $user_id = 0): Recipe_Finder_Result {
-        $rows = $user_id ? $this->repository->get_by_recipe_id_and_user_id($recipe_id, $user_id) : $this->repository->get($recipe_id);
-
-        return $this->create_result($rows);
+	// alias function
+    public function get_list(array $params = []): Recipe_Finder_Result {
+        return $this->get($params);
     }
 
     //@todo check if this function is needed + naming convention
@@ -47,7 +44,7 @@ final class Recipe_Finder_Service {
         foreach ($rows as $row) {
             $item = new Recipe_Finder_Item();
 
-            $result->items[] = $this->apply_data($item, $row);
+			$result->items[] = $this->apply_data($item, $row);
         }
 
         // apply totals for pagination
