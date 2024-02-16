@@ -374,7 +374,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     }
 
     public function rest_get_recipes_by_uuid($request) {
-        return $this->Api_Middleware->response_public($request, function ($Request) {
+        return $this->Api_Middleware->response($request, function ($Request) {
 	        $params = ['filter'=>[
 		        ['uuid', $Request->getAttribute('uuid')]
 	        ]];
@@ -428,7 +428,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     }
 
     public function rest_get_recipes($request) {
-        return $this->Api_Middleware->response_public($request, function ($Request) {
+        return $this->Api_Middleware->response($request, function ($Request) {
             $params = $Request->getParams();
 
             if ($this->Jwt_Middleware->isRole('admin')) {
@@ -445,7 +445,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     }
 
     public function rest_get_ingredients($request) {
-        return $this->Api_Middleware->response_public($request, function ($Request) {
+        return $this->Api_Middleware->response($request, function ($Request) {
             $results = $this->Recipe_Ingredients_Finder_Service->get_list();
 
             return [$results, 200];
