@@ -6,6 +6,7 @@ const wpDomainUrl = process.env.HOST_WP_DOMAIN_URL ? process.env.HOST_WP_DOMAIN_
 const appURL = process.env.APP_ROOT_URL ? process.env.APP_ROOT_URL : domainURL + '/community-rezepte/admin';
 const appPath = process.env.APP_ROOT_PATH ? process.env.APP_ROOT_PATH : subFolder + '/community-rezepte/admin';
 const apiURL = process.env.API_ROOT_V1_URL ? process.env.API_ROOT_V1_URL : domainURL + '/wp-json/sv-grillfuerst-user-recipes/v1';
+const publicURL = process.env.HOST_WP_DOMAIN_URL ? process.env.HOST_WP_DOMAIN_URL + process.env.HOST_PUBLIC_URL : domain + '/wp-content/plugins/sv-grillfuerst-user-recipes/public';
 
 export default {
 	config:{
@@ -14,6 +15,7 @@ export default {
 		appURL,
 		appPath,
 		apiURL,
+		publicURL
 	},
 	"root": appURL,
 	"login": domainURL + '/wp-admin',
