@@ -33,7 +33,7 @@ final class Recipe_Finder_Repository {
 		// limitations
         $limit = $params['limit'] ? (int)$params['limit'] : false;
         $page = $params['page'] ? (int)$params['page'] : false;
-        $order = $params['order'] ? explode(' ',$params['order']) : false;
+        $order = $params['order'] ? explode(' ',$params['order']) : ['created', 'DESC'];
         $where = $this->build_where($params);
 
 		// create query
