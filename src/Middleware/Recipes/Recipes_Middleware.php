@@ -189,7 +189,10 @@ final class Recipes_Middleware implements Middleware_Interface {
                 $data    = $Request->getJSONParams();
 
                 $recipe_uuid = $this->Recipe_Creator_Service->insert($data, $user_id);
-				$params = ['filter' => ['uuid' => $recipe_uuid], ['user_id' => $user_id]];
+
+				$params = ['filter' => [
+					['uuid' , $recipe_uuid], ['user_id' , $user_id]
+				]];
                 $results     = $this->Recipe_Finder_Service->get($params);
                 $results     = $results->items[0]; //hotfix // @todo replace the results with ReaderService
 
@@ -280,7 +283,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     public function rest_update_recipe_feedback($request) {
         $Request = $this->Adapter->Request()->set($request);
         $uuid    = $Request->getAttribute('uuid');
-       $params = ['filter'=>['uuid', $uuid]];
+       $params = ['filter'=>[['uuid', $uuid]]];
         $results = $this->Recipe_Finder_Service->get($params);
         $recipe  = $results->items[0]; // @todo error handling
         $user_id = $recipe->get('user_id');
@@ -315,7 +318,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $this->Api_Middleware->response($request, function ($Request) {
                 $uuid = $Request->getAttribute('uuid');
                 $results = ['success' => true, 'message' => 'Rezept wurde gelöscht.'];
-				$params = ['filter' => ['uuid' => $uuid]];
+				$params = ['filter' => [['uuid' , $uuid]]];
 				$list = $this->Recipe_Finder_Service->get($params);
                 $recipe = empty($list) ? [] : $list->items[0]; // @todo why are loading this?
 
@@ -472,7 +475,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     // @todo these should be services
     private function handle_after_recipe_published(int $uuid) {
         $errors  = [];
-		$params = ['filter'=>['uuid', $uuid]];
+		$params = ['filter'=>[['uuid', $uuid]]];
         $results = $this->Recipe_Finder_Service->get($params);
         $recipe  = $results->items[0];
         $user_id = $recipe->get('user_id');
@@ -542,7 +545,7 @@ final class Recipes_Middleware implements Middleware_Interface {
         return $this->Api_Middleware->response_public($request, function ($Request) {
             $urlParams  = $Request->getParams();
             $uuid = $urlParams['recipe'];
-            $params = ['filter'=>['uuid', $uuid]];
+            $params = ['filter'=>[['uuid', $uuid]]];
             $results = $this->Recipe_Finder_Service->get($params);
             $recipe  = $results->items[0];
             $user_id = $recipe->get('user_id');
