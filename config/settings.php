@@ -44,7 +44,7 @@ $settings['auth'] = [
 ];
 
 // URLS
-$settings['wordpress_domain'] = defined('GF_USER_RECIPES_APP_BASIC_AUTH') ? GF_USER_RECIPES_BASE_URL : '';
+$settings['wordpress_domain'] = defined('GF_USER_RECIPES_BASE_URL') ? GF_USER_RECIPES_BASE_URL : '';
 $settings['login_server_url'] = defined('GF_USER_RECIPES_LOGIN_SERVER_URL') ? GF_USER_RECIPES_LOGIN_SERVER_URL : '';
 $settings['loggedin_server_url'] = defined('GF_USER_RECIPES_LOGGEDIN_SERVER_URL') ? GF_USER_RECIPES_LOGGEDIN_SERVER_URL : '';
 $settings['reset_server_url'] = defined('GF_USER_RECIPES_RESET_SERVER_URL') ? GF_USER_RECIPES_RESET_SERVER_URL : '';
