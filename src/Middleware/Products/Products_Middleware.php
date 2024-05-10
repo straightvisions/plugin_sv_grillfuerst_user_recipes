@@ -32,6 +32,9 @@ final class Products_Middleware implements Middleware_Interface {
         $this->Product_Finder_Service = $Product_Finder_Service;
         $this->settings        = $container->get('settings');
 
+		// register cron job action
+	    $this->Adapter->Action()->add('sv_grillfuerst_user_recipes_product_sync', [$this, 'sync_products'], 10, 0);
+
         // get product by id
         $this->Api_Middleware->add([
             'route' => '/products/(?P<id>\d+)',
@@ -79,25 +82,27 @@ final class Products_Middleware implements Middleware_Interface {
     public function rest_sync_products($request){
         return $this->Api_Middleware->response_public($request, function ($Request) {
             $urlParams  = $Request->getParams(); // later to get a token
-            $pageNum = 1;
-            $lastPage = false;
-            $items = [];
-
-            if($this->settings['debug'] || $this->settings['env'] === 'development') {
-                while ($items !== false) { // blocking
-                    $items = $this->get_remote_products($pageNum);
-                    if ($items === false) {
-                        break;
-                    }
-
-                    $this->Product_Import_Service->import($items);
-                    $pageNum++;
-                }
-            }
-
-            return [['importedPages'=>$pageNum-1],200];
+            return $this->settings['debug'] || $this->settings['env'] === 'development' ? [$this->sync_products() ,200] : [0,200];
         });
     }
+
+	public function sync_products(){
+		$pageNum = 1;
+		$lastPage = false;
+		$items = [];
+
+		while ($items !== false) { // blocking
+			$items = $this->get_remote_products($pageNum);
+			if ($items === false) {
+				break;
+			}
+
+			$this->Product_Import_Service->import($items);
+			$pageNum++;
+		}
+
+		return ['importedPages'=>$pageNum-1];
+	}
 
     private function get_remote_products(int $page = 1, int $entriesPerPage = 1000): mixed{
         $client  = $this->Api_Middleware->http();
