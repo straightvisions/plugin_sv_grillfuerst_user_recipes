@@ -23,6 +23,7 @@ final class Recipe_Exporter_Service {
     private $Recipe_Finder_Service;
     private Api_Middleware $Api_Middleware;
     private Media_Export_Service $Media_Export_Service;
+	private User_Info_Service $User_Info_Service;
     private $settings;
     private $_errors = [];
 

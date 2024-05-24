@@ -32,6 +32,7 @@ final class Recipes_Middleware implements Middleware_Interface {
     private Recipe_Voucher_Service $Recipe_Voucher_Service;
     private Recipe_Kitchen_Styles_Finder_Service $Recipe_Kitchen_Styles_Finder_Service;
     private Recipe_Menu_Types_Finder_Service $Recipe_Menu_Types_Finder_Service;
+	private Recipe_Ingredients_Finder_Service $Recipe_Ingredients_Finder_Service;
     private Jwt_Middleware $Jwt_Middleware;
     private Email_Middleware $Email_Middleware;
     private User_Info_Service $User_Info_Service;

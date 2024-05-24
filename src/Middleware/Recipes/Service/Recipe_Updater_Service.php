@@ -14,6 +14,7 @@ final class Recipe_Updater_Service {
     private Recipe_Validator_Service $Recipe_Validator;
     private Recipe_Ingredients_Finder_Service $Recipe_Ingredients_Finder_Service;
     private LoggerInterface $logger;
+    private Media_Update_Service $Media_Update_Service;
 
     public function __construct(
         Recipe_Repository $repository,

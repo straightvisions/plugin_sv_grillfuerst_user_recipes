@@ -2,13 +2,16 @@
 
 namespace SV_Grillfuerst_User_Recipes\Middleware\Products\Service;
 
+use Psr\Log\LoggerInterface;
 use SV_Grillfuerst_User_Recipes\Middleware\Products\Data\Product_Finder_Item;
 use SV_Grillfuerst_User_Recipes\Middleware\Products\Data\Product_Finder_Result;
 use SV_Grillfuerst_User_Recipes\Middleware\Products\Repository\Product_Repository;
 use SV_Grillfuerst_User_Recipes\Factory\Logger_Factory;
 
+
 final class Product_Finder_Service {
     private Product_Repository $repository;
+	private LoggerInterface $logger;
 
     public function __construct(
         Product_Repository $repository,

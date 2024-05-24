@@ -13,7 +13,7 @@ use SV_Grillfuerst_User_Recipes\Adapters\Adapter;
 
 final class Media_Middleware implements Middleware_Interface {
     private Api_Middleware $Api_Middleware;
-    private $Adapter;
+    private Adapter $Adapter;
     private Media_Upload_Service $Media_Upload_Service;
     private Media_Update_Service $Media_Update_Service;
     private Recipe_Finder_Service $Recipe_Finder_Service;

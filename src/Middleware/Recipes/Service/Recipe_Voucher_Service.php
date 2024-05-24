@@ -10,6 +10,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 
 final class Recipe_Voucher_Service {
     private LoggerInterface $logger;
+    private Api_Middleware $Api_Middleware;
     private $settings;
 
     public function __construct(
