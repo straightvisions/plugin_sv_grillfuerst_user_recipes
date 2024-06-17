@@ -134,7 +134,7 @@ final class Media_Middleware implements Middleware_Interface {
 
 	// dedicated data updater
     private function update_recipe($item, $uuid){
-        $finderResults = $this->Recipe_Finder_Service->get($uuid); // returns object with items array
+        $finderResults = $this->Recipe_Finder_Service->get(['filter'=>['uuid'=>$uuid]]); // returns object with items array
         $recipe = reset($finderResults->items); // reset returns false if empty
         $type = $this->get_media_type($item->filename);
 

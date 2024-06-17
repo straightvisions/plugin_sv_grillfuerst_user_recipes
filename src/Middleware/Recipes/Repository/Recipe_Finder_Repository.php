@@ -134,7 +134,7 @@ final class Recipe_Finder_Repository {
 
 	// legacy function, keep for compatibility
     public function get_by_recipe_id_and_user_id($id1, $id2): array {
-	    $params['filter']['uuuid'] = $id1;
+	    $params['filter']['uuid'] = $id1;
 	    $params['filter']['user_id'] = $id2;
 	    return $this->get($params);
     }
