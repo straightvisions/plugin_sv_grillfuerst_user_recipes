@@ -12,7 +12,7 @@ export default function WYSIWYG(props) {
 	} = props;
 	
 	const [text, setText] = useState('');
-	console.log(routes.config);
+	
 	return (
 		<>
 			<Editor
