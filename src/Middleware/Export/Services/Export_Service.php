@@ -3,7 +3,13 @@
 namespace SV_Grillfuerst_User_Recipes\Middleware\Export\Services;
 
 use SV_Grillfuerst_User_Recipes\Middleware\Export\Services\Media_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Export\Services\Job_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Export\Services\Recipes_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Info_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Export\Models\Recipe_Exporter_Model;
+use SV_Grillfuerst_User_Recipes\Middleware\Products\Service\Product_Finder_Service;
 
+use Exception;
 final class Export_Service {
 
 	protected $data = [
@@ -19,9 +25,24 @@ final class Export_Service {
 	protected $clone = null;
 
 	protected Media_Service $Media_Service;
+	protected Job_Service $Job_Service;
+	protected Recipes_Service $Recipes_Service;
+	protected User_Info_Service $User_Info_Service;
+	protected Recipe_Exporter_Model $Recipe_Exporter_Model;
+	protected Product_Finder_Service $Product_Finder_Service;
 
-	public function __construct(Media_Service $Media_Service) {
+	public function __construct(
+		Media_Service $Media_Service,
+		Recipes_Service $Recipes_Service,
+		Job_Service $Job_Service,
+		User_Info_Service $User_Info_Service,
+		Product_Finder_Service $Product_Finder_Service,
+	) {
 		$this->Media_Service = $Media_Service;
+		$this->Job_Service = $Job_Service;
+		$this->Recipes_Service = $Recipes_Service;
+		$this->User_Info_Service = $User_Info_Service;
+		$this->Product_Finder_Service = $Product_Finder_Service;
 	}
 
 	public function get_data(){
@@ -39,22 +60,40 @@ final class Export_Service {
 	public function get_next(){
 		return $this->data['next'];
 	}
-	public function create($item) {
-		if(isset($item['export']) && !empty($item['export'])){
-			$export = is_string($item['export']) ? json_decode($item['export'], true) : $item['export'];
-			foreach($export as $key => $value){
-				if($key === 'media' && is_string($value)){
-					$value = json_decode($value, true);
-				}
 
-				if(isset($this->data[$key])){
-					$this->data[$key] = $value;
-				}
-			}
-		}else{
-			$this->data['uuid'] = $item['uuid'] ?? 0;
-			$this->data['media'] = $item ? $this->extract_media($item) : [];
+	public function export($item){
+		$this->create($item);
+
+		//@todo shouldn't this be moved to the controller?
+		$this->Job_Service->create([
+			'type' => 'recipe',
+			'item_id' => $this->data['uuid'],
+			'callback'=>'SV_Grillfuerst_User_Recipes\Middleware\Export\Export_Controller::run_job_export_recipe_data',
+			'priority' => 2, // give data items higher priority than media just in case we do bulk exporting later, data needs to be exported earlier
+		]);
+
+		foreach($this->data['media'] as $key => $media){
+			$this->Job_Service->create([
+				'type' => 'media',
+				'item_id' => $this->data['uuid'],
+				'data' => json_encode($media),
+				'callback'=>'SV_Grillfuerst_User_Recipes\Middleware\Export\Export_Controller::run_job_export_recipe_media',
+				'priority' => 1,
+			]);
 		}
+
+		$this->Job_Service->create([
+			'type' => 'recipe_media_merge',
+			'status' => 'pending',
+			'item_id' => $this->data['uuid'],
+			'callback'=>'SV_Grillfuerst_User_Recipes\Middleware\Export\Export_Controller::run_job_export_recipe_media_to_data',
+			'priority' => 0,
+		]);
+
+	}
+	public function create($item) {
+		$this->data['uuid'] = $item['uuid'] ?? 0;
+		$this->data['media'] = $item ? $this->extract_media($item) : [];
 
 		return $this->data;
 	}
@@ -90,38 +129,124 @@ final class Export_Service {
 		return $media;
 	}
 
-	public function export_media(): void{
-		///////////////////////////////////
-		$this->data['status'] = 'running';
-		///////////////////////////////////
-		$media_id = 0;
-		$did_an_export = false;
-		// export single media
-		foreach($this->data['media'] as $key => $file){
-			if($file['_export'] === 'done') continue;
+	public function export_recipe_data(int $recipe_id):mixed{
+		$item = $this->Recipes_Service->get($recipe_id);
+		if(empty($item)) throw new Exception(__FUNCTION__ . ' recipe not found: ' . $recipe_id);
+		$item = new Recipe_Exporter_Model($item, $this->Product_Finder_Service);
+		$user = $this->User_Info_Service->get_raw($item->get('user_id'), true);
+		if(empty($user)) throw new Exception(__FUNCTION__ . ' user not found: ' . $recipe_id . ' user id: '. $item->get('user_id'));
 
-			// export item
-			$media_id = $this->Media_Service->export_file((object)$file);
+		$user = $this->User_Info_Service->get_raw($item->get('user_id'), true);
 
-			if($media_id){
-				$file['_media_id'] = $media_id;
-				$file['_export'] = 'done';
-				$this->data['media'][$key] = $file;
-			}else{
-				$this->data['status'] = 'error';
-				$this->data['errors'][] = 'Error while exporting media ' . $file['url'];
-			}
+		$author = [
+			'user_id'=>$item->get('user_id'),
+			'username'=> $user ? $user['username'] : '',
+			'firstname'=> $user ? $user['firstname'] : '',
+			'lastname'=> $user ? $user['lastname'] : '',
+			'voucher'=>$item->get('voucher'),
+		];
 
-			$did_an_export = true;
-			break;
+		$data = [
+			'post_title'   => $item->get('title'),
+			'post_status'  => 'draft', // keep it drafty still medias have been exported
+			'post_content' => '<!-- wp:acf/sv-grillfuerst-custom-recipe-steps {"name":"acf/sv-grillfuerst-custom-recipe-steps","mode":"preview"} /-->',
+			'post_excerpt' => $item->get('excerpt'),
+			'post_type'    => 'grillrezepte',
+			'meta_input'   => [] // non custom metas
+		];
+
+		$metas = [
+			'preparation_time' => $item->get('preparation_time'),
+			'cooking_time'     => $item->get('cooking_time'),
+			'waiting_time'     => $item->get('waiting_time'),
+			'difficulty'       => $item->get('difficulty'),
+			'ingredients'      => $item->get('ingredients'),
+			'accessories'      => $item->get('accessories'),
+			'steps'            => $item->get('steps'),
+			'gf_community_recipe_is' => '1',
+			'gf_community_recipe'   => [
+				'uuid'    => $item->get('uuid'),
+				'user_id' => $author['user_id'],
+				'firstname' => $author['firstname'],
+				'lastname' => $author['lastname'],
+				'username' => $author['username'],
+				'voucher' => $author['voucher'],
+			]
+		];
+
+		$post_id = \wp_insert_post($data);
+
+		$post = \get_post($post_id);
+
+		if(empty($post)) throw new Exception(__FUNCTION__ . ' couldn\'t create post');
+
+		// add metas
+		foreach($metas as $key => $val){
+			\update_field($key, $val, $post_id);
 		}
 
-		$this->data['next'] = $did_an_export ? 'media' : 'data';
+		// add taxonomies
+		\wp_set_object_terms($post_id, $item->get('menu_type'), 'cp_menutype');
+		\wp_set_object_terms($post_id, $item->get('kitchen_style'), 'cp_kitchenstyle');
+		\wp_set_object_terms($post_id, [$this->get_community_taxonomy_id()], 'cp_source');
+
+
+		return $post;
 	}
 
-	public function export_data(): void{
-		$this->data['status'] = 'done';
-		$this->data['next'] = 'none';
+	public function export_media(int $post_id, array $media): int{
+		// export item
+		$media_id = $this->Media_Service->export_file((object)$media); // returns false or media_id
+
+		if(!$media_id) throw new Exception(__FUNCTION__ . ' Export for media file failed. post_id '.$post_id);
+
+		$this->Media_Service->link($post_id, $media_id);
+		//$this->add_media_to_post($post_id, $media_id, $media);
+		return $media_id;
+	}
+
+	public function add_media_to_post(int $post_id, array $medias){
+		$post_meta = \get_post_meta($post_id);
+		$uuid = (int) $post_meta['gf_community_recipe_uuid'][0];
+		$recipe = $this->Recipes_Service->get($uuid);
+
+		$item = new Recipe_Exporter_Model($recipe, $this->Product_Finder_Service);
+
+		foreach($medias as $key => $media){
+			// feature image
+			if($media['_type'] === 'featured'){
+				\set_post_thumbnail( $post_id, $media['_media_id']);
+				continue;
+			}
+
+			foreach ($item->steps as $skey => &$step) {
+				foreach($step->images as $iKey => &$img){
+					if($img->id === $media['id']){
+						$img = $media['_media_id'];
+					}
+				}
+			}
+		}
+
+		$steps = $item->get('steps');
+
+		\update_field('steps', $steps, $post_id);
+		\wp_update_post([
+			'ID' => $post_id,
+			'post_status' => 'publish'
+		]);
+	}
+
+	// helper functions
+	public function get_community_taxonomy_id(){
+		return defined('GF_USER_RECIPES_TAXONOMY_ID') ? GF_USER_RECIPES_TAXONOMY_ID : 0;
+	}
+
+	public function from_json(mixed $data): array{
+		if(is_array($data)) return $data;
+		if(is_string($data)) return json_decode($data, true);
+
+		throw new Exception(__FUNCTION__ . ' couldn\'t decode $data.' );
 	}
 
 }
