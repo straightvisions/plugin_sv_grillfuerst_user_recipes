@@ -32,32 +32,34 @@ final class Job_Service {
 	}
 
 	public function run_job($id){
-		$job = $this->get($id);
-
-		if(empty($job)) throw new Exception(__FUNCTION__ .' couldn\'t run job - job not found - args id: ' .  $id);
-		if($job['status'] === 'error') throw new Exception(__FUNCTION__ .' couldn\'t run job - job has status "error" - job id: ' . $job['id']);
-		if($job['status'] === 'done') throw new Exception(__FUNCTION__ .' couldn\'t run job - job has status "done" - job id: ' . $job['id']);
-		if(empty($job['callback'])) throw new Exception(__FUNCTION__ .' couldn\'t run job - job has no callback - job id: ' . $job['id']);
-
-		$command = explode('::', $job['callback']);
-		$className = $command[0];
-		$methodName = $command[1] ?? null;
-
 		try{
+			$job = $this->get($id);
+			if(empty($job)) throw new Exception(__FUNCTION__ .' couldn\'t run job - job not found - args id: ' .  $id);
+			if($job['status'] === 'error') throw new Exception(__FUNCTION__ .' couldn\'t run job - job has status "error" - job id: ' . $job['id']);
+			if($job['status'] === 'done'){
+				\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$id]);
+				throw new Exception(__FUNCTION__ .' couldn\'t run job - job has status "done" - job id: ' . $job['id']);
+			}
+			if(empty($job['callback'])) throw new Exception(__FUNCTION__ .' couldn\'t run job - job has no callback - job id: ' . $job['id']);
+
+			$command = explode('::', $job['callback']);
+			$className = $command[0];
+			$methodName = $command[1] ?? null;
+
+			// performance optimisation
+			if($job['type'] === 'media' && $this->is_another_running('media')) throw new Exception(__FUNCTION__ .' couldn\'t run job - another job of type media is running right now - job id: ' . $job['id']);
+
 			// Check if both class and method are specified
 			if ($methodName && method_exists($className, $methodName)) {
 				// Resolve the class instance from the container
 				$classInstance = $this->container->get($className);
+				//////////////////////////////////////
 				$this->connection->update($this->table, ['status'=>'running'], ['id'=>$id]);
-				// Call the method on the resolved class instance
-				$success = $classInstance->{$methodName}($job); // Pass job data as an argument if needed
-
-				if($success){
-					$this->connection->update($this->table, ['status'=>'done'], ['id'=>$id]);
-					\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', [$id]);
-				}else{
-					$this->connection->update($this->table, ['status'=>'error'], ['id'=>$id]);
-				}
+				$classInstance->{$methodName}($job);
+				$this->connection->update($this->table, ['status'=>'done'], ['id'=>$id]);
+				/////////////////////////////////////
+				//@todo add "duration" to the job, if it has "single" -> delete the cron
+				\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$id]);
 
 				return true;
 			} else {
@@ -65,9 +67,18 @@ final class Job_Service {
 			}
 		}catch(Exception $e){
 			error_log($e->getMessage());
-			return $e->getMessage();
+			if($e->getCode() === 201){
+				$this->connection->update($this->table, ['status'=>'pending'], ['id'=>$id]);
+				\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$id]);
+			}
+			return false;
 		}
 
+	}
+
+	private function is_another_running(string $type){
+		$jobs = $this->connection->selectQuery(['*'], $this->table)->where(['status'=>'running', ['type'=>$type]])->execute()->fetchAll('assoc');
+		return count($jobs) > 0;
 	}
 
 	public function create(array $job): array{

@@ -65,8 +65,8 @@ export default function ReviewToolbar(props) {
 				}
 			</button>
 			<button disabled={_disabled && !forcedEditing} onClick={()=>setConfirmReleaseOpen(true)} type="button" className="flex items-center gap-2 px-2 py-1 border rounded text-sm border-gray-200 bg-red-600 text-white">
-				{ publishing ? <> <Spinner width="4" height="4" /> Veröffentlichen </> :
-					<> Veröffentlichen </>
+				{ publishing ? <> <Spinner width="4" height="4" /> Exportieren </> :
+					<> Exportieren </>
 				}
 			</button>
 			<div className="flex items-center gap-2 px-2 py-1 rounded text-sm bg-white text-grey-500">

@@ -160,65 +160,68 @@ final class Export_Controller{
 		$data_job_status = '';
 		$merge_job = null;
 
-		try{
-			if($job['type'] !== 'media') throw new Exception(__FUNCTION__ .' wrong job type '.$job['type'].' in job id '.$job['id']);
-			// check first if uuid is available on post_meta table
-			// yes - get post_id for linking the media file
-			$job_family = $this->Job_Service->get_by_item_id($job['item_id']);
+		if($job['type'] !== 'media') throw new Exception(__FUNCTION__ .' wrong job type '.$job['type'].' in job id '.$job['id'], 409);
+		if($job['status'] === 'done') throw new Exception(__FUNCTION__ .' job already done - job id '.$job['id'], 201);
+		if($job['status'] === 'running') throw new Exception(__FUNCTION__ .' job already running - job id '.$job['id'], 201);
+		if($job['status'] === 'error') throw new Exception(__FUNCTION__ .' job halted with errors - job id '.$job['id'], 409);
 
-			if(empty($job_family)) throw new Exception(__FUNCTION__ . ' no job family members found - impossible to get post_id - job id: '. $job['id']);
+		// check first if uuid is available on post_meta table
+		// yes - get post_id for linking the media file
+		$job_family = $this->Job_Service->get_by_item_id($job['item_id']);
 
-			foreach($job_family as $key => $item){
-				if($item['type'] === 'recipe'){
-					$data = $item['data'];
-					$data_job_status = $item['status'];
-					if($data_job_status === 'done' && isset($data['post_id']) && !empty($data['post_id'])){
-						$post_id = (int)$data['post_id'];
-					}
-				}
+		if(empty($job_family)) throw new Exception(__FUNCTION__ . ' no job family members found - impossible to get post_id - job id: '. $job['id']);
 
-				if($item['type'] === 'recipe_media_merge'){
-					$merge_job = $item;
+		foreach($job_family as $key => $item){
+			if($item['type'] === 'recipe'){
+				$data = $item['data'];
+				$data_job_status = $item['status'];
+				if($data_job_status === 'done' && isset($data['post_id']) && !empty($data['post_id'])){
+					$post_id = (int)$data['post_id'];
 				}
 			}
 
-			if(empty($post_id) && $data_job_status === 'done') throw new Exception(__FUNCTION__ . ' data job is done, but there is no post_id. - job id: '. $job['id']);
-			if(!empty($post_id) && $data_job_status === 'error') throw new Exception(__FUNCTION__ . ' post_id found - but data job halted with error. - job id: '. $job['id']);
-
-			$media_id = $this->Export_Service->export_media($post_id, $job['data']);
-
-			// add job is missing
-			if(empty($merge_job)){
-				$merge_job = $this->Job_Service->create([
-					'type' => 'recipe_media_merge',
-					'status' => 'wait',
-					'item_id' => $job['item_id'],
-					'callback'=>'SV_Grillfuerst_User_Recipes\Middleware\Export\Export_Controller::run_job_export_recipe_media_to_data',
-					'priority' => 0,
-					'data' => [
-						'post_id' => 0,
-						'images' => [],
-					]
-				]);
+			if($item['type'] === 'recipe_media_merge'){
+				$merge_job = $item;
 			}
-
-			$merge_job['data']['post_id'] = $post_id;
-			$merge_job['data']['images'] = $merge_job['data']['images'] ?? [];
-			$merge_job['data']['images'][] = array_merge($job['data'], ['_media_id'=>$media_id]);
-
-			$this->Job_Service->update($merge_job['id'], ['data'=>$merge_job['data']]);
-
-			$success = true;
-		}catch(Exception $e){
-			error_log($e->getMessage());
 		}
 
-		return $success;
+		if(empty($post_id)) throw new Exception(__FUNCTION__ . ' no post_id available (yet). - job id: '. $job['id']);
+		if(empty($post_id) && $data_job_status === 'done') throw new Exception(__FUNCTION__ . ' data job is done, but there is no post_id. - job id: '. $job['id']);
+		if(!empty($post_id) && $data_job_status === 'error') throw new Exception(__FUNCTION__ . ' post_id found - but data job halted with error. - job id: '. $job['id']);
+
+		$media_id = $this->Export_Service->export_media($post_id, $job['data']);
+
+		// add job is missing
+		if(empty($merge_job)){
+			$merge_job = $this->Job_Service->create([
+				'type' => 'recipe_media_merge',
+				'status' => 'wait',
+				'item_id' => $job['item_id'],
+				'callback'=>'SV_Grillfuerst_User_Recipes\Middleware\Export\Export_Controller::run_job_export_recipe_media_to_data',
+				'priority' => 0,
+				'data' => [
+					'post_id' => 0,
+					'images' => [],
+				]
+			]);
+		}
+
+		$merge_job['data']['post_id'] = $post_id;
+		$merge_job['data']['images'] = $merge_job['data']['images'] ?? [];
+		$merge_job['data']['images'][] = array_merge($job['data'], ['_media_id'=>$media_id]);
+
+		$this->Job_Service->update($merge_job['id'], ['data'=>$merge_job['data']]);
+
+		return true;
 	}
 
 	public function run_job_export_recipe_data(array $job): bool{
 		try{
-			if($job['type'] !== 'recipe') throw new Exception(__FUNCTION__ .' wrong job type '.$job['type'].' in job id '.$job['id']);
+			if($job['type'] !== 'recipe') throw new Exception(__FUNCTION__ .' wrong job type '.$job['type'].' in job id '.$job['id'], 409);
+			if($job['status'] === 'done') throw new Exception(__FUNCTION__ .' job already done - job id '.$job['id'], 201);
+			if($job['status'] === 'running') throw new Exception(__FUNCTION__ .' job already running - job id '.$job['id'], 201);
+			if($job['status'] === 'error') throw new Exception(__FUNCTION__ .' job halted with errors - job id '.$job['id'], 409);
+
 			$recipe_id = $job['item_id'];
 			// export to post
 			$post = $this->Export_Service->export_recipe_data($recipe_id);
@@ -235,10 +238,10 @@ final class Export_Controller{
 	public function run_job_export_recipe_media_to_data(array $job): bool{
 		try{
 			$job_family = $this->Job_Service->get_by_item_id($job['item_id']);
-			$prev_jobs_done = true;
 
 			if(empty($job_family)) throw new Exception(__FUNCTION__ . ' no job family members found - impossible to get post_id - job id: '. $job['id']);
 
+			// check if all prev jobs are done
 			foreach($job_family as $key => $item){
 				if($item['type'] === 'recipe_media_merge') continue;
 				if($item['status'] !== 'done'){
@@ -256,7 +259,7 @@ final class Export_Controller{
 			$this->Job_Service->update($job['id'], ['status'=>'done']);
 
 			$this->Job_Service->delete_by_item_id($job['item_id']);
-			
+
 			return true;
 		}catch(Exception $e){
 			error_log($e->getMessage());

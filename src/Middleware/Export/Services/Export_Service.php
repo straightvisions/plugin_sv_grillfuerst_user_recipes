@@ -221,7 +221,7 @@ final class Export_Service {
 
 			foreach ($item->steps as $skey => &$step) {
 				foreach($step->images as $iKey => &$img){
-					if($img->id === $media['id']){
+					if(is_array($img) && is_array($media) && $img->id === $media['id']){
 						$img = $media['_media_id'];
 					}
 				}
