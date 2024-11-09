@@ -7,6 +7,7 @@ import headers from "../../modules/headers";
 import {useParams} from "react-router-dom";
 import storage from "../../modules/storage";
 import ReviewRecipeForm from "../review_recipe_form";
+import ExportStatus from "../review_recipe_form/export_status";
 import ActivityMap from "../activity_map";
 import Modal from "../modal";
 
@@ -49,6 +50,7 @@ export default function Review() {
 	const [messageOpen, setMessageOpen] = useState(false);
 	const [forcedEditing, setForcedEditing] = useState(false);
 	const [refresh, setRefresh] = useState(false);
+	const [exportStatus, setExportStatus] = useState(false);
 	
 	// load customer data
 	useEffect(() => {
@@ -82,6 +84,7 @@ export default function Review() {
 					// create a hidden backup of the data, might be useful later
 					const _data = Object.keys(attributes._data).length <= 0 ? data : attributes._data;
 					setAttributes({data, _data});
+					
 					setLoading(false);
 					setRefresh(false);
 				});
@@ -96,13 +99,13 @@ export default function Review() {
 		// override if forced editing is set
 		if(forcedEditing) return setAttributes({disabled: false});
 		
-		if(attributes.data.state !== 'review_pending' || attributes.saving || attributes.submitting || attributes.publishing){
+		if(attributes.data.export !== null || attributes.data.state !== 'review_pending' || attributes.saving || attributes.submitting || attributes.publishing){
 			setAttributes({disabled: true});
 			//setRefresh(true);
 		}else{
 			setAttributes({disabled: false});
 		}
-	}, [attributes.data.state, attributes.saving, attributes.submitting, attributes.publishing, forcedEditing]);
+	}, [attributes.data.export, attributes.data.state, attributes.saving, attributes.submitting, attributes.publishing, forcedEditing]);
 	
 	// add refresh stuff here
 	const onSave = () => {
@@ -225,7 +228,7 @@ export default function Review() {
 		setAttributes({publishing: true});
 		
 		return fetch(route, {
-			method: 'PUT',
+			method: 'GET',
 			cache: 'no-cache',
 			headers: headers.get()
 		})
@@ -239,16 +242,14 @@ export default function Review() {
 		}).then(({status, json, ok}) => {
 			if(ok){
 				// export ok
-				setAttributes({data: {...attributes.data, ...{state: 'published', link: json.link}}});
-				setMessage(json.message
-					+ '<br />Link: <a class="text-red-500" target="_blank" href="' + json.link + '" target="_blank">' + json.link + '</a>');
+				setMessage(json.message);
 			}else{
 				// export error
 				setMessage(json.message
 					+ '<br />Errors: ' + json.errors.join('<br />'));
+				setAttributes({publishing: false});
 			}
 		}).finally(() => {
-			setAttributes({publishing: false});
 			setMessageOpen(true);
 		});
 	}
@@ -299,6 +300,9 @@ export default function Review() {
 					cancelText=''
 					name="modalMessage"
 					/>
+			}
+			{ attributes.data.export !== null &&
+				<ExportStatus {...attributes} />
 			}
 			<ReviewToolbar {...attributes} setAttributes={setAttributes} forcedEditing={forcedEditing} setForcedEditing={setForcedEditing} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)} onDelete={onDelete}/>
 			<div className="flex gap-5 w-full max-w-full">

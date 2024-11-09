@@ -59,6 +59,7 @@ final class Recipe_Finder_Service {
         foreach ($row as $key => $value) {
             if (property_exists($item, $key)) {
                 $item->set($key, $value);
+
             }
         }
 

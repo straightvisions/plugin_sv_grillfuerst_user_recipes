@@ -32,6 +32,7 @@ final class Job_Service {
 	}
 
 	public function run_job($id){
+		error_log('Job Service - run_job - try to run '.$id);
 		try{
 			$job = $this->get($id);
 			if(empty($job)) throw new Exception(__FUNCTION__ .' couldn\'t run job - job not found - args id: ' .  $id);
@@ -69,8 +70,8 @@ final class Job_Service {
 			error_log($e->getMessage());
 			if($e->getCode() === 201){
 				$this->connection->update($this->table, ['status'=>'pending'], ['id'=>$id]);
-				\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$id]);
 			}
+			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$id]);
 			return false;
 		}
 

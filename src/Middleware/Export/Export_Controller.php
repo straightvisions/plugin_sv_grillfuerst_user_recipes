@@ -80,6 +80,7 @@ final class Export_Controller{
 					if(empty($item['export'])){
 						$message = 'Export started.';
 						$this->Export_Service->export($item);
+						$this->Recipes_Service->update($uuid, ['export'=>'running']);
 					}
 
 					if($item['export'] === 'running'){
@@ -135,15 +136,9 @@ final class Export_Controller{
 				$errors = [];
 				// get recipe
 				$uuid  = $Request->getAttribute('uuid');
-				$item = $this->Recipes_Service->get($uuid) ?? [];
-				$export = $this->Export_Service;
-				$export->create($item);
+				$jobs = $this->Job_Service->get_by_item_id($uuid);
 
-				if(empty($item)){
-					$message = 'Item not found!';
-				}
-
-				return [['message'=>$message, 'errors' => $errors, 'data' => json_encode($export->get_data())], 200];
+				return [['message'=>'', 'errors' => $errors, 'data' => $jobs], 200];
 			}
 		);
 	}

@@ -27,6 +27,7 @@ class Recipe_Model_Item {
     public int $newsletter = 0;
     public array|string $feedback = [];
     public int $legal_rights = 0;
+    public null|string $export = '';
 
     // useful functions to convert data before output
     public function __construct(){
