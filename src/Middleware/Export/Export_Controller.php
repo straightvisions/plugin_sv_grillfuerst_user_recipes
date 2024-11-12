@@ -40,10 +40,6 @@ final class Export_Controller{
 			'args'  => ['methods' => 'GET', 'callback' => [$this, 'export_recipe_restart'], 'permission_callback' => '__return_true']
 		]);
 
-		$this->Api_Middleware->add([
-			'route' => '/export/recipes/(?P<uuid>\d+)/resume',
-			'args'  => ['methods' => 'GET', 'callback' => [$this, 'export_resume'], 'permission_callback' => '__return_true']
-		]);
 
 		$this->Api_Middleware->add([
 			'route' => '/export/recipes/(?P<uuid>\d+)/status',
@@ -114,7 +110,7 @@ final class Export_Controller{
 					// flush current jobs for this recipe
 					$this->Job_Service->delete_by_item_id($uuid);
 					// flush export column on recipe
-					$this->Recipes_Service->update($uuid,['export'=>null]);
+					$this->Recipes_Service->update($uuid,['state'=>'review_pending', 'export'=>null, 'link'=>'']);
 
 					// run export again
 					$message = 'Export started.';
@@ -138,7 +134,16 @@ final class Export_Controller{
 				$uuid  = $Request->getAttribute('uuid');
 				$jobs = $this->Job_Service->get_by_item_id($uuid);
 
-				return [['message'=>'', 'errors' => $errors, 'data' => $jobs], 200];
+				// trigger job run manually
+				foreach($jobs as $key => $job){
+					if($job['status'] === 'pending'){
+						$this->Job_Service->run_job($job['id']);
+					}
+				}
+
+				$recipe = $this->Recipes_Service->get($uuid);
+				$export_status = $recipe &&  isset($recipe['export']) ? $recipe['export'] : null;
+				return [['message'=>'', 'errors' => $errors, 'export_status'=>$export_status, 'data' => $jobs], 200];
 			}
 		);
 	}
@@ -185,6 +190,12 @@ final class Export_Controller{
 		if(!empty($post_id) && $data_job_status === 'error') throw new Exception(__FUNCTION__ . ' post_id found - but data job halted with error. - job id: '. $job['id']);
 
 		$media_id = $this->Export_Service->export_media($post_id, $job['data']);
+
+		if($media_id){
+			$this->Job_Service->update($job['id'], ['status'=>'done']);
+		}else{
+			$this->Job_Service->update($job['id'], ['status'=>'error']);
+		}
 
 		// add job is missing
 		if(empty($merge_job)){
@@ -237,23 +248,28 @@ final class Export_Controller{
 			if(empty($job_family)) throw new Exception(__FUNCTION__ . ' no job family members found - impossible to get post_id - job id: '. $job['id']);
 
 			// check if all prev jobs are done
+			$check = true;
 			foreach($job_family as $key => $item){
 				if($item['type'] === 'recipe_media_merge') continue;
 				if($item['status'] !== 'done'){
-					return false; // not all prev jobs are done
+					$check = false; // not all prev jobs are done
 				}
 			}
 
 			$data = $job['data'];
 
+			if(!$check) throw new Exception(__FUNCTION__ . ' prev jobs not done for merge job: '. $job['id']);
 			if(empty($job['data'])) throw new Exception(__FUNCTION__ . ' merge job is missing data: '. $job['id']);
 			if(empty($job['data']['post_id'])) throw new Exception(__FUNCTION__ . ' merge job is missing post id: '. $job['id']);
 			if(empty($job['data']['images'])) throw new Exception(__FUNCTION__ . ' merge job is missing medias: '. $job['id']);
 
-			$this->Export_Service->add_media_to_post($data['post_id'], $data['images']);
+
+			$this->Export_Service->add_media_to_post($data['post_id'], $data['images']); // this also publishes the post
 			$this->Job_Service->update($job['id'], ['status'=>'done']);
 
+			// clean up
 			$this->Job_Service->delete_by_item_id($job['item_id']);
+			$this->Recipes_Service->update($job['item_id'], ['export'=>'done','state'=>'published']);
 
 			return true;
 		}catch(Exception $e){

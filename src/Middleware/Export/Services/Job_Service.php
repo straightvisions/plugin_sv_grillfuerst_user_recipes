@@ -48,7 +48,7 @@ final class Job_Service {
 			$methodName = $command[1] ?? null;
 
 			// performance optimisation
-			if($job['type'] === 'media' && $this->is_another_running('media')) throw new Exception(__FUNCTION__ .' couldn\'t run job - another job of type media is running right now - job id: ' . $job['id']);
+			if($job['type'] === 'media' && $this->is_another_running('media', $id)) throw new Exception(__FUNCTION__ .' couldn\'t run job - another job of type media is running right now - job id: ' . $job['id']);
 
 			// Check if both class and method are specified
 			if ($methodName && method_exists($className, $methodName)) {
@@ -77,8 +77,8 @@ final class Job_Service {
 
 	}
 
-	private function is_another_running(string $type){
-		$jobs = $this->connection->selectQuery(['*'], $this->table)->where(['status'=>'running', ['type'=>$type]])->execute()->fetchAll('assoc');
+	private function is_another_running(string $type, int $id){
+		$jobs = $this->connection->selectQuery(['*'], $this->table)->where(['status'=>'running', ['type'=>$type, 'id !=' => $id]])->execute()->fetchAll('assoc');
 		return count($jobs) > 0;
 	}
 
@@ -133,7 +133,7 @@ final class Job_Service {
 	}
 
 	public function get_by_item_id(int $item_id): array{
-		$data = $this->connection->selectQuery(['*'], $this->table)->where(['item_id'=>$item_id])->execute()->fetchAll('assoc');
+		$data = $this->connection->selectQuery(['*'], $this->table)->where(['item_id'=>$item_id])->orderBy(['priority' => 'DESC'])->execute()->fetchAll('assoc');
 		foreach($data as $key => &$item){
 			$item['data'] = $this->prepare_data($item['data']);
 		}

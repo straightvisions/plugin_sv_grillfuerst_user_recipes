@@ -86,8 +86,9 @@ final class Export_Service {
 			'type' => 'recipe_media_merge',
 			'status' => 'pending',
 			'item_id' => $this->data['uuid'],
+			'data'=>json_encode([]),
 			'callback'=>'SV_Grillfuerst_User_Recipes\Middleware\Export\Export_Controller::run_job_export_recipe_media_to_data',
-			'priority' => 0,
+			'priority' => 0
 		]);
 
 	}
@@ -231,10 +232,14 @@ final class Export_Service {
 		$steps = $item->get('steps');
 
 		\update_field('steps', $steps, $post_id);
+
+		// Publish the post
 		\wp_update_post([
 			'ID' => $post_id,
 			'post_status' => 'publish'
 		]);
+
+		$this->Recipes_Service->update($uuid, ['link'=> \get_permalink($post_id) ?? 'could_not_get_permalink']);
 	}
 
 	// helper functions
@@ -248,5 +253,6 @@ final class Export_Service {
 
 		throw new Exception(__FUNCTION__ . ' couldn\'t decode $data.' );
 	}
+
 
 }
