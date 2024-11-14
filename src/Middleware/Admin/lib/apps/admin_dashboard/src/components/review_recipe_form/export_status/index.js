@@ -10,6 +10,7 @@ const ExportStatus = (props) => {
 	const {data} = attributes;
 	const [jobs, setJobs] = useState([]);
 	const [exportStatus, setExportStatus] = useState('');
+	const [exportLink, setExportLink] = useState(null);
 	const [loading, setLoading] = useState(false);
 	const fetchJobs = async () => {
 		try {
@@ -18,6 +19,7 @@ const ExportStatus = (props) => {
 			const result = await response.json();
 			setJobs(result.data);
 			setExportStatus(result.export_status);
+			setExportLink(result.export_link);
 			setLoading(false);
 		
 		} catch (error) {
@@ -71,8 +73,8 @@ const ExportStatus = (props) => {
 					</button>
 				</div>
 				{exportStatus === 'done' &&
-					<a href={attributes.data.link} className="text-green-700"
-					   target="_blank">{attributes.data.link}</a>
+					<a href={exportLink} className="text-green-700"
+					   target="_blank">{exportLink}</a>
 				}
 				{exportStatus !== 'done' &&
 					<div className="flex gap-6">
