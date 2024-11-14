@@ -47,7 +47,7 @@ final class Export_Controller{
 		]);
 
 		// testing routes
-		$this->Api_Middleware->add([
+		/*$this->Api_Middleware->add([
 			'route' => '/export/test/jobs', // id from table jobs
 			'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_get_jobs'], 'permission_callback' => '__return_true']
 		]);
@@ -55,7 +55,7 @@ final class Export_Controller{
 		$this->Api_Middleware->add([
 			'route' => '/export/test/run_job/(?P<id>\d+)', // id from table jobs
 			'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_run_job'], 'permission_callback' => '__return_true']
-		]);
+		]);*/
 
 	}
 
@@ -63,7 +63,7 @@ final class Export_Controller{
 	// REST FUNCTIONS
 	// /////////////////////////////
 	public function export_recipe($request){
-		return $this->Api_Middleware->response_public(
+		return $this->Api_Middleware->response(
 			$request,
 			function ($Request) {
 				$message = '';
@@ -91,13 +91,13 @@ final class Export_Controller{
 				}
 
 				return [['message'=>$message, 'errors' => $errors], 200];
-			}//,			['admin', 'export']
+			},['admin', 'export']
 		);
 
 	}
 
 	public function export_recipe_restart($request){
-		return $this->Api_Middleware->response_public(
+		return $this->Api_Middleware->response(
 			$request,
 			function ($Request) use($request){
 				$message = '';
@@ -120,13 +120,13 @@ final class Export_Controller{
 				}
 
 				return [['message'=>$message, 'errors' => $errors], 200];
-			}//,			['admin', 'export']
+			},['admin', 'export']
 		);
 
 	}
 
 	public function export_status($request){
-		return $this->Api_Middleware->response_public($request,
+		return $this->Api_Middleware->response($request,
 			function ($Request) {
 				$message = '';
 				$errors = [];
@@ -138,13 +138,14 @@ final class Export_Controller{
 				foreach($jobs as $key => $job){
 					if($job['status'] === 'pending'){
 						$this->Job_Service->run_job($job['id']);
+						break;
 					}
 				}
 
 				$recipe = $this->Recipes_Service->get($uuid);
 				$export_status = $recipe &&  isset($recipe['export']) ? $recipe['export'] : null;
 				return [['message'=>'', 'errors' => $errors, 'export_link'=>empty($recipe['link']) ? null : $recipe['link'], 'export_status'=>$export_status, 'data' => $jobs], 200];
-			}
+			},['admin', 'export']
 		);
 	}
 	// /////////////////////////////
@@ -268,7 +269,7 @@ final class Export_Controller{
 	// TEST FUNCTIONS
 	// /////////////////////////////
 	public function test_get_jobs($request){
-		return $this->Api_Middleware->response_public(
+		return $this->Api_Middleware->response(
 			$request,
 			function ($Request) {
 				return [['message'=>'', 'errors' => [], 'data' => $this->Job_Service->get()], 200];
@@ -277,7 +278,7 @@ final class Export_Controller{
 		);
 	}
 	public function test_run_job($request){
-		return $this->Api_Middleware->response_public(
+		return $this->Api_Middleware->response(
 			$request,
 			function ($Request) {
 				// get recipe

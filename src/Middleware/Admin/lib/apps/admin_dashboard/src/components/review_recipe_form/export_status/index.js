@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import routes from "../../../models/routes";
 import Spinner from "../../spinner";
+import headers from "../../../modules/headers";
 
 const ExportStatus = (props) => {
 	const {
@@ -16,7 +17,11 @@ const ExportStatus = (props) => {
 	const fetchJobs = async () => {
 		try {
 			const route = routes.exportRecipe.replace('{id}', data.uuid);
-			const response = await fetch(route + '/status');
+			const response = await fetch(route + '/status',
+				{
+					headers:headers.get(),
+				}
+				);
 			const result = await response.json();
 			setJobs(result.data);
 			setExportStatus(result.export_status);
@@ -50,7 +55,7 @@ const ExportStatus = (props) => {
 		setLoading(true);
 		try {
 			const route = routes.exportRecipe.replace('{id}', data.uuid) + '/restart';
-			const response = await fetch(route, { method: 'GET' });
+			const response = await fetch(route, { headers: headers.get(), method: 'GET' });
 			if (response.ok) {
 				fetchJobs();
 			}
