@@ -156,6 +156,7 @@ final class Recipe_Validator_Service {
                 'app_meta' => $constraint->optional([]),
                 'link' => $constraint->optional([]),
                 'voucher' => $constraint->optional([]),
+                'export' => $constraint->optional([]),
             ]
         );
     }
