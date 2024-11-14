@@ -51,8 +51,7 @@ export default function Review() {
 	const [messageOpen, setMessageOpen] = useState(false);
 	const [forcedEditing, setForcedEditing] = useState(false);
 	const [refresh, setRefresh] = useState(false);
-	const [exportStatus, setExportStatus] = useState(false);
-	console.log(attributes);
+	
 	// load customer data
 	useEffect(() => {
 		// customer not set -> wait
@@ -74,25 +73,23 @@ export default function Review() {
 	}, [attributes.data.user_id]);
 	
 	// load data from db
-	useEffect(() => {
+	const getRecipe = () => {
 		setLoading(true);
-		//if(Object.keys(attributes.data).length === 0 || refresh){
-			fetch(routes.getRecipeByUuid + params.uuid,{
-				headers:headers.get(),
-			})
-				.then(response => response.json())
-				.then(data => {
-					// create a hidden backup of the data, might be useful later
-					const _data = Object.keys(attributes._data).length <= 0 ? data : attributes._data;
-					setAttributes({data, _data});
-					
-					setLoading(false);
-					setRefresh(false);
-				});
-		/*}else{
-			setLoading(false);
-			setRefresh(false);
-		}*/
+		fetch(routes.getRecipeByUuid + params.uuid,{
+			headers:headers.get(),
+		})
+			.then(response => response.json())
+			.then(data => {
+				// create a hidden backup of the data, might be useful later
+				const _data = Object.keys(attributes._data).length <= 0 ? data : attributes._data;
+				setAttributes({data, _data});
+				
+				setLoading(false);
+				setRefresh(false);
+			});
+	}
+	useEffect(() => {
+		getRecipe();
 	}, []);
 	
 	// handle form locking
@@ -105,7 +102,7 @@ export default function Review() {
 			setAttributes({showExportStatus: true});
 		}
 		
-		if((attributes.data.export !== null && attributes.data.export !== '') || attributes.data.state !== 'review_pending' || attributes.saving || attributes.submitting || attributes.publishing){
+		if(attributes.data.export || attributes.data.state !== 'review_pending' || attributes.saving || attributes.submitting || attributes.publishing){
 			setAttributes({disabled: true});
 		}else{
 			setAttributes({disabled: false});
@@ -248,8 +245,9 @@ export default function Review() {
 			if(ok){
 				// export ok
 				setMessage(json.message);
-				setAttributes({showExportStatus:true});
-				setAttributes({disabled:true}); // will lock even if export has failed - no workaround
+				setAttributes({disabled:true,showExportStatus:true});
+				getRecipe();
+				
 			}else{
 				// export error
 				setMessage(json.message
@@ -295,7 +293,6 @@ export default function Review() {
 		);
 	}
 	
-	console.log(attributes.showExportStatus);
 	return (
 		<div>
 			{message &&

@@ -154,6 +154,19 @@ final class Export_Controller{
 	// /////////////////////////////
 	// CRON JOB FUNCTIONS
 	// /////////////////////////////
+
+	public function run_job_export_recipe_data(array $job): bool{
+		if($job['type'] !== 'recipe') throw new Exception(__FUNCTION__ .' wrong job type '.$job['type'].' in job id '.$job['id'], 500);
+
+		$recipe_id = $job['item_id'];
+		// export to post
+		$post = $this->Export_Service->export_recipe_data($recipe_id);
+		// add post_id to job for exporting media files / linking them later
+		$job['data']['post_id'] = $post->ID;
+		$this->Job_Service->update($job['id'], ['data'=>$job['data']]);
+		return true;
+	}
+
 	public function run_job_export_recipe_media(array $job) {
 		$success = false;
 		$post_id = 0;
@@ -188,10 +201,8 @@ final class Export_Controller{
 
 		$media_id = $this->Export_Service->export_media($post_id, $job['data']);
 
-		if($media_id){
-			$this->Job_Service->update($job['id'], ['status'=>'done']);
-		}else{
-			$this->Job_Service->update($job['id'], ['status'=>'error']);
+		if(!$media_id){
+			throw new Exception(__FUNCTION__ . ' media export failed - job id: '. $job['id'], 500);
 		}
 
 		// add job is missing
@@ -218,20 +229,7 @@ final class Export_Controller{
 		return true;
 	}
 
-	public function run_job_export_recipe_data(array $job): bool{
-		if($job['type'] !== 'recipe') throw new Exception(__FUNCTION__ .' wrong job type '.$job['type'].' in job id '.$job['id'], 500);
-
-		$recipe_id = $job['item_id'];
-		// export to post
-		$post = $this->Export_Service->export_recipe_data($recipe_id);
-		// add post_id to job for exporting media files / linking them later
-		$job['data']['post_id'] = $post->ID;
-		$this->Job_Service->update($job['id'], ['data'=>$job['data']]);
-		return true;
-	}
-
 	public function run_job_export_recipe_media_to_data(array $job){
-
 		$job_family = $this->Job_Service->get_by_item_id($job['item_id']);
 
 		if(empty($job_family)) throw new Exception(__FUNCTION__ . ' no job family members found - impossible to get post_id - job id: '. $job['id'], 404);
@@ -247,10 +245,12 @@ final class Export_Controller{
 
 		$data = $job['data'];
 
+		// soft error
 		if(!$check) throw new Exception(__FUNCTION__ . ' prev jobs not done for merge job: '. $job['id'], 102);
-		if(empty($job['data'])) throw new Exception(__FUNCTION__ . ' merge job is missing data: '. $job['id'], 102);
-		if(empty($job['data']['post_id'])) throw new Exception(__FUNCTION__ . ' merge job is missing post id: '. $job['id'], 102);
-		if(empty($job['data']['images'])) throw new Exception(__FUNCTION__ . ' merge job is missing medias: '. $job['id'], 102);
+		// fatal errors - indicating that something went wrong with the prev jobs
+		if(empty($job['data'])) throw new Exception(__FUNCTION__ . ' merge job is missing data: '. $job['id'], 500);
+		if(empty($job['data']['post_id'])) throw new Exception(__FUNCTION__ . ' merge job is missing post id: '. $job['id'], 500);
+		if(empty($job['data']['images'])) throw new Exception(__FUNCTION__ . ' merge job is missing medias: '. $job['id'], 500);
 
 		$this->Export_Service->add_media_to_post($data['post_id'], $data['images']); // this also publishes the post
 

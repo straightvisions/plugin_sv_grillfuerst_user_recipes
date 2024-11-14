@@ -31,9 +31,9 @@ final class Recipe_Finder_Repository {
 
     public function get(array|null $params = []): array {
 		// limitations
-        $limit = $params['limit'] ? (int)$params['limit'] : false;
-        $page = $params['page'] ? (int)$params['page'] : false;
-        $order = $params['order'] ? explode(' ',$params['order']) : ['created', 'DESC'];
+        $limit = isset($params['limit']) ? (int)$params['limit'] : false;
+        $page = isset($params['page']) ? (int)$params['page'] : false;
+        $order = isset($params['order']) ? explode(' ',$params['order']) : ['created', 'DESC'];
         $where = $this->build_where($params);
 
 		// create query
@@ -141,8 +141,8 @@ final class Recipe_Finder_Repository {
 
     private function apply_counting($query, array $params = []){
         $this->totalRows = $query->execute()->rowCount();
-        $this->totalPages = $params['limit'] ? ceil($this->totalRows / (int)$params['limit']) : 1;
-        $this->currentPage = $params['page'] ? (int)$params['page'] : 1;
+        $this->totalPages = isset($params['limit']) ? ceil($this->totalRows / (int)$params['limit']) : 1;
+        $this->currentPage = isset($params['page']) ? (int)$params['page'] : 1;
     }
 
     public function get_totals(): array{

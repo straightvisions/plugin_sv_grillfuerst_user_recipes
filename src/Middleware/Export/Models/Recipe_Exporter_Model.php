@@ -90,9 +90,9 @@ class Recipe_Exporter_Model extends Recipe_Model_Item{
 
     private function get_steps(){
         $list = $this->steps;
+
         $output = [];
         foreach($list as $k => $d){
-			if(!is_integer($d->images[0])) continue;
             $output[] =  [
                 'acf_fc_layout' => 'step',
                 'description' => $d->description,

@@ -211,6 +211,10 @@ final class Export_Service {
 		$uuid = (int) $post_meta['gf_community_recipe_uuid'][0];
 		$recipe = $this->Recipes_Service->get($uuid);
 
+		if(!$post_meta) throw new Exception(__FUNCTION__ . ' post meta not found: post_id '.$post_id, 500);
+		if(!$uuid) throw new Exception(__FUNCTION__ . ' uuid missing: post_id '.$post_id, 500);
+		if(!$recipe) throw new Exception(__FUNCTION__ . ' recipe not found post_id '.$post_id, 500);
+
 		$item = new Recipe_Exporter_Model($recipe, $this->Product_Finder_Service);
 
 		foreach($medias as $key => $media){
@@ -220,13 +224,20 @@ final class Export_Service {
 				continue;
 			}
 
-			foreach ($item->steps as $skey => &$step) {
+			$steps = $item->steps;
+
+			foreach ($steps as $skey => &$step) {
 				foreach($step->images as $iKey => &$img){
-					if(is_array($img) && is_array($media) && $img->id === $media['id']){
+					if(is_object($img)
+					   && is_array($media)
+					   && $img->id === $media['id']
+					){
 						$img = $media['_media_id'];
 					}
 				}
 			}
+
+			$item->set('steps', $steps);
 		}
 
 		$steps = $item->get('steps');
