@@ -47,6 +47,11 @@ class Recipe_Model_Item {
                 case 'object': $value = $this->to_object($value);break;
             }
 
+			// fix nulls
+	        if($field === 'export' && empty($value)){
+				$value = null;
+	        }
+
             $this->{$field} = $value;
         }
     }

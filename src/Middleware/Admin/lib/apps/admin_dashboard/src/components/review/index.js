@@ -25,6 +25,7 @@ export default function Review() {
 		publishing: false, // Flag indicating if the recipe is being published
 		deleting: false, // Flag indicating if the recipe is being deleted
 		disabled: false,
+		showExportStatus: false
 	};
 	
 	// data handling
@@ -41,7 +42,7 @@ export default function Review() {
 		// Default state:
 		// If storage is empty, return the model
 		// If storage has data, merge the model with the stored data
-		{...attributesModel ,...storage.get(storageSlug, attributesModel), ...{saving: false, loading: false, publishing: false}}
+		{...attributesModel ,...storage.get(storageSlug, attributesModel), ...{saving: false, loading: false, publishing: false, showExportStatus: false}}
 		);
 
 	// local states
@@ -51,7 +52,7 @@ export default function Review() {
 	const [forcedEditing, setForcedEditing] = useState(false);
 	const [refresh, setRefresh] = useState(false);
 	const [exportStatus, setExportStatus] = useState(false);
-	
+	console.log(attributes);
 	// load customer data
 	useEffect(() => {
 		// customer not set -> wait
@@ -99,9 +100,13 @@ export default function Review() {
 		// override if forced editing is set
 		if(forcedEditing) return setAttributes({disabled: false});
 		
-		if(attributes.data.export !== null || attributes.data.state !== 'review_pending' || attributes.saving || attributes.submitting || attributes.publishing){
+		// workaround fix
+		if(attributes.data.export !== null && attributes.data.export !== ''){
+			setAttributes({showExportStatus: true});
+		}
+		
+		if((attributes.data.export !== null && attributes.data.export !== '') || attributes.data.state !== 'review_pending' || attributes.saving || attributes.submitting || attributes.publishing){
 			setAttributes({disabled: true});
-			//setRefresh(true);
 		}else{
 			setAttributes({disabled: false});
 		}
@@ -243,6 +248,8 @@ export default function Review() {
 			if(ok){
 				// export ok
 				setMessage(json.message);
+				setAttributes({showExportStatus:true});
+				setAttributes({disabled:true}); // will lock even if export has failed - no workaround
 			}else{
 				// export error
 				setMessage(json.message
@@ -288,22 +295,21 @@ export default function Review() {
 		);
 	}
 	
+	console.log(attributes.showExportStatus);
 	return (
 		<div>
 			{message &&
 				<Modal
 					message={message}
 					isOpen={messageOpen}
-					onClose={() => setMessageOpen(false)}
-					onConfirm={() => setMessageOpen(false)}
+					onClose={() => {setMessageOpen(false);setLoading(false);setAttributes({publishing:false, submitting: false});}}
+					onConfirm={() => {setMessageOpen(false);setLoading(false);setAttributes({publishing:false, submitting: false});}}
 					confirmText='Ok'
 					cancelText=''
 					name="modalMessage"
 					/>
 			}
-			{ attributes.data.export !== null &&
-				<ExportStatus {...attributes} />
-			}
+			{attributes.showExportStatus && <ExportStatus attributes={attributes} setRefresh={setRefresh} setAttributes={setAttributes} forcedEditing={forcedEditing} setForcedEditing={setForcedEditing} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)} onDelete={onDelete} />}
 			<ReviewToolbar {...attributes} setAttributes={setAttributes} forcedEditing={forcedEditing} setForcedEditing={setForcedEditing} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)} onDelete={onDelete}/>
 			<div className="flex gap-5 w-full max-w-full">
 				<div className="flex-grow">
