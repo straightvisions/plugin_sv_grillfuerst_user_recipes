@@ -83,17 +83,18 @@ final class Job_Service {
 	}
 
 	public function handle_job_status_by_exception_code($job, int $code){
+		$job_id = empty($job) || empty($job['id']) ? 0 : $job['id'];
 		if($code === 100){
-			$this->connection->update($this->table, ['status'=>'done'], ['id'=>$job['id']]);
-			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job['id']]);
+			$this->connection->update($this->table, ['status'=>'done'], ['id'=>$job_id]);
+			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
 		}
 
 		if($code === 102){
-			$this->connection->update($this->table, ['status'=>'pending'], ['id'=>$job['id']]);
+			$this->connection->update($this->table, ['status'=>'pending'], ['id'=>$job_id]);
 		}
 
 		if($code === 404){
-			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job['id']]);
+			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
 		}
 
 		if($code === 423){
@@ -101,8 +102,8 @@ final class Job_Service {
 		}
 
 		if($code === 500){
-			$this->connection->update($this->table, ['status'=>'error'], ['id'=>$job['id']]);
-			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job['id']]);
+			$this->connection->update($this->table, ['status'=>'error'], ['id'=>$job_id]);
+			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
 		}
 
 	}
@@ -152,6 +153,7 @@ final class Job_Service {
 		if(empty($id)){
 			$data = $this->connection->selectQuery(['*'], $this->table)->execute()->fetchAll('assoc');
 			foreach($data as $key => &$item){
+				if(empty($item) || !isset($item['data']) || empty($item['data'])) continue;
 				$item['data'] = $this->prepare_data($item['data']);
 			}
 		}else{
@@ -159,7 +161,7 @@ final class Job_Service {
 			$data['data'] = $this->prepare_data($data['data']);
 		}
 
-		return $data;
+		return $data ? $data : [];
 	}
 
 	public function get_by_item_id(int $item_id): array{
