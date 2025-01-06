@@ -158,12 +158,17 @@ final class Recipes_Middleware implements Middleware_Interface {
                 'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_check_voucher'], 'permission_callback' => '__return_true']
             ]);
 
+	        $this->Api_Middleware->add([
+		        'route' => '/test/voucher/resend', // wordpress specific
+		        'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_resend_voucher'], 'permission_callback' => '__return_true']
+	        ]);
+
             $this->Api_Middleware->add([
                 'route' => '/test/user/(?P<id>\d+)', // wordpress specific
                 'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_get_user_info'], 'permission_callback' => '__return_true']
             ]);
         }
-
+		
     }
 
     // ROUTER ----------------------------------------------------------------------------
@@ -474,7 +479,10 @@ final class Recipes_Middleware implements Middleware_Interface {
 
     // handler ----------------------------------------------------------------------------
     // @todo these should be services
-    private function handle_after_recipe_published(int $uuid) {
+	// DEPENDENCY: This function is called in Export_Controller after Export has been finished.
+	// DEPENDENCY: This function is called in Export_Controller after Export has been finished.
+	// DEPENDENCY: This function is called in Export_Controller after Export has been finished.
+    public function handle_after_recipe_published(int $uuid) {
         $errors  = [];
 		$params = ['filter'=>[['uuid', $uuid]]];
         $results = $this->Recipe_Finder_Service->get($params);
@@ -484,14 +492,14 @@ final class Recipes_Middleware implements Middleware_Interface {
         // get the data
         $info = $this->User_Info_Service->get($user_id, true);
         $user = $info['body']['data'];
+
+	    $voucher = empty($recipe->voucher) ? $this->Recipe_Voucher_Service->create($recipe) : $recipe->voucher;
+
         if($this->settings['debug'] === true){
-            $voucher = $this->Recipe_Voucher_Service->create($recipe);
             $errors[] = ['Debug mode: Voucher created: '.$voucher];
-        }else{
-            $voucher = empty($recipe->voucher) ? $this->Recipe_Voucher_Service->create($recipe) : $recipe->voucher;
         }
 
-        if ($voucher !== '') {
+        if (!empty($voucher)) {
             $email = [
                 'to'           => $user['email'],
                 'subject'      => 'Ihr Rezept wurde freigeschaltet!',
@@ -505,7 +513,7 @@ final class Recipes_Middleware implements Middleware_Interface {
 
             $errors = array_merge($errors, $this->send_email_recipe_published($email));
         } else {
-            $errors[] = ['Gutscheincode konnte nicht erstellt werden.'];
+            $errors[] = ['Gutscheincode konnte nicht erstellt werden - recipe: ' . $uuid ];
         }
 
         return $errors;
@@ -629,5 +637,25 @@ final class Recipes_Middleware implements Middleware_Interface {
         });
 
     }
+
+	public function test_resend_voucher($request){
+		return $this->Api_Middleware->response_public($request, function ($Request) {
+			if($this->settings['debug'] || $this->settings['env'] === 'development') {
+				$finder_results = $this->Recipe_Finder_Service->get_queried_list("state = 'published' AND voucher = ''");
+				$buffer1 = [];
+				$buffer2 = [];
+
+				foreach($finder_results->items as $key => $recipe){
+					$buffer1[] = ['uuid'=>$recipe->get('uuid'), 'voucher'=>$recipe->get('voucher'), 'state'=>$recipe->get('state')];
+					$buffer2[] = $this->handle_after_recipe_published($recipe->get('uuid'));
+				}
+
+				return [['items'=>$buffer1, 'log'=>$buffer2], 200];
+			}else{
+				return [[],404];
+			}
+		});
+
+	}
 
 }

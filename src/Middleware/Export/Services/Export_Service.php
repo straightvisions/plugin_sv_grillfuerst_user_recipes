@@ -8,6 +8,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Export\Services\Recipes_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\User\Service\User_Info_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Export\Models\Recipe_Exporter_Model;
 use SV_Grillfuerst_User_Recipes\Middleware\Products\Service\Product_Finder_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Service\Recipe_Voucher_Service;
 
 use Exception;
 final class Export_Service {
@@ -30,6 +31,7 @@ final class Export_Service {
 	protected User_Info_Service $User_Info_Service;
 	protected Recipe_Exporter_Model $Recipe_Exporter_Model;
 	protected Product_Finder_Service $Product_Finder_Service;
+	protected Recipe_Voucher_Service $Recipe_Voucher_Service;
 
 	public function __construct(
 		Media_Service $Media_Service,
@@ -37,12 +39,14 @@ final class Export_Service {
 		Job_Service $Job_Service,
 		User_Info_Service $User_Info_Service,
 		Product_Finder_Service $Product_Finder_Service,
+		Recipe_Voucher_Service $Recipe_Voucher_Service
 	) {
 		$this->Media_Service = $Media_Service;
 		$this->Job_Service = $Job_Service;
 		$this->Recipes_Service = $Recipes_Service;
 		$this->User_Info_Service = $User_Info_Service;
 		$this->Product_Finder_Service = $Product_Finder_Service;
+		$this->Recipe_Voucher_Service = $Recipe_Voucher_Service;
 	}
 
 	public function get_data(){
@@ -140,11 +144,11 @@ final class Export_Service {
 		$user = $this->User_Info_Service->get_raw($item->get('user_id'), true);
 
 		$author = [
-			'user_id'=>$item->get('user_id'),
+			'user_id'=> $item->get('user_id'),
 			'username'=> $user ? $user['username'] : '',
 			'firstname'=> $user ? $user['firstname'] : '',
 			'lastname'=> $user ? $user['lastname'] : '',
-			'voucher'=>$item->get('voucher'),
+			'voucher'=> empty($item->get('voucher')) ? $this->Recipe_Voucher_Service->create($item) : $item->get('voucher'),
 		];
 
 		$data = [

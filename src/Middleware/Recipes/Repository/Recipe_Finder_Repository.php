@@ -57,14 +57,23 @@ final class Recipe_Finder_Repository {
         return $query->execute()->fetchAll('assoc') ?: [];
     }
 
+	public function get_queried(string $queried){
+		// create query
+		$query = $this->Query_Factory->newSelect($this->table_name);
+		$query->select(['*']);
+		$query->where($queried);
+
+		return $query->execute()->fetchAll('assoc') ?: [];
+	}
+
 	private function build_where(array|null $params): array {
 		$where = [];
 
+		// expects: ['filter'=>[ ['state', 'published'], ['foo', 'bar'] ]]
 		$filter = isset($params['filter']) ? $this->parse_filter($params['filter']) : [];
 
 		// decode filter to where array
 		if(empty($filter) === false){
-
 			// filter by uuid
 			if(isset($filter['uuid'])  && empty((int)$filter['uuid']) === false){
 				$where['uuid'] = (int)$filter['uuid'];

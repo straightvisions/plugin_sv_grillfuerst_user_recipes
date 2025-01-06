@@ -51,6 +51,10 @@ final class Recipe_Voucher_Service {
         $body = json_decode($response->getBody(), true);
         $code = (int) $response->getStatusCode();
 
+		if(isset($body['status']) && $body['status'] === 'error'){
+			error_log('Voucher creation error: ' . $body['message'] . ' for recipe ' . $recipe->uuid);
+		}
+
         return isset($body['couponCode']) ? $body['couponCode'] : '';
     }
 }

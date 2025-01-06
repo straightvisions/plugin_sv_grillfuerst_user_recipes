@@ -6,6 +6,7 @@ use SV_Grillfuerst_User_Recipes\Middleware\Api\Api_Middleware;
 use SV_Grillfuerst_User_Recipes\Middleware\Export\Services\Recipes_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Export\Services\Export_Service;
 use SV_Grillfuerst_User_Recipes\Middleware\Export\Services\Job_Service;
+use SV_Grillfuerst_User_Recipes\Middleware\Recipes\Recipes_Middleware;
 
 use Exception;
 final class Export_Controller{
@@ -13,17 +14,20 @@ final class Export_Controller{
 	private Recipes_Service $Recipes_Service;
 	private Export_Service $Export_Service;
 	private Job_Service $Job_Service;
+	private Recipes_Middleware $Recipes_Middleware;
 
 	public function __construct(
 		Api_Middleware $Api_Middleware,
 		Recipes_Service $Recipes_Service,
 		Export_Service $Export_Service,
-		Job_Service $Job_Service
+		Job_Service $Job_Service,
+		Recipes_Middleware $Recipes_Middleware
 	){
 		$this->Api_Middleware = $Api_Middleware;
 		$this->Recipes_Service = $Recipes_Service;
 		$this->Export_Service = $Export_Service;
 		$this->Job_Service = $Job_Service;
+		$this->Recipes_Middleware = $Recipes_Middleware;
 
 		$this->register_routes();
 	}
@@ -258,7 +262,9 @@ final class Export_Controller{
 		// clean up
 		$this->Job_Service->delete_by_item_id($job['item_id']);
 		$this->Recipes_Service->update($job['item_id'], ['export'=>'done','state'=>'published']);
-
+			// old function with error returns - workaround // we should use events instead of logs
+			$errors = $this->Recipes_Middleware->handle_after_recipe_published($job['item_id']);
+			if(!empty($errors)){foreach($errors as $e){error_log($e);}}
 	}
 
 	// /////////////////////////////

@@ -31,6 +31,11 @@ final class Recipe_Finder_Service {
         return $this->get($params);
     }
 
+	// only for internal use // workaround function due the fact the repository getters are not supporting complex queries
+	public function get_queried_list(string $query){
+		return $this->create_result($this->repository->get_queried($query));
+	}
+
     //@todo check if this function is needed + naming convention
     public function getRaw(int $recipe_id): Recipe_Exporter_Item {
         $row = $this->repository->getRaw($recipe_id);

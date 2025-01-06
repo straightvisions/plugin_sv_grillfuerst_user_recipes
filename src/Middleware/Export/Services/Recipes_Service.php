@@ -25,7 +25,7 @@ final class Recipes_Service {
 			['uuid' => $uuid],
 			['uuid' => 'integer']
 		);
-		return $statement->fetch('assoc') ?: null;
+		return $statement->fetch('assoc') ?: null; // no model use?
 	}
 
 	// Update a recipe by ID
