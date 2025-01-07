@@ -163,6 +163,18 @@ function custom_rewrite_rules() {
         'index.php?pagename=community-rezepte/admin',
         'top'
     );
+
+	add_rewrite_rule(
+		'^community-rezepte/admin/export?$',
+		'index.php?pagename=community-rezepte/admin',
+		'top'
+	);
+
+	add_rewrite_rule(
+		'^community-rezepte/admin/export/([0-9]+)/?$',
+		'index.php?pagename=community-rezepte/admin',
+		'top'
+	);
 }
 add_action('init', 'custom_rewrite_rules');
 

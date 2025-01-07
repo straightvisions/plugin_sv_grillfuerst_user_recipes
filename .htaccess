@@ -1,3 +1,15 @@
-<FilesMatch "(README\.md|composer\.json|composer\.lock)">
+# Disable access to sensitive files globally
+<FilesMatch "(README\.md|composer\.json|composer\.lock|\.env|\.htaccess|.*\.php)">
     Deny from all
 </FilesMatch>
+
+# Enable mod_rewrite
+RewriteEngine On
+
+# Allow access to PHP files only in /public
+RewriteCond %{REQUEST_URI} ^/wp-content/plugins/sv-grillfuerst-user-recipes/public/
+RewriteCond %{REQUEST_FILENAME} -f
+RewriteRule ^ - [L]
+
+# Deny direct access to all other files in the plugin folder
+RewriteRule ^wp-content/plugins/sv-grillfuerst-user-recipes/.* - [F,L]

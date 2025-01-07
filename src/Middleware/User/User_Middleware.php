@@ -91,14 +91,14 @@ final class User_Middleware implements Middleware_Interface {
     // custom shortcode handler
     public function get_frontend_user_dashboard(array $atts): string {
         //@todo add switch for redirect to login template
-        $this->Adapter->Asset()->add('app', 'User/lib/apps/user_recipes/dist/user_recipes.build.js');
+        $this->Adapter->Asset()->deprecated_add('app', 'User/lib/apps/user_recipes/dist/user_recipes.build.js');
 
         return $this->User_Dashboard_Frontend_Service->get($atts);
     }
 
     public function get_frontend_user_login(array $atts): string {
         //@todo add switch for redirect to login template
-        $this->Adapter->Asset()->add('app', 'User/lib/apps/login/dist/login.build.js');
+        $this->Adapter->Asset()->deprecated_add('app', 'User/lib/apps/login/dist/login.build.js');
 
         return $this->User_Login_Frontend_Service->get($atts);
     }

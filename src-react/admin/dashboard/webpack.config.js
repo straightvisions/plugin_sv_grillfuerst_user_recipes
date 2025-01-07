@@ -8,7 +8,7 @@ module.exports = (env, argv) => {
 		mode: argv.mode,
 		entry: './src/index.js',
 		output: {
-			path: path.resolve(__dirname, './dist'), // the bundle output path
+			path: path.resolve(__dirname, './../../../public/react/admin'), // the bundle output path
 			filename: 'admin_dashboard.build.js', // the name of the bundle
 			publicPath: '/',
 		},

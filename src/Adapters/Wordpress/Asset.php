@@ -10,7 +10,24 @@ use function plugin_dir_url;
 final class Asset {
     private $assets = [];
 
-    public function add(string $handle, string $src, array $localize = []): void {
+	public function add(string $handle, string $src, array $localize = []): void {
+		$path = getcwd() . '/wp-content/plugins/' . plugin_dir_path('sv-grillfuerst-user-recipes/*') . $src;
+		$src = plugin_dir_url('sv-grillfuerst-user-recipes/*') . $src;
+
+		// save origin
+		$this->assets[$handle] = $src;
+		// wordpress specific
+		wp_enqueue_script( $handle, $src, [], filemtime( $path ), true);
+
+		if($localize){
+			foreach($localize as $key => $script){
+				wp_localize_script($handle, $handle.'_'.$key, $script);
+			}
+
+		}
+	}
+
+    public function deprecated_add(string $handle, string $src, array $localize = []): void {
         $path = getcwd() . '/wp-content/plugins/' . plugin_dir_path('sv-grillfuerst-user-recipes/*') . 'src/Middleware/' . $src;
         $src = plugin_dir_url('sv-grillfuerst-user-recipes/*') . 'src/Middleware/' . $src;
 

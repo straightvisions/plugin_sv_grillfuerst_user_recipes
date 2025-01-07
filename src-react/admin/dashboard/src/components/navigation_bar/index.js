@@ -9,6 +9,7 @@ const navigation = [
 	//hotfix
 	//{ name: 'Dashboard', href: '/', current: true },
 	{ name: 'Dashboard', href: routes.root, current: true },
+	{ name: 'Export', href: routes.root + '/export', current: false },
 ]
 
 const userNavigation = [
@@ -50,6 +51,7 @@ export default function NavigationBar(props) {
 								</div>
 							</div>
 							<div className="hidden sm:ml-6 sm:flex sm:items-center">
+								{/*
 								<button
 									type="button"
 									className="rounded-full bg-white p-1 text-gray-400 hover:text-gray-500 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2"
@@ -57,8 +59,7 @@ export default function NavigationBar(props) {
 									<span className="sr-only">View notifications</span>
 									<BellIcon className="h-6 w-6" aria-hidden="true" />
 								</button>
-								
-								{/* Profile dropdown */}
+							
 								<Menu as="div" className="relative ml-3">
 									<div>
 										<Menu.Button className="flex rounded-full bg-white text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
@@ -94,6 +95,7 @@ export default function NavigationBar(props) {
 										</Menu.Items>
 									</Transition>
 								</Menu>
+								*/}
 							</div>
 							<div className="-mr-2 flex items-center sm:hidden">
 								{/* Mobile menu button */}

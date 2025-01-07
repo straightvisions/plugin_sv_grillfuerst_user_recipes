@@ -2,6 +2,7 @@ import React, {useState, useEffect} from "react";
 import NavigationBar from './components/navigation_bar';
 import Recipes from './components/recipes';
 import Review from './components/review';
+import Export from './components/export';
 import user from './modules/user';
 import Spinner from './components/spinner';
 
@@ -38,6 +39,10 @@ const App = () => {
 						<Route
 							path="/"
 							element={<Recipes />}
+						/>
+						<Route
+							path="/export"
+							element={<Export />}
 						/>
 					</Routes>
 				</div>
