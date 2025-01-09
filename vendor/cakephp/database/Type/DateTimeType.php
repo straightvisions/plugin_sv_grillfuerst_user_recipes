@@ -45,14 +45,17 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     /**
      * The DateTime formats allowed by `marshal()`.
      *
-     * @var array<string>
+     * @var list<string>
      */
     protected array $_marshalFormats = [
         'Y-m-d H:i',
         'Y-m-d H:i:s',
+        'Y-m-d H:i:s.u',
         'Y-m-d\TH:i',
         'Y-m-d\TH:i:s',
         'Y-m-d\TH:i:sP',
+        'Y-m-d\TH:i:s.u',
+        'Y-m-d\TH:i:s.uP',
     ];
 
     /**
@@ -131,7 +134,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         if ($value === null || is_string($value)) {
             return $value;
         }
-        if (is_int($value)) {
+        if (is_int($value) || is_float($value)) {
             $class = $this->_className;
             $value = new $class('@' . $value);
         }
@@ -209,7 +212,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
         }
 
         $class = $this->_className;
-        if (is_int($value)) {
+        if (is_numeric($value)) {
             $instance = new $class('@' . $value);
         } elseif (str_starts_with($value, '0000-00-00')) {
             return null;
@@ -222,7 +225,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
             && $instance->getTimezone()
             && $instance->getTimezone()->getName() !== $this->defaultTimezone->getName()
         ) {
-            $instance = $instance->setTimezone($this->defaultTimezone);
+            return $instance->setTimezone($this->defaultTimezone);
         }
 
         return $instance;
@@ -321,12 +324,12 @@ class DateTimeType extends BaseType implements BatchCastingInterface
                 }
 
                 if ($dateTime) {
-                    $dateTime = $dateTime->setTimezone($this->defaultTimezone);
+                    return $dateTime->setTimezone($this->defaultTimezone);
                 }
 
                 return $dateTime;
             }
-        } catch (Exception $e) {
+        } catch (Exception) {
             return null;
         }
 
@@ -443,6 +446,7 @@ class DateTimeType extends BaseType implements BatchCastingInterface
     protected function _parseValue(string $value): DateTime|DateTimeImmutable|null
     {
         $class = $this->_className;
+
         foreach ($this->_marshalFormats as $format) {
             try {
                 $dateTime = $class::createFromFormat($format, $value, $this->userTimezone);

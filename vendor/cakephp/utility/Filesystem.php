@@ -90,17 +90,17 @@ class Filesystem
         $dirFilter = new RecursiveCallbackFilterIterator(
             $directory,
             function (SplFileInfo $current) {
-                if ($current->getFilename()[0] === '.' && $current->isDir()) {
+                if (str_starts_with($current->getFilename(), '.') && $current->isDir()) {
                     return false;
                 }
 
                 return true;
-            }
+            },
         );
 
         $flatten = new RecursiveIteratorIterator(
             $dirFilter,
-            RecursiveIteratorIterator::CHILD_FIRST
+            RecursiveIteratorIterator::CHILD_FIRST,
         );
 
         if ($filter === null) {
@@ -204,7 +204,7 @@ class Filesystem
         /** @var \RecursiveDirectoryIterator<\SplFileInfo> $iterator Replace type for psalm */
         $iterator = new RecursiveIteratorIterator(
             new RecursiveDirectoryIterator($path, FilesystemIterator::SKIP_DOTS),
-            RecursiveIteratorIterator::CHILD_FIRST
+            RecursiveIteratorIterator::CHILD_FIRST,
         );
 
         $result = true;
@@ -254,13 +254,13 @@ class Filesystem
             if ($fileInfo->isDir()) {
                 $result = $result && $this->copyDir(
                     $fileInfo->getPathname(),
-                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename()
+                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename(),
                 );
             } else {
                 // phpcs:ignore
                 $result = $result && @copy(
                     $fileInfo->getPathname(),
-                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename()
+                    $destination . DIRECTORY_SEPARATOR . $fileInfo->getFilename(),
                 );
             }
         }

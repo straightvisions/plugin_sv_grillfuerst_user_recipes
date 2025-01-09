@@ -80,15 +80,23 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
      */
     public function load(string $name, array $config = []): object
     {
+        $plugin = null;
         if (isset($config['className'])) {
-            $objName = $name;
+            if ($name === $config['className']) {
+                [$plugin, $objName] = pluginSplit($name);
+            } else {
+                $objName = $name;
+            }
             $name = $config['className'];
         } else {
-            [, $objName] = pluginSplit($name);
+            [$plugin, $objName] = pluginSplit($name);
+            if ($plugin) {
+                $config['className'] = $name;
+            }
         }
 
         $loaded = isset($this->_loaded[$objName]);
-        if ($loaded && !empty($config)) {
+        if ($loaded && $config !== []) {
             $this->_checkDuplicate($objName, $config);
         }
         if ($loaded) {
@@ -151,7 +159,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
                     ' The `%s` key has a value of `%s` but previously had a value of `%s`',
                     $key,
                     json_encode($value, JSON_THROW_ON_ERROR),
-                    json_encode($existingConfig[$key], JSON_THROW_ON_ERROR)
+                    json_encode($existingConfig[$key], JSON_THROW_ON_ERROR),
                 );
                 break;
             }
@@ -198,7 +206,7 @@ abstract class ObjectRegistry implements Countable, IteratorAggregate
     /**
      * Get the list of loaded objects.
      *
-     * @return array<string> List of object names.
+     * @return list<string> List of object names.
      */
     public function loaded(): array
     {

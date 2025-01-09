@@ -22,7 +22,6 @@ use Cake\ORM\Entity;
 use Cake\Utility\Hash;
 use Cake\Utility\Inflector;
 use InvalidArgumentException;
-use Traversable;
 
 /**
  * An entity represents a single result row from a repository. It exposes the
@@ -328,6 +327,7 @@ trait EntityTrait
 
         $method = static::_accessor($field, 'get');
         if ($method) {
+            // Must be variable before returning: Only variable references should be returned by reference.
             $result = $this->{$method}($value);
 
             return $result;
@@ -469,8 +469,7 @@ trait EntityTrait
         if (
             $value === null ||
             (
-                is_array($value) &&
-                empty($value) ||
+                $value === [] ||
                 $value === ''
             )
         ) {
@@ -527,7 +526,7 @@ trait EntityTrait
     /**
      * Sets hidden fields.
      *
-     * @param list<string> $fields An array of fields to hide from array exports.
+     * @param array<string> $fields An array of fields to hide from array exports.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -548,7 +547,7 @@ trait EntityTrait
     /**
      * Gets the hidden fields.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getHidden(): array
     {
@@ -558,7 +557,7 @@ trait EntityTrait
     /**
      * Sets the virtual fields on this entity.
      *
-     * @param list<string> $fields An array of fields to treat as virtual.
+     * @param array<string> $fields An array of fields to treat as virtual.
      * @param bool $merge Merge the new fields with the existing. By default false.
      * @return $this
      */
@@ -579,7 +578,7 @@ trait EntityTrait
     /**
      * Gets the virtual fields on this entity.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getVirtual(): array
     {
@@ -592,7 +591,7 @@ trait EntityTrait
      * The list of visible fields is all standard fields
      * plus virtual fields minus hidden fields.
      *
-     * @return array<string> A list of fields that are 'visible' in all
+     * @return list<string> A list of fields that are 'visible' in all
      *     representations.
      */
     public function getVisible(): array
@@ -610,7 +609,7 @@ trait EntityTrait
      * This method will recursively transform entities assigned to fields
      * into arrays as well.
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function toArray(): array
     {
@@ -639,7 +638,7 @@ trait EntityTrait
     /**
      * Returns the fields that will be serialized as JSON
      *
-     * @return array
+     * @return array<string, mixed>
      */
     public function jsonSerialize(): array
     {
@@ -717,7 +716,7 @@ trait EntityTrait
 
         foreach (get_class_methods($class) as $method) {
             $prefix = substr($method, 1, 3);
-            if ($method[0] !== '_' || ($prefix !== 'get' && $prefix !== 'set')) {
+            if (!str_starts_with($method, '_') || ($prefix !== 'get' && $prefix !== 'set')) {
                 continue;
             }
             $field = lcfirst(substr($method, 4));
@@ -739,7 +738,7 @@ trait EntityTrait
      * Returns an array with the requested fields
      * stored in this entity, indexed by field name
      *
-     * @param list<string> $fields list of fields to be returned
+     * @param array<string> $fields list of fields to be returned
      * @param bool $onlyDirty Return the requested field only if it is dirty
      * @return array<string, mixed>
      */
@@ -762,7 +761,7 @@ trait EntityTrait
      * Fields that are unchanged from their original value will be included in the
      * return of this method.
      *
-     * @param list<string> $fields List of fields to be returned
+     * @param array<string> $fields List of fields to be returned
      * @return array<string, mixed>
      */
     public function extractOriginal(array $fields): array
@@ -786,7 +785,7 @@ trait EntityTrait
      * This method will only return fields that have been modified since
      * the entity was built. Unchanged fields will be omitted.
      *
-     * @param list<string> $fields List of fields to be returned
+     * @param array<string> $fields List of fields to be returned
      * @return array<string, mixed>
      */
     public function extractOriginalChanged(array $fields): array
@@ -820,7 +819,7 @@ trait EntityTrait
      * Returns an array of original fields.
      * Original fields are those that the entity was initialized with.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getOriginalFields(): array
     {
@@ -896,7 +895,7 @@ trait EntityTrait
     /**
      * Gets the dirty fields.
      *
-     * @return array<string>
+     * @return list<string>
      */
     public function getDirty(): array
     {
@@ -1099,7 +1098,7 @@ trait EntityTrait
      * Auxiliary method for getting errors in nested entities
      *
      * @param string $field the field in this entity to check for errors
-     * @return array errors in nested entity if any
+     * @return array Errors in nested entity if any
      */
     protected function _nestedErrors(string $field): array
     {
@@ -1135,8 +1134,7 @@ trait EntityTrait
             }
 
             if (
-                is_array($val) ||
-                $val instanceof Traversable ||
+                is_iterable($val) ||
                 $val instanceof EntityInterface
             ) {
                 $entity = $val;
@@ -1235,7 +1233,7 @@ trait EntityTrait
     public function setInvalid(array $fields, bool $overwrite = false)
     {
         foreach ($fields as $field => $value) {
-            if ($overwrite === true) {
+            if ($overwrite) {
                 $this->_invalid[$field] = $value;
                 continue;
             }

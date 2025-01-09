@@ -16,6 +16,7 @@ declare(strict_types=1);
 namespace Cake\Utility;
 
 use ArrayAccess;
+use Cake\Core\Exception\CakeException;
 use InvalidArgumentException;
 use const SORT_ASC;
 use const SORT_DESC;
@@ -125,7 +126,7 @@ class Hash
         // Simple paths.
         if (!preg_match('/[{\[]/', $path)) {
             $data = static::get($data, $path);
-            if ($data !== null && !(is_array($data) || $data instanceof ArrayAccess)) {
+            if ($data !== null && (!is_array($data) && !$data instanceof ArrayAccess)) {
                 return [$data];
             }
 
@@ -229,7 +230,7 @@ class Hash
             '/(\[ (?P<attr>[^=><!]+?) (\s* (?P<op>[><!]?[=]|[><]) \s* (?P<val>(?:\/.*?\/ | [^\]]+)) )? \])/x',
             $selector,
             $conditions,
-            PREG_SET_ORDER
+            PREG_SET_ORDER,
         );
 
         foreach ($conditions as $cond) {
@@ -288,13 +289,15 @@ class Hash
      * Insert $values into an array with the given $path. You can use
      * `{n}` and `{s}` elements to insert $data multiple times.
      *
-     * @param array $data The data to insert into.
+     * @template T of \ArrayAccess|array
+     * @param T $data The data to insert into.
      * @param string $path The path to insert at.
      * @param mixed $values The values to insert.
-     * @return array The data with $values inserted.
+     * @return \ArrayAccess|array The data with $values inserted.
+     * @psalm-return (T is array ? array : \ArrayAccess)
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::insert
      */
-    public static function insert(array $data, string $path, mixed $values = null): array
+    public static function insert(ArrayAccess|array $data, string $path, mixed $values = null): ArrayAccess|array
     {
         $noTokens = !str_contains($path, '[');
         if ($noTokens && !str_contains($path, '.')) {
@@ -313,6 +316,10 @@ class Hash
             return static::_simpleOp('insert', $data, $tokens, $values);
         }
 
+        if (!is_iterable($data)) {
+            throw new CakeException('Cannot use path tokens of type `{}` or `[]` for non-iterable objects.');
+        }
+
         /** @var string $token */
         $token = array_shift($tokens);
         $nextPath = implode('.', $tokens);
@@ -322,7 +329,7 @@ class Hash
         foreach ($data as $k => $v) {
             if (
                 static::_matchToken($k, $token) &&
-                (!$conditions || static::_matches($v, $conditions))
+                (!$conditions || ((is_array($v) || $v instanceof ArrayAccess) && static::_matches($v, $conditions)))
             ) {
                 $data[$k] = $nextPath
                     ? static::insert($v, $nextPath, $values)
@@ -337,13 +344,17 @@ class Hash
      * Perform a simple insert/remove operation.
      *
      * @param string $op The operation to do.
-     * @param array $data The data to operate on.
+     * @param \ArrayAccess|array $data The data to operate on.
      * @param array<string> $path The path to work on.
      * @param mixed $values The values to insert when doing inserts.
-     * @return array data.
+     * @return \ArrayAccess|array
      */
-    protected static function _simpleOp(string $op, array $data, array $path, mixed $values = null): array
-    {
+    protected static function _simpleOp(
+        string $op,
+        ArrayAccess|array $data,
+        array $path,
+        mixed $values = null,
+    ): ArrayAccess|array {
         $_list = &$data;
 
         $count = count($path);
@@ -357,12 +368,12 @@ class Hash
                 }
                 $_list[$key] ??= [];
                 $_list = &$_list[$key];
-                if (!is_array($_list)) {
+                if (!is_array($_list) && !$_list instanceof ArrayAccess) {
                     $_list = [];
                 }
             } elseif ($op === 'remove') {
                 if ($i === $last) {
-                    if (is_array($_list)) {
+                    if (is_array($_list) || $_list instanceof ArrayAccess) {
                         unset($_list[$key]);
                     }
 
@@ -383,12 +394,14 @@ class Hash
      * You can use `{n}` and `{s}` to remove multiple elements
      * from $data.
      *
-     * @param array $data The data to operate on
+     * @template T of \ArrayAccess|array
+     * @param T $data The data to operate on
      * @param string $path A path expression to use to remove.
-     * @return array The modified array.
+     * @return \ArrayAccess|array The modified array.
+     * @psalm-return (T is array ? array : \ArrayAccess)
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::remove
      */
-    public static function remove(array $data, string $path): array
+    public static function remove(ArrayAccess|array $data, string $path): ArrayAccess|array
     {
         $noTokens = !str_contains($path, '[');
         $noExpansion = !str_contains($path, '{');
@@ -405,6 +418,10 @@ class Hash
             return static::_simpleOp('remove', $data, $tokens);
         }
 
+        if (!is_iterable($data)) {
+            throw new CakeException('Cannot use path tokens of type `{}` or `[]` for non-iterable objects.');
+        }
+
         /** @var string $token */
         $token = array_shift($tokens);
         $nextPath = implode('.', $tokens);
@@ -413,7 +430,7 @@ class Hash
 
         foreach ($data as $k => $v) {
             $match = static::_matchToken($k, $token);
-            if ($match && is_array($v)) {
+            if ($match && (is_array($v) || $v instanceof ArrayAccess)) {
                 if ($conditions) {
                     if (static::_matches($v, $conditions)) {
                         if ($nextPath !== '') {
@@ -454,7 +471,7 @@ class Hash
         array $data,
         array|string|null $keyPath,
         array|string|null $valuePath = null,
-        ?string $groupPath = null
+        ?string $groupPath = null,
     ): array {
         if (!$data) {
             return [];
@@ -490,7 +507,7 @@ class Hash
 
         if (is_array($keys) && count($keys) !== count($vals)) {
             throw new InvalidArgumentException(
-                '`Hash::combine()` needs an equal number of keys + values.'
+                '`Hash::combine()` needs an equal number of keys + values.',
             );
         }
 
@@ -534,7 +551,7 @@ class Hash
      * @param array $data Source array from which to extract the data
      * @param array<string> $paths An array containing one or more Hash::extract()-style key paths
      * @param string $format Format string into which values will be inserted, see sprintf()
-     * @return array<string>|null An array of strings extracted from `$path` and formatted with `$format`
+     * @return list<string>|null An array of strings extracted from `$path` and formatted with `$format`
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::format
      * @see sprintf()
      * @see \Cake\Utility\Hash::extract()
@@ -630,7 +647,7 @@ class Hash
             return false;
         }
 
-        return count($results) > 0;
+        return $results !== [];
     }
 
     /**
@@ -650,7 +667,7 @@ class Hash
             }
         }
 
-        return array_filter($data, $callback ?? [static::class, '_filter']);
+        return array_filter($data, $callback ?? static::_filter(...));
     }
 
     /**
@@ -686,7 +703,7 @@ class Hash
             $element = $data[$key];
             unset($data[$key]);
 
-            if (is_array($element) && !empty($element)) {
+            if (is_array($element) && $element !== []) {
                 if ($data) {
                     $stack[] = [$data, $path];
                 }
@@ -783,7 +800,7 @@ class Hash
      */
     protected static function _merge(array $stack, array &$return): void
     {
-        while (!empty($stack)) {
+        while ($stack !== []) {
             foreach ($stack as $curKey => &$curMerge) {
                 foreach ($curMerge[0] as $key => &$val) {
                     if (!is_array($curMerge[1])) {
@@ -866,17 +883,15 @@ class Hash
     public static function maxDimensions(array $data): int
     {
         $depth = [];
-        if ($data) {
-            foreach ($data as $value) {
-                if (is_array($value)) {
-                    $depth[] = static::maxDimensions($value) + 1;
-                } else {
-                    $depth[] = 1;
-                }
+        foreach ($data as $value) {
+            if (is_array($value)) {
+                $depth[] = static::maxDimensions($value) + 1;
+            } else {
+                $depth[] = 1;
             }
         }
 
-        return empty($depth) ? 0 : max($depth);
+        return $depth === [] ? 0 : max($depth);
     }
 
     /**
@@ -981,7 +996,7 @@ class Hash
         array $data,
         string $path,
         string|int $dir = 'asc',
-        array|string $type = 'regular'
+        array|string $type = 'regular',
     ): array {
         if (!$data) {
             return [];
@@ -1078,7 +1093,7 @@ class Hash
             if ($key !== null) {
                 $id = $key;
             }
-            if (is_array($r) && !empty($r)) {
+            if (is_array($r) && $r !== []) {
                 $stack = array_merge($stack, static::_squash($r, $id));
             } else {
                 $stack[] = ['id' => $id, 'value' => $r];
@@ -1128,7 +1143,7 @@ class Hash
      */
     public static function mergeDiff(array $data, array $compare): array
     {
-        if (!$data && !empty($compare)) {
+        if (!$data && $compare !== []) {
             return $compare;
         }
         if (!$compare) {
@@ -1197,12 +1212,11 @@ class Hash
      *
      * @param array $data The data to nest.
      * @param array<string, string|null> $options Options.
-     * @return array<array> of results, nested
+     * @return list<array> of results, nested
      * @see \Cake\Utility\Hash::extract()
      * @throws \InvalidArgumentException When providing invalid data.
      * @link https://book.cakephp.org/5/en/core-libraries/hash.html#Cake\Utility\Hash::nest
      * @psalm-param array{idPath?: string, parentPath?: string, children?: string, root?: string|null} $options
-     * @psalm-return list<array>
      */
     public static function nest(array $data, array $options = []): array
     {
@@ -1212,13 +1226,13 @@ class Hash
 
         $alias = key(current($data));
         $options += [
-            'idPath' => "{n}.$alias.id",
-            'parentPath' => "{n}.$alias.parent_id",
+            'idPath' => "{n}.{$alias}.id",
+            'parentPath' => "{n}.{$alias}.parent_id",
             'children' => 'children',
             'root' => null,
         ];
-
-        $return = $idMap = [];
+        $return = [];
+        $idMap = [];
         $ids = static::extract($data, $options['idPath']);
         assert(is_array($ids));
 
