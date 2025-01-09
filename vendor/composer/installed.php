@@ -3,7 +3,7 @@
         'name' => '__root__',
         'pretty_version' => '2.021.x-dev',
         'version' => '2.021.9999999.9999999-dev',
-        'reference' => '868ced609ab342a68a852269a279fb3d44cc17ca',
+        'reference' => 'dc818afa55cad1413c880745b779fd92a27105c6',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
@@ -13,7 +13,7 @@
         '__root__' => array(
             'pretty_version' => '2.021.x-dev',
             'version' => '2.021.9999999.9999999-dev',
-            'reference' => '868ced609ab342a68a852269a279fb3d44cc17ca',
+            'reference' => 'dc818afa55cad1413c880745b779fd92a27105c6',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
@@ -232,8 +232,8 @@
         'psr/container-implementation' => array(
             'dev_requirement' => false,
             'provided' => array(
-                0 => '^1.0',
-                1 => '^2.0',
+                0 => '^2.0',
+                1 => '^1.0',
             ),
         ),
         'psr/event-dispatcher' => array(
@@ -434,6 +434,15 @@
             'aliases' => array(),
             'dev_requirement' => false,
         ),
+        'symfony/polyfill-php81' => array(
+            'pretty_version' => 'v1.31.0',
+            'version' => '1.31.0.0',
+            'reference' => '4a4cfc2d253c21a5ad0e53071df248ed48c6ce5c',
+            'type' => 'library',
+            'install_path' => __DIR__ . '/../symfony/polyfill-php81',
+            'aliases' => array(),
+            'dev_requirement' => false,
+        ),
         'symfony/polyfill-php83' => array(
             'pretty_version' => 'v1.29.0',
             'version' => '1.29.0.0',
@@ -489,9 +498,9 @@
             'dev_requirement' => false,
         ),
         'twig/twig' => array(
-            'pretty_version' => 'v3.8.0',
-            'version' => '3.8.0.0',
-            'reference' => '9d15f0ac07f44dc4217883ec6ae02fd555c6f71d',
+            'pretty_version' => 'v3.18.0',
+            'version' => '3.18.0.0',
+            'reference' => 'acffa88cc2b40dbe42eaf3a5025d6c0d4600cc50',
             'type' => 'library',
             'install_path' => __DIR__ . '/../twig/twig',
             'aliases' => array(),

@@ -50,6 +50,11 @@ final class Export_Controller{
 			'args'  => ['methods' => 'GET', 'callback' => [$this, 'export_status'], 'permission_callback' => '__return_true']
 		]);
 
+		$this->Api_Middleware->add([
+			'route' => '/export/recipes/',
+			'args'  => ['methods' => 'GET', 'callback' => [$this, 'export_recipes_list'], 'permission_callback' => '__return_true']
+		]);
+
 		// testing routes
 		/*$this->Api_Middleware->add([
 			'route' => '/export/test/jobs', // id from table jobs
@@ -152,6 +157,64 @@ final class Export_Controller{
 			},['admin', 'export']
 		);
 	}
+
+	public function export_recipes_list($request) {
+		return $this->Api_Middleware->response_public(
+			$request,
+			function ($Request) {
+				$messages = [];
+
+				// Get pagination and filters
+				$page = $Request->getPage();
+				$limit = $Request->getLimit();
+				$offset = ($page - 1) * $limit;
+				$filters = $Request->getFilters();
+
+				// Build conditions dynamically
+				$conditions = [
+					'OR' => [
+						'export' => $filters['export'] ?? ['pending', 'done'],
+					],
+				];
+
+				if (!empty($filters['query'])) {
+					$conditions['AND'][] = ['title LIKE' => '%' . $filters['query'] . '%'];
+				}
+
+				// Define the parameters
+				$params = [
+					'columns' => ['uuid', 'title', 'state', 'link', 'export', 'voucher'],
+					'conditions' => $conditions,
+					'order' => ['created' => 'DESC'],
+					'limit' => $limit,
+					'offset' => $offset,
+				];
+
+				// Fetch items
+				$items = $this->Recipes_Service->get_list($params);
+
+				// Fetch total count for pagination
+				$totalRows = $this->Recipes_Service->get_count($params);
+				$totalPages = (int) ceil($totalRows / $limit);
+
+				return [
+					[
+						'messages' => $messages,
+						'items' => $items,
+						'pagination' => [
+							'page' => $page,
+							'totalRows' => $totalRows,
+							'totalPages' => $totalPages,
+						],
+					],
+					200,
+				];
+			},
+			['admin', 'export']
+		);
+	}
+
+
 	// /////////////////////////////
 	// REST FUNCTIONS
 	// /////////////////////////////
