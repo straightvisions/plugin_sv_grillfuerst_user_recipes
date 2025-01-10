@@ -55,6 +55,11 @@ final class Export_Controller{
 			'args'  => ['methods' => 'GET', 'callback' => [$this, 'export_recipes_list'], 'permission_callback' => '__return_true']
 		]);
 
+		$this->Api_Middleware->add([
+			'route' => '/export/recipes/(?P<uuid>\d+)/status/details',
+			'args'  => ['methods' => 'GET', 'callback' => [$this, 'export_status_details'], 'permission_callback' => '__return_true']
+		]);
+
 		// testing routes
 		/*$this->Api_Middleware->add([
 			'route' => '/export/test/jobs', // id from table jobs
@@ -158,8 +163,27 @@ final class Export_Controller{
 		);
 	}
 
+	public function export_status_details($request){
+		return $this->Api_Middleware->response($request,
+			function ($Request) {
+				$message = '';
+				$errors = [];
+				// get recipe
+				$uuid  = $Request->getAttribute('uuid');
+				$jobs = $this->Job_Service->get_by_item_id($uuid);
+				$recipe = $this->Recipes_Service->get($uuid);
+
+				return [[
+					'message'=>'',
+					'errors' => $errors,
+					'jobs' => $jobs
+				], 200];
+			},['admin', 'export']
+		);
+	}
+
 	public function export_recipes_list($request) {
-		return $this->Api_Middleware->response_public(
+		return $this->Api_Middleware->response(
 			$request,
 			function ($Request) {
 				$messages = [];
@@ -168,24 +192,25 @@ final class Export_Controller{
 				$page = $Request->getPage();
 				$limit = $Request->getLimit();
 				$offset = ($page - 1) * $limit;
-				$filters = $Request->getFilters();
-
 				// Build conditions dynamically
+				$export_state = $Request->getQuery('state', null);
+				$text_query = $Request->getQuery('query', null);
+
 				$conditions = [
 					'OR' => [
-						'export' => $filters['export'] ?? ['pending', 'done'],
+						'export in' =>  $export_state && $export_state !== 'all' ? [$export_state] : ['running', 'done', 'error'],
 					],
 				];
 
-				if (!empty($filters['query'])) {
-					$conditions['AND'][] = ['title LIKE' => '%' . $filters['query'] . '%'];
+				if ($text_query) {
+					$conditions['AND'] = ['OR'=> ['title LIKE' => '%'.$text_query.'%', 'uuid'=>$text_query]];
 				}
 
 				// Define the parameters
 				$params = [
-					'columns' => ['uuid', 'title', 'state', 'link', 'export', 'voucher'],
+					'columns' => ['uuid', 'title', 'state', 'link', 'export', 'export_date', 'voucher'],
 					'conditions' => $conditions,
-					'order' => ['created' => 'DESC'],
+					'order' => ['export_date' => 'DESC'],
 					'limit' => $limit,
 					'offset' => $offset,
 				];

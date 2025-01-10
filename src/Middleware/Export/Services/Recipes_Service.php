@@ -37,38 +37,11 @@ final class Recipes_Service {
 
 		// Add WHERE conditions
 		if (!empty($params['conditions'])) {
-			//@todo broken in 5.1
-			/*
-			$query->where(function (QueryExpression $exp, SelectQuery $q) use ($params) {
-				$conditions = $params['conditions'];
+			$conditions = $params['conditions'];
+			$hasConditions = false; // Track if any condition is added
 
-				// Handle AND conditions
-				if (!empty($conditions['AND'])) {
-					foreach ($conditions['AND'] as $field => $value) {
-						if (is_array($value)) {
-							$exp->in($field, $value);
-						} else {
-							$exp->eq($field, $value);
-						}
-					}
-				}
+			$query->where($conditions);
 
-				// Handle OR conditions
-				if (!empty($conditions['OR'])) {
-					$exp->or(function (QueryExpression $or) use ($conditions) {
-						foreach ($conditions['OR'] as $field => $value) {
-							if (is_array($value)) {
-								$or->in($field, $value);
-							} else {
-								$or->eq($field, $value);
-							}
-						}
-						return $or;
-					});
-				}
-
-				return $exp;
-			});*/
 		}
 
 		// Add ORDER BY clause
@@ -86,8 +59,16 @@ final class Recipes_Service {
 			$query->offset((int)$params['offset']);
 		}
 
+		try {
+
+			$result = $query->execute()->fetchAll('assoc');
+
+		}catch(\Exception $e){
+			error_log($e->getMessage());
+		}
+
 		// Execute the query and fetch results
-		return $query->execute()->fetchAll('assoc');
+		return $result;
 	}
 
 	// Get a single recipe by ID

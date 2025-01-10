@@ -29,6 +29,7 @@ export default {
 	"deleteRecipe": apiURL + '/recipes/', // DELETE + {recipe_id}
 	"exportRecipe": apiURL + '/export/recipes/{id}', // PUT + {recipe_id}
 	"getExportList": apiURL + '/export/recipes/', // GET
+	"getExportStatusDetails": apiURL + '/export/recipes/{id}/status/details/', // GET
 	"getIngredients": apiURL + '/recipes/ingredients', // GET
 	"getMenuTypes": apiURL + '/recipes/menutypes', // GET
 	"getKitchenStyles": apiURL + '/recipes/kitchenstyles', // GET

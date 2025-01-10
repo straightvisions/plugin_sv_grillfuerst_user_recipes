@@ -21,6 +21,7 @@ $settings['db']['database'] = defined('DB_NAME') ? DB_NAME : null;
 $settings['db']['username'] = defined('DB_USER') ? DB_USER : null;
 $settings['db']['password'] = defined('DB_PASSWORD') ? DB_PASSWORD : null;
 $settings['db']['driver'] = \Cake\Database\Driver\Mysql::class;
+//$settings['db']['log'] = true;
 
 // Path settings
 $settings['root'] = dirname(__DIR__);
