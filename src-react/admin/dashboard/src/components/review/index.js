@@ -7,7 +7,6 @@ import headers from "../../modules/headers";
 import {useParams} from "react-router-dom";
 import storage from "../../modules/storage";
 import ReviewRecipeForm from "../review_recipe_form";
-import ExportStatus from "../review_recipe_form/export_status";
 import ActivityMap from "../activity_map";
 import Modal from "../modal";
 
@@ -247,7 +246,6 @@ export default function Review() {
 				setMessage(json.message);
 				setAttributes({disabled:true,showExportStatus:true});
 				getRecipe();
-				
 			}else{
 				// export error
 				setMessage(json.message
@@ -306,7 +304,6 @@ export default function Review() {
 					name="modalMessage"
 					/>
 			}
-			{attributes.showExportStatus && <ExportStatus attributes={attributes} setRefresh={setRefresh} setAttributes={setAttributes} forcedEditing={forcedEditing} setForcedEditing={setForcedEditing} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)} onDelete={onDelete} />}
 			<ReviewToolbar {...attributes} setAttributes={setAttributes} forcedEditing={forcedEditing} setForcedEditing={setForcedEditing} refreshing={refresh} onSave={onSave} onSubmit={onSubmit} onPublish={onPublish} onRefresh={()=>setRefresh(true)} onDelete={onDelete}/>
 			<div className="flex gap-5 w-full max-w-full">
 				<div className="flex-grow">

@@ -6,6 +6,7 @@ use Cake\Database\Connection;
 use Psr\Container\ContainerInterface;
 
 use Exception;
+//@todo remove cron schedule functions after testing the new heartbeat flow
 final class Job_Service {
 	private $schema = [
 		'status'=>'string',
@@ -28,7 +29,22 @@ final class Job_Service {
 		$this->container = $container;
 
 		// @todo wordpress specific function
-		\add_action('sv_grillfuerst_user_recipes_run_job', [$this, 'run_job'], 10, 1);
+		//\add_action('sv_grillfuerst_user_recipes__job', [$this, 'run_job'], 10, 1);
+	}
+
+	public function run_next(): void{
+		$jobs = $this->get(); // ascending order
+
+		foreach($jobs as $key => $job){
+			try{
+				// this validates for status and blocker, so just run the next valid non-blocking job
+				$this->validate_job($job);
+				$this->run_job($job['id']);
+				break;
+			}catch(Exception $e){
+				continue;
+			}
+		}
 	}
 
 	public function run_job($id){
@@ -50,7 +66,7 @@ final class Job_Service {
 			$this->connection->update($this->table, ['status'=>'done'], ['id'=>$id]);
 			/////////////////////////////////////
 			//@todo add "duration" to the job, if it has "single" -> delete the cron
-			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$id]);
+			//\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$id]);
 			error_log('Job Service - run_job - run completed '.$id);
 			return true;
 		}catch(Exception $e){
@@ -86,7 +102,7 @@ final class Job_Service {
 		$job_id = empty($job) || empty($job['id']) ? 0 : $job['id'];
 		if($code === 100){
 			$this->connection->update($this->table, ['status'=>'done'], ['id'=>$job_id]);
-			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
+			//\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
 		}
 
 		if($code === 102){
@@ -94,7 +110,7 @@ final class Job_Service {
 		}
 
 		if($code === 404){
-			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
+			//\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
 		}
 
 		if($code === 423){
@@ -103,7 +119,7 @@ final class Job_Service {
 
 		if($code === 500){
 			$this->connection->update($this->table, ['status'=>'error'], ['id'=>$job_id]);
-			\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
+			//\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
 		}
 
 	}
@@ -132,9 +148,10 @@ final class Job_Service {
 
 			$job_id = $this->connection->getDriver()->lastInsertId();
 
+			/*
 			if (!\wp_next_scheduled('sv_grillfuerst_user_recipes_run_job', ['id' => (int)$job_id])) {
 				\wp_schedule_event(time(), 'every_minute', 'sv_grillfuerst_user_recipes_run_job', ['id' => (int)$job_id]);
-			}
+			}*/
 
 		}
 
@@ -164,6 +181,7 @@ final class Job_Service {
 		return $data ? $data : [];
 	}
 
+
 	public function get_by_item_id(int $item_id): array{
 		$data = $this->connection->selectQuery(['*'], $this->table)->where(['item_id'=>$item_id])->orderBy(['priority' => 'DESC'])->execute()->fetchAll('assoc');
 		foreach($data as $key => &$item){
@@ -179,7 +197,7 @@ final class Job_Service {
 		foreach($items as $key => $item){
 			$id = isset($item['id']) ? (int)$item['id'] : 0;
 			if($id){
-				\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id' => $id]);
+				//\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id' => $id]);
 			}
 
 		}

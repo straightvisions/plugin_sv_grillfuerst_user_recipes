@@ -3,16 +3,17 @@ import { Disclosure } from "@headlessui/react";
 import { Bars3Icon, XMarkIcon } from "@heroicons/react/24/outline";
 import { IconLogo } from "../icons";
 import user from "../../modules/user";
+import routes from "../../models/routes";
 
 /* @todo replace this with modern context providers */
 const navigation = [
 	{
 		name: "Dashboard",
-		href: "http://localhost:3050",
+		href: routes.config.appURL,
 	},
 	{
 		name: "Export",
-		href: "http://localhost:3050/export",
+		href: routes.config.appURL + '/export/',
 	},
 ];
 

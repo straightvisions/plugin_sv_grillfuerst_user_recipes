@@ -45,9 +45,15 @@ final class Export_Controller{
 		]);
 
 
+		// deprecated?
 		$this->Api_Middleware->add([
 			'route' => '/export/recipes/(?P<uuid>\d+)/status',
 			'args'  => ['methods' => 'GET', 'callback' => [$this, 'export_status'], 'permission_callback' => '__return_true']
+		]);
+
+		$this->Api_Middleware->add([
+			'route' => '/export/heartbeat',
+			'args'  => ['methods' => 'GET', 'callback' => [$this, 'heartbeat_rest'], 'permission_callback' => '__return_true']
 		]);
 
 		$this->Api_Middleware->add([
@@ -70,6 +76,14 @@ final class Export_Controller{
 			'route' => '/export/test/run_job/(?P<id>\d+)', // id from table jobs
 			'args'  => ['methods' => 'GET', 'callback' => [$this, 'test_run_job'], 'permission_callback' => '__return_true']
 		]);*/
+
+		// wordpress specific
+		// create the cron job
+		if (!\wp_next_scheduled('sv_grillfuerst_user_recipes_export_heartbeat')) {
+			\wp_schedule_event(time(), 'every_minute', 'sv_grillfuerst_user_recipes_export_heartbeat');
+		}
+
+		\add_action('sv_grillfuerst_user_recipes_export_heartbeat', [$this, 'heartbeat'], 10, 1);
 
 	}
 
@@ -124,7 +138,7 @@ final class Export_Controller{
 					// flush current jobs for this recipe
 					$this->Job_Service->delete_by_item_id($uuid);
 					// flush export column on recipe
-					$this->Recipes_Service->update($uuid,['state'=>'review_pending', 'export'=>null, 'link'=>'']);
+					$this->Recipes_Service->update($uuid,['state'=>'review_pending', 'export'=>'running', 'link'=>'']);
 
 					// run export again
 					$message = 'Export started.';
@@ -137,6 +151,25 @@ final class Export_Controller{
 			},['admin', 'export']
 		);
 
+	}
+
+	public function heartbeat_rest($request){
+		return $this->Api_Middleware->response($request,
+			function ($Request) {
+				$message = '';
+				$errors = [];
+
+				// blocking
+				$this->Job_Service->run_next();
+
+				return [['message'=>'', 'errors' => $errors], 200];
+			},['admin', 'export']
+		);
+	}
+
+	public function heartbeat(){
+		// blocking
+		$this->Job_Service->run_next();
 	}
 
 	public function export_status($request){
@@ -173,8 +206,18 @@ final class Export_Controller{
 				$jobs = $this->Job_Service->get_by_item_id($uuid);
 				$recipe = $this->Recipes_Service->get($uuid);
 
+				$recipe_data = [
+					'uuid' => $recipe['uuid'],
+					'state' => $recipe['state'],
+					'title' => $recipe['title'],
+					'link' => $recipe['link'],
+					'export' => $recipe['export'],
+					'export_date' => $recipe['export_date'],
+				];
+
 				return [[
 					'message'=>'',
+					'recipe'=> $recipe_data,
 					'errors' => $errors,
 					'jobs' => $jobs
 				], 200];

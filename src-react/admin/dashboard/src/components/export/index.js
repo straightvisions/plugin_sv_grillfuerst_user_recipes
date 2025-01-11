@@ -63,6 +63,7 @@ export default function Export() {
 	
 	// Fetch data when filter changes
 	useEffect(() => {
+		// update data
 		fetchData();
 	}, [filter]);
 	
@@ -70,6 +71,8 @@ export default function Export() {
 	useEffect(() => {
 		mountedRef.current = true; // Component is mounted
 		const intervalId = setInterval(() => {
+			// heartbeat
+			fetch(routes.exportHeartbeat, {headers:headers.get()});
 			fetchData(true); // Silent fetch
 		}, 10000);
 		
