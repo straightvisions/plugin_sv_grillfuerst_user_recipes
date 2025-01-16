@@ -3,6 +3,7 @@ import Spinner from "../spinner";
 import JobDetailsTable from "./job_details_table";
 import headers from "../../modules/headers";
 import routes from "../../models/routes";
+import DateDisplay from "../date_display";
 
 const exportStates = {
 	running: {
@@ -90,7 +91,7 @@ export default function ExportRow({ exportItem: initialExportItem }) {
 			<tr className="hover:bg-gray-50 cursor-pointer" onClick={toggleRow}>
 				<td className="px-3 py-4 text-sm text-gray-500">{exportItem.uuid}</td>
 				<td className="px-3 py-4 text-sm text-gray-500">{exportItem.title}</td>
-				<td className="px-3 py-4 text-sm text-gray-500">{exportItem.export_date}</td>
+				<td className="px-3 py-4 text-sm text-gray-500"><DateDisplay date={exportItem.export_date} timezoneOffset={60} /></td>
 				<td className="px-3 py-4 text-sm">
 					<span
 						className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900 ${

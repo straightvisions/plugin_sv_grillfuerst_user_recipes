@@ -104,7 +104,7 @@ final class Export_Controller{
 					if(empty($item['export'])){
 						$message = 'Export started.';
 						$this->Export_Service->export($item);
-						$this->Recipes_Service->update($uuid, ['export'=>'running']);
+						$this->Recipes_Service->update($uuid, ['export'=>'running', 'export_date'=>date('Y-m-d H:i:s')]);
 					}
 
 					if($item['export'] === 'running'){
@@ -138,7 +138,7 @@ final class Export_Controller{
 					// flush current jobs for this recipe
 					$this->Job_Service->delete_by_item_id($uuid);
 					// flush export column on recipe
-					$this->Recipes_Service->update($uuid,['state'=>'review_pending', 'export'=>'running', 'link'=>'']);
+					$this->Recipes_Service->update($uuid,['state'=>'review_pending', 'export'=>'running', 'export_date'=>date('Y-m-d H:i:s'), 'link'=>'']);
 
 					// run export again
 					$message = 'Export started.';

@@ -39,8 +39,8 @@ final class Job_Service {
 			try{
 				// this validates for status and blocker, so just run the next valid non-blocking job
 				$this->validate_job($job);
-				$this->run_job($job['id']);
-				break;
+				$success = $this->run_job($job['id']);
+				if($success) break;
 			}catch(Exception $e){
 				continue;
 			}
@@ -72,7 +72,7 @@ final class Job_Service {
 		}catch(Exception $e){
 			error_log($e->getMessage());
 			$this->handle_job_status_by_exception_code($job, $e->getCode());
-			error_log('Job Service - run_job - run failed '.$id);
+			error_log('Job Service - run_job - run failed '.$id . ' - message: '. $e->getMessage());
 			return false;
 		}
 
