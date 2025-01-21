@@ -6,15 +6,19 @@ import routes from "../../models/routes";
 import DateDisplay from "../date_display";
 
 const exportStates = {
-	running: {
+	export_pending: {
+		label: "Pending",
+		color: "bg-yellow-100",
+	},
+	export_running: {
 		label: "Running",
 		color: "bg-yellow-100",
 	},
-	done: {
-		label: "Done",
+	published: {
+		label: "Published",
 		color: "bg-green-100",
 	},
-	error: {
+	export_error: {
 		label: "Error",
 		color: "bg-red-100",
 	},
@@ -95,10 +99,10 @@ export default function ExportRow({ exportItem: initialExportItem }) {
 				<td className="px-3 py-4 text-sm">
 					<span
 						className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 text-gray-900 ${
-							exportStates[exportItem.export]?.color || "bg-gray-100"
+							exportStates[exportItem.state]?.color || "bg-gray-100"
 						}`}
 					>
-						{exportStates[exportItem.export]?.label || exportItem.export}
+						{exportStates[exportItem.state]?.label || exportItem.state}
 					</span>
 				</td>
 				<td className="px-3 py-4 text-sm text-gray-500">

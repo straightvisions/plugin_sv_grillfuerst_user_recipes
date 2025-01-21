@@ -21,6 +21,18 @@ const states = {
 		label: 'Feedback',
 		color: 'bg-blue-100'
 	},
+	export_pending: {
+		label: 'Export wartend',
+		color: 'bg-yellow-100'
+	},
+	export_running: {
+		label: 'Export läuft',
+		color: 'bg-yellow-100'
+	},
+	export_error: {
+		label: 'Export Fehler',
+		color: 'bg-red-100'
+	},
 	published: {
 		label: 'Veröffentlicht',
 		color: 'bg-green-100'

@@ -33,7 +33,7 @@ export default function ReviewToolbar(props) {
 	const [confirmReleaseOpen, setConfirmReleaseOpen] = useState(false);
 
 	const state = props.data.state;
-	const _disabled = disabled || saving || submitting || publishing || refreshing || deleting || state === 'published' || state === 'draft';
+	const _disabled = disabled || saving || submitting || publishing || refreshing || deleting || state === 'published' || state === 'draft'|| state === 'export_pending' || state === 'export_running' || state === 'export_error';
 
 	return (
 		<div className="flex flex-row items-center items-stretch mb-2 gap-2">
@@ -75,6 +75,9 @@ export default function ReviewToolbar(props) {
 				{ state === 'review_pending' && <span className="text-green-500"><strong>Wartet auf Feedback</strong></span> }
 				{ state === 'reviewed' && <span><strong className="text-yellow-500">Feedback gesendet</strong></span> }
 				{ state === 'published' && <span className="text-red-400"><strong>Veröffentlicht</strong></span> }
+				{ state === 'export_pending' && <span className="text-red-400"><strong>Export wartend</strong></span> }
+				{ state === 'export_running' && <span className="text-red-400"><strong>Export läuft</strong></span> }
+				{ state === 'export_error' && <span className="text-red-400"><strong>Export Fehler</strong></span> }
 				{ state === 'draft' && <span className="text-red-400"><strong>ENTWURF</strong></span> }
 				<span>|</span>
 				<span>Autor:

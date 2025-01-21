@@ -45,9 +45,10 @@ export default function SearchBar({ filter, onChange, id }) {
 				className="text-sm cursor-pointer rounded border border-gray-200"
 			>
 				<option value="all">All</option>
-				<option value="running">Running</option>
-				<option value="done">Done</option>
-				<option value="error">Error</option>
+				<option value="export_pending">Pending</option>
+				<option value="export_running">Running</option>
+				<option value="export_error">Error</option>
+				<option value="published">Done</option>
 			</select>
 		</div>
 	);

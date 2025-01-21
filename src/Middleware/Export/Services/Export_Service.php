@@ -64,7 +64,8 @@ final class Export_Service {
 
 	public function export($item){
 		$this->create($item);
-
+		// remove open jobs (should be only the case when an error happened before)
+		$this->Job_Service->delete_by_item_id($this->data['uuid']);
 		//@todo shouldn't this be moved to the controller?
 		$this->Job_Service->create([
 			'type' => 'recipe',
@@ -133,10 +134,10 @@ final class Export_Service {
 
 	public function export_recipe_data(int $recipe_id):mixed{
 		$item = $this->Recipes_Service->get($recipe_id);
-		if(empty($item)) throw new Exception(__FUNCTION__ . ' recipe not found: ' . $recipe_id);
+		if(empty($item)) throw new Exception(__FUNCTION__ . ' recipe not found: ' . $recipe_id, 404);
 		$item = new Recipe_Exporter_Model($item, $this->Product_Finder_Service);
 		$user = $this->User_Info_Service->get_raw($item->get('user_id'), true);
-		if(empty($user)) throw new Exception(__FUNCTION__ . ' user not found: ' . $recipe_id . ' user id: '. $item->get('user_id'));
+		if(empty($user)) throw new Exception(__FUNCTION__ . ' user not found: ' . $recipe_id . ' user id: '. $item->get('user_id'),  404);
 
 		$user = $this->User_Info_Service->get_raw($item->get('user_id'), true);
 

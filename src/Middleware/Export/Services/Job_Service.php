@@ -14,7 +14,8 @@ final class Job_Service {
 		'type'=>'string',
 		'callback'=>'string',
 		'item_id'=>'int',
-		'data'=>'json'
+		'data'=>'json',
+		'log'=>[]
 	];
 
 	protected Connection $connection;
@@ -70,12 +71,22 @@ final class Job_Service {
 			error_log('Job Service - run_job - run completed '.$id);
 			return true;
 		}catch(Exception $e){
-			error_log($e->getMessage());
+			if($e->getCode() > 300 ) $this->log($job, $e->getMessage()); // log only real errors
 			$this->handle_job_status_by_exception_code($job, $e->getCode());
 			error_log('Job Service - run_job - run failed '.$id . ' - message: '. $e->getMessage());
 			return false;
 		}
 
+	}
+
+	public function log($job, string|array $message){
+		if(is_array($message)){
+			$job['log'] = array_merge($job['log'], $message);
+		}else{
+			$job['log'][] = $message;
+		}
+
+		$this->connection->update($this->table, ['log'=>json_encode($job['log'])], ['id'=>$job['id']]);
 	}
 
 	public function validate_job($job){
@@ -102,7 +113,6 @@ final class Job_Service {
 		$job_id = empty($job) || empty($job['id']) ? 0 : $job['id'];
 		if($code === 100){
 			$this->connection->update($this->table, ['status'=>'done'], ['id'=>$job_id]);
-			//\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
 		}
 
 		if($code === 102){
@@ -110,7 +120,7 @@ final class Job_Service {
 		}
 
 		if($code === 404){
-			//\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
+			$this->connection->update($this->table, ['status'=>'error'], ['id'=>$job_id]);
 		}
 
 		if($code === 423){
@@ -119,7 +129,6 @@ final class Job_Service {
 
 		if($code === 500){
 			$this->connection->update($this->table, ['status'=>'error'], ['id'=>$job_id]);
-			//\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id'=>$job_id]);
 		}
 
 	}
@@ -141,18 +150,11 @@ final class Job_Service {
 
 		//@todo add error handling and last inserted id
 		if(!empty($data)){
-
 			if(isset($data['data']) && !is_string($data['data']) && !empty($data['data'])) $data['data'] = json_decode($data['data']);
+			if(isset($data['log']) && !is_string($data['log']) && !empty($data['log'])) $data['log'] = json_decode($data['log']);
 
 			$this->connection->insert($this->table, $data);
-
 			$job_id = $this->connection->getDriver()->lastInsertId();
-
-			/*
-			if (!\wp_next_scheduled('sv_grillfuerst_user_recipes_run_job', ['id' => (int)$job_id])) {
-				\wp_schedule_event(time(), 'every_minute', 'sv_grillfuerst_user_recipes_run_job', ['id' => (int)$job_id]);
-			}*/
-
 		}
 
 		return $this->get($job_id);
@@ -160,8 +162,10 @@ final class Job_Service {
 
 	public function update(int $id, array $data): bool {
 		if(isset($data['data']) && !is_string($data['data'])){
-			$data['data'] = json_encode($data['data']);
+			$data['data'] = !is_string($data['data']) ? json_encode($data['data']) : json_encode($data['data']);
+			$data['log'] = !is_string($data['log']) ? json_encode($data['log']) : json_encode($data['log']);
 		}
+
 		$this->connection->update($this->table, $data, ['id' => $id], ['id' => 'integer']);
 		return true;
 	}
@@ -172,10 +176,12 @@ final class Job_Service {
 			foreach($data as $key => &$item){
 				if(empty($item) || !isset($item['data']) || empty($item['data'])) continue;
 				$item['data'] = $this->prepare_data($item['data']);
+				$item['log'] = $this->prepare_data($item['log']);
 			}
 		}else{
 			$data = $this->connection->selectQuery(['*'], $this->table)->where(['id' => $id])->execute()->fetchAssoc();
 			$data['data'] = $this->prepare_data($data['data']);
+			$data['log'] = $this->prepare_data($data['log']);
 		}
 
 		return $data ? $data : [];
@@ -186,22 +192,13 @@ final class Job_Service {
 		$data = $this->connection->selectQuery(['*'], $this->table)->where(['item_id'=>$item_id])->orderBy(['priority' => 'DESC'])->execute()->fetchAll('assoc');
 		foreach($data as $key => &$item){
 			$item['data'] = $this->prepare_data($item['data']);
+			$item['log'] = $this->prepare_data($item['log']);
 		}
 
 		return $data;
 	}
 
 	public function delete_by_item_id(int $item_id): void{
-		$items = $this->connection->selectQuery(['id'], $this->table)->where(['item_id' => $item_id])->execute()->fetchAll('assoc');
-		// delete cron jobs
-		foreach($items as $key => $item){
-			$id = isset($item['id']) ? (int)$item['id'] : 0;
-			if($id){
-				//\wp_clear_scheduled_hook('sv_grillfuerst_user_recipes_run_job', ['id' => $id]);
-			}
-
-		}
-
 		$this->connection->deleteQuery($this->table, ['item_id'=>$item_id])->execute();
 	}
 

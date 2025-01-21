@@ -1,7 +1,6 @@
 import React from "react";
 
 export default function JobDetailsTable({ jobs }) {
-	
 	return (
 		<>
 			{ jobs.length ?
@@ -13,6 +12,7 @@ export default function JobDetailsTable({ jobs }) {
 						<th className="px-4 py-2 text-left text-sm font-semibold text-gray-800">Type</th>
 						<th className="px-4 py-2 text-left text-sm font-semibold text-gray-800">Priority</th>
 						<th className="px-4 py-2 text-left text-sm font-semibold text-gray-800">Data</th>
+						<th className="px-4 py-2 text-left text-sm font-semibold text-gray-800">Log</th>
 					</tr>
 					</thead>
 					<tbody className="divide-y divide-gray-200">
@@ -27,6 +27,15 @@ export default function JobDetailsTable({ jobs }) {
 									{Object.entries(job.data).map(([key, value]) => (
 										<li key={key}>
 											<strong>{key}</strong>: {typeof value === "object" ? JSON.stringify(value) : value}
+										</li>
+									))}
+								</ul>
+							</td>
+							<td className="px-4 py-2 text-sm text-gray-700">
+								<ul className="list-disc pl-4">
+									{Object.entries(job.log).map(([key, value]) => (
+										<li key={key}>
+											{typeof value === "object" ? JSON.stringify(value) : value}
 										</li>
 									))}
 								</ul>
